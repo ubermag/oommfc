@@ -1,4 +1,4 @@
-from atlases import BoxAtlas
+from .atlases import BoxAtlas
 
 
 class RectangularMesh(object):
