@@ -1,9 +1,9 @@
 import os
 import glob
-from atlases import BoxAtlas
-from meshes import RectangularMesh
-from evolvers import RungeKuttaEvolve, CGEvolve
-from drivers import TimeDriver, MinDriver
+from .atlases import BoxAtlas
+from .meshes import RectangularMesh
+from .evolvers import RungeKuttaEvolve, CGEvolve
+from .drivers import TimeDriver, MinDriver
 from oommffield import OOMMFField, read_oommf_file
 from energies.zeeman import FixedZeeman
 from oommfodt import OOMMFodt
