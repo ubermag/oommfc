@@ -13,3 +13,5 @@ install: pip install codecov pytest-cov matplotlib pandas git+https://github.com
 script: py.test --cov=oommfc --cov-config .coveragerc
 after_success:
   codecov
+notifications:
+  slack: joommf:eqKxGPXuUP3LxnOfxg7GWgDF
