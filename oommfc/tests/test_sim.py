@@ -43,9 +43,19 @@ class TestSim(object):
         assert self.sim.m.f[0, 0, 0, 1] == 2
         assert self.sim.m.f[0, 0, 0, 2] == -1
 
+        m_average = self.sim.m_average()
+        assert m_average[0] == 1
+        assert m_average[1] == 2
+        assert m_average[2] == -1
+
         def m_init(pos):
             return (1, 0, -5)
         self.sim.set_m(m_init)
         assert self.sim.m.f[0, 0, 0, 0] == 1
         assert self.sim.m.f[0, 0, 0, 1] == 0
         assert self.sim.m.f[0, 0, 0, 2] == -5
+
+        m_average = self.sim.m_average()
+        assert m_average[0] == 1
+        assert m_average[1] == 0
+        assert m_average[2] == -5
