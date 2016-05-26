@@ -12,7 +12,10 @@ Contents:
    :maxdepth: 2
 
    evolvers
+   ipynb/standard_problem1
    ipynb/standard_problem3
+   ipynb/standard_problem4
+   ipynb/fmr_standard_problem
 
 Indices and tables
 ==================
