@@ -1,7 +1,32 @@
+"""
+meshes.py
+
+Meshes in OOMMF describe the space over which the simulation occurs - there
+should be only a single mesh in a given simulation. A mesh is constructed over
+an atlas which describes the simulation geometry.
+
+"""
+
 from .atlases import BoxAtlas
 
 
 class RectangularMesh(object):
+
+    """
+    class RectangularMesh(atlas, d, meshname='mesh')
+
+    Creates a rectangular mesh across the space covered by atlas.
+
+    Inputs
+    ------
+    atlas:
+        An object of type BoxAtlas.
+    d:
+        List of length 3, specifies cell sizes in Finite Difference scheme.
+    meshname:
+        String, name of the mesh in OOMMF.
+    """
+
     def __init__(self, atlas, d, meshname='mesh'):
         if not isinstance(d, (tuple, list)) or len(d) != 3:
             raise ValueError('Cellsize d must be a tuple of length 3.')
