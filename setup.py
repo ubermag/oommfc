@@ -10,7 +10,7 @@ setup(
     long_description=readme,
     author='Computational Modelling Group',
     author_email='fangohr@soton.ac.uk',
-    packages=['oommfc', 'oommfc.tests'],
+    packages=['oommfc', 'oommfc.energies', 'oommfc.tests'],
     classifiers=[
         'License :: OSI Approved :: BSD License',
         'Programming Language :: Python :: 2.7',

@@ -1,0 +1,4 @@
+matplotlib
+pandas
+git+https://github.com/joommf/oommffield.git
+git+https://github.com/joommf/oommfodt.git
