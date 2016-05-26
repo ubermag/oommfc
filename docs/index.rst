@@ -12,6 +12,7 @@ Contents:
    :maxdepth: 2
 
    evolvers
+   ipynb/standard_problem3
 
 Indices and tables
 ==================
