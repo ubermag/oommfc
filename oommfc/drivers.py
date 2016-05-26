@@ -1,4 +1,42 @@
+"""
+drivers.py
+
+Drivers in OOMMF control the evolution of a simulation, iterating through time.
+A driver controls the evolver, which performs the actual step through time or
+phase space in the simulation.
+
+For more detail consult the OOMMF Standard Oxs_Ext Child Classes documentation.
+"""
+
+
 class TimeDriver(object):
+
+    """
+    class TimeDriver(evolver, stopping_time, stage_count, mesh, Ms, m0,
+                     basename='noname')
+
+    The TimeDriver class is used for dynamic simulations - those where the aim
+    is to look at how the system evolves over time.
+
+    Input
+    -----
+    evolver:
+        String, evolver name
+    stopping_time:
+        The time that a single stage lasts for.
+    stage_count:
+        The number of stages in a simulation - the total time simulated is
+        the stage_count*stopping_time.
+    mesh:
+        String, the name of the mesh.
+    Ms:
+        Float, int, the saturation magnetization of the system in A/m.
+    m0:
+        List of length 3 or string describing initial magnetization.
+    basename:
+        Base file name which determines the start of the name of output files.
+    """
+
     def __init__(self, evolver, stopping_time, stage_count,
                  mesh, Ms, m0, basename='noname'):
         if not isinstance(evolver, str):
@@ -61,6 +99,29 @@ class TimeDriver(object):
 
 
 class MinDriver(object):
+
+    """
+    class MinDriver(evolver, stopping_mxHxm, mesh, Ms, m0, basename='noname')
+
+    The MinDriver class is used for minimisation simulations - those where the
+    system is relaxed in order to find the minimum energy.
+
+    Input
+    -----
+    evolver:
+        String, evolver name
+    stopping_mxHxm:
+        The torque criteria for stopping a simulation.
+    mesh:
+        String, the name of the mesh.
+    Ms:
+        Float, int, the saturation magnetization of the system in A/m.
+    m0:
+        List of length 3 or string describing initial magnetization.
+    basename:
+        Base file name which determines the start of the name of output files.
+    """
+
     def __init__(self, evolver, stopping_mxHxm, mesh, Ms,
                  m0, basename='noname'):
         if not isinstance(evolver, str):
