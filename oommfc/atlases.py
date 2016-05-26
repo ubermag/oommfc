@@ -1,4 +1,37 @@
+"""
+atlases.py
+
+Atlases are geometric regions in space which are used
+to define the problem domain in OOMMF. This module contains
+classes which correspond to different types of geometry.
+"""
+
+
 class BoxAtlas(object):
+
+    """
+    class BoxAtlas(self, cmin, cmax, name='atlas',
+                   regionname='regionname'):
+
+    This class defines a single region which is a box.
+
+    Inputs
+    ------
+    cmin:
+        List of 3 coordinates representing bottom corner of box.
+    cmax:
+        List of 3 coordinates representing opposite upper corner of box.
+    name:
+        String, label assigned to the region in the atlas.
+
+    Example
+    -------
+
+    To create a 50nm x 50nm x 50nm box:
+
+    atlas = BoxAtlas([0, 0, 0], [50, 50, 50])
+    """
+
     def __init__(self, cmin, cmax, name='atlas',
                  regionname='regionname'):
         if cmin[0] >= cmax[0] or cmin[1] >= cmax[1] or cmin[2] >= cmax[2]:
@@ -18,6 +51,9 @@ class BoxAtlas(object):
             self.regionname = regionname
 
     def get_mif(self):
+        """
+        Returns MIF string.
+        """
         # Create mif string.
         mif = '# BoxAtlas\n'
         mif += 'Specify Oxs_BoxAtlas:{}'.format(self.name) + ' {\n'
