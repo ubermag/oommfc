@@ -1,7 +1,0 @@
-# use conda to build the docs
-conda:
-  file: docs/environment.yml
-
-# python version info
-python:
-  version: 2
