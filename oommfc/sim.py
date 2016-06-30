@@ -4,7 +4,7 @@ from .atlases import BoxAtlas
 from .meshes import RectangularMesh
 from .evolvers import RungeKuttaEvolve, CGEvolve
 from .drivers import TimeDriver, MinDriver
-from oommffield import OOMMFField, read_oommf_file
+from oommffield import Field, read_oommf_file
 from oommfc.energies.zeeman import FixedZeeman
 from oommfodt import OOMMFodt
 
@@ -26,7 +26,7 @@ class Sim(object):
             os.makedirs(self.dirname)
         self.mif_filename = self.dirname + self.name + '.mif'
 
-        self.m =  OOMMFField(self.atlas.cmin, self.atlas.cmax, self.mesh.d, dim=3)
+        self.m =  Field(self.atlas.cmin, self.atlas.cmax, self.mesh.d, dim=3)
 
         self.t = 0
 
@@ -71,7 +71,7 @@ class Sim(object):
             self.m = read_oommf_file(m0)
         elif hasattr(m0, '__call__'):
             self.m.set(m0)
-        elif isinstance(m0, OOMMFField):
+        elif isinstance(m0, Field):
             self.m = m0
             self.m.write_oommf_file(self.dirname + 'm0file.omf')
         else:
