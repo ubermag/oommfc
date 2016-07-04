@@ -5,7 +5,7 @@ with open('README.rst') as f:
 
 setup(
     name='oommfc',
-    version='0.3',
+    version='0.4',
     description='A Python-based OOMMF calculator.',
     long_description=readme,
     author='Computational Modelling Group',
