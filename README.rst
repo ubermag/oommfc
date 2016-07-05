@@ -10,6 +10,9 @@
    :target: http://oommfc.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
+.. image:: https://badge.fury.io/py/oommfc.svg
+   :target: https://badge.fury.io/py/oommfc
+
 A Python-based OOMMF calculator.
 
 Authors: Marijan Beg, Ryan Pepper, Hans Fangohr
