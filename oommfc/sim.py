@@ -10,7 +10,7 @@ from oommfodt import OOMMFodt
 
 
 class Sim(object):
-    def __init__(self, mesh, Ms, name=None):
+    def __init__(self, mesh, Ms, name='Untitled'):
         self.mesh = mesh
         self.atlas = mesh.atlas
         self.Ms = Ms
