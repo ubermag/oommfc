@@ -32,30 +32,32 @@ class _widget:
 
         def on_dimension_change(b):
             if self.property_dimension.value == 1:
-                self.property_Ly.disabled = True
-                self.property_Lz.disabled = True
-                self.property_dy.disabled = True
-                self.property_dz.disabled = True
+                self.property_Ly.layout.visibility = 'hidden'
+                self.property_Lz.layout.visibility = 'hidden'
+                self.property_dy.layout.visibility = 'hidden'
+                self.property_dz.layout.visibility = 'hidden'
                 self.property_initial_magnetisation.options  = ['Uniform', 'Neel Wall', 'Random']
                 self.property_initial_magnetisation.value = 'Uniform'
                 self.property_skyrmion_vortex_radius.visible = False
             elif self.property_dimension.value == 2:
-                self.property_Ly.disabled = False
-                self.property_Lz.disabled = True
-                self.property_dy.disabled = False
-                self.property_dz.disabled = True
+                self.property_Ly.layout.visibility = 'visible'
+                self.property_Lz.layout.visibility = 'hidden'
+                self.property_dy.layout.visibility = 'visible'
+                self.property_dz.layout.visibility = 'hidden'
                 self.property_initial_magnetisation.options  = ['Uniform', 'Neel Wall', 'Skyrmion', 'Vortex',  'Random']
                 self.property_initial_magnetisation.value = 'Uniform'
+                self.property_skyrmion_vortex_radius.visible = True
             elif self.property_dimension.value == 3:
-                self.property_Ly.disabled = False
-                self.property_Lz.disabled = False
-                self.property_dy.disabled = False
-                self.property_dz.disabled = False
+                self.property_Ly.layout.visibility = 'visible'
+                self.property_Lz.layout.visibility = 'visible'
+                self.property_dy.layout.visibility = 'visible'
+                self.property_dz.layout.visibility = 'visible'
                 self.property_initial_magnetisation.options  = ['Uniform', 'Neel Wall', 'Skyrmion', 'Vortex', 'Random']
                 self.property_initial_magnetisation.value = 'Uniform'
+                self.property_skyrmion_vortex_radius.visible = True
 
         def on_change_anis(c):
-            if not self.property_anis_enabled.value:
+            if not self.property_uniaxial_anisotropy_enabled.value:
                 self.property_anisotropy_constant_K1.disabled = True
                 self.property_anisotropy_axis.disabled = True
             else:
@@ -86,20 +88,25 @@ class _widget:
 
         def on_change_magnetisation_type(c):
             type = self.property_initial_magnetisation.value
-            print(type)
             if type == 'Skyrmion' or type == 'Vortex':
-                print('a')
                 self.property_domain_wall_width.disabled = True
                 self.property_skyrmion_vortex_radius.disabled = False
+                self.box_skyrmion_vortex_config.visible = True
+                self.box_skyrmion_vortex_config.layout.visibility = 'visible'
+                self.box_domain_wall_config.layout.visibility = 'hidden'
+
             if type == 'Neel Wall' or type == 'Bloch Wall':
-                print('b')
                 self.property_domain_wall_width.disabled = False
                 self.property_skyrmion_vortex_radius.disabled = True
+                self.box_skyrmion_vortex_config.layout.visibility = 'hidden'
+                self.box_skyrmion_vortex_config.layout.visibility = 'hidden'
+                self.box_domain_wall_config.layout.visibility = 'visible'
 
             if type == 'Uniform' or type == 'Random':
-                print('b')
                 self.property_domain_wall_width.disabled = True
                 self.property_skyrmion_vortex_radius.disabled = True
+                self.box_skyrmion_vortex_config.layout.visibility = 'hidden'
+                self.box_domain_wall_config.layout.visibility = 'hidden'
 
         def on_click_getcode(c):
             self.code_output.value = "import oommfc\n"
@@ -329,15 +336,18 @@ class _widget:
         self.property_dimension = IntSlider(value=1, min=1, max=3, step=1)
         self.label_lengths = Label("Mesh Lengths")
         self.property_Lx = IntText("10", description="Lx")
-        self.property_Ly = IntText("1", description="Ly", disabled=True)
-        self.property_Lz = IntText("1", description="Lz", disabled=True)
+        self.property_Ly = IntText("1", description="Ly")
+        self.property_Ly.layout.visibility = 'hidden'
+        self.property_Lz = IntText("1", description="Lz")
+        self.property_Lz.layout.visibility = 'hidden'
         self.label_scale = Label("Length Scale (m)")
         self.property_scale = FloatText(value=1e-9)
         self.label_discretisation = Label("Discretisation")
         self.property_dx = FloatText("1", description="dx")
-        self.property_dy = FloatText("1", description="dy", disabled=True)
-        self.property_dz = FloatText("1", description="dz", disabled=True)
-
+        self.property_dy = FloatText("1", description="dy")
+        self.property_dy.layout.visibility = 'hidden'
+        self.property_dz = FloatText("1", description="dz")
+        self.property_dz.layout.visibility = 'hidden'
         self.property_dimension.observe(on_dimension_change)
         self.page0 = widgets.Box((self.label_dimension, self.property_dimension,
                                   self.label_lengths, self.property_Lx,
@@ -386,12 +396,14 @@ class _widget:
         self.property_initial_magnetisation = Dropdown(options=['Uniform', 'Neel Wall', 'Random'])
         self.box_initial_magnetisation = HBox([self.label_initial_magnetisation, self.property_initial_magnetisation])
         self.label_skyrmion_vortex_radius = Label("Skyrmion/Vortex Radius (nm)")
-        self.property_skyrmion_vortex_radius = FloatText(value=10, visible=False, disabled = True)
+        self.property_skyrmion_vortex_radius = FloatText(value=10)
         self.label_domain_wall_width = Label("Wall width (nm)")
-        self.property_domain_wall_width = FloatText(value=10, visible=False, disabled = True)
+        self.property_domain_wall_width = FloatText(value=10)
 
-        self.box_skyrmion_vortex_config = Box([self.label_skyrmion_vortex_radius, self.property_skyrmion_vortex_radius], visible=False)
-        self.box_domain_wall_config = Box([self.property_domain_wall_width], visible=False)
+        self.box_skyrmion_vortex_config = Box([self.label_skyrmion_vortex_radius, self.property_skyrmion_vortex_radius])
+        self.box_domain_wall_config = Box([self.label_domain_wall_width, self.property_domain_wall_width])
+        self.box_skyrmion_vortex_config.layout.visibility = 'hidden'
+        self.box_domain_wall_config.layout.visibility = 'hidden'
         self.property_initial_magnetisation.observe(on_change_magnetisation_type)
         self.page2 = Box([self.box_initial_magnetisation, self.box_domain_wall_config, self.box_skyrmion_vortex_config])
 
