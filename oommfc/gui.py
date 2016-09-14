@@ -1,5 +1,20 @@
 from ipywidgets import *
 import textwrap
+import base64
+from IPython.display import Javascript, display
+from IPython.utils.py3compat import str_to_bytes, bytes_to_str
+def create_code_cell(code='', where='below'):
+    """
+    This function was written by jfreder and posted to GitHub here:
+    https://github.com/ipython/ipython/issues/4983
+    as a workaround to using set_next_input(some_text),
+    as this does not work with widgets.
+    """
+    encoded_code = bytes_to_str(base64.b64encode(str_to_bytes(code)))
+    display(Javascript("""
+        var code = IPython.notebook.insert_cell_{0}('code');
+        code.set_text(atob("{1}"));
+    """.format(where, encoded_code)))
 
 
 def GUI():
@@ -109,8 +124,6 @@ class _widget:
                 self.property_skyrmion_vortex_radius.layout.visibility = 'hidden'
 
 
-        def on_click_getcode(c):
-            self.code_output.value = "import oommfc\n"
 
         def update_dictionary():
             self.dict = {}
@@ -128,7 +141,7 @@ class _widget:
             code += assemble_initial_magnetisation_code()
             code += assemble_interactions_code()
             code += assemble_properties_code()
-            self.code_output.value = code
+            create_code_cell(code)
 
         def assemble_mesh_code():
             update_dictionary()
@@ -165,6 +178,7 @@ class _widget:
                    atlas = oommfc.BoxAtlas((0, 0, 0), ({}, {}, {}))
                    mesh = oommfc.RectangularMesh(atlas, ({}, {}, {}),
                                                  periodicity=({}, {}, {}))
+
                    sim = oommfc.Sim(mesh, {})
                    sim.set_m(init_m)
 
@@ -470,11 +484,7 @@ class _widget:
                           self.property_stopping_mxHxm,
                           self.property_rununtil])
 
-        self.code_output = Textarea(value="")
-        self.code_output.width = '600px'
-        self.code_output.height = '400px'
-
-        self.page4 = Box([self.get_code_button, self.code_output])
+        self.page4 = Box([self.get_code_button])
 
         self.get_code_button.on_click(get_code)
 
