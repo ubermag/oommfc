@@ -1,5 +1,6 @@
 import os
 import glob
+import subprocess
 from .atlases import BoxAtlas
 from .meshes import RectangularMesh
 from .evolvers import RungeKuttaEvolve, CGEvolve
@@ -10,7 +11,7 @@ from oommfodt import OOMMFodt
 
 
 class Sim(object):
-    def __init__(self, mesh, Ms, name=None):
+    def __init__(self, mesh, Ms, name='Untitled'):
         self.mesh = mesh
         self.atlas = mesh.atlas
         self.Ms = Ms
@@ -121,11 +122,14 @@ class Sim(object):
 
     def execute_mif(self):
         self.create_mif()
-
-        oommf_command = 'tclsh $OOMMFTCL boxsi +fg '
+        if os.name == 'nt':
+            oommf_command = 'tclsh86 %OOMMFTCL% boxsi +fg '
+        else:
+            oommf_command = 'tclsh $OOMMFTCL boxsi +fg '
         oommf_command += self.mif_filename
         oommf_command += ' -exitondone 1'
         os.system('cd ' + self.dirname)
-        os.system(oommf_command)
-
+        returncode = os.system(oommf_command)
+        if returncode:
+            raise Exception("Something has gone wrong in running OOMMF")
         self.update_self()

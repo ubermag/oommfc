@@ -8,7 +8,7 @@ python:
   - "3.4"
   - "2.7"
 # Install any dependencies for running the tests:
-install: pip install codecov pytest-cov matplotlib pandas git+https://github.com/joommf/oommffield.git git+https://github.com/joommf/oommfodt.git git+https://github.com/joommf/finitedifferencefield.git
+install: pip install codecov pytest-cov ipywidgets matplotlib pandas git+https://github.com/joommf/oommffield.git git+https://github.com/joommf/oommfodt.git git+https://github.com/joommf/finitedifferencefield.git 
 # command to run tests
 script: py.test --cov=oommfc --cov-config .coveragerc
 after_success:
