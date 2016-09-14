@@ -180,7 +180,6 @@ class _widget:
                                                  periodicity=({}, {}, {}))
 
                    sim = oommfc.Sim(mesh, {})
-                   sim.set_m(init_m)
 
                    """)
 
@@ -195,7 +194,7 @@ class _widget:
 
         def assemble_initial_magnetisation_code():
             type = self.dict['initial_magnetisation']
-            code = ''
+            code = 'sim.set_m(init_m)\n'
             if type == 'Uniform':
                 code += textwrap.dedent("""
 
