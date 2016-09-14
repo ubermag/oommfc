@@ -54,30 +54,32 @@ class _widget:
                 self.property_dz.layout.visibility = 'visible'
                 self.property_initial_magnetisation.options  = ['Uniform', 'Neel Wall', 'Skyrmion', 'Vortex', 'Random']
                 self.property_initial_magnetisation.value = 'Uniform'
-                self.property_skyrmion_vortex_radius.visible = True
+                self.property_skyrmion_vortex_radius.layout.visiblity = 'visible'
 
         def on_change_anis(c):
             if not self.property_uniaxial_anisotropy_enabled.value:
-                self.property_anisotropy_constant_K1.disabled = True
-                self.property_anisotropy_axis.disabled = True
+                self.property_anisotropy_constant_K1.layout.visibility = 'hidden'
+                self.property_anisotropy_axis.layout.visibility = 'hidden'
+                self.label_anisotropy_constant_K1.layout.visibility = 'hidden'
             else:
-                self.property_anisotropy_constant_K1 = False
-                self.property_anisotropy_axis.disabled = False
+                self.property_anisotropy_constant_K1.layout.visibility = 'visible'
+                self.property_anisotropy_axis.layout.visibility = 'visible'
+                self.label_anisotropy_constant_K1.layout.visibility = 'visible'
 
         def on_change_exch(c):
             if not self.property_exchange_enabled.value:
-                self.property_exchange_constant.disabled = True
+                self.property_exchange_constant.layout.visibility = 'hidden'
             else:
-                self.property_exchange_constant.disabled = False
+                self.property_exchange_constant.layout.visibility = 'visible'
 
 
         def on_change_simtype(c):
             if self.property_simtype.value == 'Relax':
-                self.property_rununtil.disabled = True
-                self.property_stopping_mxHxm.disabled = False
+                self.property_rununtil.layout.visibility = 'hidden'
+                self.property_stopping_mxHxm.layout.visibility = 'visible'
             else:
-                self.property_rununtil.disabled = False
-                self.property_stopping_mxHxm.disabled = True
+                self.property_rununtil.layout.visibility = 'visible'
+                self.property_stopping_mxHxm.layout.visibility = 'hidden'
 
         def normpress(c):
             r = np.sqrt(self.property_mx.value**2 + self.property_my.value**2 +
@@ -89,24 +91,23 @@ class _widget:
         def on_change_magnetisation_type(c):
             type = self.property_initial_magnetisation.value
             if type == 'Skyrmion' or type == 'Vortex':
-                self.property_domain_wall_width.disabled = True
-                self.property_skyrmion_vortex_radius.disabled = False
-                self.box_skyrmion_vortex_config.visible = True
-                self.box_skyrmion_vortex_config.layout.visibility = 'visible'
-                self.box_domain_wall_config.layout.visibility = 'hidden'
+                self.label_skyrmion_vortex_radius.layout.visibility = 'visible'
+                self.label_domain_wall_width.layout.visibility = 'hidden'
+                self.property_domain_wall_width.layout.visibility = 'hidden'
+                self.property_skyrmion_vortex_radius.layout.visibility = 'visible'
 
             if type == 'Neel Wall' or type == 'Bloch Wall':
-                self.property_domain_wall_width.disabled = False
-                self.property_skyrmion_vortex_radius.disabled = True
-                self.box_skyrmion_vortex_config.layout.visibility = 'hidden'
-                self.box_skyrmion_vortex_config.layout.visibility = 'hidden'
-                self.box_domain_wall_config.layout.visibility = 'visible'
+                self.label_skyrmion_vortex_radius.layout.visibility = 'hidden'
+                self.label_domain_wall_width.layout.visibility = 'visible'
+                self.property_domain_wall_width.layout.visibility = 'visible'
+                self.property_skyrmion_vortex_radius.layout.visibility = 'hidden'
 
             if type == 'Uniform' or type == 'Random':
-                self.property_domain_wall_width.disabled = True
-                self.property_skyrmion_vortex_radius.disabled = True
-                self.box_skyrmion_vortex_config.layout.visibility = 'hidden'
-                self.box_domain_wall_config.layout.visibility = 'hidden'
+                self.label_skyrmion_vortex_radius.layout.visibility = 'hidden'
+                self.label_domain_wall_width.layout.visibility = 'hidden'
+                self.property_domain_wall_width.layout.visibility = 'hidden'
+                self.property_skyrmion_vortex_radius.layout.visibility = 'hidden'
+
 
         def on_click_getcode(c):
             self.code_output.value = "import oommfc\n"
@@ -117,15 +118,14 @@ class _widget:
             for item in internal_objects:
                 if "property" in item:
                     var = getattr(self, item)
+                    # Strip 'property' from left of name in assignment
                     self.dict[item[9:]] = var.value
 
         def get_code(c):
             update_dictionary()
-            code = 'import oommfc\nimport numpy\n'
-
-            code += assemble_initial_magnetisation_code()
-
+            code = 'import oommfc\nimport numpy as np\nimport finitedifferencefield\n'
             code += assemble_mesh_code()
+            code += assemble_initial_magnetisation_code()
             code += assemble_interactions_code()
             code += assemble_properties_code()
             self.code_output.value = code
@@ -135,48 +135,59 @@ class _widget:
             code = ""
             property_dimension = self.dict['dimension']
             dL = self.dict['scale']
+            # We set these values to self as they are needed
+            # in the assemble_initial_magnetisation_code,
+            # and there's no point doing this twice.
             if property_dimension == 1:
-               property_Lx = self.dict['Lx']*dL
-               property_Ly = 1*dL
-               property_Lz = 1*dL
-               property_dx = self.dict['dx']*dL
-               property_dy = 1*dL
-               property_dz = 1*dL
+                self.Lx = self.dict['Lx']*dL
+                self.Ly = 1*dL
+                self.Lz = 1*dL
+                self.dx = self.dict['dx']*dL
+                self.dy = 1*dL
+                self.dz = 1*dL
             elif property_dimension == 2:
-                property_Lx = self.dict['Lx']*dL
-                property_Ly = self.dict['Ly']*dL
-                property_Lz = 1*dL
-                property_dx = self.dict['dx']*dL
-                property_dy = self.dict['dy']*dL
-                property_dz = 1*dL
+                self.Lx = self.dict['Lx']*dL
+                self.Ly = self.dict['Ly']*dL
+                self.Lz = 1*dL
+                self.dx = self.dict['dx']*dL
+                self.dy = self.dict['dy']*dL
+                self.dz = 1*dL
             elif property_dimension == 3:
-                property_Lx = self.dict['Lx']*dL
-                property_Ly = self.dict['Ly']*dL
-                property_Lz = self.dict['Lz']*dL
-                property_dx = self.dict['dx']*dL
-                property_dy = self.dict['dy']*dL
-                property_dz = self.dict['dz']*dL
+                self.Lx = self.dict['Lx']*dL
+                self.Ly = self.dict['Ly']*dL
+                self.Lz = self.dict['Lz']*dL
+                self.dx = self.dict['dx']*dL
+                self.dy = self.dict['dy']*dL
+                self.dz = self.dict['dz']*dL
             property_Ms = self.dict['Ms']
             code = textwrap.dedent("""\
 
                    atlas = oommfc.BoxAtlas((0, 0, 0), ({}, {}, {}))
-                   mesh = oommfc.RectangularMesh(atlas, ({}, {}, {}))
+                   mesh = oommfc.RectangularMesh(atlas, ({}, {}, {}),
+                                                 periodicity=({}, {}, {}))
                    sim = oommfc.Sim(mesh, {})
                    sim.set_m(init_m)
+
                    """)
 
-            return code.format(property_Lx, property_Ly, property_Lz,
-                               property_dx, property_dy, property_dz,
-                               property_Ms)
+            return code.format(self.Lx, self.Ly, self.Lz,
+                               self.dx, self.dy, self.dz,
+                               1*self.dict['periodic_x'],
+                               1*self.dict['periodic_y'],
+                               1*self.dict['periodic_z'],
+                               property_Ms
+                               )
 
 
         def assemble_initial_magnetisation_code():
-            code = "import finitedifferencefield\n"
             type = self.dict['initial_magnetisation']
-            if type == 'uniform':
+            code = ''
+            if type == 'Uniform':
                 code += textwrap.dedent("""
+
                 def init_m(pos):
                     return (0, 0, 1.0)
+
                 """)
             elif type == 'Vortex':
                 code += textwrap.dedent("""\
@@ -192,10 +203,11 @@ class _widget:
                         return (yrad, -xrad, 0.0)
 
 
-                """).format(self.dict['Lx'], self.dict['Ly'], self.dict['skyrmion_vortex_radius'])
+                """).format(self.Lx, self.Ly, self.dict['skyrmion_vortex_radius'])
 
             elif type == 'Skyrmion':
                 code += textwrap.dedent("""\
+
                 import scipy.optimize
 
                 g = lambda x: -2 * np.sin(x)**2 - np.sin(2*x)/(2*x) + 1
@@ -229,15 +241,12 @@ class _widget:
 
                     return (m_x_init, m_y_init, m_z_init)
 
-                """).format(self.dict['Lx'], self.dict['Ly'], self.dict['skyrmion_vortex_radius'])
+                """).format(self.Lx, self.Ly, self.dict['skyrmion_vortex_radius'])
 
-            elif type == 'Uniform':
-                code += textwrap.dedent("""\
-                init_m = lambda pos: (0, 0, 1)
-                """)
 
             elif type == 'Random':
                 code += textwrap.dedent("""\
+
                 def init_m(pos):
                     temp = np.random.uniform(-1, 1, 3)
                     norm = np.linalg.norm(temp)
@@ -247,6 +256,7 @@ class _widget:
 
             elif type == 'Neel Wall':
                 code += textwrap.dedent("""\
+
                 def init_m(pos):
                     x, y, z = pos
                     wall_width = {}
@@ -257,14 +267,17 @@ class _widget:
                         return (1, 1, 0)
                     else:
                         return (0, 0, -1)
-                """).format(self.dict['wall_width'], self.dict['Lz'])
 
+                """).format(self.dict['domain_wall_width'], self.dict['Lz'])
 
+            dL = self.dict['scale']
             code += textwrap.dedent("""\
+
             field = finitedifferencefield.finitedifferencefield.Field((0, 0, 0),
                                                                       ({}, {}, {}),
                                                                       ({}, {}, {}),
                                                                       value=init_m)
+
             """).format(self.dict['Lx'], self.dict['Ly'], self.dict['Lz'],
                         self.dict['dx'], self.dict['dy'], self.dict['dz'])
 
@@ -306,7 +319,7 @@ class _widget:
             if self.dict['uniaxial_anisotropy_enabled']:
                 code += textwrap.dedent("""\
 
-                    anis = oommfc.energies.UniaxialAnisotropy(Ku={},
+                    anis = oommfc.energies.UniaxialAnisotropy(K1={},
                                                             axis=({},{},{}))
                     sim.add(anis)
 
@@ -349,6 +362,15 @@ class _widget:
         self.property_dz = FloatText("1", description="dz")
         self.property_dz.layout.visibility = 'hidden'
         self.property_dimension.observe(on_dimension_change)
+        self.label_periodicity = Label("Periodicity")
+        self.property_periodic_x = Checkbox(description='x', value = False)
+        self.property_periodic_y = Checkbox(description='y', value = False)
+        self.property_periodic_z = Checkbox(description='z', value = False)
+
+
+
+
+
         self.page0 = widgets.Box((self.label_dimension, self.property_dimension,
                                   self.label_lengths, self.property_Lx,
                                   self.property_Ly, self.property_Lz,
@@ -356,6 +378,10 @@ class _widget:
                                   self.property_dy, self.property_dz,
                                   self.label_scale,
                                   self.property_scale,
+                                  self.label_periodicity,
+                                  self.property_periodic_x,
+                                  self.property_periodic_y,
+                                  self.property_periodic_z
                                   ))
 
         # Page 1 : Interactions
@@ -378,14 +404,18 @@ class _widget:
         self.label_uniaxial_anisotropy = Label("Uniaxial Anisotropy")
         self.property_uniaxial_anisotropy_enabled = Checkbox(
             value=False, description="Enabled")
-        self.property_anisotropy_constant_K1 = FloatText(value=1.3e-11, disabled=True)
+        self.label_anisotropy_constant_K1 = Label("K1 (J/m)")
+        self.label_anisotropy_constant_K1.layout.visibility = 'hidden'
+        self.property_anisotropy_constant_K1 = FloatText(value=1.3e-11)
+        self.property_anisotropy_constant_K1.layout.visibility = 'hidden'
         self.property_anisotropy_axis = SelectMultiple(description="Axis",
                                                        options={
-                                                       'x': 1, 'y': 2, 'z': 3},
-                                                       disabled=True)
+                                                       'x': 1, 'y': 2, 'z': 3})
+        self.property_anisotropy_axis.layout.visibility = 'hidden'
         self.property_uniaxial_anisotropy_enabled.observe(on_change_anis)
         self.anisbox = Box([HBox([self.label_uniaxial_anisotropy, self.property_uniaxial_anisotropy_enabled]),
-                            self.property_anisotropy_constant_K1, self.property_anisotropy_axis])
+                            self.label_anisotropy_constant_K1, self.property_anisotropy_constant_K1,
+                            self.property_anisotropy_axis])
 
         self.page1 = Box([self.box_Ms, self.box_exchange, self.box_demagnetisation,
                           self.anisbox])
@@ -430,9 +460,10 @@ class _widget:
         self.label_simtype = Label("Simulation Type")
         self.property_simtype = RadioButtons(options=['Relax', 'Run until'])
         self.property_simtype.observe(on_change_simtype)
-        self.property_rununtil = FloatText(value=10e-9, disabled=True)
-        self.property_stopping_mxHxm = FloatText(value=0.01, disabled=False)
-        self.get_code_button = Button(description="Get Code!")
+        self.property_rununtil = FloatText(value=10e-9)
+        self.property_rununtil.layout.visibility = 'hidden'
+        self.property_stopping_mxHxm = FloatText(value=0.01)
+        self.get_code_button = Button(description="Generate Code")
         self.page3 = Box([HBox([self.label_dt, self.property_dt]),
                           self.property_saveevery, self.property_maxsteps,
                           self.label_simtype, self.property_simtype,
@@ -458,7 +489,3 @@ class _widget:
         self.tabs.set_title(3, 'Simulation Parameters')
         self.tabs.set_title(4, 'Generate Code')
         self.GUI = Box((self.maintitle, self.tabs))
-
-
-    def print_dir(self):
-        print(dir(self))
