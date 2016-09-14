@@ -3,6 +3,11 @@ from oommfc import RectangularMesh
 from oommfc import BoxAtlas
 
 
+import pytest
+from oommfc import RectangularMesh
+from oommfc import BoxAtlas
+
+
 class TestRectangularMesh(object):
     def setup(self):
         # Set of valid arguments.
@@ -62,7 +67,7 @@ class TestRectangularMesh(object):
 
             mif = mesh.get_mif()
             mif_lines = mesh.get_mif().split('\n')
-
+            print(mif_lines)
             # Assert comment.
             l = mif_lines[0].split()
             assert l[0] == '#'
@@ -89,10 +94,9 @@ class TestRectangularMesh(object):
             assert mif_lines[3][0] == '\t'
             l = mif_lines[3].split()
             assert l[0] == 'atlas'
-            assert l[1] == atlas.name
+            assert l[1] == ':' + atlas.name
 
             # Assert mif end.
             assert mif_lines[4] == '}'
-
             # Assert new lines at the end of the string.
-            assert mif[-2:] == '\n\n'
+            assert mif_lines[-1] == ''

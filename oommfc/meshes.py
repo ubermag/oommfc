@@ -55,8 +55,8 @@ class RectangularMesh(object):
             mif = textwrap.dedent("""\
             # RectangularMesh
             Specify Oxs_RectangularMesh:{} {{
-            cellsize {{ {} {} {} }}
-            atlas :{}
+            \tcellsize {{ {} {} {} }}
+            \tatlas :{}
             }}
             """).format(self.meshname, self.d[0], self.d[1], self.d[2], self.atlas.name)
         else:
@@ -75,6 +75,8 @@ class RectangularMesh(object):
             atlas {}
             periodic {}
             }}
+
+            
             """).format(self.meshname, self.d[0], self.d[1],
                         self.d[2], self.atlas.name, periodicstring)
 
