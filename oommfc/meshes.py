@@ -67,7 +67,7 @@ class RectangularMesh(object):
                 periodicstring.append('y')
             if self.periodicity[2] == 1:
                 periodicstring.append('z')
-            periodicstring = str(periodicstring)
+            periodicstring = ''.join(periodicstring)
             mif = textwrap.dedent("""\
             # RectangularMesh
             Specify Oxs_PeriodicRectangularMesh:{} {{
