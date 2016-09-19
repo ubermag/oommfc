@@ -6,7 +6,7 @@ should be only a single mesh in a given simulation. A mesh is constructed over
 an atlas which describes the simulation geometry.
 
 """
-
+import textwrap
 from .atlases import BoxAtlas
 
 
@@ -27,7 +27,7 @@ class RectangularMesh(object):
         String, name of the mesh in OOMMF.
     """
 
-    def __init__(self, atlas, d, meshname='mesh'):
+    def __init__(self, atlas, d, meshname='mesh',periodicity=(0,0,0)):
         if not isinstance(d, (tuple, list)) or len(d) != 3:
             raise ValueError('Cellsize d must be a tuple of length 3.')
         elif d[0] <= 0 or d[1] <= 0 or d[2] <= 0:
@@ -44,15 +44,40 @@ class RectangularMesh(object):
             raise ValueError('name must be a string.')
         else:
             self.meshname = meshname
+        if not isinstance(periodicity, tuple) or len(periodicity) != 3:
+            raise ValueError('periodicity must be a length 3 tuple')
+        else:
+            self.periodicity = periodicity
 
     def get_mif(self):
-        # Create mif string.
-        mif = '# RectangularMesh\n'
-        mif += 'Specify Oxs_RectangularMesh:{}'.format(self.meshname) + ' {\n'
-        mif += '\tcellsize {'
-        mif += ' {} {} {} '.format(self.d[0], self.d[1], self.d[2])
-        mif += '}\n'
-        mif += '\tatlas {}\n'.format(self.atlas.name)
-        mif += '}\n\n'
+        if self.periodicity == (0,0,0):
+            # Create mif string.
+            mif = textwrap.dedent("""\
+            # RectangularMesh
+            Specify Oxs_RectangularMesh:{} {{
+            \tcellsize {{ {} {} {} }}
+            \tatlas :{}
+            }}
+            """).format(self.meshname, self.d[0], self.d[1], self.d[2], self.atlas.name)
+        else:
+            periodicstring = []
+            if self.periodicity[0] == 1:
+                periodicstring.append('x')
+            if self.periodicity[1] == 1:
+                periodicstring.append('y')
+            if self.periodicity[2] == 1:
+                periodicstring.append('z')
+            periodicstring = ''.join(periodicstring)
+            mif = textwrap.dedent("""\
+            # RectangularMesh
+            Specify Oxs_PeriodicRectangularMesh:{} {{
+            cellsize {{ {} {} {} }}
+            atlas {}
+            periodic {}
+            }}
+
+            
+            """).format(self.meshname, self.d[0], self.d[1],
+                        self.d[2], self.atlas.name, periodicstring)
 
         return mif
