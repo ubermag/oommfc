@@ -284,16 +284,16 @@ class _widget:
         self.tabs.set_title(4, 'Generate Code')
         self.GUI = Box((self.maintitle, self.tabs))
 
-        def update_dictionary(self):
-	        self.dict = {}
-	        internal_objects = dir(self)
-	        for item in internal_objects:
-	            if "property" in item:
-	                var = getattr(self, item)
-	                # Strip 'property' from left of name in assignment
-	                self.dict[item[9:]] = var.value
+    def update_dictionary(self):
+        self.dict = {}
+        internal_objects = dir(self)
+        for item in internal_objects:
+            if "property" in item:
+                var = getattr(self, item)
+                # Strip 'property' from left of name in assignment
+                self.dict[item[9:]] = var.value
 
-    def assemble_mesh_code():
+    def assemble_mesh_code(self):
         code = ""
         property_dimension = self.dict['dimension']
         dL = self.dict['scale']
