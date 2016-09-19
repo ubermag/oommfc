@@ -4,7 +4,7 @@ from .atlases import BoxAtlas
 from .meshes import RectangularMesh
 from .evolvers import RungeKuttaEvolve, CGEvolve
 from .drivers import TimeDriver, MinDriver
-from oommffield import Field, read_oommf_file
+from discretisedfield import Field, read_oommf_file
 from oommfc.energies.zeeman import FixedZeeman
 from oommfodt import OOMMFodt
 

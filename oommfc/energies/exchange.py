@@ -1,12 +1,8 @@
-class UniformExchange(object):
-    def __init__(self, A):
-        if not isinstance(A, (float, int)) or A <= 0:
-            raise ValueError('Exchange constant must be positive float/int.')
-        else:
-            self.A = A
+from micromagneticmodel.hamiltonian import Exchange
 
-    def get_mif(self):
-        # Create mif string.
+
+class UniformExchange(Exchange):
+    def script(self):
         mif = '# UniformExchange\n'
         mif += 'Specify Oxs_UniformExchange {\n'
         mif += '\tA {}\n'.format(self.A)

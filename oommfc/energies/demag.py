@@ -1,8 +1,8 @@
-class Demag(object):
-    def __init__(self):
-        pass
+from micromagneticmodel.hamiltonian import Demag
 
-    def get_mif(self):
+
+class Demag(Demag):
+    def script(self):
         mif = '# Demag\n'
         mif += 'Specify Oxs_Demag {}\n\n'
 

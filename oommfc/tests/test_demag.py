@@ -1,12 +1,11 @@
-import pytest
 from oommfc.energies import Demag
 
 
 class TestDemag(object):
-    def test_get_mif(self):
+    def test_script(self):
         demag = Demag()
 
-        mif = demag.get_mif()
+        mif = demag.script()
         mif_lines = mif.split('\n')
 
         # Assert comment line.

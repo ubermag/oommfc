@@ -5,55 +5,21 @@ from oommfc.energies import FixedZeeman
 class TestFixedZeeman(object):
     def setup(self):
         # Set of valid arguments.
-        self.args1 = [[(1, 1.4, 1), 1, 'fixedzeeman1'],
-                      [(0, 0, 1), 1e6, 'fixedzeeman2'],
-                      [[1.2, 0, 0], 1e-6, 'fixedzeeman3'],
-                      [(0.56, 1.98, -1.1), 15, 'fixedzeeman4'],
-                      [[15, 0, 3.14], 1e7, 'fixedzeeman5']]
+        self.args1 = [[(1, 1.4, 1), 'fixedzeeman1'],
+                      [(0, 0, 1), 'fixedzeeman2'],
+                      [[1.2, 0, 0], 'fixedzeeman3'],
+                      [(0.56, 1.98, -1.1), 'fixedzeeman4'],
+                      [[15, 0, 3.14], 'fixedzeeman5']]
 
-        # Set of invalid arguments.
-        self.args2 = [[(1, 1), 1, 'fixedzeeman1'],
-                      [1, 1e6, 'fixedzeeman2'],
-                      [(1.2, 0, 0, 5), 1e-6, 'fixedzeeman3'],
-                      [(0.56, 1.98, -1.1), (1, 1), 'fixedzeeman4'],
-                      [(15, 0, 3.14), 1e7, 5]]
-
-    def test_init(self):
-        # Valid arguments.
+    def test_script(self):
         for args in self.args1:
             H = args[0]
-            multiplier = args[1]
-            name = args[2]
+            name = args[1]
 
-            fz = FixedZeeman(H, multiplier, name)
+            fz = FixedZeeman(H, name)
 
-            assert fz.H == H
-            assert isinstance(fz.H, (tuple, list))
-            assert fz.multiplier == multiplier
-            assert isinstance(fz.multiplier, (int, float))
-            assert fz.name == name
-            assert isinstance(fz.name, str)
-
-    def test_init_exceptions(self):
-        # Invalid arguments (ValueError expected).
-        for args in self.args2:
-            with pytest.raises(ValueError):
-                H = args[0]
-                multiplier = args[1]
-                name = args[2]
-
-                fz = FixedZeeman(H, multiplier, name)
-
-    def test_get_mif(self):
-        for args in self.args1:
-            H = args[0]
-            multiplier = args[1]
-            name = args[2]
-
-            fz = FixedZeeman(H, multiplier, name)
-
-            mif = fz.get_mif()
-            mif_lines = fz.get_mif().split('\n')
+            mif = fz.script()
+            mif_lines = fz.script().split('\n')
 
             # Assert comment.
             l = mif_lines[0].split()
@@ -97,7 +63,7 @@ class TestFixedZeeman(object):
             assert mif_lines[7][0] == '\t'
             l = mif_lines[7].split()
             assert l[0] == 'multiplier'
-            assert l[1] == str(multiplier)
+            assert l[1] == '1'
 
             # Assert mif end.
             assert mif_lines[8] == '}'
