@@ -3,6 +3,8 @@ import textwrap
 import base64
 from IPython.display import Javascript, display
 from IPython.utils.py3compat import str_to_bytes, bytes_to_str
+
+
 def create_code_cell(code='', where='below'):
     """
     This function was written by jfreder and posted to GitHub here:
@@ -18,13 +20,8 @@ def create_code_cell(code='', where='below'):
 
 
 def GUI():
-    # try:
     a = _widget()
     return a.GUI
-    # except:
-    #    print("This must be called within a Jupyter Notebook.\n"
-    #
-    #          "Requires IPython >= 4.2 and ipywidgets >= 5")
 
 
 class _widget:
@@ -45,13 +42,19 @@ class _widget:
         # e.g, if the user chooses a 1-D simulation, the properties that only
         # have relevance in 2-D or 3=D are disabled.
 
+        # Note that these are defined in the init statement NOT as class functions, because
+        # they can only take a single parameter, and if they are class functions, Python
+        # automatically passes the parameter self. There is probably a way to work around
+        # this but I've not had time to look into it.
+
         def on_dimension_change(b):
             if self.property_dimension.value == 1:
                 self.property_Ly.layout.visibility = 'hidden'
                 self.property_Lz.layout.visibility = 'hidden'
                 self.property_dy.layout.visibility = 'hidden'
                 self.property_dz.layout.visibility = 'hidden'
-                self.property_initial_magnetisation.options  = ['Uniform', 'Neel Wall', 'Random']
+                self.property_initial_magnetisation.options = [
+                    'Uniform', 'Neel Wall', 'Random']
                 self.property_initial_magnetisation.value = 'Uniform'
                 self.label_skyrmion_vortex_radius.layout.visibility = 'hidden'
                 self.property_skyrmion_vortex_radius.layout.visibility = 'hidden'
@@ -60,7 +63,8 @@ class _widget:
                 self.property_Lz.layout.visibility = 'hidden'
                 self.property_dy.layout.visibility = 'visible'
                 self.property_dz.layout.visibility = 'hidden'
-                self.property_initial_magnetisation.options  = ['Uniform', 'Neel Wall', 'Skyrmion', 'Vortex',  'Random']
+                self.property_initial_magnetisation.options = [
+                    'Uniform', 'Neel Wall', 'Skyrmion', 'Vortex',  'Random']
                 self.property_initial_magnetisation.value = 'Uniform'
 
             elif self.property_dimension.value == 3:
@@ -68,9 +72,9 @@ class _widget:
                 self.property_Lz.layout.visibility = 'visible'
                 self.property_dy.layout.visibility = 'visible'
                 self.property_dz.layout.visibility = 'visible'
-                self.property_initial_magnetisation.options  = ['Uniform', 'Neel Wall', 'Skyrmion', 'Vortex', 'Random']
+                self.property_initial_magnetisation.options = [
+                    'Uniform', 'Neel Wall', 'Skyrmion', 'Vortex', 'Random']
                 self.property_initial_magnetisation.value = 'Uniform'
-
 
         def on_change_anis(c):
             if not self.property_uniaxial_anisotropy_enabled.value:
@@ -87,7 +91,6 @@ class _widget:
                 self.property_exchange_constant.layout.visibility = 'hidden'
             else:
                 self.property_exchange_constant.layout.visibility = 'visible'
-
 
         def on_change_simtype(c):
             if self.property_simtype.value == 'Relax':
@@ -124,235 +127,14 @@ class _widget:
                 self.property_domain_wall_width.layout.visibility = 'hidden'
                 self.property_skyrmion_vortex_radius.layout.visibility = 'hidden'
 
-
-
-        def update_dictionary():
-            self.dict = {}
-            internal_objects = dir(self)
-            for item in internal_objects:
-                if "property" in item:
-                    var = getattr(self, item)
-                    # Strip 'property' from left of name in assignment
-                    self.dict[item[9:]] = var.value
-
         def get_code(c):
-            update_dictionary()
-            code = 'import oommfc\nimport numpy as np\nimport finitedifferencefield\n'
-            code += assemble_mesh_code()
-            code += assemble_initial_magnetisation_code()
-            code += assemble_interactions_code()
-            code += assemble_properties_code()
-            create_code_cell(code)
-
-        def assemble_mesh_code():
-            code = ""
-            property_dimension = self.dict['dimension']
-            dL = self.dict['scale']
-            # We set these values to self as they are needed
-            # in the assemble_initial_magnetisation_code,
-            # and there's no point doing this twice.
-            if property_dimension == 1:
-                self.Lx = self.dict['Lx']*dL
-                self.Ly = 1*dL
-                self.Lz = 1*dL
-                self.dx = self.dict['dx']*dL
-                self.dy = 1*dL
-                self.dz = 1*dL
-            elif property_dimension == 2:
-                self.Lx = self.dict['Lx']*dL
-                self.Ly = self.dict['Ly']*dL
-                self.Lz = 1*dL
-                self.dx = self.dict['dx']*dL
-                self.dy = self.dict['dy']*dL
-                self.dz = 1*dL
-            elif property_dimension == 3:
-                self.Lx = self.dict['Lx']*dL
-                self.Ly = self.dict['Ly']*dL
-                self.Lz = self.dict['Lz']*dL
-                self.dx = self.dict['dx']*dL
-                self.dy = self.dict['dy']*dL
-                self.dz = self.dict['dz']*dL
-            property_Ms = self.dict['Ms']
-            code = textwrap.dedent("""\
-
-                   atlas = oommfc.BoxAtlas((0, 0, 0), ({}, {}, {}))
-                   mesh = oommfc.RectangularMesh(atlas, ({}, {}, {}),
-                                                 periodicity=({}, {}, {}))
-
-                   sim = oommfc.Sim(mesh, {})
-
-                   """)
-
-            return code.format(self.Lx, self.Ly, self.Lz,
-                               self.dx, self.dy, self.dz,
-                               1*self.dict['periodic_x'],
-                               1*self.dict['periodic_y'],
-                               1*self.dict['periodic_z'],
-                               property_Ms
-                               )
-
-
-        def assemble_initial_magnetisation_code():
-            type = self.dict['initial_magnetisation']
-            code = ''
-            if type == 'Uniform':
-                code += textwrap.dedent("""
-
-                def init_m(pos):
-                    return (0, 0, 1.0)
-
-                """)
-            elif type == 'Vortex':
-                code += textwrap.dedent("""\
-
-                def init_m(pos):
-                    x, y, z = pos
-                    xrad = 2*x - {}
-                    yrad = 2*y - {}
-                    sqrd = xrad*xrad + yrad*yrad
-                    if sqrd <= {}**2:
-                        return (0.0, 0.0, 1.0)
-                    else:
-                        return (yrad, -xrad, 0.0)
-
-
-                """).format(self.Lx, self.Ly, self.dict['skyrmion_vortex_radius'])
-
-            elif type == 'Skyrmion':
-                code += textwrap.dedent("""\
-
-				import scipy.optimize
-				import numpy as np
-				g = lambda x: -2 * np.sin(x)**2 - np.sin(2*x)/(2*x) + 1
-				m_theta = lambda kr: np.sin(kr)
-				m_z = lambda kr: -np.cos(kr)
-				m_r = lambda kr: 0
-				x0 = 3*np.pi/4
-				kR = scipy.optimize.newton(g, x0)
-				radius = 20
-				k = kR/({}/2.)
-
-				def init_m(pos):
-				    x = 2*pos[0]-{}
-				    y = 2*pos[1]-{}
-				    r = (x**2 + y**2)**0.5
-				    if r > radius*1.4:
-				        return (0, 0, -1)
-				    # Correction of arctan computation.
-				    if x > 0:
-				        theta = np.arctan(y/x)
-				    elif x < 0:
-				        theta = np.arctan(y/x) + np.pi
-				    else:
-				        if y > 0:
-				            theta = np.pi/2
-				        else:
-				            theta = -np.pi/2
-				    
-				    m_x_init = -np.sin(theta) * m_theta(k*r)
-				    m_y_init = np.cos(theta) * m_theta(k*r)
-				    m_z_init = m_z(k*r)
-				    return (m_x_init, m_y_init, m_z_init)
-
-                """).format(self.dict['skyrmion_vortex_radius'], self.dict['Lx'], self.dict['Ly'])
-
-
-            elif type == 'Random':
-                code += textwrap.dedent("""\
-
-                def init_m(pos):
-                    temp = np.random.uniform(-1, 1, 3)
-                    norm = np.linalg.norm(temp)
-                    return temp/norm
-                """
-                )
-
-            elif type == 'Neel Wall':
-                code += textwrap.dedent("""\
-
-                def init_m(pos):
-                    x, y, z = pos
-                    wall_width = {}
-                    Lz = {}
-                    if z < (Lz - w)/2:
-                        return (0, 0, 1)
-                    elif z >= (Lz-w)/2 and z <= (Lz + w)/2:
-                        return (1, 1, 0)
-                    else:
-                        return (0, 0, -1)
-
-                """).format(self.dict['domain_wall_width'], self.dict['Lz'])
-
-            dL = self.dict['scale']
-            code += textwrap.dedent("""\
-
-            field = finitedifferencefield.finitedifferencefield.Field((0, 0, 0),
-                                                                      ({}, {}, {}),
-                                                                      ({}, {}, {}),
-                                                                      value=init_m)
-
-            """).format(self.dict['Lx'], self.dict['Ly'], self.dict['Lz'],
-                        self.dict['dx'], self.dict['dy'], self.dict['dz'])
-
-            return code
-
-
-
-
-
-
-
-
-
-
-
-        def assemble_interactions_code():
-            code = ""
-            axis = self.dict['anisotropy_axis']
-            ax_x, ax_y, ax_z = 0, 0, 0
-            if 1 in axis or axis == 1:
-                ax_x = 1
-            if 2 in axis or axis == 2:
-                ax_y = 1
-            if 3 in axis or axis == 3:
-                ax_z = 1
-            if self.dict['exchange_enabled']:
-                code += textwrap.dedent("""\
-                    exchange = oommfc.energies.UniformExchange({})
-                    sim.add(exchange)
-                    """).format(self.dict['exchange_constant'])
-
-            if self.dict['demagnetisation_enabled']:
-                code += textwrap.dedent("""\
-
-                    demagnetisation = oommfc.energies.Demag()
-                    sim.add(demagnetisation)
-
-                    """)
-            if self.dict['uniaxial_anisotropy_enabled']:
-                code += textwrap.dedent("""\
-
-                    anis = oommfc.energies.UniaxialAnisotropy(K1={},
-                                                            axis=({},{},{}))
-                    sim.add(anis)
-
-                    """).format(self.dict['anisotropy_constant_K1'],
-                                ax_x, ax_y, ax_z)
-            return code
-
-        def assemble_properties_code():
-            code = ""
-            if self.dict['simtype'] == 'Relax':
-                code += textwrap.dedent("""\
-                    sim.relax(stopping_mxHxm={})
-                    """).format(self.dict['stopping_mxHxm'])
-            elif self.dict['simtype'] == 'Run until':
-                code += textwrap.dedent("""\
-                    sim.run_until({}, {})
-                    """).format(self.dict['rununtil'], self.dict['saveevery'])
-            return code
-
-
+            self.update_dictionary()
+            self.code = 'import oommfc\nimport numpy as np\nimport finitedifferencefield\n'
+            self.code += self.assemble_mesh_code()
+            self.code += self.assemble_initial_magnetisation_code()
+            self.code += self.assemble_interactions_code()
+            self.code += self.assemble_properties_code()
+            create_code_cell(self.code)
 
         # View:
 
@@ -376,13 +158,9 @@ class _widget:
         self.property_dz.layout.visibility = 'hidden'
         self.property_dimension.observe(on_dimension_change)
         self.label_periodicity = Label("Periodicity")
-        self.property_periodic_x = Checkbox(description='x', value = False)
-        self.property_periodic_y = Checkbox(description='y', value = False)
-        self.property_periodic_z = Checkbox(description='z', value = False)
-
-
-
-
+        self.property_periodic_x = Checkbox(description='x', value=False)
+        self.property_periodic_y = Checkbox(description='y', value=False)
+        self.property_periodic_z = Checkbox(description='z', value=False)
 
         self.page0 = widgets.Box((self.label_dimension, self.property_dimension,
                                   self.label_lengths, self.property_Lx,
@@ -405,7 +183,8 @@ class _widget:
         self.label_exchange = Label("Exchange (J/m)")
         self.property_exchange_enabled = Checkbox(
             value=True, description="Enabled")
-        self.property_exchange_constant = FloatText(value=13e-12, readout_format='.5e')
+        self.property_exchange_constant = FloatText(
+            value=13e-12, readout_format='.5e')
         self.property_exchange_enabled.observe(on_change_exch)
         self.box_exchange = Box(
             [HBox([self.label_exchange, self.property_exchange_enabled]),
@@ -413,7 +192,8 @@ class _widget:
         self.label_demagnetisation = Label("Demagnetisation")
         self.property_demagnetisation_enabled = Checkbox(
             value=False, description="Enabled")
-        self.box_demagnetisation = HBox([self.label_demagnetisation, self.property_demagnetisation_enabled])
+        self.box_demagnetisation = HBox(
+            [self.label_demagnetisation, self.property_demagnetisation_enabled])
         self.label_uniaxial_anisotropy = Label("Uniaxial Anisotropy")
         self.property_uniaxial_anisotropy_enabled = Checkbox(
             value=False, description="Enabled")
@@ -423,7 +203,7 @@ class _widget:
         self.property_anisotropy_constant_K1.layout.visibility = 'hidden'
         self.property_anisotropy_axis = SelectMultiple(description="Axis",
                                                        options={
-                                                       'x': 1, 'y': 2, 'z': 3})
+                                                           'x': 1, 'y': 2, 'z': 3})
         self.property_anisotropy_axis.layout.visibility = 'hidden'
         self.property_uniaxial_anisotropy_enabled.observe(on_change_anis)
         self.anisbox = Box([HBox([self.label_uniaxial_anisotropy, self.property_uniaxial_anisotropy_enabled]),
@@ -436,28 +216,31 @@ class _widget:
         # Page 2 - Initial Magnetisation
         # Put this in later after  are working
         self.label_initial_magnetisation = Label("Initial magnetisation")
-        self.property_initial_magnetisation = Dropdown(options=['Uniform', 'Neel Wall', 'Random'])
-        self.box_initial_magnetisation = HBox([self.label_initial_magnetisation, self.property_initial_magnetisation])
-        self.label_skyrmion_vortex_radius = Label("Skyrmion/Vortex Radius (nm)")
+        self.property_initial_magnetisation = Dropdown(
+            options=['Uniform', 'Neel Wall', 'Random'])
+        self.box_initial_magnetisation = HBox(
+            [self.label_initial_magnetisation, self.property_initial_magnetisation])
+        self.label_skyrmion_vortex_radius = Label(
+            "Skyrmion/Vortex Radius (nm)")
         self.property_skyrmion_vortex_radius = FloatText(value=10)
         self.label_domain_wall_width = Label("Wall width (nm)")
         self.property_domain_wall_width = FloatText(value=10)
 
-        self.box_skyrmion_vortex_config = Box([self.label_skyrmion_vortex_radius, self.property_skyrmion_vortex_radius])
-        self.box_domain_wall_config = Box([self.label_domain_wall_width, self.property_domain_wall_width])
+        self.box_skyrmion_vortex_config = Box(
+            [self.label_skyrmion_vortex_radius, self.property_skyrmion_vortex_radius])
+        self.box_domain_wall_config = Box(
+            [self.label_domain_wall_width, self.property_domain_wall_width])
         self.box_skyrmion_vortex_config.layout.visibility = 'hidden'
         self.box_domain_wall_config.layout.visibility = 'hidden'
-        self.property_initial_magnetisation.observe(on_change_magnetisation_type)
-        self.page2 = Box([self.box_initial_magnetisation, self.box_domain_wall_config, self.box_skyrmion_vortex_config])
-
+        self.property_initial_magnetisation.observe(
+            on_change_magnetisation_type)
+        self.page2 = Box([self.box_initial_magnetisation,
+                          self.box_domain_wall_config, self.box_skyrmion_vortex_config])
 
         # Page 3 : Simulation Parameters
 
         self.label_dt = Label("dt (s)")
         self.property_dt = FloatText(value=1e-9)
-
-
-
 
         self.property_stopping_mxHxm = FloatText(
             description="Stopping dmxHxm", value=0.01)
@@ -489,12 +272,219 @@ class _widget:
 
         # Header, assemble final layout
 
-        self.maintitle = Label("OOMMFC - A Python GUI for setting up OOMMF Simulations")
+        self.maintitle = Label(
+            "OOMMFC - A Python GUI for setting up OOMMF Simulations")
         self.maintitle.layout.padding = '10px'
-        self.tabs = Accordion([self.page0, self.page1, self.page2, self.page3, self.page4])
+        self.tabs = Accordion(
+            [self.page0, self.page1, self.page2, self.page3, self.page4])
         self.tabs.set_title(0, 'Mesh')
         self.tabs.set_title(1, 'Interactions')
         self.tabs.set_title(2, 'Initial Magnetisation')
         self.tabs.set_title(3, 'Simulation Parameters')
         self.tabs.set_title(4, 'Generate Code')
         self.GUI = Box((self.maintitle, self.tabs))
+
+        def update_dictionary(self):
+	        self.dict = {}
+	        internal_objects = dir(self)
+	        for item in internal_objects:
+	            if "property" in item:
+	                var = getattr(self, item)
+	                # Strip 'property' from left of name in assignment
+	                self.dict[item[9:]] = var.value
+
+    def assemble_mesh_code():
+        code = ""
+        property_dimension = self.dict['dimension']
+        dL = self.dict['scale']
+        # We set these values to self as they are needed
+        # in the assemble_initial_magnetisation_code,
+        # and there's no point doing this twice.
+        if property_dimension == 1:
+            self.Lx = self.dict['Lx']*dL
+            self.Ly = 1*dL
+            self.Lz = 1*dL
+            self.dx = self.dict['dx']*dL
+            self.dy = 1*dL
+            self.dz = 1*dL
+        elif property_dimension == 2:
+            self.Lx = self.dict['Lx']*dL
+            self.Ly = self.dict['Ly']*dL
+            self.Lz = 1*dL
+            self.dx = self.dict['dx']*dL
+            self.dy = self.dict['dy']*dL
+            self.dz = 1*dL
+        elif property_dimension == 3:
+            self.Lx = self.dict['Lx']*dL
+            self.Ly = self.dict['Ly']*dL
+            self.Lz = self.dict['Lz']*dL
+            self.dx = self.dict['dx']*dL
+            self.dy = self.dict['dy']*dL
+            self.dz = self.dict['dz']*dL
+        property_Ms = self.dict['Ms']
+        code = textwrap.dedent("""\
+
+               atlas = oommfc.BoxAtlas((0, 0, 0), ({}, {}, {}))
+               mesh = oommfc.RectangularMesh(atlas, ({}, {}, {}),
+                                             periodicity=({}, {}, {}))
+
+               sim = oommfc.Sim(mesh, {})
+
+               """)
+
+        return code.format(self.Lx, self.Ly, self.Lz,
+                           self.dx, self.dy, self.dz,
+                           1*self.dict['periodic_x'],
+                           1*self.dict['periodic_y'],
+                           1*self.dict['periodic_z'],
+                           property_Ms
+                           )
+
+    def assemble_initial_magnetisation_code(self):
+        type = self.dict['initial_magnetisation']
+        code = ''
+        if type == 'Uniform':
+            code += textwrap.dedent("""
+
+            def init_m(pos):
+                return (0, 0, 1.0)
+
+            """)
+        elif type == 'Vortex':
+            code += textwrap.dedent("""\
+
+            def init_m(pos):
+                x, y, z = pos
+                xrad = 2*x - {}
+                yrad = 2*y - {}
+                sqrd = xrad*xrad + yrad*yrad
+                if sqrd <= {}**2:
+                    return (0.0, 0.0, 1.0)
+                else:
+                    return (yrad, -xrad, 0.0)
+
+
+            """).format(self.Lx, self.Ly, self.dict['skyrmion_vortex_radius'])
+
+        elif type == 'Skyrmion':
+            code += textwrap.dedent("""\
+
+			import scipy.optimize
+			import numpy as np
+			g = lambda x: -2 * np.sin(x)**2 - np.sin(2*x)/(2*x) + 1
+			m_theta = lambda kr: np.sin(kr)
+			m_z = lambda kr: -np.cos(kr)
+			m_r = lambda kr: 0
+			x0 = 3*np.pi/4
+			kR = scipy.optimize.newton(g, x0)
+			radius = 20
+			k = kR/({}/2.)
+
+			def init_m(pos):
+			    x = 2*pos[0]-{}
+			    y = 2*pos[1]-{}
+			    r = (x**2 + y**2)**0.5
+			    if r > radius*1.4:
+			        return (0, 0, -1)
+			    # Correction of arctan computation.
+			    if x > 0:
+			        theta = np.arctan(y/x)
+			    elif x < 0:
+			        theta = np.arctan(y/x) + np.pi
+			    else:
+			        if y > 0:
+			            theta = np.pi/2
+			        else:
+			            theta = -np.pi/2
+			    
+			    m_x_init = -np.sin(theta) * m_theta(k*r)
+			    m_y_init = np.cos(theta) * m_theta(k*r)
+			    m_z_init = m_z(k*r)
+			    return (m_x_init, m_y_init, m_z_init)
+
+            """).format(self.dict['skyrmion_vortex_radius'], self.dict['Lx'], self.dict['Ly'])
+
+        elif type == 'Random':
+            code += textwrap.dedent("""\
+
+            def init_m(pos):
+                temp = np.random.uniform(-1, 1, 3)
+                norm = np.linalg.norm(temp)
+                return temp/norm
+            """
+                                    )
+
+        elif type == 'Neel Wall':
+            code += textwrap.dedent("""\
+
+            def init_m(pos):
+                x, y, z = pos
+                wall_width = {}
+                Lz = {}
+                if z < (Lz - w)/2:
+                    return (0, 0, 1)
+                elif z >= (Lz-w)/2 and z <= (Lz + w)/2:
+                    return (1, 1, 0)
+                else:
+                    return (0, 0, -1)
+
+            """).format(self.dict['domain_wall_width'], self.dict['Lz'])
+
+        dL = self.dict['scale']
+        code += textwrap.dedent("""\
+
+        field = finitedifferencefield.finitedifferencefield.Field((0, 0, 0),
+                                                                  ({}, {}, {}),
+                                                                  ({}, {}, {}),
+                                                                  value=init_m)
+
+        """).format(self.dict['Lx'], self.dict['Ly'], self.dict['Lz'],
+                    self.dict['dx'], self.dict['dy'], self.dict['dz'])
+
+        return code
+
+    def assemble_interactions_code(self):
+        code = ""
+        axis = self.dict['anisotropy_axis']
+        ax_x, ax_y, ax_z = 0, 0, 0
+        if 1 in axis or axis == 1:
+            ax_x = 1
+        if 2 in axis or axis == 2:
+            ax_y = 1
+        if 3 in axis or axis == 3:
+            ax_z = 1
+        if self.dict['exchange_enabled']:
+            code += textwrap.dedent("""\
+                exchange = oommfc.energies.UniformExchange({})
+                sim.add(exchange)
+                """).format(self.dict['exchange_constant'])
+
+        if self.dict['demagnetisation_enabled']:
+            code += textwrap.dedent("""\
+
+                demagnetisation = oommfc.energies.Demag()
+                sim.add(demagnetisation)
+
+                """)
+        if self.dict['uniaxial_anisotropy_enabled']:
+            code += textwrap.dedent("""\
+
+                anis = oommfc.energies.UniaxialAnisotropy(K1={},
+                                                        axis=({},{},{}))
+                sim.add(anis)
+
+                """).format(self.dict['anisotropy_constant_K1'],
+                            ax_x, ax_y, ax_z)
+        return code
+
+    def assemble_properties_code(self):
+        code = ""
+        if self.dict['simtype'] == 'Relax':
+            code += textwrap.dedent("""\
+                sim.relax(stopping_mxHxm={})
+                """).format(self.dict['stopping_mxHxm'])
+        elif self.dict['simtype'] == 'Run until':
+            code += textwrap.dedent("""\
+                sim.run_until({}, {})
+                """).format(self.dict['rununtil'], self.dict['saveevery'])
+        return code
