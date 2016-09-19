@@ -53,7 +53,8 @@ class _widget:
                 self.property_dz.layout.visibility = 'hidden'
                 self.property_initial_magnetisation.options  = ['Uniform', 'Neel Wall', 'Random']
                 self.property_initial_magnetisation.value = 'Uniform'
-                self.property_skyrmion_vortex_radius.visible = False
+                self.label_skyrmion_vortex_radius.layout.visibility = 'hidden'
+                self.property_skyrmion_vortex_radius.layout.visibility = 'hidden'
             elif self.property_dimension.value == 2:
                 self.property_Ly.layout.visibility = 'visible'
                 self.property_Lz.layout.visibility = 'hidden'
@@ -61,7 +62,7 @@ class _widget:
                 self.property_dz.layout.visibility = 'hidden'
                 self.property_initial_magnetisation.options  = ['Uniform', 'Neel Wall', 'Skyrmion', 'Vortex',  'Random']
                 self.property_initial_magnetisation.value = 'Uniform'
-                self.property_skyrmion_vortex_radius.visible = True
+
             elif self.property_dimension.value == 3:
                 self.property_Ly.layout.visibility = 'visible'
                 self.property_Lz.layout.visibility = 'visible'
@@ -69,7 +70,7 @@ class _widget:
                 self.property_dz.layout.visibility = 'visible'
                 self.property_initial_magnetisation.options  = ['Uniform', 'Neel Wall', 'Skyrmion', 'Vortex', 'Random']
                 self.property_initial_magnetisation.value = 'Uniform'
-                self.property_skyrmion_vortex_radius.layout.visiblity = 'visible'
+
 
         def on_change_anis(c):
             if not self.property_uniaxial_anisotropy_enabled.value:
@@ -144,7 +145,6 @@ class _widget:
             create_code_cell(code)
 
         def assemble_mesh_code():
-            update_dictionary()
             code = ""
             property_dimension = self.dict['dimension']
             dL = self.dict['scale']
@@ -221,40 +221,40 @@ class _widget:
             elif type == 'Skyrmion':
                 code += textwrap.dedent("""\
 
-                import scipy.optimize
+				import scipy.optimize
+				import numpy as np
+				g = lambda x: -2 * np.sin(x)**2 - np.sin(2*x)/(2*x) + 1
+				m_theta = lambda kr: np.sin(kr)
+				m_z = lambda kr: -np.cos(kr)
+				m_r = lambda kr: 0
+				x0 = 3*np.pi/4
+				kR = scipy.optimize.newton(g, x0)
+				radius = 20
+				k = kR/({}/2.)
 
-                g = lambda x: -2 * np.sin(x)**2 - np.sin(2*x)/(2*x) + 1
-                m_theta = lambda kr: np.sin(kr)
-                m_z = lambda kr: -np.cos(kr)
-                m_r = lambda kr: 0
+				def init_m(pos):
+				    x = 2*pos[0]-{}
+				    y = 2*pos[1]-{}
+				    r = (x**2 + y**2)**0.5
+				    if r > radius*1.4:
+				        return (0, 0, -1)
+				    # Correction of arctan computation.
+				    if x > 0:
+				        theta = np.arctan(y/x)
+				    elif x < 0:
+				        theta = np.arctan(y/x) + np.pi
+				    else:
+				        if y > 0:
+				            theta = np.pi/2
+				        else:
+				            theta = -np.pi/2
+				    
+				    m_x_init = -np.sin(theta) * m_theta(k*r)
+				    m_y_init = np.cos(theta) * m_theta(k*r)
+				    m_z_init = m_z(k*r)
+				    return (m_x_init, m_y_init, m_z_init)
 
-                x0 = 3*np.pi/4
-                kR = scipy.optimize.newton(g, x0)
-                k = kR/(d/2.)
-
-                def m_init(pos):
-                    x = 2*{} - {}
-                    y = 2*{} - {}
-                    r = (x**2 + y**2)**0.5
-
-                    # Correction of arctan computation.
-                    if x > 0:
-                        theta = np.arctan(y/x)
-                    elif x < 0:
-                        theta = np.arctan(y/x) + np.pi
-                    else:
-                        if y > 0:
-                            theta = np.pi/2
-                        else:
-                            theta = -np.pi/2
-
-                    m_x_init = -np.sin(theta) * m_theta(k*r)
-                    m_y_init = np.cos(theta) * m_theta(k*r)
-                    m_z_init = m_z(k*r)
-
-                    return (m_x_init, m_y_init, m_z_init)
-
-                """).format(self.Lx, self.Ly, self.dict['skyrmion_vortex_radius'])
+                """).format(self.dict['skyrmion_vortex_radius'], self.dict['Lx'], self.dict['Ly'])
 
 
             elif type == 'Random':
