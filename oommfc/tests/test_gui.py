@@ -1,4 +1,4 @@
- import oommfc.gui
+import oommfc.gui
 import ipywidgets as widgets
 
 # The following section is from the source of IPywidgets, and 
