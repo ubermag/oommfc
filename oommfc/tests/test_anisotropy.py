@@ -1,5 +1,5 @@
 import pytest
-from oommfc.energies import UniaxialAnisotropy
+from oommfc.hamiltonian import UniaxialAnisotropy
 
 
 class TestUniaxialAnisotropy(object):

@@ -1,5 +1,5 @@
 import pytest
-from oommfc.energies import UniformExchange
+from oommfc.hamiltonian import UniformExchange
 
 
 class TestUniformExchange(object):

@@ -1,5 +1,5 @@
 import pytest
-from oommfc.energies import FixedZeeman
+from oommfc.hamiltonian import FixedZeeman
 
 
 class TestFixedZeeman(object):

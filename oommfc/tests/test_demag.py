@@ -1,4 +1,4 @@
-from oommfc.energies import Demag
+from oommfc.hamiltonian import Demag
 
 
 class TestDemag(object):
