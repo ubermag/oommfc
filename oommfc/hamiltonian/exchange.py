@@ -1,11 +1,11 @@
 from micromagneticmodel.hamiltonian import Exchange
 
 
-class UniformExchange(Exchange):
+class Exchange(Exchange):
     def script(self):
-        mif = '# UniformExchange\n'
-        mif += 'Specify Oxs_UniformExchange {\n'
-        mif += '\tA {}\n'.format(self.A)
-        mif += '}\n\n'
+        mif = "# UniformExchange\n"
+        mif += "Specify Oxs_UniformExchange {\n"
+        mif += "  A {}\n".format(self.A)
+        mif += "}\n\n"
 
         return mif
