@@ -1,4 +1,3 @@
-import pytest
 from discretisedfield.tests.test_mesh import TestMesh
 from oommfc import Mesh
 

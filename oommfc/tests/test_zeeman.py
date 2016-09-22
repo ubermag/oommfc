@@ -1,4 +1,3 @@
-import pytest
 from micromagneticmodel.tests.test_zeeman import TestZeeman
 from oommfc.hamiltonian import Zeeman
 

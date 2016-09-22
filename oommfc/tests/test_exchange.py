@@ -1,4 +1,3 @@
-import pytest
 from micromagneticmodel.tests.test_exchange import TestExchange
 from oommfc.hamiltonian import Exchange
 
