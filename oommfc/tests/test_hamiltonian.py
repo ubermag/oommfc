@@ -28,7 +28,7 @@ class TestHamiltonian:
         assert script.count("Specify") == 4
         assert script[0] == "#"
         assert script[-1] == "\n"
-        
+
         assert "UniformExchange" in script
         assert "FixedZeeman" in script
         assert "UniaxialAnisotropy" in script
