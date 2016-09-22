@@ -1,21 +1,21 @@
-from micromagneticmodel.tests.test_uniaxialanisotropy import TestUniaxialAnisotropy
+import micromagneticmodel.tests.test_uniaxialanisotropy as tua
 from oommfc.hamiltonian import UniaxialAnisotropy
 
 
-class TestUniaxialAnisotropy(TestUniaxialAnisotropy):
+class TestUniaxialAnisotropy(tua.TestUniaxialAnisotropy):
     def test_script(self):
         for arg in self.valid_args:
             K = arg[0]
             u = arg[1]
             name = "anisotropy_test"
-            
+
             anisotropy = UniaxialAnisotropy(K, u, name=name)
 
             script = anisotropy.script()
             assert script.count("\n") == 6
             assert script[0] == "#"
             assert script[-1] == "\n"
-            
+
             lines = script.split("\n")
             assert len(lines) == 7
             assert lines[0] == "# UniaxialAnisotropy"

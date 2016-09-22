@@ -12,7 +12,7 @@ class TestZeeman(TestZeeman):
             assert script.count("\n") == 10
             assert script[0] == "#"
             assert script[-1] == "\n"
-            
+
             lines = script.split("\n")
             assert len(lines) == 11
             assert lines[0] == "# FixedZeeman"

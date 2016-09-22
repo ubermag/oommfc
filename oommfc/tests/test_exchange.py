@@ -11,7 +11,7 @@ class TestExchange(TestExchange):
             assert script.count("\n") == 5
             assert script[0] == "#"
             assert script[-1] == "\n"
-            
+
             lines = script.split("\n")
             assert len(lines) == 6
             assert lines[0] == "# UniformExchange"
