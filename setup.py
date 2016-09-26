@@ -13,7 +13,8 @@ setup(
     url = 'https://github.com/joommf/oommfc',
     download_url = 'https://github.com/joommf/oommfc/tarball/0.4',
     packages=['oommfc',
-              'oommfc.energies',
+              #'oommfc.energies',           # should this be hamiltonian?
+                                            # and dynamics?
               'oommfc.tests'],
     install_requires=[
         'finitedifferencefield',
