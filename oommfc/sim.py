@@ -27,7 +27,7 @@ class Sim(object):
             os.makedirs(self.dirname)
         self.mif_filename = self.dirname + self.name + '.mif'
 
-        self.m =  Field(self.atlas.cmin, self.atlas.cmax, self.mesh.d, dim=3)
+        self.m = Field(self.atlas.cmin, self.atlas.cmax, self.mesh.d, dim=3)
 
         self.t = 0
 
