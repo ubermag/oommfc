@@ -1,7 +1,7 @@
 import os
 import glob
+import discretisedfield as df
 from micromagneticmodel.drivers import Driver
-from discretisedfield import read_oommf_file
 from oommfodt import OOMMFodt
 
 
@@ -17,7 +17,7 @@ class Driver(Driver):
         self._makedir(system)
 
         # Save system's magnetisation configuration omf file.
-        omffilename = filenames["oommffilename"]
+        omffilename = filenames["omffilename"]
         system.m.write_oommf_file(omffilename)
 
         # Save OOMMF configuration mif file.
@@ -77,8 +77,8 @@ class Driver(Driver):
                             key=os.path.getctime)
 
         # Update system's magnetisaton.
-        system.m = read_oommf_file(last_omf_file,
-                                   normalisedto=system.m.normalisedto)
+        system.m = df.read_oommf_file(last_omf_file,
+                                      normalisedto=system.m.normalisedto)
 
     def _update_dt(self, system):
         # Find last odt file.
@@ -91,12 +91,12 @@ class Driver(Driver):
 
     def _filenames(self, system):
         dirname = "{}/".format(system.name)
-        oommffilename = "{}m0file.omf".format(dirname)
+        omffilename = "{}m0.omf".format(dirname)
         miffilename = "{}{}.mif".format(dirname, system.name)
 
         filenames = {}
         filenames["dirname"] = dirname
-        filenames["oommffilename"] = oommffilename
+        filenames["omffilename"] = omffilename
         filenames["miffilename"] = miffilename
 
         return filenames

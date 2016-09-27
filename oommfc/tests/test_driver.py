@@ -5,7 +5,7 @@ import oommfc as oc
 
 class TestDriver:
     def setup(self):
-        self.system = oc.System(name='test_driver_system')
+        self.system = oc.System(name='tds')
         mesh = oc.Mesh((0, 0, 0), (10, 10, 10), (1, 1, 2))
         self.system.mesh = mesh
         self.system.hamiltonian += oc.Exchange(1.5e-11)
@@ -23,3 +23,12 @@ class TestDriver:
         assert os.path.exists(dirname)
 
         os.system("rm -r {}".format(dirname))
+
+    def test_filenames(self):
+        driver = oc.Driver()
+        filenames = driver._filenames(self.system)
+
+        assert len(filenames.keys()) == 3
+        assert filenames["dirname"] == 'tds/'
+        assert filenames["omffilename"] == 'tds/m0.omf'
+        assert filenames["miffilename"] == 'tds/tds.mif'
