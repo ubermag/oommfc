@@ -1,5 +1,8 @@
 import os
+import glob
 from micromagneticmodel.drivers import Driver
+from discretisedfield import read_oommf_file
+from oommfodt import OOMMFodt
 
 
 class Driver(Driver):
@@ -8,43 +11,50 @@ class Driver(Driver):
         Drive the system using energy minimisation driver.
 
         """
+        filenames = self._filenames(system)
+
         # Make directory for saving OOMMF files.
-        dirname = "{}/".format(system.name)
-        self._makedirs(dirname)
+        self._makedir(system)
 
         # Save system's magnetisation configuration omf file.
-        omffilename = "{}m0file.omf".format(dirname)
+        omffilename = filenames["oommffilename"]
         system.m.write_oommf_file(omffilename)
 
-        miffilename = "{}{}.mif".format(dirname, system.name)
-        self.save_mif(system, miffilename)
+        # Save OOMMF configuration mif file.
+        miffilename = filenames["miffilename"]
+        self._save_mif(system)
 
         # Run simulation.
-        self.run_simulator(dirname, miffilename)
+        self._run_simulator(system)
 
         # Update system.
-        self.update_system()
+        self._update_system(system)
 
-    def _makedirs(self, dirname):
+    def _makedir(self, system):
         """
         Create directory where OOMMF files are saved.
         """
+        dirname = self._filenames(system)["dirname"]
         if not os.path.exists(dirname):
             os.makedirs(dirname)
 
-    def save_mif(self, system, miffilename):
+    def _save_mif(self, system):
         """
         Save OOMMF configuration mif file.
         """
         mif = "# MIF 2.1\n\n"
         mif += system.script()
         mif += self.script(system)
-        
+
+        miffilename = self._filenames(system)["miffilename"]
         miffile = open(miffilename, 'w')
         miffile.write(mif)
         miffile.close()
 
-    def run_simulator(self, dirname, miffilename):
+    def _run_simulator(self, system):
+        dirname = self._filenames(system)["dirname"]
+        miffilename = self._filenames(system)["miffilename"]
+
         if os.name == 'nt':
             oommf_command = 'tclsh86 %OOMMFTCL% boxsi +fg '
         else:
@@ -56,5 +66,36 @@ class Driver(Driver):
         if returncode:
             raise Exception("Something has gone wrong in running OOMMF")
 
-    def update_system(self):
-        pass
+    def _update_system(self, system):
+        self._update_m(system)
+        self._update_dt(system)
+
+    def _update_m(self, system):
+        # Find last omf file.
+        dirname = self._filenames(system)["dirname"]
+        last_omf_file = max(glob.iglob("{}*.omf".format(dirname)),
+                            key=os.path.getctime)
+
+        # Update system's magnetisaton.
+        system.m = read_oommf_file(last_omf_file)
+
+    def _update_dt(self, system):
+        # Find last odt file.
+        dirname = self._filenames(system)["dirname"]
+        last_odt_file = max(glob.iglob("{}*.odt".format(dirname)),
+                            key=os.path.getctime)
+
+        # Update system's datatable.
+        system.dt = OOMMFodt(last_odt_file).df
+
+    def _filenames(self, system):
+        dirname = "{}/".format(system.name)
+        oommffilename = "{}m0file.omf".format(dirname)
+        miffilename = "{}{}.mif".format(dirname, system.name)
+
+        filenames = {}
+        filenames["dirname"] = dirname
+        filenames["oommffilename"] = oommffilename
+        filenames["miffilename"] = miffilename
+
+        return filenames
