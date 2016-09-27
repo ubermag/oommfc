@@ -1,5 +1,5 @@
-from micromagneticmodel.dynamics import Dynamics
+import micromagneticmodel.dynamics as dyn
 
 
-class Dynamics(Dynamics):
+class Dynamics(dyn.Dynamics):
     pass

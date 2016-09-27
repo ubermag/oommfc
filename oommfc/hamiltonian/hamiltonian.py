@@ -1,5 +1,5 @@
-from micromagneticmodel.hamiltonian import Hamiltonian
+import micromagneticmodel.hamiltonian as hamil
 
 
-class Hamiltonian(Hamiltonian):
+class Hamiltonian(hamil.Hamiltonian):
     pass

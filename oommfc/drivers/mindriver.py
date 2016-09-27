@@ -28,7 +28,8 @@ class MinDriver(Driver):
         self._update_system(system)
 
     def script(self, system):
-        mif = "Specify Oxs_CGEvolve {}\n\n"
+        mif = "# CGEvolver\n"
+        mif += "Specify Oxs_CGEvolve {}\n\n"
         mif += "# MinDriver\n"
         mif += "Specify Oxs_MinDriver {\n"
         mif += "  evolver Oxs_CGEvolve\n"
@@ -50,4 +51,3 @@ class MinDriver(Driver):
         mif += "Schedule DataTable table Stage 1\n"
         mif += "Schedule Oxs_MinDriver::Spin mags Stage 1"
         return mif
-
