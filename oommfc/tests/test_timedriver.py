@@ -1,3 +1,4 @@
+import os
 import oommfc as oc
 from .test_driver import TestDriver
 
@@ -32,3 +33,18 @@ class TestTimeDriver(TestDriver):
         assert lines[12] == "  Ms {}".format(8e5)
         assert lines[17] == "      file m0.omf"
         assert lines[20] == "  basename tds"
+
+    def test_save_mif(self):
+        driver = oc.TimeDriver()
+        t = 1e-9
+        n = 120
+        driver._makedir(self.system)
+        driver._save_mif(self.system, t=t, n=n)
+
+        assert os.path.isfile("tds/tds.mif")
+
+        lines = open("tds/tds.mif", "r").readlines()
+        assert lines[0] == "# MIF 2.1\n"
+        assert lines[-1][-1] == "1"
+
+        os.system("rm -r tds/")
