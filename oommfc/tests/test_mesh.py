@@ -5,9 +5,9 @@ from oommfc import Mesh
 class TestMesh(TestMesh):
     def test_get_mif(self):
         for arg in self.valid_args:
-            c1 = (0, -4, 11)
-            c2 = (15, 10.1, 16.5)
-            d = (1, 0.1, 0.5)
+            c1 = arg[0]
+            c2 = arg[1]
+            d = arg[2]
             name = "test_mesh"
 
             mesh = Mesh(c1, c2, d, name=name)

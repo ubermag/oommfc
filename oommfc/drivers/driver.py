@@ -53,7 +53,8 @@ class Driver(Driver):
                             key=os.path.getctime)
 
         # Update system's magnetisaton.
-        system.m = read_oommf_file(last_omf_file)
+        system.m = read_oommf_file(last_omf_file,
+                                   normalisedto=system.m.normalisedto)
 
     def _update_dt(self, system):
         # Find last odt file.
