@@ -1,7 +1,7 @@
-from micromagneticmodel.hamiltonian import Zeeman
+import micromagneticmodel as mm
 
 
-class Zeeman(Zeeman):
+class Zeeman(mm.Zeeman):
     def script(self):
         mif = '# FixedZeeman\n'
         mif += 'Specify Oxs_FixedZeeman:{} {{\n'.format(self.name)

@@ -1,5 +1,5 @@
-from micromagneticmodel.dynamics import Precession
+import micromagneticmodel as mm
 
 
-class Precession(Precession):
+class Precession(mm.Precession):
     pass

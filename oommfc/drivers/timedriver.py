@@ -1,4 +1,3 @@
-import os
 from .driver import Driver
 
 

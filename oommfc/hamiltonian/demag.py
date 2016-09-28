@@ -1,7 +1,7 @@
-from micromagneticmodel.hamiltonian import Demag
+import micromagneticmodel as mm
 
 
-class Demag(Demag):
+class Demag(mm.Demag):
     def script(self):
         mif = "# Demag\n"
         mif += "Specify Oxs_Demag {}\n\n"

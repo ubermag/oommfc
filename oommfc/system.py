@@ -1,7 +1,7 @@
-from micromagneticmodel import System
+import micromagneticmodel as mm
 
 
-class System(System):
+class System(mm.System):
     def script(self):
         mif = self.mesh.script()
         mif += self.hamiltonian.script()

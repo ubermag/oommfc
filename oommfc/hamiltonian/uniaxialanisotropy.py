@@ -1,7 +1,7 @@
-from micromagneticmodel.hamiltonian import UniaxialAnisotropy
+import micromagneticmodel as mm
 
 
-class UniaxialAnisotropy(UniaxialAnisotropy):
+class UniaxialAnisotropy(mm.UniaxialAnisotropy):
     def script(self):
         mif = "# UniaxialAnisotropy\n"
         mif += "Specify Oxs_UniaxialAnisotropy {\n"

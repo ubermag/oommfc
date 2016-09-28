@@ -1,11 +1,11 @@
 import os
 import glob
+import oommfodt
+import micromagneticmodel as mm
 import discretisedfield as df
-from micromagneticmodel.drivers import Driver
-from oommfodt import OOMMFodt
 
 
-class Driver(Driver):
+class Driver(mm.Driver):
     def drive(self, system, **kwargs):
         """
         Drive the system.
@@ -87,7 +87,7 @@ class Driver(Driver):
                             key=os.path.getctime)
 
         # Update system's datatable.
-        system.dt = OOMMFodt(last_odt_file).df
+        system.dt = oommfodt.OOMMFodt(last_odt_file).df
 
     def _filenames(self, system):
         dirname = "{}/".format(system.name)

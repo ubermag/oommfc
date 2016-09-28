@@ -1,7 +1,7 @@
-from micromagneticmodel.hamiltonian import Exchange
+import micromagneticmodel as mm
 
 
-class Exchange(Exchange):
+class Exchange(mm.Exchange):
     def script(self):
         mif = "# UniformExchange\n"
         mif += "Specify Oxs_UniformExchange {\n"

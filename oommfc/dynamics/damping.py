@@ -1,5 +1,5 @@
-from micromagneticmodel.dynamics import Damping
+import micromagneticmodel as mm
 
 
-class Damping(Damping):
+class Damping(mm.Damping):
     pass

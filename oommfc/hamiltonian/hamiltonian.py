@@ -1,7 +1,7 @@
-import micromagneticmodel.hamiltonian as hamil
+import micromagneticmodel as mm
 
 
-class Hamiltonian(hamil.Hamiltonian):
+class Hamiltonian(mm.Hamiltonian):
     def script(self):
         mif = ""
         for term in self.terms:
