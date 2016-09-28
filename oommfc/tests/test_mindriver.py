@@ -26,7 +26,7 @@ class TestMinDriver(TestDriver):
         assert lines[8] == "  Ms {}".format(8e5)
         assert lines[13] == "      file m0.omf"
         assert lines[16] == "  basename tds"
-        
+
     def test_save_mif(self):
         driver = oc.MinDriver()
 

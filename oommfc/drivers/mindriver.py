@@ -6,7 +6,7 @@ class MinDriver(Driver):
         meshname = system.mesh.name
         Ms = system.m.normalisedto
         systemname = system.name
-        
+
         mif = "# CGEvolver\n"
         mif += "Specify Oxs_CGEvolve {}\n\n"
         mif += "# MinDriver\n"

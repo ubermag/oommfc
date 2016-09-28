@@ -11,7 +11,7 @@ class TestSystem:
         system.hamiltonian += oc.Demag()
         system.hamiltonian += oc.UniaxialAnisotropy(1e3, (0, 1, 0))
         system.hamiltonian += oc.Zeeman((0, 1e6, 0))
-        
+
         system.dynamics += oc.Precession(2.211e5)
         system.dynamics += oc.Damping(0.1)
 
@@ -29,4 +29,3 @@ class TestSystem:
         assert "UniaxialAnisotropy" in script
         assert "BoxAtlas" in script
         assert "RectangularMesh" in script
-                                                
