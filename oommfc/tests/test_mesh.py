@@ -1,8 +1,8 @@
-from discretisedfield.tests.test_mesh import TestMesh
-from oommfc import Mesh
+import oommfc as oc
+import discretisedfield.tests as dft
 
 
-class TestMesh(TestMesh):
+class TestMesh(dft.TestMesh):
     def test_get_mif(self):
         for arg in self.valid_args:
             c1 = arg[0]
@@ -10,7 +10,7 @@ class TestMesh(TestMesh):
             d = arg[2]
             name = "test_mesh"
 
-            mesh = Mesh(c1, c2, d, name=name)
+            mesh = oc.Mesh(c1, c2, d, name=name)
 
             script = mesh.script()
             assert script.count("\n") == 13

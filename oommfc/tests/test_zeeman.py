@@ -1,12 +1,12 @@
-from micromagneticmodel.tests.test_zeeman import TestZeeman
-from oommfc.hamiltonian import Zeeman
+import oommfc as oc
+import micromagneticmodel.tests as mmt
 
 
-class TestZeeman(TestZeeman):
+class TestZeeman(mmt.TestZeeman):
     def test_script(self):
         for H in self.valid_args:
             name = 'zeeman_test'
-            zeeman = Zeeman(H, name=name)
+            zeeman = oc.Zeeman(H, name=name)
 
             script = zeeman.script()
             assert script.count("\n") == 10

@@ -1,16 +1,16 @@
-import oommfc.hamiltonian as oh
+import oommfc as oc
 
 
 class TestHamiltonian:
     def setup(self):
         A = 1e-12
-        self.exchange = oh.Exchange(A)
+        self.exchange = oc.Exchange(A)
         H = (0, 0, 1.2e6)
-        self.zeeman = oh.Zeeman(H)
+        self.zeeman = oc.Zeeman(H)
         K = 1e4
         u = (0, 1, 0)
-        self.uniaxialanisotropy = oh.UniaxialAnisotropy(K, u)
-        self.demag = oh.Demag()
+        self.uniaxialanisotropy = oc.UniaxialAnisotropy(K, u)
+        self.demag = oc.Demag()
 
         self.terms = [self.exchange,
                       self.zeeman,
@@ -18,7 +18,7 @@ class TestHamiltonian:
                       self.demag]
 
     def test_script(self):
-        hamiltonian = oh.Hamiltonian()
+        hamiltonian = oc.Hamiltonian()
         for term in self.terms:
             hamiltonian.add(term)
 

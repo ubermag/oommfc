@@ -1,12 +1,11 @@
 import pytest
-from micromagneticmodel.tests.test_damping import TestDamping
-from oommfc.dynamics import Damping
+import oommfc as oc
+import micromagneticmodel.tests as mmt
 
 
-class TestDamping(TestDamping):
+class TestDamping(mmt.TestDamping):
     def test_script(self):
         for alpha in self.valid_args:
+            damping = oc.Damping(alpha)
             with pytest.raises(NotImplementedError):
-                damping = Damping(alpha)
-
                 damping.script()

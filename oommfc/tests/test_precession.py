@@ -1,12 +1,11 @@
 import pytest
-from micromagneticmodel.tests.test_precession import TestPrecession
-from oommfc.dynamics import Precession
+import oommfc as oc
+import micromagneticmodel.tests as mmt
 
 
-class TestPrecession(TestPrecession):
+class TestPrecession(mmt.TestPrecession):
     def test_script(self):
         for gamma in self.valid_args:
+            precession = oc.Precession(gamma)
             with pytest.raises(NotImplementedError):
-                precession = Precession(gamma)
-
                 precession.script()

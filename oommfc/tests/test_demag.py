@@ -1,10 +1,10 @@
-from micromagneticmodel.tests.test_demag import TestDemag
-from oommfc.hamiltonian import Demag
+import oommfc as oc
+import micromagneticmodel.tests as mmt
 
 
-class TestDemag(TestDemag):
+class TestDemag(mmt.TestDemag):
     def test_script(self):
-        demag = Demag()
+        demag = oc.Demag()
 
         script = demag.script()
         assert script.count("\n") == 3

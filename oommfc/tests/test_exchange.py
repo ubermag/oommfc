@@ -1,11 +1,11 @@
-from micromagneticmodel.tests.test_exchange import TestExchange
-from oommfc.hamiltonian import Exchange
+import oommfc as oc
+import micromagneticmodel.tests as mmt
 
 
-class TestExchange(TestExchange):
+class TestExchange(mmt.TestExchange):
     def test_script(self):
         for A in self.valid_args:
-            exchange = Exchange(A)
+            exchange = oc.Exchange(A)
 
             script = exchange.script()
             assert script.count("\n") == 5

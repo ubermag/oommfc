@@ -1,5 +1,4 @@
 import oommfc as oc
-from micromagneticmodel.tests.test_system import TestSystem
 
 
 class TestSystem:

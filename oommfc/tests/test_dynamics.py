@@ -1,11 +1,11 @@
 import pytest
-from micromagneticmodel.tests.test_dynamics import TestDynamics
-from oommfc.dynamics import Dynamics
+import oommfc as oc
+import micromagneticmodel.tests as mmt
 
 
-class TestDynamics(TestDynamics):
+class TestDynamics(mmt.TestDynamics):
     def test_script(self):
-        dynamics = Dynamics()
+        dynamics = oc.Dynamics()
         for term in self.terms:
             dynamics += term
 
