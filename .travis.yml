@@ -4,13 +4,15 @@ python:
   - "3.5"
 
 before_script:
-- "export DISPLAY=:99.0"
-- "sh -e /etc/init.d/xvfb start"
-- sleep 3 # give xvfb some time to start
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3
 
-install: pip install codecov pytest-cov matplotlib pandas ipywidgets git+https://github.com/joommf/oommfodt.git git+https://github.com/joommf/discretisedfield.git git+https://github.com/joommf/micromagneticmodel.git
+install:
+  pip install codecov pytest-cov matplotlib pandas ipywidgets git+https://github.com/joommf/oommfodt.git git+https://github.com/joommf/discretisedfield.git git+https://github.com/joommf/micromagneticmodel.git
 
-script: py.test --cov=oommfc --cov-config .coveragerc
+script:
+  py.test --cov=oommfc --cov-config .coveragerc
 
 after_success:
   codecov
