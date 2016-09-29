@@ -1,21 +1,17 @@
-language: python
+sudo: required
 
-python:
-  - "3.5"
-
-before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3
+services:
+  - docker
 
 install:
-  pip install codecov pytest-cov matplotlib pandas ipywidgets git+https://github.com/joommf/oommfodt.git git+https://github.com/joommf/discretisedfield.git git+https://github.com/joommf/micromagneticmodel.git
+  - docker build -t dockertestimage .
 
 script:
-  py.test --cov=oommfc --cov-config .coveragerc
-
-after_success:
-  codecov
+  - ci_env=`bash <(curl -s https://codecov.io/env)`
+  - docker run -e ci_env -ti dockertestimage /bin/bash -c
+      "cd oommfc;
+      python3 -m pytest --cov=oommfc --cov-config .coveragerc;
+      bash <(curl -s https://codecov.io/bash) -t a253c171-1619-4812-944c-89918bf5c98d"
 
 notifications:
   slack: joommf:eqKxGPXuUP3LxnOfxg7GWgDF
