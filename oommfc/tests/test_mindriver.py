@@ -1,13 +1,14 @@
 import os
+import glob
 import oommfc as oc
 from .test_driver import TestDriver
 
 
 class TestMinDriver(TestDriver):
     def test_script(self):
-        driver = oc.MinDriver()
+        md = oc.MinDriver()
 
-        script = driver.script(self.system)
+        script = md.script(self.system)
 
         assert script[0] == "#"
         assert script[-1] == "1"
@@ -28,10 +29,10 @@ class TestMinDriver(TestDriver):
         assert lines[16] == "  basename tds"
 
     def test_save_mif(self):
-        driver = oc.MinDriver()
+        md = oc.MinDriver()
 
-        driver._makedir(self.system)
-        driver._save_mif(self.system)
+        md._makedir(self.system)
+        md._save_mif(self.system)
 
         assert os.path.isfile("tds/tds.mif")
 
@@ -40,3 +41,22 @@ class TestMinDriver(TestDriver):
         assert lines[-1][-1] == "1"
 
         os.system("rm -r tds/")
+
+    def test_drive(self):
+        md = oc.MinDriver()
+
+        md.drive(self.system)
+
+        assert os.path.exists("tds/")
+        assert os.path.isfile("tds/tds.mif")
+
+        omf_files = list(glob.iglob("tds/*.omf"))
+        odt_files = list(glob.iglob("tds/*.odt"))
+
+        assert len(omf_files) == 2
+        assert "tds/m0.omf" in omf_files
+
+        assert len(odt_files) == 1
+
+        os.system("rm -r tds/")
+        

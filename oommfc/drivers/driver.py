@@ -56,15 +56,15 @@ class Driver(mm.Driver):
         miffilename = self._filenames(system)["miffilename"]
 
         if os.name == "nt":
-            oommf_command = ("tclsh86 %OOMMFTCL% boxsi +fg {} "
-                             "-exitondone 1").format(miffilename)
+            oommf_command = ("tclsh86 %OOMMFTCL% "  # pragma: no cover
+                             "boxsi +fg {} -exitondone 1").format(miffilename)
         else:
             oommf_command = ("tclsh $OOMMFTCL boxsi +fg {} "
                              "-exitondone 1").format(miffilename)
         os.system("cd {}".format(dirname))
         returncode = os.system(oommf_command)
         if returncode:
-            raise Exception("Something has gone wrong in running OOMMF")
+            raise Exception("Error in running OOMMF")  # pragma: no cover
 
     def _update_system(self, system):
         self._update_m(system)

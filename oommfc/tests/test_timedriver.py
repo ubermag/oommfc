@@ -1,4 +1,5 @@
 import os
+import glob
 import oommfc as oc
 from .test_driver import TestDriver
 
@@ -46,5 +47,23 @@ class TestTimeDriver(TestDriver):
         lines = open("tds/tds.mif", "r").readlines()
         assert lines[0] == "# MIF 2.1\n"
         assert lines[-1][-1] == "1"
+
+        os.system("rm -r tds/")
+
+    def test_drive(self):
+        md = oc.TimeDriver()
+
+        md.drive(self.system, t=0.1e-9, n=10)
+
+        assert os.path.exists("tds/")
+        assert os.path.isfile("tds/tds.mif")
+
+        omf_files = list(glob.iglob("tds/*.omf"))
+        odt_files = list(glob.iglob("tds/*.odt"))
+
+        assert len(omf_files) == 11
+        assert "tds/m0.omf" in omf_files
+
+        assert len(odt_files) == 1
 
         os.system("rm -r tds/")
