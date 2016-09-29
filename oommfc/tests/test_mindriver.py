@@ -59,4 +59,3 @@ class TestMinDriver(TestDriver):
         assert len(odt_files) == 1
 
         os.system("rm -r tds/")
-        
