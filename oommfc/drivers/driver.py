@@ -47,7 +47,7 @@ class Driver(mm.Driver):
         mif += self.script(system, **kwargs)
 
         miffilename = self._filenames(system)["miffilename"]
-        miffile = open(miffilename, 'w')
+        miffile = open(miffilename, "w")
         miffile.write(mif)
         miffile.close()
 
@@ -55,13 +55,13 @@ class Driver(mm.Driver):
         dirname = self._filenames(system)["dirname"]
         miffilename = self._filenames(system)["miffilename"]
 
-        if os.name == 'nt':
-            oommf_command = 'tclsh86 %OOMMFTCL% boxsi +fg '
+        if os.name == "nt":
+            oommf_command = ("tclsh86 %OOMMFTCL% boxsi +fg {} "
+                             "-exitondone 1").format(miffilename)
         else:
-            oommf_command = 'tclsh $OOMMFTCL boxsi +fg '
-        oommf_command += miffilename
-        oommf_command += ' -exitondone 1'
-        os.system('cd ' + dirname)
+            oommf_command = ("tclsh $OOMMFTCL boxsi +fg {} "
+                             "-exitondone 1").format(miffilename)
+        os.system("cd {}".format(dirname))
         returncode = os.system(oommf_command)
         if returncode:
             raise Exception("Something has gone wrong in running OOMMF")
