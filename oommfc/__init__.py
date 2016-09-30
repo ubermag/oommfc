@@ -4,3 +4,4 @@ from .dynamics import Precession, Damping, Dynamics
 from .drivers import Driver, MinDriver, TimeDriver
 from .mesh import Mesh
 from .system import System
+from micromagneticmodel.consts import mu0
