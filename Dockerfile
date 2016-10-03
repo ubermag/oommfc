@@ -2,10 +2,9 @@ FROM ubuntu:16.04
 
 MAINTAINER Marijan Beg <m.beg@soton.ac.uk>
 
-RUN apt-get update -y && \
-    apt-get install -y git python3-pip curl tk-dev tcl-dev && \
-    python3 -m pip install --upgrade pip pytest-cov codecov \
-      git+git://github.com/computationalmodelling/nbval.git nbformat \
+RUN apt-get update -y
+RUN apt-get install -y git python3-pip curl tk-dev tcl-dev
+RUN python3 -m pip install --upgrade pip pytest-cov codecov nbval \
       git+git://github.com/joommf/discretisedfield.git \
       git+git://github.com/joommf/micromagneticmodel.git \
       git+git://github.com/joommf/oommfodt.git
