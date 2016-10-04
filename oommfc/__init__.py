@@ -5,3 +5,8 @@ from .drivers import Driver, MinDriver, TimeDriver
 from .mesh import Mesh
 from .system import System
 from micromagneticmodel.consts import mu0
+
+
+def test():
+    import pytest
+    pytest.main()
