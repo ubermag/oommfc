@@ -4,7 +4,8 @@ MAINTAINER Marijan Beg <m.beg@soton.ac.uk>
 
 RUN apt-get update -y
 RUN apt-get install -y git python3-pip curl tk-dev tcl-dev
-RUN python3 -m pip install --upgrade pip pytest-cov codecov nbval \
+RUN python3 -m pip install --upgrade pip pytest-cov \
+      git+git://github.com/computationalmodelling/nbval.git nbformat \
       git+git://github.com/joommf/discretisedfield.git \
       git+git://github.com/joommf/micromagneticmodel.git \
       git+git://github.com/joommf/oommfodt.git
