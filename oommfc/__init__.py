@@ -8,5 +8,5 @@ from micromagneticmodel.consts import mu0
 
 
 def test():
-    import pytest
-    pytest.main()
+    import pytest  # pragma: no cover
+    pytest.main()  # pragma: no cover
