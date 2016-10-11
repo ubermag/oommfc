@@ -13,21 +13,17 @@ class Driver(mm.Driver):
         """
         filenames = self._filenames(system)
 
-        # Make directory for saving OOMMF files.
+        # Make a directory for saving OOMMF files.
         self._makedir(system)
 
         # Save system's magnetisation configuration omf file.
         omffilename = filenames["omffilename"]
         system.m.write_oommf_file(omffilename)
 
-        # Save OOMMF configuration mif file.
         miffilename = filenames["miffilename"]
         self._save_mif(system, **kwargs)
 
-        # Run simulation.
         self._run_simulator(system)
-
-        # Update system.
         self._update_system(system)
 
     def _makedir(self, system):
