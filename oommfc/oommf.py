@@ -25,8 +25,16 @@ class OOMMF:
         else:
             return True
 
+    def call_oommf(self, argstring):
+        cmd = ["tclsh", os.getenv("OOMMFTCL"), argstring]
+        process = subprocess.Popen(cmd,
+                                   stdout=subprocess.PIPE, 
+                                   stderr=subprocess.PIPE)
+
+        return process.communicate()
+
     def version(self):
         if self.test_oommf():
-            output = subprocess.check_output(["tclsh", "$OOMMFTCL", "+version"])
-            return output
-            
+            out, err = self.call_oommf("+version")
+
+            return err.decode().split("\n")[1].split()[1]

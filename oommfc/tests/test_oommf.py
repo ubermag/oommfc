@@ -18,4 +18,8 @@ class TestOOMMF:
         assert self.oommf.test_oommf() is True
 
     def test_version(self):
-        assert self.oommf.test_oommf() is True
+        version = self.oommf.version()
+        assert isinstance(version, str)
+        assert "." in version
+        assert version[0].isdigit()
+        assert version[-1].isdigit()
