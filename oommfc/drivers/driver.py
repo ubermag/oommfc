@@ -3,6 +3,7 @@ import glob
 import oommfodt
 import micromagneticmodel as mm
 import discretisedfield as df
+import oommfc as oc
 
 
 class Driver(mm.Driver):
@@ -51,16 +52,9 @@ class Driver(mm.Driver):
         dirname = self._filenames(system)["dirname"]
         miffilename = self._filenames(system)["miffilename"]
 
-        if os.name == "nt":
-            oommf_command = ("tclsh86 %OOMMFTCL% "  # pragma: no cover
-                             "boxsi +fg {} -exitondone 1").format(miffilename)
-        else:
-            oommf_command = ("tclsh $OOMMFTCL boxsi +fg {} "
-                             "-exitondone 1").format(miffilename)
-        os.system("cd {}".format(dirname))
-        returncode = os.system(oommf_command)
-        if returncode:
-            raise Exception("Error in running OOMMF")  # pragma: no cover
+        oommf = oc.OOMMF()
+
+        out, err = oommf.call_oommf(miffilename)
 
     def _update_system(self, system):
         self._update_m(system)

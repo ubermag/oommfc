@@ -43,15 +43,13 @@ class OOMMF:
             """)
             raise EnvironmentError(msg)
         else:
-            print(100*'**')
             return os.getenv(varname)
-
 
     def test_oommf(self):
         try:
             self.oommfpath = self.oommf_path("OOMMFTCL")
         except EnvironmentError:
-            self.host, self.docker = False, installed("docker")
+            self.host, self.docker = False, self.installed("docker")
         else:
             if os.path.isfile(self.oommfpath):
                 self.host, self.docker = True, False
@@ -63,16 +61,21 @@ class OOMMF:
                               
     def call_oommf(self, argstring):
         if self.host:
-            cmd = ["tclsh", os.getenv("OOMMFTCL"), argstring,
-                   "-exitondone", "1"]
+            cmd = ["tclsh", os.getenv("OOMMFTCL"), "boxsi", "+fg",
+                   argstring, "-exitondone", "1"]
             process = subprocess.Popen(cmd,
                                        stdout=subprocess.PIPE, 
                                        stderr=subprocess.PIPE)
 
-            return process.communicate()
         elif self.docker:
-            pass
+            cmd = "docker run -it -v $(pwd):/io joommf/oommf /bin/bash -c \"tclsh /usr/local/oommf/oommf/oommf.tcl boxsi +fg {} -exitondone 1\"".format(argstring)
+            subprocess.call(["docker", "pull", "joommf/oommf"])
+            process = subprocess.Popen(cmd, shell=True,
+                                       stdout=subprocess.PIPE, 
+                                       stderr=subprocess.PIPE)
 
+        return process.communicate()
+    
     def version(self):
         out, err = self.call_oommf("+version")
         return err.decode().split("\n")[1].split()[1]
