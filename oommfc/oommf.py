@@ -3,6 +3,14 @@ import subprocess
 
 
 class OOMMF:
+    def installed(self, package="oommf"):
+        try:
+            subprocess.check_call(["which", package])
+        except subprocess.CalledProcessError:
+            return False
+        else:
+            return True
+
     def environment_variable(self, varname="OOMMFTCL"):
         if not os.getenv(varname, False):
             return False
@@ -17,7 +25,8 @@ class OOMMF:
 
     def call_oommf(self, argstring):
         if self.test_oommf():
-            cmd = ["tclsh", os.getenv("OOMMFTCL"), argstring]
+            cmd = ["tclsh", os.getenv("OOMMFTCL"), argstring,
+                   "-exitondone", "1"]
             process = subprocess.Popen(cmd,
                                        stdout=subprocess.PIPE, 
                                        stderr=subprocess.PIPE)
