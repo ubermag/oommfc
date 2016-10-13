@@ -4,7 +4,7 @@ import oommfc as oc
 import discretisedfield as df
 
 
-def test_stdprob4_paper():
+def test_stdprob4():
     name = "stdprob4"
 
     # Remove any previous simulation directories.
