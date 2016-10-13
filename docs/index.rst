@@ -11,11 +11,11 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   evolvers
    ipynb/standard_problem1
    ipynb/standard_problem3
    ipynb/standard_problem4
-   ipynb/fmr_standard_problem
+   ipynb/standard_problem5
+   ipynb/standard_problem_fmr
 
 Indices and tables
 ==================
