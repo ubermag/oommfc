@@ -19,10 +19,3 @@ class TestOOMMF:
         self.oommf.test_oommf()
         assert self.oommf.host is True
         assert self.oommf.docker is False
-
-    def test_version(self):
-        version = self.oommf.version()
-        assert isinstance(version, str)
-        assert "." in version
-        assert version[0].isdigit()
-        assert version[-1].isdigit()

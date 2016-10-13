@@ -61,21 +61,26 @@ class OOMMF:
                               
     def call_oommf(self, argstring):
         if self.host:
-            cmd = ["tclsh", os.getenv("OOMMFTCL"), "boxsi", "+fg",
-                   argstring, "-exitondone", "1"]
-            process = subprocess.Popen(cmd,
-                                       stdout=subprocess.PIPE, 
-                                       stderr=subprocess.PIPE)
+            cmd = ("tclsh {} boxsi +fg {} "
+                   "-exitondone 1").format(os.getenv("OOMMFTCL"), argstring)
+            print("Running OOMMF on the host machine...")
+            out = os.system(cmd)
+            if out:
+                raise EnvironmentError("Error in OOMMF run.")
+            else:
+                print("Completed OOMMF simulation on the host machine.")
 
         elif self.docker:
-            cmd = "docker run -it -v $(pwd):/io joommf/oommf /bin/bash -c \"tclsh /usr/local/oommf/oommf/oommf.tcl boxsi +fg {} -exitondone 1\"".format(argstring)
-            subprocess.call(["docker", "pull", "joommf/oommf"])
-            process = subprocess.Popen(cmd, shell=True,
-                                       stdout=subprocess.PIPE, 
-                                       stderr=subprocess.PIPE)
-
-        return process.communicate()
-    
-    def version(self):
-        out, err = self.call_oommf("+version")
-        return err.decode().split("\n")[1].split()[1]
+            print("Pull OOMMF docker image...")
+            out = os.system("docker pull joommf/oommf")
+            if out:
+                raise EnvironmentError("Cannot pull OOMMF docker image.")
+            print("Running OOMMF in Docker container...")
+            cmd = ("docker run -it -v $(pwd):/io joommf/oommf "
+                   "/bin/bash -c \"tclsh /usr/local/oommf/oommf/oommf.tcl "
+                   "boxsi +fg {} -exitondone 1\"").format(argstring)
+            out = os.system(cmd)
+            if out:
+                raise EnvironmentError("Error in OOMMF run inside Docker.")
+            else:
+                print("OOMMF simulation inside Docker completed")
