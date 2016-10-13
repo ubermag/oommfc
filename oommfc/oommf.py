@@ -60,6 +60,7 @@ class OOMMF:
             raise EnvironmentError("Neither Docker nor oommf are installed.")
                               
     def call_oommf(self, argstring):
+        print("Calling OOMMF")
         if self.host:
             cmd = ("tclsh {} boxsi +fg {} "
                    "-exitondone 1").format(os.getenv("OOMMFTCL"), argstring)
@@ -76,11 +77,12 @@ class OOMMF:
             if out:
                 raise EnvironmentError("Cannot pull OOMMF docker image.")
             print("Running OOMMF in Docker container...")
-            cmd = ("docker run -it -v $(pwd):/io joommf/oommf "
+            cmd = ("docker run -it -v {}:/io joommf/oommf "
                    "/bin/bash -c \"tclsh /usr/local/oommf/oommf/oommf.tcl "
-                   "boxsi +fg {} -exitondone 1\"").format(argstring)
+                   "boxsi +fg {} -exitondone 1\"").format(os.getcwd(), argstring)
+            print(cmd)
             out = os.system(cmd)
-            if out:
-                raise EnvironmentError("Error in OOMMF run inside Docker.")
-            else:
-                print("OOMMF simulation inside Docker completed")
+            #if not out:
+            #    raise EnvironmentError("Error in OOMMF run inside Docker.")
+            #else:
+            #    print("OOMMF simulation inside Docker completed")
