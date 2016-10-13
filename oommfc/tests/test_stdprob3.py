@@ -6,8 +6,8 @@ import discretisedfield as df
 from scipy.optimize import bisect
 
 
-def test_stdprob4_paper():
-    name = "stdprob4"
+def test_stdprob3():
+    name = "stdprob3"
 
     # Remove any previous simulation directories.
     os.system("rm -rf {}/".format(name))
@@ -51,7 +51,7 @@ def test_stdprob4_paper():
         mesh = oc.Mesh(p1=(0, 0, 0), p2=(cubesize, cubesize, cubesize),
                        cell=(cellsize, cellsize, cellsize))
 
-        system = oc.System(name="stdprob3")
+        system = oc.System(name=name)
         system.mesh = mesh
         system.hamiltonian = oc.Exchange(A) + oc.UniaxialAnisotropy(K, u) + \
             oc.Demag()
