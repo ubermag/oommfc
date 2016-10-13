@@ -70,3 +70,5 @@ def test_stdprob3():
 
     cross_section = bisect(energy_difference, 8, 9, xtol=0.1)
     assert 8.4 < cross_section < 8.5
+
+    os.system("rm -r {}/".format(name))

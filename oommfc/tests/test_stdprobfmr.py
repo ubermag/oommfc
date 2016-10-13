@@ -48,3 +48,5 @@ def test_stdprobfmr():
 
     psd = np.log10(np.abs(scipy.fftpack.fft(my))**2)
     f_axis = scipy.fftpack.fftfreq(4000, d=20e-9/4000)
+
+    os.system("rm -r {}/".format(name))
