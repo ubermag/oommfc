@@ -10,4 +10,4 @@ from micromagneticmodel.consts import mu0
 
 def test():
     import pytest  # pragma: no cover
-    pytest.main(["--pyargs", "oommfc"])  # pragma: no cover
+    pytest.main(["-v", "--pyargs", "oommfc"])  # pragma: no cover
