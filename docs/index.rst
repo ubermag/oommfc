@@ -11,6 +11,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   ipynb/installation
+   ipynb/testing
    ipynb/standard_problem1
    ipynb/standard_problem3
    ipynb/standard_problem4
