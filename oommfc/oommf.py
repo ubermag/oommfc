@@ -77,7 +77,7 @@ class OOMMF:
             if out:
                 raise EnvironmentError("Cannot pull OOMMF docker image.")
             print("Running OOMMF in Docker container...")
-            cmd = ("docker run -it -v {}:/io joommf/oommf "
+            cmd = ("docker run -v {}:/io joommf/oommf "
                    "/bin/bash -c \"tclsh /usr/local/oommf/oommf/oommf.tcl "
                    "boxsi +fg {} -exitondone 1\"").format(os.getcwd(), argstring)
             print(cmd)
