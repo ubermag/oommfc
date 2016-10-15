@@ -1,11 +1,13 @@
 import os
 import glob
 import numpy as np
+import pytest
+from scipy.optimize import bisect
 import oommfc as oc
 import discretisedfield as df
-from scipy.optimize import bisect
 
 
+@pytest.mark.oommf
 def test_stdprob3():
     name = "stdprob3"
 

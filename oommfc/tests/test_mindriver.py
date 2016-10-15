@@ -1,5 +1,6 @@
 import os
 import glob
+import pytest
 import oommfc as oc
 from .test_driver import TestDriver
 
@@ -42,6 +43,7 @@ class TestMinDriver(TestDriver):
 
         os.system("rm -r tds/")
 
+    @pytest.mark.oommf
     def test_drive(self):
         md = oc.MinDriver()
 
