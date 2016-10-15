@@ -1,9 +1,11 @@
 import os
 import glob
+import pytest
 import oommfc as oc
 from .test_driver import TestDriver
 
 
+@pytest.mark.oommf
 class TestMinDriver(TestDriver):
     def test_script(self):
         md = oc.MinDriver()

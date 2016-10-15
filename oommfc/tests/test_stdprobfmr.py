@@ -1,11 +1,13 @@
 import os
 import glob
+import pytest	
 import scipy.fftpack
 import numpy as np
 import oommfc as oc
 import discretisedfield as df
 
 
+@pytest.mark.oommf
 def test_stdprobfmr():
     name = "stdprobfmr"
 

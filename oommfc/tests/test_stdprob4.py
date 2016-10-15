@@ -1,9 +1,12 @@
 import os
 import glob
+import pytest
 import oommfc as oc
 import discretisedfield as df
+import pytest
 
 
+@pytest.mark.oommf
 def test_stdprob4():
     name = "stdprob4"
 

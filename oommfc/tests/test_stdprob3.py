@@ -4,8 +4,10 @@ import numpy as np
 import oommfc as oc
 import discretisedfield as df
 from scipy.optimize import bisect
+import pytest
 
 
+@pytest.mark.oommf
 def test_stdprob3():
     name = "stdprob3"
 
