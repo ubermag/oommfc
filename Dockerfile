@@ -4,9 +4,10 @@ RUN apt-get update -y
 RUN apt-get install -y git python3-pip curl tk-dev tcl-dev
 RUN python3 -m pip install --upgrade pip pytest-cov scipy \
       git+git://github.com/computationalmodelling/nbval.git nbformat \
+      git+git://github.com/joommf/discretisedfield.git \
       git+git://github.com/joommf/micromagneticmodel.git \
-      git+git://github.com/joommf/oommfodt.git \
-      git+git://github.com/joommf/discretisedfield.git
+      git+git://github.com/joommf/oommfodt.git
+
 
 WORKDIR /usr/local/
 
