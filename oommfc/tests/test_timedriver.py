@@ -5,7 +5,6 @@ import oommfc as oc
 from .test_driver import TestDriver
 
 
-@pytest.mark.oommf
 class TestTimeDriver(TestDriver):
     def test_script(self):
         driver = oc.TimeDriver()
@@ -52,6 +51,7 @@ class TestTimeDriver(TestDriver):
 
         os.system("rm -r tds/")
 
+    @pytest.mark.oommf
     def test_drive(self):
         md = oc.TimeDriver()
 
