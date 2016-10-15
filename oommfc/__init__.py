@@ -9,5 +9,20 @@ from micromagneticmodel.consts import mu0
 
 
 def test():
+    """Runs all the tests"""
     import pytest  # pragma: no cover
     pytest.main(["-v", "--pyargs", "oommfc"])  # pragma: no cover
+
+
+def test_non_oommf():
+    """ Runs tests that do not need an OOMMF installation"""
+    import pytest  # pragma: no cover
+    pytest.main(["-m", "not oommf", "-v", "--pyargs", "oommfc"])  # pragma: no cover
+
+
+def test_oommf():
+    """Runs all tests that require an OOMMF installation."""
+    import pytest  # pragma: no cover
+    pytest.main(["-m", "oommf", "-v", "--pyargs", "oommfc"])  # pragma: no cover
+
+    
