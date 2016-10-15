@@ -1,10 +1,10 @@
 import os
 import glob
 import numpy as np
+import pytest
+from scipy.optimize import bisect
 import oommfc as oc
 import discretisedfield as df
-from scipy.optimize import bisect
-import pytest
 
 
 @pytest.mark.oommf
