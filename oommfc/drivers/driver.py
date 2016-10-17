@@ -12,6 +12,8 @@ class Driver(mm.Driver):
         Drive the system.
 
         """
+        self._check_args(**kwargs)
+
         filenames = self._filenames(system)
 
         # Make a directory for saving OOMMF files.

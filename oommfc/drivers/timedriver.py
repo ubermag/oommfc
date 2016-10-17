@@ -69,3 +69,11 @@ class TimeDriver(Driver):
         mif += "Schedule Oxs_TimeDriver::Spin mags Stage 1"
 
         return mif
+
+    def _check_args(self, **kwargs):
+        t, n = kwargs["t"], kwargs["n"]
+
+        if t <= 0:
+            raise ValueError("Expected t > 0.")
+        if n <= 0 or not isinstance(n, int):
+            raise ValueError("Expected n > 0.")

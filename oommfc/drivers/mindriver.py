@@ -31,3 +31,6 @@ class MinDriver(Driver):
         mif += "Schedule Oxs_MinDriver::Spin mags Stage 1"
 
         return mif
+
+    def _check_args(self, **kwargs):
+        pass

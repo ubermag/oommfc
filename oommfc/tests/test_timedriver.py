@@ -69,3 +69,11 @@ class TestTimeDriver(TestDriver):
         assert len(odt_files) == 1
 
         os.system("rm -r tds/")
+
+    def test_drive_exception(self):
+        md = oc.TimeDriver()
+        with pytest.raises(ValueError):
+            md.drive(self.system, t=-0.1e-9, n=10)
+        with pytest.raises(ValueError):
+            md.drive(self.system, t=0.1e-9, n=-10)
+        
