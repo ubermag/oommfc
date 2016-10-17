@@ -7,15 +7,6 @@ class OOMMF:
     def __init__(self):
         self.test_oommf()
 
-    def installed(self, package):
-        """Checks if package is installed."""
-        try:
-            subprocess.check_call(["which", package])
-        except subprocess.CalledProcessError:
-            return False
-        else:
-            return True
-
     def oommf_path(self, varname="OOMMFTCL"):
         """
         Gets value from the environment variable varname.
@@ -45,11 +36,19 @@ class OOMMF:
         else:
             return os.getenv(varname)
 
+    def docker_available(self):
+        try:
+            subprocess.check_call(["docker", "version"])
+        except subprocess.CalledProcessError:
+            return False
+        else:
+            return True
+
     def test_oommf(self):
         try:
             self.oommfpath = self.oommf_path("OOMMFTCL")
         except EnvironmentError:
-            self.host, self.docker = False, self.installed("docker")
+            self.host, self.docker = False, self.docker_available()
         else:
             if os.path.isfile(self.oommfpath):
                 self.host, self.docker = True, False
