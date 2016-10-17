@@ -7,18 +7,18 @@ test: test-all #test-ipynb
 
 # run all tests to get coverage info
 test-all:
-	py.test --cov=oommfc --cov-config .coveragerc
+	python3 -m pytest --cov=oommfc --cov-config .coveragerc
 
 # run only tests that don't need oommf (fast)
 test-not-oommf:
-	py.test -v -m "not oommf"
+	python3 -m pytest -v -m "not oommf"
 
 test-oommf:
-	py.test -v -m "oommf"
+	python3 -m pytest -v -m "oommf"
 
 # we are currently not testing notebooks. Should we?
 test-ipynb:
-	py.test --nbval docs/ipynb/*.ipynb
+	python3 -m pytest  --nbval docs/ipynb/*.ipynb
 
 
 # run TESTs in Docker container (TESTD). The commands below are copied
