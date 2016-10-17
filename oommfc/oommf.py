@@ -7,19 +7,9 @@ class OOMMF:
     def __init__(self):
         self.test_oommf()
 
-    def oommf_path(self, varname="OOMMFTCL"):
+    def getenv(self, varname):
         """
         Gets value from the environment variable varname.
-
-        Returns
-        -------
-        string
-          Path to folder containing oommf.tcl
-
-        Notes
-        -----
-        Environment variable OOMMF_PATH should point to the directory which
-        contains 'oommf.tcl'
 
         """
         if not varname in os.environ:
@@ -46,7 +36,7 @@ class OOMMF:
 
     def test_oommf(self):
         try:
-            self.oommfpath = self.oommf_path("OOMMFTCL")
+            self.oommfpath = self.getenv("OOMMFTCL")
         except EnvironmentError:
             self.host, self.docker = False, self.docker_available()
         else:
@@ -58,30 +48,30 @@ class OOMMF:
         if not (self.host or self.docker):
             raise EnvironmentError("Neither Docker nor oommf are installed.")
                               
-    def call_oommf(self, argstring):
+    def call_oommf(self, argstr):
         print("Calling OOMMF")
         if self.host:
-            cmd = ("tclsh {} boxsi +fg {} "
-                   "-exitondone 1").format(os.getenv("OOMMFTCL"), argstring)
-            print("Running OOMMF on the host machine...")
-            out = os.system(cmd)
-            if out:
-                raise EnvironmentError("Error in OOMMF run.")
-            else:
-                print("Completed OOMMF simulation on the host machine.")
-
+            self._call_oommf_host(argstr)
         elif self.docker:
-            print("Pull OOMMF docker image...")
-            out = os.system("docker pull joommf/oommf")
-            if out:
-                raise EnvironmentError("Cannot pull OOMMF docker image.")
-            print("Running OOMMF in Docker container...")
-            cmd = ("docker run -v {}:/io joommf/oommf "
-                   "/bin/bash -c \"tclsh /usr/local/oommf/oommf/oommf.tcl "
-                   "boxsi +fg {} -exitondone 1\"").format(os.getcwd(), argstring)
-            print(cmd)
-            out = os.system(cmd)
-            #if not out:
-            #    raise EnvironmentError("Error in OOMMF run inside Docker.")
-            #else:
-            #    print("OOMMF simulation inside Docker completed")
+            self._call_oommf_docker(argstr)
+
+    def _call_oommf_host(self, argstr):
+        cmd = ("tclsh {} boxsi +fg {} "
+               "-exitondone 1").format(os.getenv("OOMMFTCL"), argstr)
+        print("Running OOMMF on the host machine...")
+        out = subprocess.call(cmd, shell=True)
+        if out:
+            raise EnvironmentError("Error in OOMMF run.")
+        else:
+            print("Completed OOMMF simulation on the host machine.")
+
+    def _call_oommf_docker(self, argstr):
+        print("Pull OOMMF docker image...")
+        out = subprocess.call(["docker", "pull", "joommf/oommf"])
+        if out:
+            raise EnvironmentError("Cannot pull OOMMF docker image.")
+        print("Running OOMMF in Docker container...")
+        cmd = ("docker run -v {}:/io joommf/oommf "
+               "/bin/bash -c \"tclsh /usr/local/oommf/oommf/oommf.tcl "
+               "boxsi +fg {} -exitondone 1\"").format(os.getcwd(), argstr)
+        out = subprocess.call(cmd, shell=True)
