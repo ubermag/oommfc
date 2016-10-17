@@ -5,7 +5,7 @@ from .dynamics import Precession, Damping, STT, Dynamics
 from .drivers import Driver, MinDriver, TimeDriver, HysteresisDriver
 from .mesh import Mesh
 from .system import System
-from micromagneticmodel.consts import mu0
+from micromagneticmodel.consts import mu0, e, muB, kB
 
 
 def test():
