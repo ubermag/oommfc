@@ -1,26 +1,24 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
-with open("README.rst") as f:
+with open('README.rst') as f:
     readme = f.read()
 
 setup(
-    name="oommfc",
-    version="0.5.4.3",
-    description="A Python-based OOMMF calculator.",
+    name='oommfc',
+    version='0.5.4.3',
+    description='A Python-based OOMMF calculator.',
     long_description=readme,
-    author="Computational Modelling Group",
-    author_email="fangohr@soton.ac.uk",
-    url="https://github.com/joommf/oommfc",
-    download_url="https://github.com/joommf/oommfc/tarball/0.5.4.3",
-    packages=["oommfc",
-              "oommfc.tests",
-              "oommfc.hamiltonian",
-              "oommfc.dynamics",
-              "oommfc.drivers"],
-    install_requires=["scipy",
-                      "discretisedfield",
-                      "micromagneticmodel",
-                      "oommfodt"],
-    classifiers=["License :: OSI Approved :: BSD License",
-                 "Programming Language :: Python :: 3"]
+    url='https://github.com/joommf/oommfc',
+    author='Computational Modelling Group',
+    author_email='fangohr@soton.ac.uk',
+    packages=find_packages(),
+    install_requires=['scipy',
+                      'discretisedfield',
+                      'micromagneticmodel',
+                      'oommfodt'],
+    classifiers=['Development Status :: 3 - Alpha',
+                 'License :: OSI Approved :: BSD License',
+                 'Topic :: Scientific/Engineering :: Physics',
+                 'Intended Audience :: Science/Research',
+                 'Programming Language :: Python :: 3 :: Only']
 )
