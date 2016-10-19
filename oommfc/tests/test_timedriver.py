@@ -77,3 +77,17 @@ class TestTimeDriver(TestDriver):
         with pytest.raises(ValueError):
             md.drive(self.system, t=0.1e-9, n=-10)
         
+    def test_script_missing_terms(self):
+        # Missing Gilbert damping alpha
+        self.system.dynamics = oc.Precession(gamma=2.2)
+        td = oc.TimeDriver()
+        script = td.script(self.system, t=1e-9, n=20)
+        assert "alpha 0" in script
+        assert "gamma_G 2.2" in script
+
+        # Missing gamma
+        self.system.dynamics = oc.Damping(alpha=5)
+        td = oc.TimeDriver()
+        script = td.script(self.system, t=1e-9, n=20)
+        assert "alpha 5" in script
+        assert "gamma_G 221100" in script
