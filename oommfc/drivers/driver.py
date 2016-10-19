@@ -56,7 +56,7 @@ class Driver(mm.Driver):
 
         oommf = oc.OOMMF()
 
-        oommf.call_oommf(miffilename)
+        oommf.call(miffilename)
 
     def _update_system(self, system):
         self._update_m(system)

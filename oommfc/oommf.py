@@ -5,13 +5,13 @@ import subprocess
 class OOMMF:
     def status(self, raise_exception=False):
         # OOMMF status on host
-        out = self._call_oommf_host("+version")
-        if not out:
+        returncode = self._call_host("+version")
+        if not returncode:
             host = True
         else:
             host = False
             # Investigate the reason why OOMMF does not run.
-            oommftcl = os.getenv("$OOMMFTCL")
+            oommftcl = os.getenv("OOMMFTCL")
             if oommftcl is None:
                 print("Cannot find OOMMFTCL path.")
             else:
@@ -26,7 +26,7 @@ class OOMMF:
 
         # Docker status
         try:
-            subprocess.check_call(["docker", "version"], shell=True)
+            subprocess.check_call(["docker", "--version"])
         except subprocess.CalledProcessError:
             docker = False
             print("Docker not installed/active.")
@@ -39,25 +39,33 @@ class OOMMF:
 
         return {"host": host, "docker": docker}
                               
-    def call_oommf(self, argstr, where=None):
+    def call(self, argstr, where=None):
+        where = self._where_to_run(where)
+
+        if self.status(raise_exception=True)[where]:
+            if where == "host":
+                return self._call_host(argstr)
+            elif where == "docker":
+                return self._call_docker(argstr)
+
+    def _where_to_run(self, where):
         oommf_status = self.status(raise_exception=True)
         if where is None:
             if oommf_status["host"]:
-                where = "host"
+                return "host"
             else:
-                where = "docker"
+                return "docker"
+        else:
+            return where
 
-        if oommf_status[where]:
-            if where == "host":
-                return self._call_oommf_host(argstr)
-            elif where == "docker":
-                out = subprocess.call(["docker", "pull", "joommf/oommf"])
-                cmd = ("docker run -v {}:/io joommf/oommf "
-                       "/bin/bash -c \"tclsh /usr/local/oommf/oommf/oommf.tcl "
-                       "boxsi +fg {} -exitondone 1\"").format(os.getcwd(), argstr)
-                return subprocess.call(cmd, shell=True)
-
-    def _call_oommf_host(self, argstr):
+    def _call_host(self, argstr):
         cmd = ("tclsh", os.getenv("OOMMFTCL", "None"),
                "boxsi", "+fg", argstr, "-exitondone", "1")
         return subprocess.call(cmd)
+
+    def _call_docker(self, argstr):
+        returncode = subprocess.call(["docker", "pull", "joommf/oommf"])
+        cmd = ("docker run -v {}:/io joommf/oommf "
+               "/bin/bash -c \"tclsh /usr/local/oommf/oommf/oommf.tcl "
+               "boxsi +fg {} -exitondone 1\"").format(os.getcwd(), argstr)
+        return subprocess.call(cmd, shell=True)
