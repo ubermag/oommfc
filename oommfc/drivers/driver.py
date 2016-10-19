@@ -54,9 +54,7 @@ class Driver(mm.Driver):
         dirname = self._filenames(system)["dirname"]
         miffilename = self._filenames(system)["miffilename"]
 
-        oommf = oc.OOMMF()
-
-        oommf.call(miffilename)
+        oc.oommf.call(miffilename)
 
     def _update_system(self, system):
         self._update_m(system)

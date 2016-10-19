@@ -1,4 +1,4 @@
-from .oommf import OOMMF
+import oommfc.oommf
 from .hamiltonian import Exchange, UniaxialAnisotropy, \
     Demag, Zeeman, Hamiltonian
 from .dynamics import Precession, Damping, STT, Dynamics

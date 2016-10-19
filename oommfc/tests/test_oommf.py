@@ -3,19 +3,13 @@ import oommfc as oc
 
 class TestOOMMF:
     def test_status(self):
-        oommf = oc.OOMMF()
-
-        status = oommf.status()
+        status = oc.oommf.status()
         assert isinstance(status, dict)
 
     def test_call_oommf(self):
-        oommf = oc.OOMMF()
-
-        oommf.call(argstr="+v", where=None)
-        oommf.call(argstr="+v", where="host")
-        oommf.call(argstr="+v", where="docker")
+        oc.oommf.call(argstr="+v", where=None)
+        oc.oommf.call(argstr="+v", where="host")
+        oc.oommf.call(argstr="+v", where="docker")
 
     def test_call_oommf_host(self):
-        oommf = oc.OOMMF()
-
-        oommf._call_host(argstr="+v")
+        oc.oommf.call_host(argstr="+v")

@@ -1,1 +1,1 @@
-from .oommf import OOMMF
+from .oommf import *
