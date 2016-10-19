@@ -26,12 +26,13 @@ class OOMMF:
                           "a non-existing file.".format(oommftcl))
 
         # Docker status
-        out = subprocess.call(["docker", "version"])
-        if not out:
-            docker = True
-        else:
+        try:
+            subprocess.check_call(["docker", "version"])
+        except subprocess.CalledProcessError:
             docker = False
             print("Docker not installed/active.")
+        else:
+            docker = True
 
         # Raise exception if required
         if not (host or docker) and raise_exception:
