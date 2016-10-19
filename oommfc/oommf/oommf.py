@@ -39,7 +39,8 @@ def status(raise_exception=False):
         raise EnvironmentError("OOMMF and docker not found.")
 
     return {"host": host, "docker": docker}
-                              
+
+
 def call(argstr, where=None):
     where = where_to_run(where)
 
@@ -48,6 +49,7 @@ def call(argstr, where=None):
             return call_host(argstr)
         elif where == "docker":
             return call_docker(argstr)
+
 
 def where_to_run(where):
     oommf_status = status(raise_exception=True)
@@ -59,10 +61,12 @@ def where_to_run(where):
     else:
         return where
 
+
 def call_host(argstr):
     cmd = ("tclsh", os.getenv("OOMMFTCL", "None"),
            "boxsi", "+fg", argstr, "-exitondone", "1")
     return subprocess.call(cmd)
+
 
 def call_docker(argstr):
     returncode = subprocess.call(["docker", "pull", "joommf/oommf"])
