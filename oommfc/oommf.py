@@ -27,7 +27,7 @@ class OOMMF:
 
         # Docker status
         try:
-            subprocess.check_call(["docker", "version"])
+            subprocess.check_call(["docker", "version"], shell=True)
         except subprocess.CalledProcessError:
             docker = False
             print("Docker not installed/active.")
