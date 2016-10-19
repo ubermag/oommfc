@@ -10,6 +10,7 @@ from micromagneticmodel.consts import mu0, e, muB, kB
 
 def test():
     """Runs all the tests"""
+    print(oommfc.oommf.status(raise_exception=True))  # pragma: no cover
     import pytest  # pragma: no cover
     pytest.main(["-v", "--pyargs", "oommfc"])  # pragma: no cover
 
@@ -22,6 +23,7 @@ def test_non_oommf():
 
 def test_oommf():
     """Runs all tests that require an OOMMF installation."""
+    oommfc.oommf.status(raise_exception=True)  # pragma: no cover
     import pytest  # pragma: no cover
     pytest.main(["-m", "oommf", "-v", "--pyargs", "oommfc"])  # pragma: no cover
 
