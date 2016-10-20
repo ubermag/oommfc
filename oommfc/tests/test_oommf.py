@@ -98,13 +98,16 @@ class TestOOMMF:
         assert isinstance(version, str)
         assert "." in version
         assert version[0].isdigit() and version[-1].isdigit()
+        assert 5 < len(version) < 10
 
         version = oc.oommf.version(where="host")
         assert isinstance(version, str)
         assert "." in version
         assert version[0].isdigit() and version[-1].isdigit()
+        assert 5 < len(version) < 10
 
         version = oc.oommf.version(where="docker")
         assert isinstance(version, str)
         assert "." in version
         assert version[0].isdigit() and version[-1].isdigit()
+        assert 5 < len(version) < 10
