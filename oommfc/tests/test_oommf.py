@@ -111,3 +111,34 @@ class TestOOMMF:
         assert "." in version
         assert version[0].isdigit() and version[-1].isdigit()
         assert 5 < len(version) < 10
+
+    def test_where_to_run(self):
+        # Case 1: choose "host", both working
+        where = None
+        varname = "OOMMFTCL"
+        dockername = "docker"
+        raise_exception = True
+        where = oc.oommf.oommf.where_to_run(where=where, varname=varname,
+                                            dockername=dockername,
+                                            raise_exception=raise_exception)
+        assert where == "host"
+
+        # Case 2: choose "host", only host working
+        where = None
+        varname = "OOMMFTCL"
+        dockername = "wrongdocker"
+        raise_exception = True
+        where = oc.oommf.oommf.where_to_run(where=where, varname=varname,
+                                            dockername=dockername,
+                                            raise_exception=raise_exception)
+        assert where == "host"
+
+        # Case 2: choose "docker", only docker working
+        where = None
+        varname = "WRONGOMMFPATH"
+        dockername = "docker"
+        raise_exception = True
+        where = oc.oommf.oommf.where_to_run(where=where, varname=varname,
+                                            dockername=dockername,
+                                            raise_exception=raise_exception)
+        assert where == "docker"
