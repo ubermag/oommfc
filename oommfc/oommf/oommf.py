@@ -27,7 +27,7 @@ def status(varname=varname, dockername=dockername, raise_exception=False):
                 print("Something wrong with OOMMF installation.")
             else:
                 print("{} path {} set to a non-existing "
-                      "file.".format(oommfpath))
+                      "file.".format(varname, oommfpath))
 
     # Docker status
     try:

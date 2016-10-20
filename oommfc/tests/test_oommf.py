@@ -59,7 +59,6 @@ class TestOOMMF:
         assert status["host"] is False
         assert status["docker"] is False
 
-
         # Case 5: host False (wrong path), docker False, raise exception
         varname = "WRONGWRONGWRONG"
         dockername = "dockerwrong"
