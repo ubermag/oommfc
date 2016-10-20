@@ -76,7 +76,7 @@ class TestTimeDriver(TestDriver):
             md.drive(self.system, t=-0.1e-9, n=10)
         with pytest.raises(ValueError):
             md.drive(self.system, t=0.1e-9, n=-10)
-        
+
     def test_script_missing_terms(self):
         # Missing Gilbert damping alpha
         self.system.dynamics = oc.Precession(gamma=2.2)

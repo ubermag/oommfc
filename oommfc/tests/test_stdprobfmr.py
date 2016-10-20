@@ -1,6 +1,6 @@
 import os
 import glob
-import pytest	
+import pytest
 import scipy.fftpack
 import numpy as np
 import oommfc as oc
