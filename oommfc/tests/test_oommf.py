@@ -92,3 +92,19 @@ class TestOOMMF:
                           raise_exception=raise_exception,
                           dockerimage=dockerimage,
                           where=where)
+
+    def test_version(self):
+        version = oc.oommf.version(where=None)
+        assert isinstance(version, str)
+        assert "." in version
+        assert version[0].isdigit() and version[-1].isdigit()
+
+        version = oc.oommf.version(where="host")
+        assert isinstance(version, str)
+        assert "." in version
+        assert version[0].isdigit() and version[-1].isdigit()
+
+        version = oc.oommf.version(where="docker")
+        assert isinstance(version, str)
+        assert "." in version
+        assert version[0].isdigit() and version[-1].isdigit()

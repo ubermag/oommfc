@@ -52,17 +52,18 @@ def call(argstr, varname, dockername, raise_exception, dockerimage, where=None):
                                argstr=argstr)
 
 
-def version(varname, where=None):
-    where = where_to_run(where)
+def version(where=None, varname="OOMMFTCL", dockerimage="joommf/oommf"):
+    where = where_to_run(where, varname, dockername="docker",
+                         raise_exception=True)
     if where == "host":
         cmd = ("tclsh", os.getenv(varname), "+version")
         phost = subprocess.Popen(cmd, stderr=subprocess.PIPE)
         out, err = phost.communicate()
     else:
         returncode = subprocess.call(["docker", "pull", "joommf/oommf"])
-        cmd = ("docker run -v {}:/io joommf/oommf "
+        cmd = ("docker run -v {}:/io {} "
                "/bin/bash -c \"tclsh /usr/local/oommf/oommf/oommf.tcl "
-               "+version\"").format(os.getcwd())
+               "+version\"").format(os.getcwd(), dockerimage)
         pdocker = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
         out, err = pdocker.communicate()
 
