@@ -9,7 +9,7 @@ import oommfc as oc
 class Driver(mm.Driver):
     def __init__(self, varname="OOMMFTCL", dockerimage="joommf/oommf",
                  where=None):
-        self.varname = "VARNAME"
+        self.varname = varname
         self.dockerimage = dockerimage
         self.where = where
 
