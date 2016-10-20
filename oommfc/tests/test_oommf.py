@@ -68,8 +68,27 @@ class TestOOMMF:
                                      dockername=dockername,
                                      raise_exception=raise_exception)
 
+        # Case 6: host False (wrong file), docker False, no exception
+        varname = "OOMMFWRONGFILE"
+        dockername = "dockerwrong"
+        raise_exception = False
+        status = oc.oommf.status(varname=varname,
+                                 dockername=dockername,
+                                 raise_exception=raise_exception)
+        assert isinstance(status, dict)
+        assert status["host"] is False
+        assert status["docker"] is False
 
     def test_call_oommf(self):
-        oc.oommf.call(argstr="+v", where=None)
-        oc.oommf.call(argstr="+v", where="host")
-        oc.oommf.call(argstr="+v", where="docker")
+        argstr = "+v"
+        varname = "OOMMFTCL"
+        dockername = "docker"
+        raise_exception = True
+        dockerimage = "joommf/oommf"
+        for where in [None, "host", "docker"]:
+            oc.oommf.call(argstr=argstr,
+                          varname=varname,
+                          dockername=dockername,
+                          raise_exception=raise_exception,
+                          dockerimage=dockerimage,
+                          where=where)

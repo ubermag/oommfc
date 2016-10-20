@@ -7,6 +7,12 @@ import oommfc as oc
 
 
 class Driver(mm.Driver):
+    def __init__(self, varname="OOMMFTCL", dockerimage="joommf/oommf",
+                 where=None):
+        self.varname = "VARNAME"
+        self.dockerimage = dockerimage
+        self.where = where
+
     def drive(self, system, **kwargs):
         """
         Drive the system.
@@ -51,10 +57,13 @@ class Driver(mm.Driver):
         miffile.close()
 
     def _run_simulator(self, system):
-        dirname = self._filenames(system)["dirname"]
         miffilename = self._filenames(system)["miffilename"]
-
-        oc.oommf.call(miffilename)
+        oc.oommf.call(argstr=miffilename,
+                      varname=self.varname,
+                      dockername="docker",
+                      raise_exception=True,
+                      dockerimage=self.dockerimage,
+                      where=self.where)
 
     def _update_system(self, system):
         self._update_m(system)

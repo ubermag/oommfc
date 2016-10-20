@@ -18,8 +18,9 @@ RUN chmod +x /usr/local/bin/wrapdocker
 VOLUME /var/lib/docker
 CMD ["wrapdocker"]
 
-# Intentionally wrong OOMMF path for testing.
+# Intentionally wrong OOMMF paths for testing.
 ENV OOMMFWRONGPATH /usr/local/oommf/oommf/oommf/oommf.tcl
+ENV OOMMFWRONGFILE /usr/local/oommfc/Dockerfile
 
 WORKDIR /usr/local
 RUN git clone https://github.com/joommf/oommfc.git
