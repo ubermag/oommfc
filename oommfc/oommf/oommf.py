@@ -8,7 +8,7 @@ varname = "OOMMFTCL"
 dockername = "docker"
 
 
-def status(raise_exception=False, varname=varname, dockername=dockername):
+def status(varname=varname, dockername=dockername, raise_exception=False):
     # OOMMF status on host
     returncode = call_host("+v", varname=varname)
     if not returncode:
@@ -32,7 +32,7 @@ def status(raise_exception=False, varname=varname, dockername=dockername):
     # Docker status
     try:
         subprocess.check_call([dockername, "--version"])
-    except subprocess.CalledProcessError:
+    except (subprocess.CalledProcessError, FileNotFoundError):
         docker = False
         print("Docker not installed/active.")
     else:
