@@ -80,7 +80,7 @@ class TestOOMMF:
         assert status["docker"] is False
 
     def test_call_oommf(self):
-        argstr = "+v"
+        argstr = "+version"
         varname = "OOMMFTCL"
         dockername = "docker"
         raise_exception = True
