@@ -1,10 +1,11 @@
 import os
+import signal
 import subprocess
 
 
 def status(raise_exception=False):
     # OOMMF status on host
-    returncode = call_host("+version")
+    returncode = call_host("+v")
     if not returncode:
         print("OOMMF on host machine status: OK")
         host = True
@@ -49,6 +50,23 @@ def call(argstr, where=None):
             return call_host(argstr)
         elif where == "docker":
             return call_docker(argstr)
+
+
+def version(where=None):
+    where = where_to_run(where)
+    if where == "host":
+        cmd = ("tclsh", os.getenv("OOMMFTCL"), "+version")
+        phost = subprocess.Popen(cmd, stderr=subprocess.PIPE)
+        out, err = phost.communicate()
+    else:
+        returncode = subprocess.call(["docker", "pull", "joommf/oommf"])
+        cmd = ("docker run -v {}:/io joommf/oommf "
+               "/bin/bash -c \"tclsh /usr/local/oommf/oommf/oommf.tcl "
+               "+version\"").format(os.getcwd())
+        pdocker = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
+        out, err = pdocker.communicate()
+
+    return err.decode().split("oommf.tcl")[-1].strip()
 
 
 def where_to_run(where):
