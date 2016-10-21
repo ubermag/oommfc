@@ -8,7 +8,9 @@ install:
 
 script:
   - ci_env=`bash <(curl -s https://codecov.io/env)`
-  - docker run --privileged -e ci_env -ti --name testcontainer dockertestimage -c "make travistest"
+  - docker run --privileged -e ci_env -ti -d --name testcontainer dockertestimage
+  - docker exec testcontainer make travistest
+  - docker stop testcontainer
 
 notifications:
   slack: joommf:eqKxGPXuUP3LxnOfxg7GWgDF
