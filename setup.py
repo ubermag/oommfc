@@ -5,10 +5,10 @@ with open('README.rst') as f:
 
 setuptools.setup(
     name='oommfc',
-    version='0.5.5',
+    version='0.5.5.1',
     description='A Python-based OOMMF calculator.',
     long_description=readme,
-    url='joommf.github.io',
+    url='https://joommf.github.io',
     author='Marijan Beg, Ryan A. Pepper, and Hans Fangohr',
     author_email='jupyteroommf@gmail.com',
     packages=setuptools.find_packages(),
