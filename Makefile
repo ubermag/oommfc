@@ -34,3 +34,7 @@ testd:
 	# run tests in docker, first non-oommf, then oommf
 	docker run -e ci_env -ti dockertestimage /bin/bash -c "cd oommfc && python3 -m pytest -s -l -v -m 'not oommf'"
 	docker run -e ci_env -ti dockertestimage /bin/bash -c "cd oommfc && python3 -m pytest -s -l -v -m 'oommf'"
+
+travistest:
+	python3 -m pytest --cov=oommfc --cov-config .coveragerc
+	bash <(curl -s https://codecov.io/bash) -t a253c171-1619-4812-944c-89918bf5c98d

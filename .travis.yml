@@ -8,10 +8,7 @@ install:
 
 script:
   - ci_env=`bash <(curl -s https://codecov.io/env)`
-  - docker run --privileged -e ci_env -ti -d --name testcontainer dockertestimage
-  - docker exec testcontainer python3 -m pytest --cov=oommfc --cov-config .coveragerc 
-  - docker exec testcontainer bash <(curl -s https://codecov.io/bash) -t a253c171-1619-4812-944c-89918bf5c98d
-  - docker stop testcontainer
+  - docker run --privileged -e ci_env -ti --name testcontainer dockertestimage -c "make travistest"
 
 notifications:
   slack: joommf:eqKxGPXuUP3LxnOfxg7GWgDF
