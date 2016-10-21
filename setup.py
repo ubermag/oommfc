@@ -8,7 +8,7 @@ setuptools.setup(
     version='0.5.5',
     description='A Python-based OOMMF calculator.',
     long_description=readme,
-    url='joommf.github.io'
+    url='joommf.github.io',
     author='Marijan Beg, Ryan A. Pepper, and Hans Fangohr',
     author_email='jupyteroommf@gmail.com',
     packages=setuptools.find_packages(),
