@@ -32,3 +32,10 @@ test-oommf:
 
 test-not-oommf:
 	python3 -m pytest -m "not oommf"
+
+pypitest-upload:
+	python3 setup.py register -r pypitest
+	python3 setup.py sdist upload -r pypitest
+
+pypi-upload: pypitest-upload
+	python3 setup.py sdist upload -r pypi
