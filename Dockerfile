@@ -1,4 +1,6 @@
-# Modified script taken from https://github.com/jpetazzo/dind
+# Script for running "Docker in Docker" taken from
+# https://github.com/jpetazzo/dind
+# where the license can be found.
 
 FROM joommf/oommf
 

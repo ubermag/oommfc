@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# This script is taken from
+# https://github.com/jpetazzo/dind
+# where the license can be found.
+
 # Ensure that all nodes in /dev/mapper correspond to mapped devices currently loaded by the device-mapper kernel driver
 dmsetup mknodes
 
