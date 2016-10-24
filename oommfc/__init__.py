@@ -11,7 +11,7 @@ from micromagneticmodel.consts import mu0, e, me, kB, h, g, \
 
 def test():
     """Runs all the tests"""
-    print(oommfc.oommf.status(raise_exception=True))  # pragma: no cover
+    oommfc.oommf.status(raise_exception=True)  # pragma: no cover
     import pytest  # pragma: no cover
     pytest.main(["-v", "--pyargs", "oommfc"])  # pragma: no cover
 
