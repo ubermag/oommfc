@@ -7,7 +7,6 @@ def status(varname, dockername, raise_exception):
     # OOMMF status on host
     returncode = call_host(varname=varname, argstr="+version")
     if not returncode:
-        print("OOMMF on host machine status: OK")
         host = True
     else:
         host = False
@@ -30,7 +29,6 @@ def status(varname, dockername, raise_exception):
         docker = False
         print("Docker not installed/active.")
     else:
-        print("Docker status: OK")
         docker = True
 
     # Raise exception if required
@@ -95,5 +93,4 @@ def call_docker(dockername, dockerimage, argstr):
            "/usr/local/oommf/oommf/oommf.tcl boxsi +fg {} "
            "-exitondone 1\"").format(dockername, os.getcwd(),
                                      dockerimage, argstr)
-    print(cmd)
     return subprocess.call(cmd, shell=True)
