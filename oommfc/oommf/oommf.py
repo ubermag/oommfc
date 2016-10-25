@@ -3,7 +3,7 @@ import signal
 import subprocess
 
 
-def status(varname, dockername, raise_exception):
+def status(varname, dockername, raise_exception, verbose=True):
     # OOMMF status on host
     returncode = call_host(varname=varname, argstr="+version")
     if not returncode:
@@ -13,21 +13,25 @@ def status(varname, dockername, raise_exception):
         # Investigate the reason why OOMMF does not run.
         oommfpath = os.getenv(varname)
         if oommfpath is None:
-            print("Cannot find {} path.".format(varname))
+            if verbose:
+                print("Cannot find {} path.".format(varname))
         elif not os.path.isfile(oommfpath):
-            print("{} path {} set to a non-existing "
-                  "file.".format(varname, oommfpath))
+            if verbose:
+                print("{} path {} set to a non-existing "
+                      "file.".format(varname, oommfpath))
         else:
-            print("{} path {} set to an existing "
-                  "file.".format(varname, oommfpath))
-            print("Something wrong with OOMMF installation.")
+            if verbose:
+                print("{} path {} set to an existing "
+                      "file.".format(varname, oommfpath))
+                print("Something wrong with OOMMF installation.")
 
     # Docker status
     try:
         subprocess.check_call([dockername, "ps"])
     except (subprocess.CalledProcessError, FileNotFoundError):
         docker = False
-        print("Docker not installed/active.")
+        if verbose:
+            print("Docker not installed/active.")
     else:
         docker = True
 
@@ -38,15 +42,17 @@ def status(varname, dockername, raise_exception):
     return {"host": host, "docker": docker}
 
 
-def call(argstr, varname, dockername, raise_exception, dockerimage, where=None):
+def call(argstr, varname, dockername, raise_exception, dockerimage,
+         where=None):
     where = where_to_run(where, varname, dockername, raise_exception)
 
     if status(varname=varname, dockername=dockername,
-              raise_exception=raise_exception)[where]:
+              raise_exception=raise_exception, verbose=False)[where]:
         if where == "host":
             return call_host(varname=varname, argstr=argstr)
         elif where == "docker":
-            return call_docker(dockername=dockername, dockerimage=dockerimage,
+            return call_docker(dockername=dockername,
+                               dockerimage=dockerimage,
                                argstr=argstr)
 
 
@@ -71,7 +77,7 @@ def version(where=None, varname="OOMMFTCL", dockerimage="joommf/oommf"):
 
 def where_to_run(where, varname, dockername, raise_exception):
     oommf_status = status(varname=varname, dockername=dockername,
-                          raise_exception=raise_exception)
+                          raise_exception=raise_exception, verbose=False)
     if where is None:
         if oommf_status["host"]:
             return "host"
