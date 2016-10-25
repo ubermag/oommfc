@@ -24,7 +24,7 @@ def status(varname, dockername, raise_exception):
 
     # Docker status
     try:
-        subprocess.check_call([dockername, "--version"])
+        subprocess.check_call([dockername, "ps"])
     except (subprocess.CalledProcessError, FileNotFoundError):
         docker = False
         print("Docker not installed/active.")
