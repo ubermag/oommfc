@@ -31,6 +31,6 @@ class TestDriver:
         filenames = driver._filenames(self.system)
 
         assert len(filenames.keys()) == 3
-        assert filenames["dirname"] == 'tds/'
-        assert filenames["omffilename"] == 'tds/m0.omf'
-        assert filenames["miffilename"] == 'tds/tds.mif'
+        assert filenames["dirname"] == os.path.join("tds", "")
+        assert filenames["omffilename"] == os.path.join("tds", "m0.omf")
+        assert filenames["miffilename"] == os.path.join("tds", "tds.mif")
