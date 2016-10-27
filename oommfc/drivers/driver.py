@@ -58,12 +58,9 @@ class Driver(mm.Driver):
 
     def _run_simulator(self, system):
         miffilename = self._filenames(system)["miffilename"]
-        oc.oommf.call(argstr=miffilename,
-                      varname=self.varname,
-                      dockername="docker",
-                      raise_exception=True,
-                      dockerimage=self.dockerimage,
-                      where=self.where)
+        oommf = oc.OOMMF(self.varname, self.dockerimage,
+                         where=None)
+        oommf.call(argstr=miffilename)
 
     def _update_system(self, system):
         self._update_m(system)

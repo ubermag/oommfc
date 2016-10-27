@@ -3,100 +3,106 @@ import signal
 import subprocess
 
 
-def status(varname, dockername, raise_exception, verbose=True):
-    # OOMMF status on host
-    returncode = call_host(varname=varname, argstr="+version")
-    if not returncode:
-        host = True
-    else:
-        host = False
-        # Investigate the reason why OOMMF does not run.
-        oommfpath = os.getenv(varname)
-        if oommfpath is None:
+class OOMMF:
+    def __init__(self, varname="OOMMFTCL", dockername="docker",
+                 dockerimage="joommf/oommf", where=None):
+        self.varname = varname
+        self.dockername = dockername
+        self.dockerimage = dockerimage
+        self.statusdict = self.status(raise_exception=False)
+        self.where = self._where_to_run(where)
+
+    def status(self, raise_exception=False, verbose=False):
+        # OOMMF status on host
+        oommfpath = os.getenv(self.varname, None)
+        try:
+            if oommfpath is None:
+                raise FileNotFoundError
+            else:
+                cmd = ("tclsh", os.getenv(self.varname, None), "boxsi",
+                       "+fg", "+version", "-exitondone", "1")
+                subprocess.check_call(cmd, stdout=subprocess.PIPE)
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            host = False
             if verbose:
-                print("Cannot find {} path.".format(varname))
-        elif not os.path.isfile(oommfpath):
-            if verbose:
-                print("{} path {} set to a non-existing "
-                      "file.".format(varname, oommfpath))
+                oommfpath = os.getenv(varname)
+                if oommfpath is None:
+                    print("Cannot find {} path.".format(varname))
+                elif not os.path.isfile(oommfpath):
+                    print("{} path {} set to a non-existing "
+                          "file.".format(varname, oommfpath))
+                else:
+                    print("{} path {} set to an existing "
+                          "file.".format(varname, oommfpath))
+                    print("Something wrong with OOMMF installation.")
         else:
+            host = True
+
+        # Docker status
+        try:
+            cmd = (self.dockername, "images")
+            subprocess.check_call(cmd)
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            docker = False
             if verbose:
-                print("{} path {} set to an existing "
-                      "file.".format(varname, oommfpath))
-                print("Something wrong with OOMMF installation.")
+                print("Docker not installed/active.")
+        else:
+            docker = True
 
-    # Docker status
-    try:
-        subprocess.check_call([dockername, "ps"])
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        docker = False
-        if verbose:
-            print("Docker not installed/active.")
-    else:
-        docker = True
+        # Raise exception if required
+        if not (host or docker) and raise_exception:
+            raise EnvironmentError("OOMMF and docker not found.")
 
-    # Raise exception if required
-    if not (host or docker) and raise_exception:
-        raise EnvironmentError("OOMMF and docker not found.")
+        return {"host": host, "docker": docker}
 
-    return {"host": host, "docker": docker}
+    def call(self, argstr):
+        if self.statusdict[self.where]:
+            if self.where == "host":
+                return self._call_host(argstr=argstr)
+            elif self.where == "docker":
+                return self._call_docker(argstr=argstr)
 
-
-def call(argstr, varname, dockername, raise_exception, dockerimage,
-         where=None):
-    where = where_to_run(where, varname, dockername, raise_exception)
-
-    if status(varname=varname, dockername=dockername,
-              raise_exception=raise_exception, verbose=False)[where]:
+    def version(self, where=None):
+        where = self._where_to_run(where=where)
         if where == "host":
-            return call_host(varname=varname, argstr=argstr)
-        elif where == "docker":
-            return call_docker(dockername=dockername,
-                               dockerimage=dockerimage,
-                               argstr=argstr)
-
-
-def version(where=None, varname="OOMMFTCL", dockerimage="joommf/oommf"):
-    where = where_to_run(where=where, varname=varname,
-                         dockername="docker",
-                         raise_exception=True)
-    if where == "host":
-        cmd = ("tclsh", os.getenv(varname), "+version")
-        phost = subprocess.Popen(cmd, stderr=subprocess.PIPE)
-        out, err = phost.communicate()
-    else:
-        returncode = subprocess.call(["docker", "pull", "joommf/oommf"])
-        cmd = ("docker run --privileged -v {}:/io {} "
-               "/bin/bash -c \"tclsh /usr/local/oommf/oommf/oommf.tcl "
-               "+version\"").format(os.getcwd(), dockerimage)
-        pdocker = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
-        out, err = pdocker.communicate()
-
-    return err.decode().split("oommf.tcl")[-1].strip()
-
-
-def where_to_run(where, varname, dockername, raise_exception):
-    oommf_status = status(varname=varname, dockername=dockername,
-                          raise_exception=raise_exception, verbose=False)
-    if where is None:
-        if oommf_status["host"]:
-            return "host"
+            cmd = ("tclsh", os.getenv(self.varname), "+version")
+            phost = subprocess.Popen(cmd, stderr=subprocess.PIPE)
+            out, err = phost.communicate()
         else:
-            return "docker"
-    else:
-        return where
+            returncode = subprocess.call([self.dockername,
+                                          "pull",
+                                          self.dockerimage])
+            cmd = ("{} run --privileged -v {}:/io {} "
+                   "/bin/bash -c \"tclsh /usr/local/oommf/oommf/oommf.tcl "
+                   "+version\"").format(self.dockername, os.getcwd(),
+                                        self.dockerimage)
+            pdocker = subprocess.Popen(cmd,
+                                       shell=True,
+                                       stderr=subprocess.PIPE)
+            out, err = pdocker.communicate()
 
+        return err.decode().split("oommf.tcl")[-1].strip()
 
-def call_host(varname, argstr):
-    cmd = ("tclsh", os.getenv(varname, "None"),
-           "boxsi", "+fg", argstr, "-exitondone", "1")
-    return subprocess.call(cmd)
+    def _where_to_run(self, where):
+        if where is None:
+            if self.statusdict["host"]:
+                return "host"
+            else:
+                return "docker"
+        else:
+            return where
 
+    def _call_host(self, argstr):
+        oommfpath = os.getenv(self.varname, None)
+        cmd = ("tclsh", oommfpath, "boxsi", "+fg",
+               argstr, "-exitondone", "1")
+        return subprocess.call(cmd)
 
-def call_docker(dockername, dockerimage, argstr):
-    returncode = subprocess.call([dockername, "pull", dockerimage])
-    cmd = ("{} run -v {}:/io {} /bin/bash -c \"tclsh "
-           "/usr/local/oommf/oommf/oommf.tcl boxsi +fg {} "
-           "-exitondone 1\"").format(dockername, os.getcwd(),
-                                     dockerimage, argstr)
-    return subprocess.call(cmd, shell=True)
+    def _call_docker(self, argstr):
+        returncode = subprocess.call([self.dockername, "pull",
+                                      self.dockerimage])
+        cmd = ("{} run -v {}:/io {} /bin/bash -c \"tclsh "
+               "/usr/local/oommf/oommf/oommf.tcl boxsi +fg {} "
+               "-exitondone 1\"").format(self.dockername, os.getcwd(),
+                                         self.dockerimage, argstr)
+        return subprocess.call(cmd, shell=True)

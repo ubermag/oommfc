@@ -1,1 +1,1 @@
-from .oommf import status, call, version
+from .oommf import OOMMF
