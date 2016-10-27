@@ -10,7 +10,8 @@ class TestOOMMF:
         raise_exception = True
         oommf = oc.OOMMF(varname=varname,
                          dockername=dockername)
-        status = oommf.status(raise_exception=raise_exception)
+        status = oommf.status(raise_exception=raise_exception,
+                              verbose=True)
         assert isinstance(status, dict)
         assert status["host"] is True
         assert status["docker"] is True
@@ -21,7 +22,8 @@ class TestOOMMF:
         raise_exception = True
         oommf = oc.OOMMF(varname=varname,
                          dockername=dockername)
-        status = oommf.status(raise_exception=raise_exception)
+        status = oommf.status(raise_exception=raise_exception,
+                              verbose=True)
         assert isinstance(status, dict)
         assert status["host"] is True
         assert status["docker"] is False
@@ -32,7 +34,8 @@ class TestOOMMF:
         raise_exception = True
         oommf = oc.OOMMF(varname=varname,
                          dockername=dockername)
-        status = oommf.status(raise_exception=raise_exception)
+        status = oommf.status(raise_exception=raise_exception,
+                              verbose=True)
         assert isinstance(status, dict)
         assert status["host"] is False
         assert status["docker"] is True
@@ -43,7 +46,8 @@ class TestOOMMF:
         raise_exception = True
         oommf = oc.OOMMF(varname=varname,
                          dockername=dockername)
-        status = oommf.status(raise_exception=raise_exception)
+        status = oommf.status(raise_exception=raise_exception,
+                              verbose=True)
         assert isinstance(status, dict)
         assert status["host"] is False
         assert status["docker"] is True
@@ -54,7 +58,8 @@ class TestOOMMF:
         raise_exception = False
         oommf = oc.OOMMF(varname=varname,
                          dockername=dockername)
-        status = oommf.status(raise_exception=raise_exception)
+        status = oommf.status(raise_exception=raise_exception,
+                              verbose=True)
         assert isinstance(status, dict)
         assert status["host"] is False
         assert status["docker"] is False
@@ -66,7 +71,8 @@ class TestOOMMF:
         with pytest.raises(EnvironmentError):
             oommf = oc.OOMMF(varname=varname,
                              dockername=dockername)
-            status = oommf.status(raise_exception=raise_exception)
+            status = oommf.status(raise_exception=raise_exception,
+                                  verbose=True)
 
         # Case 7: host False (wrong file), docker False, no exception
         varname = "OOMMFWRONGFILE"
@@ -74,7 +80,8 @@ class TestOOMMF:
         raise_exception = False
         oommf = oc.OOMMF(varname=varname,
                          dockername=dockername)
-        status = oommf.status(raise_exception=raise_exception)
+        status = oommf.status(raise_exception=raise_exception,
+                              verbose=True)
         assert isinstance(status, dict)
         assert status["host"] is False
         assert status["docker"] is False

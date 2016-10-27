@@ -25,15 +25,15 @@ class OOMMF:
         except (subprocess.CalledProcessError, FileNotFoundError):
             host = False
             if verbose:
-                oommfpath = os.getenv(varname)
+                oommfpath = os.getenv(self.varname)
                 if oommfpath is None:
-                    print("Cannot find {} path.".format(varname))
+                    print("Cannot find {} path.".format(self.varname))
                 elif not os.path.isfile(oommfpath):
                     print("{} path {} set to a non-existing "
-                          "file.".format(varname, oommfpath))
+                          "file.".format(self.varname, oommfpath))
                 else:
                     print("{} path {} set to an existing "
-                          "file.".format(varname, oommfpath))
+                          "file.".format(self.varname, oommfpath))
                     print("Something wrong with OOMMF installation.")
         else:
             host = True
