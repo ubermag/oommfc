@@ -1,1 +1,0 @@
-from .oommf import OOMMF
