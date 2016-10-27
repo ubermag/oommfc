@@ -12,7 +12,8 @@ def test_stdprobfmr():
     name = "stdprobfmr"
 
     # Remove any previous simulation directories.
-    os.system("rm -rf {}/".format(name))
+    if os.path.exists(name):
+        shutil.rmtree(name)
 
     lx = ly = 120e-9  # x and y dimensions of the sample(m)
     lz = 10e-9  # sample thickness (m)

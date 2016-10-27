@@ -1,10 +1,11 @@
 import os
 import glob
-import numpy as np
+import shutil
 import pytest
-from scipy.optimize import bisect
+import numpy as np
 import oommfc as oc
 import discretisedfield as df
+from scipy.optimize import bisect
 
 
 @pytest.mark.oommf
@@ -12,7 +13,8 @@ def test_stdprob3():
     name = "stdprob3"
 
     # Remove any previous simulation directories.
-    os.system("rm -rf {}".format(name))
+    if os.path.exists(name):
+        shutil.rmtree(name)
 
     # Function for initiaising the flower state.
     def m_init_flower(pos):

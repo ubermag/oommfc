@@ -1,5 +1,6 @@
 import os
 import glob
+import shutil
 import pytest
 import numpy as np
 import oommfc as oc
@@ -12,7 +13,8 @@ def test_stdprob5():
     name = "stdprob5"
 
     # Remove any previous simulation directories.
-    os.system("rm -rf {}/".format(name))
+    if os.path.exists(name):
+        shutil.rmtree(name)
 
     # Geometry
     lx = 100e-9  # x dimension of the sample(m)

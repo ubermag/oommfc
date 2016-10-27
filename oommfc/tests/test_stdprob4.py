@@ -1,5 +1,6 @@
 import os
 import glob
+import shutil
 import pytest
 import oommfc as oc
 import discretisedfield as df
@@ -11,7 +12,8 @@ def test_stdprob4():
     name = "stdprob4"
 
     # Remove any previous simulation directories.
-    os.system("rm -rf {}".format(name))
+    if os.path.exists(name):
+        shutil.rmtree(name)
 
     L, d, th = 500e-9, 125e-9, 3e-9   # (m)
     cellsize = (5e-9, 5e-9, 3e-9)  # (m)

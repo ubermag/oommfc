@@ -1,5 +1,6 @@
 import os
 import glob
+import shutil
 import pytest
 import oommfc as oc
 from .test_driver import TestDriver
@@ -42,7 +43,7 @@ class TestMinDriver(TestDriver):
         assert lines[0] == "# MIF 2.1\n"
         assert lines[-1][-1] == "1"
 
-        os.system("rm -r tds")
+        shutil.rmtree("tds")
 
     @pytest.mark.oommf
     def test_drive(self):
@@ -64,4 +65,4 @@ class TestMinDriver(TestDriver):
 
         assert len(odt_files) == 1
 
-        os.system("rm -r tds/")
+        shutil.rmtree("tds")
