@@ -13,19 +13,24 @@ oommf = OOMMF()
 
 def test():
     """Runs all the tests"""
-    oommfc.oommf.status(raise_exception=True)  # pragma: no cover
+    oommf.status(raise_exception=True)  # pragma: no cover
     import pytest  # pragma: no cover
-    pytest.main(["-v", "--pyargs", "oommfc"])  # pragma: no cover
+    args = ["-v", "--pyargs", "oommfc"]  # pragma: no cover
+    pytest.main(args)  # pragma: no cover
 
 
 def test_non_oommf():
     """ Runs tests that do not need an OOMMF installation"""
     import pytest  # pragma: no cover
-    pytest.main(["-m", "not oommf", "-v", "--pyargs", "oommfc"])  # pragma: no cover
+    args = ["-m", "not oommf", "-v",
+            "--pyargs", "oommfc"]  # pragma: no cover
+    pytest.main(args)  # pragma: no cover
 
 
 def test_oommf():
     """Runs all tests that require an OOMMF installation."""
-    oommfc.oommf.status(raise_exception=True)  # pragma: no cover
+    oommf.status(raise_exception=True)  # pragma: no cover
     import pytest  # pragma: no cover
-    pytest.main(["-m", "oommf", "-v", "--pyargs", "oommfc"])  # pragma: no cover
+    args = ["-m", "oommf", "-v",
+            "--pyargs", "oommfc"]  # pragma: no cover
+    pytest.main(args)  # pragma: no cover
