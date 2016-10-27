@@ -13,6 +13,7 @@ setuptools.setup(
     author_email='jupyteroommf@gmail.com',
     packages=setuptools.find_packages(),
     install_requires=['scipy',
+                      'sarge',
                       'discretisedfield',
                       'micromagneticmodel',
                       'oommfodt'],
