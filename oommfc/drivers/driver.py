@@ -88,9 +88,9 @@ class Driver(mm.Driver):
         system.dt = oommfodt.OOMMFodt(last_odt_file).df
 
     def _filenames(self, system):
-        dirname = "{}/".format(system.name)
-        omffilename = "{}m0.omf".format(dirname)
-        miffilename = "{}{}.mif".format(dirname, system.name)
+        dirname = os.path.join(system.name, "")
+        omffilename = os.path.join(dirname, "m0.omf")
+        miffilename = os.path.join(dirname, "{}.mif".format(system.name))
 
         filenames = {}
         filenames["dirname"] = dirname

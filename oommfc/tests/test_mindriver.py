@@ -35,13 +35,14 @@ class TestMinDriver(TestDriver):
         md._makedir(self.system)
         md._save_mif(self.system)
 
-        assert os.path.isfile("tds/tds.mif")
+        miffilename = os.path.join("tds", "tds.mif")
+        assert os.path.isfile(miffilename)
 
-        lines = open("tds/tds.mif", "r").readlines()
+        lines = open(miffilename, "r").readlines()
         assert lines[0] == "# MIF 2.1\n"
         assert lines[-1][-1] == "1"
 
-        os.system("rm -r tds/")
+        os.system("rm -r tds")
 
     @pytest.mark.oommf
     def test_drive(self):
@@ -49,14 +50,17 @@ class TestMinDriver(TestDriver):
 
         md.drive(self.system)
 
-        assert os.path.exists("tds/")
-        assert os.path.isfile("tds/tds.mif")
+        dirname = os.path.join("tds", "")
+        assert os.path.exists(dirname)
+        miffilename = os.path.join("tds", "tds.mif")
+        assert os.path.isfile(miffilename)
 
         omf_files = list(glob.iglob("tds/*.omf"))
         odt_files = list(glob.iglob("tds/*.odt"))
 
         assert len(omf_files) == 2
-        assert "tds/m0.omf" in omf_files
+        omffilename = os.path.join("tds", "m0.omf")
+        assert omffilename in omf_files
 
         assert len(odt_files) == 1
 

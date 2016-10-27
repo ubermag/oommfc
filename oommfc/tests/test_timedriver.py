@@ -43,13 +43,14 @@ class TestTimeDriver(TestDriver):
         driver._makedir(self.system)
         driver._save_mif(self.system, t=t, n=n)
 
-        assert os.path.isfile("tds/tds.mif")
+        miffilename = os.path.join("tds", "tds.mif")
+        assert os.path.isfile(miffilename)
 
-        lines = open("tds/tds.mif", "r").readlines()
+        lines = open(miffilename, "r").readlines()
         assert lines[0] == "# MIF 2.1\n"
         assert lines[-1][-1] == "1"
 
-        os.system("rm -r tds/")
+        os.system("rm -r tds")
 
     @pytest.mark.oommf
     def test_drive(self):
@@ -57,18 +58,20 @@ class TestTimeDriver(TestDriver):
 
         md.drive(self.system, t=0.1e-9, n=10)
 
-        assert os.path.exists("tds/")
-        assert os.path.isfile("tds/tds.mif")
+        assert os.path.exists("tds")
+        miffilename = os.path.join("tds", "tds.mif")
+        assert os.path.isfile(miffilename)
 
         omf_files = list(glob.iglob("tds/*.omf"))
         odt_files = list(glob.iglob("tds/*.odt"))
 
         assert len(omf_files) == 11
-        assert "tds/m0.omf" in omf_files
+        omffilename = os.path.join("tds", "m0.omf")
+        assert omffilename in omf_files
 
         assert len(odt_files) == 1
 
-        os.system("rm -r tds/")
+        os.system("rm -r tds")
 
     def test_drive_exception(self):
         md = oc.TimeDriver()
