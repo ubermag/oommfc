@@ -18,8 +18,8 @@ class OOMMF:
         cmd = ("tclsh", os.getenv(self.varname, "wrong"), "boxsi",
                "+fg", "+version", "-exitondone", "1")
         try:
-            p = sarge.capture_both(cmd)
-            returncode = p.returncode
+            poommf = sarge.capture_both(cmd)
+            returncode = poommf.returncode
         except FileNotFoundError:
             returncode = 1
         if returncode:
@@ -41,8 +41,8 @@ class OOMMF:
         # Docker status
         cmd = (self.dockername, "images")
         try:
-            p = sarge.capture_both(cmd)
-            returncode = p.returncode
+            pdocker = sarge.capture_both(cmd)
+            returncode = pdocker.returncode
         except FileNotFoundError:
             returncode = 1
 
