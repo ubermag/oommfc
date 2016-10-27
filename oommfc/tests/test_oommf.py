@@ -4,6 +4,7 @@ import oommfc as oc
 
 class TestOOMMF:
     @pytest.mark.oommf
+    @pytest.mark.travis
     def test_status(self):
         # Case 1: host True, docker True
         varname = "OOMMFTCL"
@@ -102,6 +103,7 @@ class TestOOMMF:
             oommf.call(argstr=argstr)
 
     @pytest.mark.oommf
+    @pytest.mark.travis
     def test_version(self):
         oommf = oc.OOMMF()
         version = oommf.version(where=None)
