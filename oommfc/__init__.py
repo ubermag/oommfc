@@ -19,7 +19,7 @@ def test():
     pytest.main(args)  # pragma: no cover
 
 
-def test_non_oommf():
+def test_not_oommf():
     """ Runs tests that do not need an OOMMF installation"""
     import pytest  # pragma: no cover
     args = ["-m", "not oommf", "-v",
