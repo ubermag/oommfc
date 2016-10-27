@@ -1,4 +1,5 @@
 import os
+import sys
 import sarge
 
 
@@ -16,7 +17,7 @@ class OOMMF:
         cmd = ("tclsh", os.getenv(self.varname, "wrong"), "boxsi",
                "+fg", "+version", "-exitondone", "1")
         try:
-            poommf = sarge.capture_both(cmd)
+            poommf = self._run_cmd(cmd)
             returncode = poommf.returncode
         except FileNotFoundError:
             returncode = 1
@@ -39,7 +40,7 @@ class OOMMF:
         # Docker status
         cmd = (self.dockername, "images")
         try:
-            pdocker = sarge.capture_both(cmd)
+            pdocker = self._run_cmd(cmd)
             returncode = pdocker.returncode
         except FileNotFoundError:
             returncode = 1
@@ -84,13 +85,19 @@ class OOMMF:
         oommfpath = os.getenv(self.varname, None)
         cmd = ("tclsh", oommfpath, "boxsi", "+fg",
                argstr, "-exitondone", "1")
-        return sarge.run(cmd, stderr=sarge.Capture())
+        return self._run_cmd(cmd)
 
     def _call_docker(self, argstr):
         cmd = "{} pull {}".format(self.dockername, self.dockerimage)
-        sarge.run(cmd)
+        self._run_cmd(cmd)
         cmd = ("{} run -v {}:/io {} /bin/bash -c \"tclsh "
                "/usr/local/oommf/oommf/oommf.tcl boxsi +fg {} "
                "-exitondone 1\"").format(self.dockername, os.getcwd(),
                                          self.dockerimage, argstr)
-        return sarge.run(cmd)
+        return self._run_cmd(cmd)
+
+    def _run_cmd(self, cmd):
+        if sys.platform == "linux":
+            return sarge.capture_both(cmd)
+        elif sys.platform.startswith("win"):
+            return sarge.run(cmd)

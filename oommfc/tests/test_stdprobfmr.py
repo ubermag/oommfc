@@ -1,5 +1,6 @@
 import os
 import glob
+import shutil
 import pytest
 import scipy.fftpack
 import numpy as np
