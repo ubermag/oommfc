@@ -8,7 +8,7 @@ RUN apt-get update -y
 RUN apt-get install -y apt-transport-https ca-certificates \
       lxc iptables curl python3-pip
 
-RUN python3 -m pip install --upgrade pip pytest-cov scipy \
+RUN python3 -m pip install --upgrade pip pytest-cov scipy sarge \
       git+git://github.com/joommf/discretisedfield.git \
       git+git://github.com/joommf/micromagneticmodel.git \
       git+git://github.com/joommf/oommfodt.git
