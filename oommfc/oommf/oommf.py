@@ -1,7 +1,5 @@
 import os
-import signal
 import sarge
-import subprocess
 
 
 class OOMMF:
@@ -59,33 +57,19 @@ class OOMMF:
 
         return {"host": host, "docker": docker}
 
-    def call(self, argstr):
-        if self.statusdict[self.where]:
-            if self.where == "host":
+    def call(self, argstr, where=None):
+        if where is None:
+            where = self.where
+        if self.statusdict[where]:
+            if where == "host":
                 return self._call_host(argstr=argstr)
-            elif self.where == "docker":
+            elif where == "docker":
                 return self._call_docker(argstr=argstr)
 
     def version(self, where=None):
         where = self._where_to_run(where=where)
-        if where == "host":
-            cmd = ("tclsh", os.getenv(self.varname), "+version")
-            phost = subprocess.Popen(cmd, stderr=subprocess.PIPE)
-            out, err = phost.communicate()
-        else:
-            returncode = subprocess.call([self.dockername,
-                                          "pull",
-                                          self.dockerimage])
-            cmd = ("{} run --privileged -v {}:/io {} "
-                   "/bin/bash -c \"tclsh /usr/local/oommf/oommf/oommf.tcl "
-                   "+version\"").format(self.dockername, os.getcwd(),
-                                        self.dockerimage)
-            pdocker = subprocess.Popen(cmd,
-                                       shell=True,
-                                       stderr=subprocess.PIPE)
-            out, err = pdocker.communicate()
-
-        return err.decode().split("oommf.tcl")[-1].strip()
+        p = self.call(argstr="+version", where=where)
+        return p.stderr.text.split("oommf.tcl")[-1].strip()
 
     def _where_to_run(self, where):
         if where is None:
@@ -100,13 +84,14 @@ class OOMMF:
         oommfpath = os.getenv(self.varname, None)
         cmd = ("tclsh", oommfpath, "boxsi", "+fg",
                argstr, "-exitondone", "1")
-        return subprocess.call(cmd)
+        return sarge.capture_both(cmd)
 
     def _call_docker(self, argstr):
-        returncode = subprocess.call([self.dockername, "pull",
-                                      self.dockerimage])
+        returncode = sarge.capture_both([self.dockername,
+                                         "pull",
+                                         self.dockerimage])
         cmd = ("{} run -v {}:/io {} /bin/bash -c \"tclsh "
                "/usr/local/oommf/oommf/oommf.tcl boxsi +fg {} "
                "-exitondone 1\"").format(self.dockername, os.getcwd(),
                                          self.dockerimage, argstr)
-        return subprocess.call(cmd, shell=True)
+        return sarge.capture_both(cmd)
