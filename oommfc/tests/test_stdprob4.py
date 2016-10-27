@@ -50,7 +50,7 @@ def test_stdprob4():
 
     assert len(odt_files) == 1
 
-    os.system("rm -r {}".format(name))
+    shutil.rmtree(name)
 
     H = (-24.6e-3/oc.mu0, 4.3e-3/oc.mu0, 0)
     system.hamiltonian += oc.Zeeman(H)
