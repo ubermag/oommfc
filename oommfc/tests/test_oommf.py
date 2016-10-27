@@ -3,6 +3,7 @@ import oommfc as oc
 
 
 class TestOOMMF:
+    @pytest.mark.oommf
     def test_status(self):
         # Case 1: host True, docker True
         varname = "OOMMFTCL"
@@ -86,6 +87,7 @@ class TestOOMMF:
         assert status["host"] is False
         assert status["docker"] is False
 
+    @pytest.mark.oommf
     def test_call_oommf(self):
         argstr = "+version"
         varname = "OOMMFTCL"
@@ -99,6 +101,7 @@ class TestOOMMF:
                              where=where)
             oommf.call(argstr=argstr)
 
+    @pytest.mark.oommf
     def test_version(self):
         oommf = oc.OOMMF()
         version = oommf.version(where=None)
@@ -121,6 +124,7 @@ class TestOOMMF:
         assert version[0].isdigit() and version[-1].isdigit()
         assert 5 < len(version) < 10
 
+    @pytest.mark.oommf
     def test_where_to_run(self):
         # Case 1: choose "host", both working
         where = None
