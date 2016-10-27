@@ -84,14 +84,15 @@ class OOMMF:
         oommfpath = os.getenv(self.varname, None)
         cmd = ("tclsh", oommfpath, "boxsi", "+fg",
                argstr, "-exitondone", "1")
-        return sarge.capture_both(cmd)
+        return sarge.run(cmd, stdout=sarge.Capture(),
+                         stderr=sarge.Capture())
 
     def _call_docker(self, argstr):
-        returncode = sarge.capture_both([self.dockername,
-                                         "pull",
-                                         self.dockerimage])
+        cmd = "{} pull {}".format(self.dockername, self.dockerimage)
+        sarge.run(cmd, stdout=sarge.Capture(), stderr = sarge.Capture())
         cmd = ("{} run -v {}:/io {} /bin/bash -c \"tclsh "
                "/usr/local/oommf/oommf/oommf.tcl boxsi +fg {} "
                "-exitondone 1\"").format(self.dockername, os.getcwd(),
                                          self.dockerimage, argstr)
-        return sarge.capture_both(cmd)
+        return sarge.run(cmd, stdout=sarge.Capture(),
+                         stderr = sarge.Capture())
