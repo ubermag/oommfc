@@ -1,5 +1,6 @@
 import os
 import signal
+import sarge
 import subprocess
 
 
@@ -14,15 +15,14 @@ class OOMMF:
 
     def status(self, raise_exception=False, verbose=False):
         # OOMMF status on host
-        oommfpath = os.getenv(self.varname, None)
+        cmd = ("tclsh", os.getenv(self.varname, "wrong"), "boxsi",
+               "+fg", "+version", "-exitondone", "1")
         try:
-            if oommfpath is None:
-                raise FileNotFoundError
-            else:
-                cmd = ("tclsh", os.getenv(self.varname, None), "boxsi",
-                       "+fg", "+version", "-exitondone", "1")
-                subprocess.check_call(cmd, stdout=subprocess.PIPE)
-        except (subprocess.CalledProcessError, FileNotFoundError):
+            p = sarge.capture_both(cmd)
+            returncode = p.returncode
+        except FileNotFoundError:
+            returncode = 1
+        if returncode:
             host = False
             if verbose:
                 oommfpath = os.getenv(self.varname)
@@ -39,10 +39,14 @@ class OOMMF:
             host = True
 
         # Docker status
+        cmd = (self.dockername, "images")
         try:
-            cmd = (self.dockername, "images")
-            subprocess.check_call(cmd)
-        except (subprocess.CalledProcessError, FileNotFoundError):
+            p = sarge.capture_both(cmd)
+            returncode = p.returncode
+        except FileNotFoundError:
+            returncode = 1
+
+        if returncode:
             docker = False
             if verbose:
                 print("Docker not installed/active.")
