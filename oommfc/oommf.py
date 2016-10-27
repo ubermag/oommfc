@@ -101,3 +101,7 @@ class OOMMF:
             return sarge.capture_both(cmd)
         elif sys.platform.startswith("win"):
             return sarge.run(cmd)
+        else:
+            raise NotImplementedError("Cant handle platform '{}'".
+                                      format(sys.platform))
+        
