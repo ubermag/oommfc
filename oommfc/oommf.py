@@ -10,7 +10,6 @@ class OOMMF:
         self.dockername = dockername
         self.dockerimage = dockerimage
         self.statusdict = self.status(raise_exception=False)
-        self.where = self._where_to_run(where)
 
     def status(self, raise_exception=False, verbose=False):
         # OOMMF status on host
@@ -59,13 +58,11 @@ class OOMMF:
         return {"host": host, "docker": docker}
 
     def call(self, argstr, where=None):
-        if where is None:
-            where = self.where
-        if self.statusdict[where]:
-            if where == "host":
-                return self._call_host(argstr=argstr)
-            elif where == "docker":
-                return self._call_docker(argstr=argstr)
+        where = self._where_to_run(where=where)
+        if where == "host":
+            return self._call_host(argstr=argstr)
+        elif where == "docker":
+            return self._call_docker(argstr=argstr)
 
     def version(self, where=None):
         where = self._where_to_run(where=where)
@@ -105,3 +102,9 @@ class OOMMF:
             msg = ("Cannot handle platform '{}' - please report to "
                    "developers").format(sys.platform)  # pragma: no cover
             raise NotImplementedError(msg)
+
+    def kill(self, targets=('all',), where=None):
+        where = self._where_to_run(where)
+        if where == 'host':
+            oommfpath = os.getenv(self.varname, None)
+            sarge.run(("tclsh", oommfpath, "killoommf") + targets)
