@@ -53,3 +53,15 @@ class HysteresisDriver(Driver):
         mif += "Schedule Oxs_MinDriver::Spin mags Stage 1"
         
         return mif
+
+    def _check_args(self, **kwargs):
+        Hmin = kwargs["Hmin"]
+        Hmax = kwargs["Hmax"]
+        n = kwargs["n"]
+
+        if len(Hmin) != 3:
+            raise ValueError("Expected length 3 tuple")
+        if len(Hmax) != 3:
+            raise ValueError("Expected length 3 tuple")
+        if n <= 0 or not isinstance(n, int):
+            raise ValueError("Expected n > 0.")
