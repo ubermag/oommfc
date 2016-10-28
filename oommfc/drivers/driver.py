@@ -61,6 +61,7 @@ class Driver(mm.Driver):
         oommf = oc.OOMMF(self.varname, dockerimage=self.dockerimage,
                          where=None)
         oommf.call(argstr=miffilename)
+        oommf.kill()
 
     def _update_system(self, system):
         self._update_m(system)
