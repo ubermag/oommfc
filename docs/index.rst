@@ -13,7 +13,6 @@ Contents:
 
    ipynb/installation
    ipynb/testing
-   ipynb/micromagneticmodel
    ipynb/standard_problem1
    ipynb/standard_problem3
    ipynb/standard_problem4
