@@ -127,6 +127,7 @@ class TestOOMMF:
         assert 5 < len(version) < 10
 
     @pytest.mark.oommf
+    @pytest.mark.travis
     def test_where_to_run(self):
         # Case 1: choose "host", both working
         where = None
