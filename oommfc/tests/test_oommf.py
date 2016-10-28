@@ -151,31 +151,3 @@ class TestOOMMF:
         oommf = oc.OOMMF(varname=varname, dockername=dockername)
         where = oommf._where_to_run(where=where)
         assert where == "docker"
-
-
-def test_oommf_platform_values():
-    """When we import oommf, we create an instance of OOMMF.
-    This fails, if the plat form is unknown. Let's check important platforms.
-    """
-    import sys
-    trueplatform = sys.platform
-    o = oc.OOMMF()
-    # fail early if we don't know the platform
-    with pytest.raises(NotImplementedError):
-        sys.platform = "non-existent"
-        o = oc.OOMMF()
-    # can we deal with linux?
-    sys.platform = "linux"
-    o = oc.OOMMF()
-    # can we deal with OSX?
-    sys.platform = "darwin"
-    o = oc.OOMMF()
-    # can we deal with windows?
-    sys.platform = "win32"
-    o = oc.OOMMF()
-
-    # we may want to extend this. List of available platforms at
-    # http://stackoverflow.com/questions/446209/possible-values-from-sys-platform
-
-
-
