@@ -5,7 +5,7 @@ import sarge
 
 class OOMMF:
     def __init__(self, varname="OOMMFTCL", dockername="docker",
-                 dockerimage="joommf/oommf"):
+                 dockerimage="joommf/oommf", where=None):
         self.varname = varname
         self.dockername = dockername
         self.dockerimage = dockerimage
@@ -57,8 +57,8 @@ class OOMMF:
 
         return {"host": host, "docker": docker}
 
-    def call(self, argstr):
-        where = self._where_to_run(where=None)
+    def call(self, argstr, where=None):
+        where = self._where_to_run(where=where)
         if where == "host":
             return self._call_host(argstr=argstr)
         elif where == "docker":
