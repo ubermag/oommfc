@@ -105,3 +105,10 @@ class OOMMF:
             msg = ("Cannot handle platform '{}' - please report to "
                    "developers").format(sys.platform)  # pragma: no cover
             raise NotImplementedError(msg)
+
+    def kill(self, targets=('all',), where=None):
+        where = self._where_to_run(where)
+        print(where)
+        if where == 'host':
+            oommfpath = os.getenv(self.varname, None)
+            sarge.run(("tclsh", oommfpath, "killoommf") + targets)
