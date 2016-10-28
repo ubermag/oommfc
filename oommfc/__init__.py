@@ -8,6 +8,7 @@ from .system import System
 from micromagneticmodel.consts import mu0, e, me, kB, h, g, \
     hbar, gamma, muB, gamma0
 
+__version__ = "0.5.6.9"
 
 oommf = OOMMF()
 

@@ -1,11 +1,13 @@
 import setuptools
+import oommfc as oc
+
 
 with open('README.rst') as f:
     readme = f.read()
 
 setuptools.setup(
     name='oommfc',
-    version='0.5.6.8',
+    version=oc.__version__,
     description='A Python-based OOMMF calculator.',
     long_description=readme,
     url='https://joommf.github.io',
