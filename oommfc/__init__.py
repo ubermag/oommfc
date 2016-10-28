@@ -8,7 +8,7 @@ from .system import System
 from micromagneticmodel.consts import mu0, e, me, kB, h, g, \
     hbar, gamma, muB, gamma0
 
-__version__ = "0.5.6.10"
+__version__ = "0.5.6.11"
 oommf = OOMMF()
 
 
@@ -33,6 +33,6 @@ def test_oommf():
     """Runs all tests that require an OOMMF installation."""
     oommf.status(raise_exception=True)  # pragma: no cover
     import pytest  # pragma: no cover
-    args = ["-m", "not travis", "-m", "oommf", "-v",
+    args = ["-m", "oommf and not travis", "-v",
             "--pyargs", "oommfc"]  # pragma: no cover
     pytest.main(args)  # pragma: no cover
