@@ -9,8 +9,8 @@ from micromagneticmodel.consts import mu0, e, me, kB, h, g, \
     hbar, gamma, muB, gamma0
 
 __version__ = "0.5.6.10"
-
 oommf = OOMMF()
+
 
 def test():
     """Runs all the tests"""

@@ -97,14 +97,11 @@ class OOMMF:
         return self._run_cmd(cmd)
 
     def _run_cmd(self, cmd):
-        if sys.platform == "linux":
-            return sarge.capture_both(cmd)
-        if sys.platform == "darwin":            # OSX
+        if sys.platform in ("linux", "darwin"):  # Linux and MacOs
             return sarge.capture_both(cmd)
         elif sys.platform.startswith("win"):
             return sarge.run(cmd)
         else:
-            raise NotImplementedError(
-                "Cant handle platform '{}'  - please report to developers".
-                format(sys.platform))
-        
+            msg = ("Cannot handle platform '{}' - please report to "
+                   "developers").format(sys.platform)  # pragma: no cover
+            raise NotImplementedError(msg)
