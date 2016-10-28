@@ -76,11 +76,8 @@ class OOMMF:
         if where is None:
             if self.statusdict["host"]:
                 return "host"
-            elif self.statusdict["docker"]:
-                return "docker"
             else:
-                raise ValueError("Cannot find OOMMFTCL on host, and "\
-                                 "cannot find docker daemon.")
+                return "docker"
         else:
             return where
 
