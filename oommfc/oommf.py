@@ -5,12 +5,11 @@ import sarge
 
 class OOMMF:
     def __init__(self, varname="OOMMFTCL", dockername="docker",
-                 dockerimage="joommf/oommf", where=None):
+                 dockerimage="joommf/oommf"):
         self.varname = varname
         self.dockername = dockername
         self.dockerimage = dockerimage
         self.statusdict = self.status(raise_exception=False)
-        self.where = self._where_to_run(where)
 
     def status(self, raise_exception=False, verbose=False):
         # OOMMF status on host
@@ -58,14 +57,12 @@ class OOMMF:
 
         return {"host": host, "docker": docker}
 
-    def call(self, argstr, where=None):
-        if where is None:
-            where = self.where
-        if self.statusdict[where]:
-            if where == "host":
-                return self._call_host(argstr=argstr)
-            elif where == "docker":
-                return self._call_docker(argstr=argstr)
+    def call(self, argstr):
+        where = self._where_to_run(where=None)
+        if where == "host":
+            return self._call_host(argstr=argstr)
+        elif where == "docker":
+            return self._call_docker(argstr=argstr)
 
     def version(self, where=None):
         where = self._where_to_run(where=where)
