@@ -153,7 +153,7 @@ class TestOOMMF:
         assert where == "docker"
 
 
-def test_import_oommf():
+def test_oommf_platform_values():
     """When we import oommf, we create an instance of OOMMF.
     This fails, if the plat form is unknown. Let's check important platforms.
     """
@@ -176,4 +176,6 @@ def test_import_oommf():
 
     # we may want to extend this. List of available platforms at
     # http://stackoverflow.com/questions/446209/possible-values-from-sys-platform
-    
+
+
+
