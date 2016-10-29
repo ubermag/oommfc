@@ -2,7 +2,7 @@ PROJECT=oommfc
 IPYNBPATH=docs/ipynb/*.ipynb
 CODECOVTOKEN=a253c171-1619-4812-944c-89918bf5c98d
 
-test: test-coverage #test-ipynb
+#test: test-coverage #test-ipynb
 
 test-all:
 	python3 -m pytest
