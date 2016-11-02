@@ -13,6 +13,7 @@ Contents:
 
    ipynb/installation
    ipynb/testing
+   ipynb/first_oommfc_notebook
    ipynb/standard_problem1
    ipynb/standard_problem3
    ipynb/standard_problem4
