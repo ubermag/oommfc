@@ -1,9 +1,13 @@
-import discretisedfield as df
+import shutil
+import pytest
 import oommfc as oc
+import discretisedfield as df
 
 
 @pytest.mark.oommf
 def test_stdprob1():
+    name = "stdprob1"
+
     # Geometry
     lx = 2e-6  # x dimension of the sample(m)
     ly = 1e-6  # y dimension of the sample (m)
@@ -18,7 +22,7 @@ def test_stdprob1():
     # Create a mesh object.
     mesh = oc.Mesh(p1=(0, 0, 0), p2=(lx, ly, lz), cell=(20e-9, 20e-9, 20e-9))
 
-    system = oc.System(name="stdprob1")
+    system = oc.System(name=name)
     system.hamiltonian = oc.Exchange(A) + oc.UniaxialAnisotropy(K, u) + \
         oc.Demag()
     system.m = df.Field(mesh, value=(-10, -1, 0), norm=Ms)
@@ -35,3 +39,5 @@ def test_stdprob1():
 
     assert len(mx) == 21
     assert len(Bx) == 21
+
+    shutil.rmtree(name)
