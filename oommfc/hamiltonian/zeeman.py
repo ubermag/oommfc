@@ -7,9 +7,7 @@ class Zeeman(mm.Zeeman):
         mif += 'Specify Oxs_FixedZeeman:{} {{\n'.format(self.name)
         mif += '  field {\n'
         mif += '    Oxs_UniformVectorField {\n'
-        mif += '      vector {{{} {} {}}}\n'.format(self.H[0],
-                                                    self.H[1],
-                                                    self.H[2])
+        mif += '      vector {{{} {} {}}}\n'.format(*self.H)
         mif += '    }\n'
         mif += '  }\n'
         mif += '  multiplier 1\n'
