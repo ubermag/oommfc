@@ -22,7 +22,7 @@ class TestHamiltonian:
         for term in self.terms:
             hamiltonian.add(term)
 
-        script = hamiltonian.script()
+        script = hamiltonian.script
 
         assert script.count("#") == 4
         assert script.count("Specify") == 4

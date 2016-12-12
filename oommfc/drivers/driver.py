@@ -47,7 +47,7 @@ class Driver(mm.Driver):
         Save OOMMF configuration mif file.
         """
         mif = "# MIF 2.1\n\n"
-        mif += system.script()
+        mif += system.script
         mif += self.script(system, **kwargs)
 
         miffilename = self._filenames(system)["miffilename"]

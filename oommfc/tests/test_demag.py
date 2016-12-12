@@ -6,7 +6,7 @@ class TestDemag(mmt.TestDemag):
     def test_script(self):
         demag = oc.Demag()
 
-        script = demag.script()
+        script = demag.script
         assert script.count("\n") == 3
         assert script[0] == "#"
         assert script[-1] == "\n"

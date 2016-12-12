@@ -2,6 +2,7 @@ import micromagneticmodel as mm
 
 
 class Exchange(mm.Exchange):
+    @property
     def script(self):
         mif = "# UniformExchange\n"
         mif += "Specify Oxs_UniformExchange {\n"

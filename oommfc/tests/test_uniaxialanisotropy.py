@@ -4,14 +4,12 @@ import micromagneticmodel.tests as mmt
 
 class TestUniaxialAnisotropy(mmt.TestUniaxialAnisotropy):
     def test_script(self):
-        for arg in self.valid_args:
-            K = arg[0]
-            u = arg[1]
+        for K, u in self.valid_args:
             name = "anisotropy_test"
 
             anisotropy = oc.UniaxialAnisotropy(K, u, name=name)
 
-            script = anisotropy.script()
+            script = anisotropy.script
             assert script.count("\n") == 6
             assert script[0] == "#"
             assert script[-1] == "\n"

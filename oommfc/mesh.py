@@ -3,6 +3,7 @@ import discretisedfield as df
 
 
 class Mesh(df.Mesh):
+    @property
     def script(self):
         mif = "# BoxAtlas\n"
         mif += "Specify Oxs_BoxAtlas:atlas {\n"

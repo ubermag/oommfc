@@ -15,10 +15,10 @@ class TestSystem:
         system.dynamics += oc.Damping(0.1)
 
         mesh = oc.Mesh((0, 0, 0), (5, 5, 5), (1, 1, 1))
-        m_fun = lambda pos: (0, 1, 0)
-        system.m = df.Field(mesh, dim=3, value=m_fun, norm=1)
+        
+        system.m = df.Field(mesh, dim=3, value=(0, 1, 0), norm=1)
 
-        script = system.script()
+        script = system.script
 
         assert script[0] == "#"
         assert script[-1] == "\n"

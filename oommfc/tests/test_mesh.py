@@ -4,15 +4,12 @@ import discretisedfield.tests as dft
 
 class TestMesh(dft.TestMesh):
     def test_get_mif(self):
-        for arg in self.valid_args:
-            p1 = arg[0]
-            p2 = arg[1]
-            cell = arg[2]
+        for p1, p2, cell in self.valid_args:
             name = "test_mesh"
 
             mesh = oc.Mesh(p1, p2, cell, name=name)
 
-            script = mesh.script()
+            script = mesh.script
             assert script.count("\n") == 13
             assert script[0] == "#"
             assert script[-1] == "\n"
