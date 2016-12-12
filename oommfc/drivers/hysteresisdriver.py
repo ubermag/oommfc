@@ -4,7 +4,7 @@ from .driver import Driver
 class HysteresisDriver(Driver):
     def script(self, system, **kwargs):
         meshname = system.mesh.name
-        Ms = system.m.normalisedto
+        Ms = system.m._norm
         systemname = system.name
         Hmin = kwargs["Hmin"]
         Hmax = kwargs["Hmax"]

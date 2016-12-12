@@ -4,7 +4,7 @@ from .driver import Driver
 class MinDriver(Driver):
     def script(self, system):
         meshname = system.mesh.name
-        Ms = system.m.normalisedto
+        Ms = system.m._norm
         systemname = system.name
 
         mif = "# CGEvolver\n"

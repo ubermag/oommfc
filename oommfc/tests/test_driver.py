@@ -14,8 +14,7 @@ class TestDriver:
         self.system.hamiltonian += oc.Demag()
         self.system.dynamics += oc.Precession(2.211e5)
         self.system.dynamics += oc.Damping(0.02)
-        self.system.m = df.Field(mesh, value=(0, 1, 0),
-                                 normalisedto=8e5)
+        self.system.m = df.Field(mesh, value=(0, 1, 0), norm=8e5)
 
     def test_makedir(self):
         driver = oc.Driver()

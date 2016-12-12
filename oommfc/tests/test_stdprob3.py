@@ -59,7 +59,7 @@ def test_stdprob3():
         system.mesh = mesh
         system.hamiltonian = oc.Exchange(A) + oc.UniaxialAnisotropy(K, u) + \
             oc.Demag()
-        system.m = df.Field(mesh, value=m_init, normalisedto=Ms)
+        system.m = df.Field(mesh, value=m_init, norm=Ms)
 
         md = oc.MinDriver()
         md.drive(system)

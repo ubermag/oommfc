@@ -41,7 +41,7 @@ def test_stdprob5():
         x, y, z = pos[0]/1e-9-50, pos[1]/1e-9-50, pos[2]/1e-9
         return (-y, x, 10)
 
-    system.m = df.Field(mesh, value=m_vortex, normalisedto=Ms)
+    system.m = df.Field(mesh, value=m_vortex, norm=Ms)
 
     md = oc.MinDriver()
     md.drive(system)

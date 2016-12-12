@@ -30,8 +30,7 @@ def test_stdprob4():
     system.dynamics = oc.Precession(gamma) + oc.Damping(alpha)
 
     Ms = 8e5  # (A/m)
-    system.m = df.Field(mesh, value=(1, 0.25, 0.1),
-                        normalisedto=Ms)
+    system.m = df.Field(mesh, value=(1, 0.25, 0.1), norm=Ms)
 
     md = oc.MinDriver()
     md.drive(system)  # updates system.m in-place

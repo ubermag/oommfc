@@ -31,6 +31,7 @@ class Driver(mm.Driver):
         self._save_mif(system, **kwargs)
 
         self._run_simulator(system)
+
         self._update_system(system)
 
     def _makedir(self, system):
@@ -72,8 +73,7 @@ class Driver(mm.Driver):
 
         # Update system's magnetisaton.
         m_field = df.read_oommf_file(last_omf_file)
-        m_field.normalisedto = system.m.normalisedto
-        m_field.normalise()
+        m_field.norm = system.m._norm
         system.m = m_field
 
     def _update_dt(self, system):
