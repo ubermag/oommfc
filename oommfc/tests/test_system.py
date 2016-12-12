@@ -15,7 +15,7 @@ class TestSystem:
         system.dynamics += oc.Damping(0.1)
 
         mesh = oc.Mesh((0, 0, 0), (5, 5, 5), (1, 1, 1))
-        
+
         system.m = df.Field(mesh, dim=3, value=(0, 1, 0), norm=1)
 
         script = system.script
