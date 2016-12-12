@@ -3,7 +3,7 @@ from .driver import Driver
 
 class MinDriver(Driver):
     def script(self, system):
-        meshname = system.mesh.name
+        meshname = system.m.mesh.name
         Ms = system.m._norm
         systemname = system.name
 

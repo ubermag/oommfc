@@ -3,7 +3,7 @@ from .driver import Driver
 
 class HysteresisDriver(Driver):
     def script(self, system, **kwargs):
-        meshname = system.mesh.name
+        meshname = system.m.mesh.name
         Ms = system.m._norm
         systemname = system.name
         Hmin = kwargs["Hmin"]

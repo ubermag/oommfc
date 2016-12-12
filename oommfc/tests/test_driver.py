@@ -9,7 +9,6 @@ class TestDriver:
         mesh = oc.Mesh((0, 0, 0),
                        (100e-9, 100e-9, 10e-9),
                        (10e-9, 10e-9, 10e-9))
-        self.system.mesh = mesh
         self.system.hamiltonian += oc.Exchange(1.5e-11)
         self.system.hamiltonian += oc.Demag()
         self.system.dynamics += oc.Precession(2.211e5)

@@ -73,6 +73,11 @@ class Driver(mm.Driver):
 
         # Update system's magnetisaton.
         m_field = df.read_oommf_file(last_omf_file)
+
+        # Temporary solution for having script in mesh object.
+        # Overwrites the df.Mesh with oc.Mesh.
+        m_field.mesh = system.m.mesh
+
         m_field.norm = system.m._norm
         system.m = m_field
 

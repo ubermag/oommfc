@@ -30,7 +30,6 @@ def test_stdprobfmr():
 
     system = oc.System(name="stdprobfmr")
 
-    system.mesh = mesh
     system.hamiltonian = oc.Exchange(A) + oc.Demag() + oc.Zeeman(H)
     system.dynamics = oc.Precession(gamma) + oc.Damping(alpha)
     system.m = df.Field(mesh, value=(0, 0, 1), norm=Ms)

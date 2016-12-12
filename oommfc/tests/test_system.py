@@ -1,11 +1,10 @@
+import discretisedfield as df
 import oommfc as oc
 
 
 class TestSystem:
     def test_script(self):
         system = oc.System(name="test_system")
-
-        system.mesh = oc.Mesh((0, 0, 0), (5, 5, 5), (1, 1, 1))
 
         system.hamiltonian += oc.Exchange(1e-12)
         system.hamiltonian += oc.Demag()
@@ -15,7 +14,9 @@ class TestSystem:
         system.dynamics += oc.Precession(2.211e5)
         system.dynamics += oc.Damping(0.1)
 
-        system.m = lambda pos: (0, 1, 0)
+        mesh = oc.Mesh((0, 0, 0), (5, 5, 5), (1, 1, 1))
+        m_fun = lambda pos: (0, 1, 0)
+        system.m = df.Field(mesh, dim=3, value=m_fun, norm=1)
 
         script = system.script()
 

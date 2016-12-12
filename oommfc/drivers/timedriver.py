@@ -19,7 +19,7 @@ class TimeDriver(Driver):
         else:
             stt = True
 
-        meshname = system.mesh.name
+        meshname = system.m.mesh.name
         Ms = system.m._norm
         systemname = system.name
 

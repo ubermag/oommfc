@@ -20,7 +20,6 @@ def test_stdprob4():
     mesh = oc.Mesh((0, 0, 0), (L, d, th), cellsize)
 
     system = oc.System(name=name)
-    system.mesh = mesh
 
     A = 1.3e-11  # (J/m)
     system.hamiltonian = oc.Exchange(A) + oc.Demag()

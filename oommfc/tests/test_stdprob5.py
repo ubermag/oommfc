@@ -34,7 +34,6 @@ def test_stdprob5():
     system = oc.System(name=name)
     mesh = oc.Mesh(p1=(0, 0, 0), p2=(100e-9, 100e-9, 10e-9),
                    cell=(5e-9, 5e-9, 5e-9))
-    system.mesh = mesh
     system.hamiltonian = oc.Exchange(A) + oc.Demag()
 
     def m_vortex(pos):
