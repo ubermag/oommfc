@@ -2,6 +2,7 @@ import discretisedfield as df
 import oommfc as oc
 
 
+@pytest.mark.oommf
 def test_stdprob1():
     # Geometry
     lx = 2e-6  # x dimension of the sample(m)
