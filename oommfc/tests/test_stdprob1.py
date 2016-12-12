@@ -18,12 +18,10 @@ def test_stdprob1():
     mesh = oc.Mesh(p1=(0, 0, 0), p2=(lx, ly, lz), cell=(20e-9, 20e-9, 20e-9))
 
     system = oc.System(name="stdprob1")
-    
     system.hamiltonian = oc.Exchange(A) + oc.UniaxialAnisotropy(K, u) + \
-                         oc.Demag()
-
+        oc.Demag()
     system.m = df.Field(mesh, value=(-10, -1, 0), norm=Ms)
-    
+
     Hmax = (50e-3/oc.mu0, 0.87275325e-3/oc.mu0, 0)
     Hmin = (-50e-3/oc.mu0, -0.87275325e-3/oc.mu0, 0)
     n = 10
