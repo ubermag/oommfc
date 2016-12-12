@@ -13,20 +13,8 @@ class HysteresisDriver(Driver):
         mif = "# UZeeman\n"
         mif += "Specify Oxs_UZeeman {\n"
         mif += "  Hrange {\n"
-        mif += "    {{ {} {} {} {} {} {} {} }}\n".format(Hmin[0],
-                                                         Hmin[1],
-                                                         Hmin[2],
-                                                         Hmax[0],
-                                                         Hmax[1],
-                                                         Hmax[2],
-                                                         n)
-        mif += "    {{ {} {} {} {} {} {} {} }}\n".format(Hmax[0],
-                                                         Hmax[1],
-                                                         Hmax[2],
-                                                         Hmin[0],
-                                                         Hmin[1],
-                                                         Hmin[2],
-                                                         n)
+        mif += "    {{ {} {} {} {} {} {} {} }}\n".format(*Hmin, *Hmax, n)
+        mif += "    {{ {} {} {} {} {} {} {} }}\n".format(*Hmax, *Hmin, n)
         mif += "  }\n"
         mif += "}\n\n"
         mif += "# CGEvolver\n"
