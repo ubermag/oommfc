@@ -42,4 +42,8 @@ class Data(mm.Data):
 
         return dt[_dict[self.interaction]][0]
 
+    @property
+    def energy_density(self):
+        pass
+
         
