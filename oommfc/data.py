@@ -1,6 +1,7 @@
 import os
 import glob
 import oommfc as oc
+import oommfodt as oo
 import discretisedfield as df
 import micromagneticmodel as mm
 
@@ -25,4 +26,20 @@ class Data(mm.Data):
 
     @property
     def energy(self):
-        pass
+        _dict = {"Demag": "Demag::Energy",
+                 "Exchange": "UniformExchange::Energy",
+                 "UniaxialAnisotropy": "UniaxialAnisotropy::Energy",
+                 "Zeeman": "FixedZeeman:zeeman:Energy",
+                 "Hamiltonian": "RungeKuttaEvolve:evolver:Totalenergy"}
+        td = oc.TimeDriver()
+        td.drive(self.system, derive="energy")
+
+        dirname = os.path.join(self.system.name, "")
+        last_odt_file = max(glob.iglob("{}*.odt".format(dirname)),
+                            key=os.path.getctime)
+
+        dt = oo.OOMMFodt(last_odt_file, replace_headers=False).df
+
+        return dt[_dict[self.interaction]][0]
+
+        

@@ -71,12 +71,17 @@ class TimeDriver(Driver):
         mif += "  basename {}\n".format(systemname)
         mif += "  vector_field_output_format {text %\#.8g}\n"
         mif += "}\n\n"
+        mif += "Destination table mmArchive\n"
+        mif += "Destination mags mmArchive\n\n"
+        mif += "Destination archive mmArchive\n\n"
         if "derive" in kwargs:
-            mif += "Destination archive mmArchive\n\n"
-            mif += "Schedule \"{}\" archive Step 1".format(kwargs["derive"])
+            if "ield" in kwargs["derive"]:
+                mif += "Schedule \"{}\" archive Step 1".format(kwargs["derive"])
+            elif "density" in kwargs["derive"]:
+                pass
+            else:
+                mif += "Schedule DataTable table Stage 1\n"
         else:
-            mif += "Destination table mmArchive\n"
-            mif += "Destination mags mmArchive\n\n"
             mif += "Schedule DataTable table Stage 1\n"
             mif += "Schedule Oxs_TimeDriver::Spin mags Stage 1"
 

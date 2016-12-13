@@ -17,9 +17,9 @@ class TestTimeDriver(TestDriver):
         assert script[-1] == "1"
         assert script.count("#") == 3
         assert script.count("Specify") == 2
-        assert script.count("Destination") == 2
+        assert script.count("Destination") == 3
         assert script.count("Schedule") == 2
-        assert script.count("mmArchive") == 2
+        assert script.count("mmArchive") == 3
         assert script.count("Stage") == 2
 
         assert "Oxs_RungeKuttaEvolve" in script
