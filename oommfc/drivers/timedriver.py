@@ -22,6 +22,10 @@ class TimeDriver(Driver):
         meshname = system.m.mesh.name
         Ms = system.m._norm
         systemname = system.name
+        if "derive" in kwargs:
+            t, n = 1e-20, 1
+        else:
+            t, n = kwargs["t"], kwargs["n"]
 
         if not stt:
             mif = "# RungeKuttaEvolver\n"
@@ -49,9 +53,13 @@ class TimeDriver(Driver):
         mif += "# TimeDriver\n"
         mif += "Specify Oxs_TimeDriver {\n"
         mif += "  evolver {}\n".format(evolver)
-        mif += "  stopping_time {}\n".format(kwargs["t"]/kwargs["n"])
+        mif += "  stopping_time {}\n".format(t/n)
         mif += "  mesh :{}\n".format(meshname)
-        mif += "  stage_count {}\n".format(kwargs["n"])
+        mif += "  stage_count {}\n".format(n)
+        if "total_iteration_limit" in kwargs:
+            mif += "  total_iteration_limit {}\n".format(total_iteration_limit)
+        elif "derive" in kwargs:
+            mif += "  total_iteration_limit {}\n".format(1)
         mif += "  Ms {}\n".format(Ms)
         mif += "  m0 {\n"
         mif += "    Oxs_FileVectorField {\n"
@@ -63,17 +71,22 @@ class TimeDriver(Driver):
         mif += "  basename {}\n".format(systemname)
         mif += "  vector_field_output_format {text %\#.8g}\n"
         mif += "}\n\n"
-        mif += "Destination table mmArchive\n"
-        mif += "Destination mags mmArchive\n\n"
-        mif += "Schedule DataTable table Stage 1\n"
-        mif += "Schedule Oxs_TimeDriver::Spin mags Stage 1"
+        if "derive" in kwargs:
+            mif += "Destination archive mmArchive\n\n"
+            mif += "Schedule \"{}\" archive Step 1".format(kwargs["derive"])
+        else:
+            mif += "Destination table mmArchive\n"
+            mif += "Destination mags mmArchive\n\n"
+            mif += "Schedule DataTable table Stage 1\n"
+            mif += "Schedule Oxs_TimeDriver::Spin mags Stage 1"
 
         return mif
 
     def _check_args(self, **kwargs):
-        t, n = kwargs["t"], kwargs["n"]
-
-        if t <= 0:
-            raise ValueError("Expected t > 0.")
-        if n <= 0 or not isinstance(n, int):
-            raise ValueError("Expected n > 0.")
+        if "derive" in kwargs:
+            pass
+        else:
+            if kwargs["t"] <= 0:
+                raise ValueError("Expected t > 0.")
+            if kwargs["n"] <= 0 or not isinstance(kwargs["n"], int):
+                raise ValueError("Expected n > 0.")

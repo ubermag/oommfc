@@ -32,7 +32,8 @@ class Driver(mm.Driver):
 
         self._run_simulator(system)
 
-        self._update_system(system)
+        if "derive" not in kwargs:
+            self._update_system(system)
 
     def _makedir(self, system):
         """
