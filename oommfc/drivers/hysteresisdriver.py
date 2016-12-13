@@ -39,7 +39,7 @@ class HysteresisDriver(Driver):
         mif += "Destination mags mmArchive\n\n"
         mif += "Schedule DataTable table Stage 1\n"
         mif += "Schedule Oxs_MinDriver::Spin mags Stage 1"
-        
+
         return mif
 
     def _check_args(self, **kwargs):
