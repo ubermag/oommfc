@@ -72,13 +72,11 @@ class TimeDriver(Driver):
         mif += "  vector_field_output_format {text %\#.8g}\n"
         mif += "}\n\n"
         mif += "Destination table mmArchive\n"
-        mif += "Destination mags mmArchive\n\n"
+        mif += "Destination mags mmArchive\n"
         mif += "Destination archive mmArchive\n\n"
         if "derive" in kwargs:
-            if "ield" in kwargs["derive"]:
+            if "ield" in kwargs["derive"] or "density" in kwargs["derive"]:
                 mif += "Schedule \"{}\" archive Step 1".format(kwargs["derive"])
-            elif "density" in kwargs["derive"]:
-                pass
             else:
                 mif += "Schedule DataTable table Stage 1\n"
         else:

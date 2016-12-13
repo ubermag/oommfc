@@ -44,6 +44,17 @@ class Data(mm.Data):
 
     @property
     def energy_density(self):
-        pass
+        _dict = {"Demag": "Oxs_Demag::Energy density",
+                 "Exchange": "Oxs_UniformExchange::Energy density",
+                 "UniaxialAnisotropy": "Oxs_UniaxialAnisotropy::Energy density",
+                 "Zeeman": "Oxs_FixedZeeman:zeeman:Energy density",
+                 "Hamiltonian": "Oxs_RungeKuttaEvolve:evolver:Total energy density"}
 
-        
+        td = oc.TimeDriver()
+        td.drive(self.system, derive=_dict[self.interaction])
+
+        dirname = os.path.join(self.system.name, "")
+        last_oef_file = max(glob.iglob("{}*.oef".format(dirname)),
+                            key=os.path.getctime)
+
+        return last_oef_file
