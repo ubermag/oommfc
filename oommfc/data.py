@@ -57,4 +57,4 @@ class Data(mm.Data):
         last_oef_file = max(glob.iglob("{}*.oef".format(dirname)),
                             key=os.path.getctime)
 
-        return last_oef_file
+        return df.read_oommf_file(last_oef_file)
