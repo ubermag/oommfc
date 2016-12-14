@@ -27,11 +27,6 @@ class Driver(mm.Driver):
         omffilename = filenames["omffilename"]
         system.m.write_oommf_file(omffilename)
 
-        # Save saturation magnetisation to omf file.
-        Ms_field = df.Field(system.m.mesh, dim=1, value=system.m._norm)
-        Ms_filename = os.path.join(system.name, "Ms.omf")
-        Ms_field.write_oommf_file(Ms_filename)
-
         miffilename = filenames["miffilename"]
         self._save_mif(system, **kwargs)
 
