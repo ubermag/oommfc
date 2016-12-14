@@ -20,7 +20,6 @@ class TimeDriver(Driver):
             stt = True
 
         meshname = system.m.mesh.name
-        Ms = system.m._norm
         systemname = system.name
         if "derive" in kwargs:
             t, n = 1e-20, 1
