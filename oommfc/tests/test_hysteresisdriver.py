@@ -56,7 +56,7 @@ class TestHysteresisDriver(TestDriver):
         omf_files = list(glob.iglob("tds/*.omf"))
         odt_files = list(glob.iglob("tds/*.odt"))
 
-        # assert len(omf_files) == 22
+        assert len(omf_files) == 22
         omffilename = os.path.join("tds", "m0.omf")
         assert omffilename in omf_files
 
