@@ -20,6 +20,7 @@ Contents:
    ipynb/standard_problem4
    ipynb/standard_problem5
    ipynb/standard_problem_fmr
+   ipynb/spatially_varying_parameters
 
 Indices and tables
 ==================
