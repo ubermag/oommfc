@@ -50,6 +50,12 @@ class TimeDriver(Driver):
             mif += "}\n\n"
             evolver = "Anv_SpinTEvolve"
 
+        mif += "# Ms file\n"
+        mif += "Specify Oxs_FileVectorField:msfile {\n"
+        mif += "   atlas :atlas\n"
+        mif += "   file Ms.omf\n"
+        mif += "}\n\n"
+            
         mif += "# TimeDriver\n"
         mif += "Specify Oxs_TimeDriver {\n"
         mif += "  evolver {}\n".format(evolver)
@@ -60,7 +66,10 @@ class TimeDriver(Driver):
             mif += "  total_iteration_limit {}\n".format(total_iteration_limit)
         elif "derive" in kwargs:
             mif += "  total_iteration_limit {}\n".format(1)
-        mif += "  Ms {}\n".format(Ms)
+            
+        mif += "  Ms {Oxs_VecMagScalarField {\n"
+        mif += "     field :msfile\n"
+        mif += "  }}\n"
         mif += "  m0 {\n"
         mif += "    Oxs_FileVectorField {\n"
         mif += "      atlas :atlas\n"
