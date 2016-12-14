@@ -15,7 +15,7 @@ class TestTimeDriver(TestDriver):
 
         assert script[0] == "#"
         assert script[-1] == "1"
-        assert script.count("#") == 4
+        assert script.count("#") == 5
         assert script.count("Specify") == 3
         assert script.count("Destination") == 3
         assert script.count("Schedule") == 2

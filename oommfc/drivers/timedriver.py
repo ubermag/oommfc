@@ -73,6 +73,7 @@ class TimeDriver(Driver):
         mif += "  }\n"
         mif += "  m0 :m0file\n"
         mif += "  basename {}\n".format(systemname)
+        mif += "  scalar_field_output_format {text %\#.15g}\n"
         mif += "  vector_field_output_format {text %\#.15g}\n"
         mif += "}\n\n"
         mif += "Destination table mmArchive\n"
