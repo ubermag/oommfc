@@ -15,8 +15,8 @@ class TestTimeDriver(TestDriver):
 
         assert script[0] == "#"
         assert script[-1] == "1"
-        assert script.count("#") == 3
-        assert script.count("Specify") == 2
+        assert script.count("#") == 4
+        assert script.count("Specify") == 3
         assert script.count("Destination") == 3
         assert script.count("Schedule") == 2
         assert script.count("mmArchive") == 3
@@ -31,11 +31,6 @@ class TestTimeDriver(TestDriver):
         assert lines[2] == "  alpha {}".format(alpha)
         gamma = self.system.dynamics.precession.gamma
         assert lines[3] == "  gamma_G {}".format(gamma)
-        assert lines[9] == "  stopping_time {}".format(t/n)
-        assert lines[11] == "  stage_count {}".format(n)
-        assert lines[12] == "  Ms {}".format(8e5)
-        assert lines[17] == "      file m0.omf"
-        assert lines[20] == "  basename tds"
 
     def test_save_mif(self):
         driver = oc.TimeDriver()
