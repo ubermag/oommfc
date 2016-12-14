@@ -79,7 +79,6 @@ class Driver(mm.Driver):
         # Overwrites the df.Mesh with oc.Mesh.
         m_field.mesh = system.m.mesh
 
-        m_field.norm = system.m._norm
         system.m = m_field
 
     def _update_dt(self, system):

@@ -66,13 +66,13 @@ class TimeDriver(Driver):
             mif += "  total_iteration_limit {}\n".format(total_iteration_limit)
         elif "derive" in kwargs:
             mif += "  total_iteration_limit {}\n".format(1)
-            
+
         mif += "  Ms {\n"
         mif += "    Oxs_VecMagScalarField {\n"
         mif += "      field :m0file\n"
         mif += "    }\n"
         mif += "  }\n"
-        mif += "  m0 m0file\n"
+        mif += "  m0 :m0file\n"
         mif += "  basename {}\n".format(systemname)
         mif += "  vector_field_output_format {text %\#.8g}\n"
         mif += "}\n\n"
@@ -86,7 +86,7 @@ class TimeDriver(Driver):
                 mif += "Schedule DataTable table Stage 1\n"
         else:
             mif += "Schedule DataTable table Stage 1\n"
-            mif += "Schedule Oxs_TimeDriver::Spin mags Stage 1"
+            mif += "Schedule Oxs_TimeDriver::Magnetization mags Stage 1"
 
         return mif
 
