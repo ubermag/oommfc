@@ -54,7 +54,7 @@ class TimeDriver(Driver):
         mif += "   atlas :atlas\n"
         mif += "   file m0.omf\n"
         mif += "}\n\n"
-            
+
         mif += "# TimeDriver\n"
         mif += "Specify Oxs_TimeDriver {\n"
         mif += "  evolver {}\n".format(evolver)
@@ -81,7 +81,8 @@ class TimeDriver(Driver):
         mif += "Destination archive mmArchive\n\n"
         if "derive" in kwargs:
             if "ield" in kwargs["derive"] or "density" in kwargs["derive"]:
-                mif += "Schedule \"{}\" archive Step 1".format(kwargs["derive"])
+                mif += ("Schedule \"{}\" archive "
+                        "Step 1".format(kwargs["derive"]))
             else:
                 mif += "Schedule DataTable table Stage 1\n"
         else:

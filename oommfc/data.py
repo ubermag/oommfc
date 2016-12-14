@@ -16,13 +16,13 @@ class Data(mm.Data):
                  "Hamiltonian": "Oxs_RungeKuttaEvolve:evolver:Total field"}
 
         td = oc.TimeDriver()
-        td.drive(self.system, derive=_dict[self.interaction])
+        td.drive(self.system, derive=_dict[self.cls])
 
         dirname = os.path.join(self.system.name, "")
-        last_ohf_file = max(glob.iglob("{}*.ohf".format(dirname)),
-                            key=os.path.getctime)
+        ohf_file = max(glob.iglob("{}*.ohf".format(dirname)),
+                       key=os.path.getctime)
 
-        return df.read_oommf_file(last_ohf_file)
+        return df.read_oommf_file(ohf_file)
 
     @property
     def energy(self):
@@ -35,26 +35,28 @@ class Data(mm.Data):
         td.drive(self.system, derive="energy")
 
         dirname = os.path.join(self.system.name, "")
-        last_odt_file = max(glob.iglob("{}*.odt".format(dirname)),
-                            key=os.path.getctime)
+        odt_file = max(glob.iglob("{}*.odt".format(dirname)),
+                       key=os.path.getctime)
 
-        dt = oo.OOMMFodt(last_odt_file, replace_headers=False).df
+        dt = oo.OOMMFodt(odt_file, replace_headers=False).df
 
-        return dt[_dict[self.interaction]][0]
+        return dt[_dict[self.cls]][0]
 
     @property
     def energy_density(self):
         _dict = {"Demag": "Oxs_Demag::Energy density",
                  "Exchange": "Oxs_UniformExchange::Energy density",
-                 "UniaxialAnisotropy": "Oxs_UniaxialAnisotropy::Energy density",
+                 "UniaxialAnisotropy": ("Oxs_UniaxialAnisotropy::"
+                                        "Energy density"),
                  "Zeeman": "Oxs_FixedZeeman:zeeman:Energy density",
-                 "Hamiltonian": "Oxs_RungeKuttaEvolve:evolver:Total energy density"}
+                 "Hamiltonian": ("Oxs_RungeKuttaEvolve:evolver:"
+                                 "Total energy density")}
 
         td = oc.TimeDriver()
-        td.drive(self.system, derive=_dict[self.interaction])
+        td.drive(self.system, derive=_dict[self.cls])
 
         dirname = os.path.join(self.system.name, "")
-        last_oef_file = max(glob.iglob("{}*.oef".format(dirname)),
-                            key=os.path.getctime)
+        oef_file = max(glob.iglob("{}*.oef".format(dirname)),
+                       key=os.path.getctime)
 
-        return df.read_oommf_file(last_oef_file)
+        return df.read_oommf_file(oef_file)
