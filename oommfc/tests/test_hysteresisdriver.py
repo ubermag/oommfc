@@ -15,7 +15,7 @@ class TestHysteresisDriver(TestDriver):
 
         assert script[0] == "#"
         assert script[-1] == "1"
-        assert script.count("#") == 5
+        assert script.count("#") == 6
         assert script.count("Specify") == 4
         assert script.count("Destination") == 2
         assert script.count("Schedule") == 2
