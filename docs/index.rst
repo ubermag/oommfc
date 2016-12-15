@@ -21,6 +21,7 @@ Contents:
    ipynb/standard_problem5
    ipynb/standard_problem_fmr
    ipynb/spatially_varying_parameters
+   ipynb/derived_fields
 
 Indices and tables
 ==================
