@@ -3,9 +3,9 @@ import micromagneticmodel as mm
 
 class System(mm.System):
     @property
-    def script(self):
-        mif = self.m.mesh.script
-        mif += self.hamiltonian.script
+    def _script(self):
+        mif = self.m.mesh._script
+        mif += self.hamiltonian._script
         return mif
 
     def total_energy(self):

@@ -20,9 +20,9 @@ class TestHamiltonian:
     def test_script(self):
         hamiltonian = oc.Hamiltonian()
         for term in self.terms:
-            hamiltonian.add(term)
+            hamiltonian._add(term)
 
-        script = hamiltonian.script
+        script = hamiltonian._script
 
         assert script.count("#") == 4
         assert script.count("Specify") == 4

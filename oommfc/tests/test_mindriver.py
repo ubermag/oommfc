@@ -10,7 +10,7 @@ class TestMinDriver(TestDriver):
     def test_script(self):
         md = oc.MinDriver()
 
-        script = md.script(self.system)
+        script = md._script(self.system)
 
         assert script[0] == "#"
         assert script[-1] == "1"

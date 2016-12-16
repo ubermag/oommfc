@@ -7,7 +7,7 @@ class TestExchange(mmt.TestExchange):
         for A in self.valid_args:
             exchange = oc.Exchange(A)
 
-            script = exchange.script
+            script = exchange._script
             assert script.count("\n") == 5
             assert script[0] == "#"
             assert script[-1] == "\n"

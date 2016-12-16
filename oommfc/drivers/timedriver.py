@@ -2,7 +2,7 @@ from .driver import Driver
 
 
 class TimeDriver(Driver):
-    def script(self, system, **kwargs):
+    def _script(self, system, **kwargs):
         try:
             alpha = system.dynamics.damping.alpha
         except AttributeError:

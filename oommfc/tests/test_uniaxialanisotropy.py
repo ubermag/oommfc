@@ -9,7 +9,7 @@ class TestUniaxialAnisotropy(mmt.TestUniaxialAnisotropy):
 
             anisotropy = oc.UniaxialAnisotropy(K, u, name=name)
 
-            script = anisotropy.script
+            script = anisotropy._script
             assert script.count("\n") == 6
             assert script[0] == "#"
             assert script[-1] == "\n"

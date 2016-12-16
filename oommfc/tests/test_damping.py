@@ -8,4 +8,4 @@ class TestDamping(mmt.TestDamping):
         for alpha in self.valid_args:
             damping = oc.Damping(alpha)
             with pytest.raises(NotImplementedError):
-                damping.script()
+                damping._script()

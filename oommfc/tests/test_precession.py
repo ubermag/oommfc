@@ -8,4 +8,4 @@ class TestPrecession(mmt.TestPrecession):
         for gamma in self.valid_args:
             precession = oc.Precession(gamma)
             with pytest.raises(NotImplementedError):
-                precession.script()
+                precession._script()

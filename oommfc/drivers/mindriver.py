@@ -2,7 +2,7 @@ from .driver import Driver
 
 
 class MinDriver(Driver):
-    def script(self, system):
+    def _script(self, system):
         meshname = system.m.mesh.name
         systemname = system.name
 

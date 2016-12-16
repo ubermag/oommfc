@@ -9,4 +9,4 @@ class TestSTT(mmt.TestSTT):
             u, beta = arg
             stt = oc.STT(u, beta)
             with pytest.raises(NotImplementedError):
-                stt.script()
+                stt._script()

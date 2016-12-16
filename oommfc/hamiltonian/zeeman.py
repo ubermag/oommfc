@@ -3,7 +3,7 @@ import micromagneticmodel as mm
 
 class Zeeman(mm.Zeeman):
     @property
-    def script(self):
+    def _script(self):
         mif = '# FixedZeeman\n'
         mif += 'Specify Oxs_FixedZeeman:{} {{\n'.format(self.name)
         mif += '  field {\n'

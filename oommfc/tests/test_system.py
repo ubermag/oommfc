@@ -18,7 +18,7 @@ class TestSystem:
 
         system.m = df.Field(mesh, dim=3, value=(0, 1, 0), norm=1)
 
-        script = system.script
+        script = system._script
 
         assert script[0] == "#"
         assert script[-1] == "\n"

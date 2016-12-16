@@ -10,4 +10,4 @@ class TestDynamics(mmt.TestDynamics):
             dynamics += term
 
             with pytest.raises(NotImplementedError):
-                dynamics.script()
+                dynamics._script()

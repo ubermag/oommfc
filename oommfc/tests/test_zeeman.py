@@ -8,7 +8,7 @@ class TestZeeman(mmt.TestZeeman):
             name = 'zeeman_test'
             zeeman = oc.Zeeman(H, name=name)
 
-            script = zeeman.script
+            script = zeeman._script
             assert script.count("\n") == 10
             assert script[0] == "#"
             assert script[-1] == "\n"

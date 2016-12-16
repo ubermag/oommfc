@@ -3,7 +3,7 @@ import micromagneticmodel as mm
 
 class UniaxialAnisotropy(mm.UniaxialAnisotropy):
     @property
-    def script(self):
+    def _script(self):
         mif = "# UniaxialAnisotropy\n"
         mif += "Specify Oxs_UniaxialAnisotropy {\n"
         mif += "  K1 {}\n".format(self.K)
