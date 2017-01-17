@@ -1,4 +1,3 @@
-import pkg_resources as pr
 from .oommf import OOMMF
 from .hamiltonian import Exchange, UniaxialAnisotropy, \
     Demag, Zeeman, Hamiltonian
@@ -10,7 +9,6 @@ from .data import Data
 from micromagneticmodel.consts import mu0, e, me, kB, h, g, \
     hbar, gamma, muB, gamma0
 
-__version__ = pr.get_distribution("oommfc").version
 oommf = OOMMF()
 
 
