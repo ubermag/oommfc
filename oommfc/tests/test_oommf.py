@@ -128,6 +128,24 @@ class TestOOMMF:
 
     @pytest.mark.oommf
     @pytest.mark.travis
+    def test_platform(self):
+        oommf = oc.OOMMF()
+        platform = oommf.platform(where=None)
+        assert isinstance(platform, str)
+        assert "Platform Name" in platform
+
+        oommf = oc.OOMMF()
+        platform = oommf.platform(where="host")
+        assert isinstance(platform, str)
+        assert "Platform Name" in platform
+
+        oommf = oc.OOMMF()
+        platform = oommf.platform(where="docker")
+        assert isinstance(platform, str)
+        assert "Platform Name" in platform
+
+    @pytest.mark.oommf
+    @pytest.mark.travis
     def test_where_to_run(self):
         # Case 1: choose "host", both working
         where = None
