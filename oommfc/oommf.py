@@ -69,6 +69,11 @@ class OOMMF:
         p = self.call(argstr="+version", where=where)
         return p.stderr.text.split("oommf.tcl")[-1].strip()
 
+    def platform(self, where=None):
+        where = self._where_to_run(where=where)
+        p = self.call(argstr="+platform", where=where)
+        return p.stderr.text
+
     def _where_to_run(self, where):
         if where is None:
             if self.statusdict["host"]:
