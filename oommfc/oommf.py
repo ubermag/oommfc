@@ -1,3 +1,4 @@
+import datetime
 import os
 import sys
 import time
@@ -59,9 +60,15 @@ class OOMMF:
         return {"host": host, "docker": docker}
 
     def call(self, argstr, where=None):
-        tic = time.time()
-        print("Calling OOMMF ({}) ... ".format(argstr), end='')
+        # print day and time at which we start calling OOMMF (useful
+        # for longer runs)
+        x = datetime.datetime.now()
+        timestamp = "{}/{}/{} {}:{}".format(x.year, x.month, x.day,
+                                            x.hour, x.minute)
+        print("{}: Calling OOMMF ({}) ... ".format(timestamp, argstr), end='')
 
+        # measure execution time of OOMMF
+        tic = time.time()
         where = self._where_to_run(where=where)
         if where == "host":
             val = self._call_host(argstr=argstr)
@@ -70,6 +77,7 @@ class OOMMF:
 
         toc = time.time()
         seconds = "[{:0.1f}s]".format(toc - tic)
+
         print(seconds)
         return val
 
