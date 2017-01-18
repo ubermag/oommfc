@@ -23,7 +23,7 @@ test-docker:
 	docker build -t dockertestimage .
 	docker run --privileged -ti -d --name testcontainer dockertestimage
 	docker exec testcontainer python3 -m pytest
-	#docker exec testcontainer python3 -m pytest --nbval $(IPYNBPATH)
+	docker exec testcontainer python3 -m pytest --nbval-lax $(IPYNBPATH)
 	docker stop testcontainer
 	docker rm testcontainer
 
