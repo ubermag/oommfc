@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import sarge
 
 
@@ -58,12 +59,19 @@ class OOMMF:
         return {"host": host, "docker": docker}
 
     def call(self, argstr, where=None):
-        print("Calling OOMMF ({})".format(argstr))
+        tic = time.time()
+        print("Calling OOMMF ({}) ... ".format(argstr), end='')
+
         where = self._where_to_run(where=where)
         if where == "host":
-            return self._call_host(argstr=argstr)
+            val = self._call_host(argstr=argstr)
         elif where == "docker":
-            return self._call_docker(argstr=argstr)
+            val = self._call_docker(argstr=argstr)
+
+        toc = time.time()
+        seconds = "[{:0.1f}s]".format(toc - tic)
+        print(seconds)
+        return val
 
     def version(self, where=None):
         where = self._where_to_run(where=where)
