@@ -58,6 +58,7 @@ class OOMMF:
         return {"host": host, "docker": docker}
 
     def call(self, argstr, where=None):
+        print("Calling OOMMF ({})".format(argstr))
         where = self._where_to_run(where=where)
         if where == "host":
             return self._call_host(argstr=argstr)
