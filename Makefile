@@ -11,7 +11,8 @@ test-ipynb:
 	python3 -m pytest --nbval $(IPYNBPATH)
 
 test-coverage:
-	python3 -m pytest --cov=$(PROJECT) --cov-config .coveragerc
+	python3 -m pytest --cov=$(PROJECT) --cov-config .coveragerc . oommfc/tests/travis_*
+
 
 upload-coverage: SHELL:=/bin/bash
 upload-coverage:
