@@ -8,6 +8,8 @@ from .system import System
 from .data import Data
 from micromagneticmodel.consts import mu0, e, me, kB, h, g, \
     hbar, gamma, muB, gamma0
+import oommfc.examples
+
 
 oommf = OOMMF()
 
