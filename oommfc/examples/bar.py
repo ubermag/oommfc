@@ -7,7 +7,7 @@ def bar():
     mesh = oc.Mesh(p1=(0, 0, 0), p2=shape, cell=(d, d, d))
     # Permalloy
     A = 1e-12
-    H = (8e6, 0, 0)
+    H = (0, 0, 0)  # no Zeeman field, but provide interaction as convenience
 
     system.hamiltonian = oc.Exchange(A=A) + oc.Demag() + oc.Zeeman(H=H)
     alpha = 0.2
