@@ -11,7 +11,8 @@ RUN apt-get install -y apt-transport-https ca-certificates \
 RUN python3 -m pip install --upgrade pip pytest-cov scipy sarge \
       git+git://github.com/joommf/discretisedfield.git \
       git+git://github.com/joommf/micromagneticmodel.git \
-      git+git://github.com/joommf/oommfodt.git
+      git+git://github.com/joommf/oommfodt.git \
+      git+git://github.com/computationalmodelling/nbval.git
 
 # Enable running Docker inside Docker.
 RUN curl -sSL https://get.docker.com/ | sh
