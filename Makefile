@@ -13,6 +13,8 @@ test-ipynb:
 test-coverage:
 	python3 -m pytest --cov=$(PROJECT) --cov-config .coveragerc . oommfc/tests/travis_*
 
+test-no-docker-running-raises-error:
+	python3 -m pytest oommfc/tests/no_docker_running_raises_error.py
 
 upload-coverage: SHELL:=/bin/bash
 upload-coverage:
