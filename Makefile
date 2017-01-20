@@ -13,6 +13,8 @@ test-ipynb:
 test-coverage:
 	python3 -m pytest --cov=$(PROJECT) --cov-config .coveragerc . oommfc/tests/travis_*
 
+# this target should be run in an environment where docker is installed
+# but the deamon not running. See https://github.com/joommf/oommfc/issues/13
 test-no-docker-running-raises-error:
 	python3 -m pytest oommfc/tests/no_docker_running_raises_error.py
 

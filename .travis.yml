@@ -12,7 +12,6 @@ script:
   - docker exec testcontainer make travis-build
   - docker stop testcontainer
   - docker rm testcontainer
-  - make test-no-docker-running-raises-error
 
 notifications:
   slack: joommf:eqKxGPXuUP3LxnOfxg7GWgDF
