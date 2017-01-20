@@ -8,7 +8,7 @@ test-all:
 	python3 -m pytest
 
 test-ipynb:
-	python3 -m pytest --nbval $(IPYNBPATH)
+	python3 -m pytest --nbval-lax $(IPYNBPATH)
 
 test-coverage:
 	python3 -m pytest --cov=$(PROJECT) --cov-config .coveragerc . oommfc/tests/travis_*
@@ -22,7 +22,7 @@ upload-coverage: SHELL:=/bin/bash
 upload-coverage:
 	bash <(curl -s https://codecov.io/bash) -t $(CODECOVTOKEN)
 
-travis-build: test-coverage upload-coverage
+travis-build: test-coverage upload-coverage test-ipynb
 
 test-docker:
 	docker build -t dockertestimage .
