@@ -59,6 +59,26 @@ class OOMMF:
 
         return {"host": host, "docker": docker}
 
+    def _check_return_value(self, ret):
+
+        # there must be at least one ...
+        assert len(ret.commands) > 0, "No commands to report?"
+
+        # then take the last one:
+        command = ret.commands[-1]
+
+        if command.returncode is not 0:
+            stderr = command.stderr.read()
+            stdout = command.stdout.read()
+            cmdstr = " ".join(command.args)
+            print("Error when executing:")
+            print("\tcommand: {}".format(cmdstr))
+            print("\tstdout: {}".format(stdout))
+            print("\tstderr: {}".format(stderr))
+            print("\n")
+
+        return ret
+
     def call(self, argstr, where=None):
         # print day and time at which we start calling OOMMF (useful
         # for longer runs)
@@ -77,8 +97,14 @@ class OOMMF:
 
         toc = time.time()
         seconds = "[{:0.1f}s]".format(toc - tic)
-
         print(seconds)
+
+        # check exit code
+        val = self._check_return_value(val)
+
+        if val.returncode is not 0:
+            raise RuntimeError("Some problem calling OOMMF.")
+
         return val
 
     def version(self, where=None):
