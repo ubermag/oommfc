@@ -1,6 +1,6 @@
 from .oommf import OOMMF
 from .hamiltonian import Exchange, UniaxialAnisotropy, \
-    Demag, Zeeman, Hamiltonian
+    Demag, Zeeman, DMI, Hamiltonian
 from .dynamics import Precession, Damping, STT, Dynamics
 from .drivers import Driver, MinDriver, TimeDriver, HysteresisDriver
 from .mesh import Mesh
