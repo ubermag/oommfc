@@ -10,12 +10,12 @@ class TestMesh(dft.TestMesh):
             mesh = oc.Mesh(p1, p2, cell, name=name)
 
             script = mesh._script
-            assert script.count("\n") == 13
+            assert script.count("\n") == 14
             assert script[0] == "#"
             assert script[-1] == "\n"
 
             lines = script.split("\n")
-            assert len(lines) == 14
+            assert len(lines) == 15
 
             # Assert BoxAtlas script
             assert lines[0] == "# BoxAtlas"
@@ -26,14 +26,15 @@ class TestMesh(dft.TestMesh):
                                                            mesh.pmax[1])
             assert lines[4] == "  zrange {{{} {}}}".format(mesh.pmin[2],
                                                            mesh.pmax[2])
-            assert lines[5] == "}"
+            assert lines[5] == "  name atlas"
+            assert lines[6] == "}"
 
             # Empty line between BoxAtlas and RectangularMesh
-            assert lines[6] == ""
+            assert lines[7] == ""
 
             # Assert RectangularMesh script
-            assert lines[7] == "# RectangularMesh"
-            assert lines[8] == "Specify Oxs_RectangularMesh:{} {{".format(name)
-            assert lines[9] == "  cellsize {{{} {} {}}}".format(*cell)
-            assert lines[10] == "  atlas Oxs_BoxAtlas:atlas"
-            assert lines[11] == "}"
+            assert lines[8] == "# RectangularMesh"
+            assert lines[9] == "Specify Oxs_RectangularMesh:{} {{".format(name)
+            assert lines[10] == "  cellsize {{{} {} {}}}".format(*cell)
+            assert lines[11] == "  atlas Oxs_BoxAtlas:atlas"
+            assert lines[12] == "}"
