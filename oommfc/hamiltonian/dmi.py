@@ -5,7 +5,7 @@ class DMI(mm.DMI):
     @property
     def _script(self):
         mif = "# BulkDMI\n"
-        mif += "Specify Oxs_BulkDMI6ngbr {\n"
+        mif += "Specify Oxs_BulkDMI {\n"
         mif += "  default_D {}\n".format(self.D)
         mif += "  atlas :atlas\n"
         mif += "  D {\n"
