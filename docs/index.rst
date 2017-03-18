@@ -11,11 +11,18 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   evolvers
+   ipynb/installation
+   ipynb/testing
+   ipynb/updating
+   ipynb/first_oommfc_notebook
    ipynb/standard_problem1
    ipynb/standard_problem3
    ipynb/standard_problem4
-   ipynb/fmr_standard_problem
+   ipynb/standard_problem5
+   ipynb/standard_problem_fmr
+   ipynb/new_discretisedfield_interface
+   ipynb/spatially_varying_parameters
+   ipynb/derived_fields
 
 Indices and tables
 ==================

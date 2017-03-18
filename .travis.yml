@@ -1,17 +1,17 @@
-# This is a simple Travis config for a project that only needs to install pure
-# Python dependencies. For more complex setups, you can use conda on Travis:
-# http://conda.pydata.org/docs/travis.html 
+sudo: required
 
-language: python
-python:
-  - "3.5"
-  - "3.4"
-  - "2.7"
-# Install any dependencies for running the tests:
-install: pip install codecov pytest-cov matplotlib pandas git+https://github.com/joommf/oommffield.git git+https://github.com/joommf/oommfodt.git
-# command to run tests
-script: py.test --cov=oommfc --cov-config .coveragerc
-after_success:
-  codecov
+services:
+  - docker
+
+install:
+  - docker build -t dockertestimage .
+
+script:
+  - ci_env=`bash <(curl -s https://codecov.io/env)`
+  - docker run --privileged -e ci_env -ti -d --name testcontainer dockertestimage
+  - docker exec testcontainer make travis-build
+  - docker stop testcontainer
+  - docker rm testcontainer
+
 notifications:
   slack: joommf:eqKxGPXuUP3LxnOfxg7GWgDF

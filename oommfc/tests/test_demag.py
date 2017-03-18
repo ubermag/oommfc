@@ -1,22 +1,17 @@
-import pytest
-from oommfc.energies import Demag
+import oommfc as oc
+import micromagneticmodel.tests as mmt
 
 
-class TestDemag(object):
-    def test_get_mif(self):
-        demag = Demag()
+class TestDemag(mmt.TestDemag):
+    def test_script(self):
+        demag = oc.Demag()
 
-        mif = demag.get_mif()
-        mif_lines = mif.split('\n')
+        script = demag._script
+        assert script.count("\n") == 3
+        assert script[0] == "#"
+        assert script[-1] == "\n"
 
-        # Assert comment line.
-        l = mif_lines[0].split()
-        assert l[0] == '#'
-        assert l[1] == 'Demag'
-
-        # Assert Specify line.
-        assert mif[-2:] == '\n\n'
-        l = mif_lines[1].split()
-        assert l[0] == 'Specify'
-        assert l[1] == 'Oxs_Demag'
-        assert l[2] == '{}'
+        lines = script.split("\n")
+        assert len(lines) == 4
+        assert lines[0] == "# Demag"
+        assert lines[1] == "Specify Oxs_Demag {}"
