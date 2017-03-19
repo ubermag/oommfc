@@ -2,6 +2,9 @@
 
 # @pytest.mark.xfail
 def test_macrospin():
+    """Test that runs an OOMMF simulation that basically doesn't do much:
+    it computes the time development of a macrospin for a very short time.
+    We can use this to test the overhead of starting up OOMMF."""
     import os
     import time
     import oommfc as oc
@@ -60,6 +63,9 @@ def test_macrospin():
     print("Difference between oommfc and os.system call is {:.4}s = {:.4}%".format(
         difference, reldiff * 100))
 
+    # Calling OOMMF should not take 6 seconds. Let's say this should
+    # be doable in 3, hopefully this also works on travis.
+    assert duration2 <= 3.0, "{} should be < 3 seconds".format(duration2)
 
     # risky test: the folloming could fail if the run time is very short and
     # oommfc is hugely effective in starting OOMMF. THen we need to update this
@@ -67,10 +73,9 @@ def test_macrospin():
     assert reldiff > 0, "Direct call to OOMMF is slower - probably something went wrong?"
 
     # Here we could add a test criterion, that requires that
-    # we only have a 10% overhead. This may be too ambitions. I'll
-    # introduce it, and set it to xfail. We may have to change that
-    # once we have established we are not doing something fundamentally wrong.
-    assert reldiff < 0.2, "Actual absdiff={:.4}s, reldiff={:.4} > 0.2".format(difference, reldiff)
+    # we only have a 50% overhead. This is maybe too forgiving - we should aim
+    # to reduce this .
+    assert reldiff < 0.5, "Actual absdiff={:.4}s, reldiff={:.4} > 0.5".format(difference, reldiff)
 
 
 if __name__ == "__main__":
