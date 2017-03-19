@@ -73,9 +73,14 @@ def test_macrospin():
     assert reldiff > 0, "Direct call to OOMMF is slower - probably something went wrong?"
 
     # Here we could add a test criterion, that requires that
-    # we only have a 50% overhead. This is maybe too forgiving - we should aim
+    # we only have a 100% overhead. This is maybe too forgiving - we should aim
     # to reduce this .
-    assert reldiff < 0.5, "Actual absdiff={:.4}s, reldiff={:.4} > 0.5".format(difference, reldiff)
+    assert reldiff < 1.0, "Actual absdiff={:.4}s, reldiff={:.4} > 0.5".format(difference, reldiff)
+
+    # The overhead should be under one second. Again, we shoud aim towards a harsher
+    # criterion in due course.
+    assert difference < 1.0, "overhead from OOMMFC is {:.4}s and exceeding 1second".\
+        format(difference)
 
 
 if __name__ == "__main__":
