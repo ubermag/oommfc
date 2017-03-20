@@ -1,9 +1,11 @@
 import os
 import shutil
+import pytest
 import oommfc as oc
 import discretisedfield as df
 
 
+@pytest.mark.oommf
 class TestDerive:
     def setup(self):
         self.name = "derive_tests"
@@ -50,5 +52,3 @@ class TestDerive:
         assert hamiltonian.effective_field.dim == 3
         if os.path.exists(self.name):
             shutil.rmtree(self.name)
-
-    
