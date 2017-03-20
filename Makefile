@@ -15,9 +15,10 @@ test-coverage:
 
 	@# if performance file has been created, display the results
 	@# (touch is only used to guarantee the file exists, and avoid failure of the cat command)
-
+	pwd
 	touch oommfc/tests/travis_test_performance_summary.txt
 	cat oommfc/tests/travis_test_performance_summary.txt
+	ls -l oommfc/tests/travis_test_performance_summary.txt
 
 # this target should be run in an environment where docker is installed
 # but the deamon not running. See https://github.com/joommf/oommfc/issues/13
