@@ -9,7 +9,6 @@ from .data import Data
 from micromagneticmodel.consts import mu0, e, me, kB, h, g, \
     hbar, gamma, muB, gamma0
 from . import examples
-from .util import oommf_start_up_time
 
 oommf = OOMMF()
 
@@ -44,7 +43,7 @@ def test_oommf_overhead(t=1e-12):
 
     returns (time, mifpath) with
       - time : real time it took to call oommf (via Timedriver)
-      - miffilepath : the path to the miffilepath
+      - mifpath : the path to the mif file used (so that this can be re-used)
 
     Additional information will be printed.
 
