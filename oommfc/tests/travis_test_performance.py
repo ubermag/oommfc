@@ -79,6 +79,9 @@ def test_performance():
         f.write("Relative difference:    {:.4}%\n".format(reldiff*100))
         f.write("-------------------------------------------------\n")
         f.write("Run on {}\n".format(time.asctime()))
+    print("Current directory: os.getcwd()={}".format(os.getcwd()))
+    print("Current directory: os.path.realpath('.')={}".format(os.path.realpath('.')))
+    print("MIFPATH = {}".format(mifpath))
 
 
     # Now onto the testing. These may have to be fine tuned, depending
@@ -100,5 +103,7 @@ def test_performance():
     assert difference < 1.0, \
         "overhead from OOMMFC is {:.4}s and exceeding 1second".format(difference)
 
-    if __name__ == "__main__":
-        test_performance()
+    assert False # force fail to see output
+
+if __name__ == "__main__":
+    test_performance()
