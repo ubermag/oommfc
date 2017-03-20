@@ -73,16 +73,16 @@ def test_performance():
 
     # Also write output to file (might be useful to get the data if the test passes)
     with open('travis_test_performance_summary.txt', 'tw') as f:
-        f.write("==================================================")
-        f.write("Performance test oommfc/tests/travis_test_performance.py results:")
-        f.write("")
+        f.write("=================================================================\n")
+        f.write("Performance test oommfc/tests/travis_test_performance.py results:\n")
+        f.write("\n")
         f.write("Call through oommfc:    {:.4}s\n".format(duration))
         f.write("Call through os.system: {:.4}s\n".format(duration2))
         f.write("Difference:             {:.4}s\n".format(difference))
         f.write("Relative difference:    {:.4}%\n".format(reldiff*100))
-        f.write("-------------------------------------------------\n")
-        f.write("Run on {}\n".format(time.asctime()))
-        f.write("-------------------------------------------------\n")
+        f.write("-----------------------------------------------------------------\n")
+        f.write("This data is from {}.\n".format(time.asctime()))
+        f.write("-----------------------------------------------------------------\n")
 
     # Now onto the testing. These may have to be fine tuned, depending
     # on how reproducible the hardware load on the Travis system is.
