@@ -2,7 +2,7 @@ import pytest
 
 # Attempt to find out performance on travis
 
-@pytest.mark.travis
+@pytest.mark.oommf
 def test_macrospin():
 
     """Test that runs an OOMMF simulation that basically doesn't do much:
