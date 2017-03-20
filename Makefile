@@ -15,9 +15,7 @@ test-coverage:
 
 	@# if performance file has been created, display the results
 	@# (touch is only used to guarantee the file exists, and avoid failure of the cat command)
-	pwd
-	ls -l
-	touch travis_test_performance_summary.txt
+	@touch travis_test_performance_summary.txt
 	cat travis_test_performance_summary.txt
 
 
