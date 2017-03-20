@@ -103,7 +103,6 @@ def test_performance():
     assert difference < 1.0, \
         "overhead from OOMMFC is {:.4}s and exceeding 1second".format(difference)
 
-    assert False # force fail to see output
 
 if __name__ == "__main__":
     test_performance()
