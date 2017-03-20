@@ -1,7 +1,11 @@
 # import pytest
 
 # @pytest.mark.xfail
-def test_macrospin():
+def notest_macrospin():
+    # this needs updating, and using of the oommf.test_oommf_overhead() function.
+
+
+
     """Test that runs an OOMMF simulation that basically doesn't do much:
     it computes the time development of a macrospin for a very short time.
     We can use this to test the overhead of starting up OOMMF."""
