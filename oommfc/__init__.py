@@ -37,3 +37,29 @@ def test_oommf():
     args = ["-m", "oommf and not travis", "-v",
             "--pyargs", "oommfc"]  # pragma: no cover
     pytest.main(args)  # pragma: no cover
+
+def test_oommf_overhead(t=1e-12):
+    """Run a macrospin example for time t, return system object.
+
+    returns (time, mifpath) with
+      - time : real time it took to call oommf (via Timedriver)
+      - mifpath : the path to the mif file used (so that this can be re-used)
+
+    Additional information will be printed.
+
+    This can be used to measure/test the performance overhead of calling OOMMF.
+    """
+    import os
+    import time
+
+    system = examples.macrospin()
+
+    td = TimeDriver()
+    start = time.time()
+    td.drive(system, t=0.001e-9, n=1)
+    stop = time.time()
+    time_ = stop - start
+    print("Duration of calling OOMMF through oommfc: {:.4}s".format(time_))
+    print("oommfc.oommf.status(): {}".format(oommf.status(verbose=True)))
+    mifpath = os.path.realpath('example-macrospin/example-macrospin.mif')
+    return time_, mifpath
