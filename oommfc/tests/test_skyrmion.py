@@ -1,3 +1,5 @@
+import os
+import shutil
 import oommfc as oc
 import discretisedfield as df
 
@@ -16,7 +18,8 @@ def test_skyrmion():
     system.hamiltonian = oc.Exchange(A=1.6e-11) + \
                          oc.DMI(D=4e-3, kind="interfacial") + \
                          oc.UniaxialAnisotropy(K=0.51e6, u=(0, 0, 1)) + \
-                         oc.Demag()
+                         oc.Demag() + \
+                         oc.Zeeman(H=(0, 0, 2e5))
 
     Ms = 1.1e6
     def Ms_fun(pos):
@@ -39,7 +42,7 @@ def test_skyrmion():
     md.drive(system)
 
     # Check the magnetisation at the sample centre.
-    assert system.m((0, 0, 0))[2]/Ms < -0.99
+    assert system.m((0, 0, 0))[2]/Ms < -0.97
 
     # Check the magnetisation at the sample edge.
     assert system.m((50e-9, 0, 0))[2]/Ms > 0
