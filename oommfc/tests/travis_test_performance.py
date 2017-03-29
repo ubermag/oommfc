@@ -1,10 +1,11 @@
+import os
+import time
 import pytest
-
-# Attempt to find out performance on travis
+import oommfc as oc
 
 @pytest.mark.oommf
+@pytest.mark.travis
 def test_performance():
-
     """Test that runs an OOMMF simulation that basically doesn't do much:
     it computes the time development of a macrospin for a very short time.
     We can use this to test the overhead of starting up OOMMF.
@@ -49,9 +50,6 @@ def test_performance():
     Hans, Dresden, 20 March 2017
 
     """
-    import os
-    import time
-    import oommfc as oc
     duration, mifpath = oc.test_oommf_overhead()
 
     # now do the same thing 'more directly':

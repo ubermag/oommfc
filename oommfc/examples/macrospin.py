@@ -1,14 +1,11 @@
 import os
 import time
+import oommfc as oc
+import discretisedfield as df
 
 
 def macrospin():
-
     """Return a sytsem that represents a macrospin."""
-
-    import oommfc as oc
-    import discretisedfield as df
-
     # define macro spin (i.e. one discretisation cell)
     p1 = (0, 0, 0)            # all lengths in metre
     p2 = (5e-9, 5e-9, 5e-9)
@@ -21,7 +18,7 @@ def macrospin():
 
     zeeman = oc.Zeeman(H=(0, 0, 5e6)) # external magnetic field (A/m)
 
-    gamma = 2.211e5  # gyrotropic ration
+    gamma = 2.211e5  # gyrotropic ratio
     alpha = 0.05 # Gilbert damping
 
     runid = "example-macrospin"

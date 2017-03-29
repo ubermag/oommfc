@@ -7,10 +7,10 @@ test:
 	$(PYTHON) -m pytest
 
 test-coverage:
-	$(PYTHON) -m pytest --cov=$(PROJECT) --cov-config .coveragerc . oommfc/tests/travis_*
+	$(PYTHON) -m pytest --cov=$(PROJECT) --cov-config .coveragerc oommfc/tests/*test*
 
-	@# if performance file has been created, display the results
-	@# (touch is only used to guarantee the file exists, and avoid failure of the cat command)
+	@# If performance file has been created, display the results
+	@# (touch used to avoid failure of the cat command if file is not created)
 	@touch travis_test_performance_summary.txt
 	cat travis_test_performance_summary.txt
 

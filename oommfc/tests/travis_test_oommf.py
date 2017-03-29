@@ -89,6 +89,7 @@ class TestOOMMF:
         assert status["docker"] is False
 
     @pytest.mark.oommf
+    @pytest.mark.travis
     def test_call_oommf(self):
         argstr = "+version"
         varname = "OOMMFTCL"

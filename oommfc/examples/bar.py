@@ -1,6 +1,8 @@
+import oommfc as oc
+import discretisedfield as df
+
+
 def bar():
-    import oommfc as oc
-    import discretisedfield as df
     system = oc.System(name="example-bar")
     shape = (100e-9, 30e-9, 30e-9)
     d = 10e-9
