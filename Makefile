@@ -3,13 +3,8 @@ IPYNBPATH=docs/ipynb/*.ipynb
 CODECOVTOKEN=a253c171-1619-4812-944c-89918bf5c98d
 PYTHON?=python3
 
-test: test-coverage test-ipynb
-
-test-all:
+test:
 	$(PYTHON) -m pytest
-
-test-ipynb:
-	$(PYTHON) -m pytest --nbval-lax $(IPYNBPATH)
 
 test-coverage:
 	$(PYTHON) -m pytest --cov=$(PROJECT) --cov-config .coveragerc . oommfc/tests/travis_*
@@ -19,9 +14,22 @@ test-coverage:
 	@touch travis_test_performance_summary.txt
 	cat travis_test_performance_summary.txt
 
+test-ipynb:
+	$(PYTHON) -m pytest --nbval $(IPYNBPATH)
 
-# this target should be run in an environment where docker is installed
-# but the deamon not running. See https://github.com/joommf/oommfc/issues/13
+test-docs:
+	$(PYTHON) -m pytest --doctest-modules --ignore=$(PROJECT)/tests $(PROJECT)
+
+test-all: test-coverage test-ipynb test-docs
+
+test-oommf:
+	$(PYTHON) -m pytest -m "oommf"
+
+test-not-oommf:
+	$(PYTHON) -m pytest -m "not oommf"
+
+# This target should be run in an environment where docker is installed
+# but the deamon not running. See https://github.com/joommf/oommfc/issues/13.
 test-no-docker-running-raises-error:
 	$(PYTHON) -m pytest oommfc/tests/no_docker_running_raises_error.py
 
@@ -29,21 +37,22 @@ upload-coverage: SHELL:=/bin/bash
 upload-coverage:
 	bash <(curl -s https://codecov.io/bash) -t $(CODECOVTOKEN)
 
-travis-build: test-coverage upload-coverage test-ipynb
+travis-build: SHELL:=/bin/bash
+travis-build:
+	ci_env=`bash <(curl -s https://codecov.io/env)`
+	docker build -t dockertestimage .
+	docker run -e ci_env -ti -d --name testcontainer dockertestimage
+	docker exec testcontainer make test-all
+	docker exec testcontainer make upload-coverage
+	docker stop testcontainer
+	docker rm testcontainer
 
 test-docker:
 	docker build -t dockertestimage .
 	docker run --privileged -ti -d --name testcontainer dockertestimage
-	docker exec testcontainer $(PYTHON) -m pytest
-	docker exec testcontainer $(PYTHON) -m pytest --nbval-lax $(IPYNBPATH)
+	docker exec testcontainer make test-all
 	docker stop testcontainer
 	docker rm testcontainer
-
-test-oommf:
-	$(PYTHON) -m pytest -m "oommf"
-
-test-not-oommf:
-	$(PYTHON) -m pytest -m "not oommf"
 
 build-dists:
 	rm -rf dist/
@@ -52,3 +61,4 @@ build-dists:
 
 release: build-dists
 	twine upload dist/*
+
