@@ -8,9 +8,7 @@ test:
 
 test-coverage:
 	$(PYTHON) -m pytest --cov=$(PROJECT) --cov-config .coveragerc oommfc/tests/*test*
-
-	@# If performance file has been created, display the results
-	@# (touch used to avoid failure of the cat command if file is not created)
+	@# Touch used to avoid failure of the cat command if file is not created.
 	@touch travis_test_performance_summary.txt
 	cat travis_test_performance_summary.txt
 
@@ -27,11 +25,6 @@ test-oommf:
 
 test-not-oommf:
 	$(PYTHON) -m pytest -m "not oommf"
-
-# This target should be run in an environment where docker is installed
-# but the deamon not running. See https://github.com/joommf/oommfc/issues/13.
-test-no-docker-running-raises-error:
-	$(PYTHON) -m pytest oommfc/tests/no_docker_running_raises_error.py
 
 upload-coverage: SHELL:=/bin/bash
 upload-coverage:
