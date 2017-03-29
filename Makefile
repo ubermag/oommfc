@@ -15,7 +15,7 @@ test-coverage:
 	cat travis_test_performance_summary.txt
 
 test-ipynb:
-	$(PYTHON) -m pytest --nbval $(IPYNBPATH)
+	$(PYTHON) -m pytest --nbval-lax $(IPYNBPATH)
 
 test-docs:
 	$(PYTHON) -m pytest --doctest-modules --ignore=$(PROJECT)/tests $(PROJECT)
