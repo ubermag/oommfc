@@ -25,6 +25,7 @@ Contents:
    ipynb/derived_fields
    ipynb/support
    ipynb/acknowledgements
+   ipynb/how-to-cite
 
 Indices and tables
 ==================
