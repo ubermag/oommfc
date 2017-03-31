@@ -23,6 +23,7 @@ Contents:
    ipynb/new_discretisedfield_interface
    ipynb/spatially_varying_parameters
    ipynb/derived_fields
+   ipynb/acknowledgements
 
 Indices and tables
 ==================
