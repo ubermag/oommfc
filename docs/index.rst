@@ -22,6 +22,7 @@ Contents:
    ipynb/standard_problem_fmr
    ipynb/new_discretisedfield_interface
    ipynb/spatially_varying_parameters
+   ipynb/exporting-data
    ipynb/derived_fields
    ipynb/support
    ipynb/acknowledgements
@@ -33,4 +34,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
