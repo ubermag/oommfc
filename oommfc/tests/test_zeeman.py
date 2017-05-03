@@ -19,9 +19,7 @@ class TestZeeman(mmt.TestZeeman):
             assert lines[1] == "Specify Oxs_FixedZeeman:{} {{".format(name)
             assert lines[2] == "  field {"
             assert lines[3] == "    Oxs_UniformVectorField {"
-            assert lines[4] == "      vector {{{} {} {}}}".format(H[0],
-                                                                  H[1],
-                                                                  H[2])
+            assert lines[4] == "      vector {{{} {} {}}}".format(*H)
             assert lines[5] == "    }"
             assert lines[6] == "  }"
             assert lines[7] == "  multiplier 1"
