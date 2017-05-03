@@ -1,7 +1,7 @@
 import os
 import glob
+import oommfodt
 import oommfc as oc
-import oommfodt as oo
 import discretisedfield as df
 import micromagneticmodel as mm
 
@@ -38,7 +38,7 @@ class Data(mm.Data):
         odt_file = max(glob.iglob("{}*.odt".format(dirname)),
                        key=os.path.getctime)
 
-        dt = oo.OOMMFodt(odt_file, replace_headers=False).df
+        dt = oommfodt.read(odt_file, replace_headers=False)
 
         return dt[_dict[self.cls]][0]
 

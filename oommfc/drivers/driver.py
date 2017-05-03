@@ -88,7 +88,7 @@ class Driver(mm.Driver):
                             key=os.path.getctime)
 
         # Update system's datatable.
-        system.dt = oommfodt.OOMMFodt(last_odt_file).df
+        system.dt = oommfodt.read(last_odt_file)
 
     def _filenames(self, system):
         dirname = os.path.join(system.name, "")
