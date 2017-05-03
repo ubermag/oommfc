@@ -38,7 +38,7 @@ class Data(mm.Data):
         odt_file = max(glob.iglob("{}*.odt".format(dirname)),
                        key=os.path.getctime)
 
-        dt = oommfodt.read(odt_file, replace_headers=False)
+        dt = oommfodt.read(odt_file, replace_columns=False)
 
         return dt[_dict[self.cls]][0]
 
