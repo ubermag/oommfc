@@ -23,6 +23,7 @@ class TestCubicAnisotropy(mmt.TestCubicAnisotropy):
             assert lines[5] == "}"
 
 
+@pytest.mark.oommf
 def test_relax_with_cubicanisotropy():
     name = "cubic_anisotropy"
     L = 100e-9
