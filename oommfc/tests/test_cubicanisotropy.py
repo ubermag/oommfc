@@ -1,5 +1,6 @@
 import os
 import shutil
+import pytest
 import oommfc as oc
 import discretisedfield as df
 import micromagneticmodel.tests as mmt
