@@ -11,7 +11,7 @@ class TestHysteresisDriver(TestDriver):
         hd = oc.HysteresisDriver()
 
         script = hd._script(self.system, Hmin=(0, 0, 0),
-                           Hmax=(10, 10, 10), n=10)
+                            Hmax=(10, 10, 10), n=10)
 
         assert script[0] == "#"
         assert script[-1] == "1"
