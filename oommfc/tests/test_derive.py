@@ -36,7 +36,8 @@ class TestDerive:
         assert isinstance(hamiltonian.exchange.energy_density, df.Field)
         assert isinstance(hamiltonian.demag.energy_density, df.Field)
         assert isinstance(hamiltonian.zeeman.energy_density, df.Field)
-        assert isinstance(hamiltonian.uniaxialanisotropy.energy_density, df.Field)
+        assert isinstance(hamiltonian.uniaxialanisotropy.energy_density,
+                          df.Field)
         assert isinstance(hamiltonian.energy_density, df.Field)
         assert hamiltonian.energy_density.dim == 1
         if os.path.exists(self.name):
@@ -47,7 +48,8 @@ class TestDerive:
         assert isinstance(hamiltonian.exchange.effective_field, df.Field)
         assert isinstance(hamiltonian.demag.effective_field, df.Field)
         assert isinstance(hamiltonian.zeeman.effective_field, df.Field)
-        assert isinstance(hamiltonian.uniaxialanisotropy.effective_field, df.Field)
+        assert isinstance(hamiltonian.uniaxialanisotropy.effective_field,
+                          df.Field)
         assert isinstance(hamiltonian.effective_field, df.Field)
         assert hamiltonian.effective_field.dim == 3
         if os.path.exists(self.name):
