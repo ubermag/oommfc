@@ -15,7 +15,7 @@ class TestUniaxialAnisotropy(mmt.TestUniaxialAnisotropy):
             assert lines[2] == "  K1 {}".format(K1)
             assert lines[-4] == "  axis {{{} {} {}}}".format(*u)
             assert lines[-3] == "}"
-            
+
             if K2 == 0:
                 assert script.count("\n") == 6
                 assert len(lines) == 7
@@ -25,5 +25,3 @@ class TestUniaxialAnisotropy(mmt.TestUniaxialAnisotropy):
                 assert len(lines) == 8
                 assert lines[1] == "Specify Southampton_UniaxialAnisotropy4 {"
                 assert lines[3] == "  K2 {}".format(K2)
-
-
