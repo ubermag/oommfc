@@ -7,11 +7,11 @@ class System(mm.System):
     Parameters
     ----------
     name : str
-   
+
     Examples
     --------
     Creating a simple system object.
-    
+
     >>> import oommfc as oc
     >>> system = oc.System(name="my_system")
 

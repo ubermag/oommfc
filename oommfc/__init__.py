@@ -38,6 +38,7 @@ def test_oommf():
             "--pyargs", "oommfc"]  # pragma: no cover
     pytest.main(args)  # pragma: no cover
 
+
 def test_oommf_overhead(t=1e-12):
     """Run a macrospin example for time t, return system object.
 
