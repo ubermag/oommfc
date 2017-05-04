@@ -3,6 +3,7 @@ import shutil
 import oommfc as oc
 import discretisedfield as df
 
+
 def test_skyrmion():
     name = "skyrmion"
 
@@ -16,12 +17,13 @@ def test_skyrmion():
 
     system = oc.System(name="skyrmion")
     system.hamiltonian = oc.Exchange(A=1.6e-11) + \
-                         oc.DMI(D=4e-3, kind="interfacial") + \
-                         oc.UniaxialAnisotropy(K1=0.51e6, K2=0.1, u=(0, 0, 1)) + \
-                         oc.Demag() + \
-                         oc.Zeeman(H=(0, 0, 2e5))
+        oc.DMI(D=4e-3, kind="interfacial") + \
+        oc.UniaxialAnisotropy(K1=0.51e6, K2=0.1, u=(0, 0, 1)) + \
+        oc.Demag() + \
+        oc.Zeeman(H=(0, 0, 2e5))
 
     Ms = 1.1e6
+
     def Ms_fun(pos):
         x, y, z = pos
         if (x**2 + y**2)**0.5 < 50e-9:
