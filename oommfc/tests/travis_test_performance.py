@@ -1,6 +1,7 @@
 import os
 import time
 import pytest
+import shutil
 import oommfc as oc
 
 @pytest.mark.oommf
@@ -101,6 +102,7 @@ def test_performance():
     assert difference < 1.0, \
         "overhead from OOMMFC is {:.4}s and exceeding 1second".format(difference)
 
+    shutil.rmtree("example-macrospin")
 
 if __name__ == "__main__":
     test_performance()

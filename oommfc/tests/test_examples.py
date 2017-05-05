@@ -11,13 +11,11 @@ def test_example_bar():
     _ = b.m.average
     assert b.name == 'example-bar'
 
-    ham = repr(b.hamiltonian).lower()
     for interaction in ['exchange', 'demag']:
-        assert interaction in ham
+        assert interaction in repr(b.hamiltonian).lower()
 
-    dyn = repr(b.dynamics).lower()
     for dynamics in ['precession', 'damping']:
-        assert dynamics in dyn
+        assert dynamics in repr(b.dynamics).lower()
 
 
 def test_example_macrospin():
@@ -28,9 +26,7 @@ def test_example_macrospin():
     _ = m.m.average
     assert m.name == 'example-macrospin'
 
-    ham = repr(m.hamiltonian).lower()
-    assert 'zeeman' in ham
+    assert 'zeeman' in repr(m.hamiltonian).lower()
 
-    dyn = repr(m.dynamics).lower()
     for dynamics in ['precession', 'damping']:
-        assert dynamics in dyn
+        assert dynamics in repr(m.dynamics).lower()
