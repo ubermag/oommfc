@@ -99,15 +99,16 @@ class NativeOOMMFRunner(OOMMFRunner):
 
 class DockerOOMMFRunner(OOMMFRunner):
     """Run OOMMF inside a docker image"""
-    def __init__(self, image="joommf/oommf"):
+    def __init__(self, image="joommf/oommf", docker_exe='docker'):
         self.image = image
+        self.docker_exe = docker_exe
 
     def _call(self, argstr):
-        cmd = "docker pull {}".format(self.image)
+        cmd = [self.docker_exe, "pull", self.image]
         self._run_cmd(cmd)
-        cmd = ("docker run -v {}:/io {} /bin/bash -c \"tclsh "
+        cmd = ("{} run -v {}:/io {} /bin/bash -c \"tclsh "
                "/usr/local/oommf/oommf/oommf.tcl boxsi +fg {} "
-               "-exitondone 1\"").format(os.getcwd(),
+               "-exitondone 1\"").format(self.docker_exe, os.getcwd(),
                                          self.image, argstr)
         return self._run_cmd(cmd)
 
