@@ -1,4 +1,4 @@
-from .oommf import OOMMF
+from .oommf import get_oommf_runner
 from .hamiltonian import Exchange, UniaxialAnisotropy, \
     Demag, Zeeman, DMI, CubicAnisotropy, Hamiltonian
 from .dynamics import Precession, Damping, STT, Dynamics
@@ -10,12 +10,10 @@ from micromagneticmodel.consts import mu0, e, me, kB, h, g, \
     hbar, gamma, muB, gamma0
 from . import examples
 
-oommf = OOMMF()
-
 
 def test():
     """Runs all the tests"""
-    oommf.status(raise_exception=True)  # pragma: no cover
+    get_oommf_runner()  # pragma: no cover
     import pytest  # pragma: no cover
     args = ["-m", "not travis", "-v", "--pyargs",
             "oommfc"]  # pragma: no cover
@@ -32,7 +30,7 @@ def test_not_oommf():
 
 def test_oommf():
     """Runs all tests that require an OOMMF installation."""
-    oommf.status(raise_exception=True)  # pragma: no cover
+    get_oommf_runner()  # pragma: no cover
     import pytest  # pragma: no cover
     args = ["-m", "oommf and not travis", "-v",
             "--pyargs", "oommfc"]  # pragma: no cover
@@ -61,6 +59,6 @@ def test_oommf_overhead(t=1e-12):
     stop = time.time()
     time_ = stop - start
     print("Duration of calling OOMMF through oommfc: {:.4}s".format(time_))
-    print("oommfc.oommf.status(): {}".format(oommf.status(verbose=True)))
+    print("oommfc.oommf.get_oommf_runner(): {}".format(get_oommf_runner()))
     mifpath = os.path.realpath('example-macrospin/example-macrospin.mif')
     return time_, mifpath
