@@ -1,64 +1,19 @@
 import datetime
+import logging
 import os
 import sys
 import time
 import sarge
+from subprocess import call, DEVNULL
 
+log = logging.getLogger(__name__)
 
-class OOMMF:
-    def __init__(self, varname="OOMMFTCL", dockername="docker",
-                 dockerimage="joommf/oommf", where=None):
-        self.varname = varname
-        self.dockername = dockername
-        self.dockerimage = dockerimage
-        self.statusdict = self.status(raise_exception=False)
-
-    def status(self, raise_exception=False, verbose=False):
-        # OOMMF status on host
-        cmd = ("tclsh", os.getenv(self.varname, "wrong"), "boxsi",
-               "+fg", "+version", "-exitondone", "1")
-        try:
-            poommf = self._run_cmd(cmd)
-            returncode = poommf.returncode
-        except FileNotFoundError:
-            returncode = 1
-        if returncode:
-            host = False
-            if verbose:
-                oommfpath = os.getenv(self.varname)
-                if oommfpath is None:
-                    print("Cannot find {} path.".format(self.varname))
-                elif not os.path.isfile(oommfpath):
-                    print("{} path {} set to a non-existing "
-                          "file.".format(self.varname, oommfpath))
-                else:
-                    print("{} path {} set to an existing "
-                          "file.".format(self.varname, oommfpath))
-                    print("Something wrong with OOMMF installation.")
-        else:
-            host = True
-
-        # Docker status
-        cmd = (self.dockername, "images")
-        try:
-            pdocker = self._run_cmd(cmd)
-            returncode = pdocker.returncode
-        except FileNotFoundError:
-            returncode = 1
-
-        if returncode:
-            docker = False
-            if verbose:
-                print("Docker not installed/active.")
-        else:
-            docker = True
-
-        # Raise exception if required
-        if not (host or docker) and raise_exception:
-            raise EnvironmentError("OOMMF and docker not found.")
-
-        return {"host": host, "docker": docker}
-
+class OOMMFRunner:
+    """Base class for running OOMMF.
+    
+    Don't use this directly. You should normally use get_oommf_runner() to pick
+    a subclass of this class.
+    """
     def _check_return_value(self, ret):
 
         # there must be at least one ...
@@ -79,7 +34,7 @@ class OOMMF:
 
         return ret
 
-    def call(self, argstr, where=None):
+    def call(self, argstr):
         # print day and time at which we start calling OOMMF (useful
         # for longer runs)
         x = datetime.datetime.now()
@@ -89,11 +44,7 @@ class OOMMF:
 
         # measure execution time of OOMMF
         tic = time.time()
-        where = self._where_to_run(where=where)
-        if where == "host":
-            val = self._call_host(argstr=argstr)
-        elif where == "docker":
-            val = self._call_docker(argstr=argstr)
+        val = self._call(argstr=argstr)
 
         toc = time.time()
         seconds = "[{:0.1f}s]".format(toc - tic)
@@ -107,39 +58,17 @@ class OOMMF:
 
         return val
 
+    def _call(self, argstr):
+        # Implement in subclass
+        raise NotImplementedError
+
     def version(self, where=None):
-        where = self._where_to_run(where=where)
-        p = self.call(argstr="+version", where=where)
+        p = self.call(argstr="+version")
         return p.stderr.text.split("oommf.tcl")[-1].strip()
 
     def platform(self, where=None):
-        where = self._where_to_run(where=where)
-        p = self.call(argstr="+platform", where=where)
+        p = self.call(argstr="+platform")
         return p.stderr.text
-
-    def _where_to_run(self, where):
-        if where is None:
-            if self.statusdict["host"]:
-                return "host"
-            else:
-                return "docker"
-        else:
-            return where
-
-    def _call_host(self, argstr):
-        oommfpath = os.getenv(self.varname, None)
-        cmd = ("tclsh", oommfpath, "boxsi", "+fg",
-               argstr, "-exitondone", "1")
-        return self._run_cmd(cmd)
-
-    def _call_docker(self, argstr):
-        cmd = "{} pull {}".format(self.dockername, self.dockerimage)
-        self._run_cmd(cmd)
-        cmd = ("{} run -v {}:/io {} /bin/bash -c \"tclsh "
-               "/usr/local/oommf/oommf/oommf.tcl boxsi +fg {} "
-               "-exitondone 1\"").format(self.dockername, os.getcwd(),
-                                         self.dockerimage, argstr)
-        return self._run_cmd(cmd)
 
     def _run_cmd(self, cmd):
         if sys.platform in ("linux", "darwin"):  # Linux and MacOs
@@ -151,8 +80,94 @@ class OOMMF:
                    "developers").format(sys.platform)  # pragma: no cover
             raise NotImplementedError(msg)
 
+
+class NativeOOMMFRunner(OOMMFRunner):
+    """Run OOMMF on this system, given a path to oommf.tcl
+    
+    This requires tclsh to be available.
+    """
+    def __init__(self, oommf_tcl_path):
+        self.oommf_tcl_path = oommf_tcl_path
+
+    def _call(self, argstr):
+        cmd = ("tclsh", self.oommf_tcl_path, "boxsi", "+fg",
+               argstr, "-exitondone", "1")
+        return self._run_cmd(cmd)
+
     def kill(self, targets=('all',), where=None):
-        where = self._where_to_run(where)
-        if where == 'host':
-            oommfpath = os.getenv(self.varname, None)
-            sarge.run(("tclsh", oommfpath, "killoommf") + targets)
+        sarge.run(("tclsh", self.oommf_tcl_path, "killoommf") + targets)
+
+class DockerOOMMFRunner(OOMMFRunner):
+    """Run OOMMF inside a docker image"""
+    def __init__(self, image="joommf/oommf"):
+        self.image = image
+
+    def _call(self, argstr):
+        cmd = "docker pull {}".format(self.image)
+        self._run_cmd(cmd)
+        cmd = ("docker run -v {}:/io {} /bin/bash -c \"tclsh "
+               "/usr/local/oommf/oommf/oommf.tcl boxsi +fg {} "
+               "-exitondone 1\"").format(os.getcwd(),
+                                         self.image, argstr)
+        return self._run_cmd(cmd)
+
+    def kill(self):
+        pass # Does this need to do anything?
+
+_cached_oommf_runner = None
+
+def get_oommf_runner(use_cache=True, docker_exe='docker'):
+    """Find the best available way to run OOMMF.
+    
+    Returns an OOMMFRunner object, or raises EnvironmentError if no suitable
+    method is found.
+    
+    Parameters
+    ----------
+    use_cache : bool
+      The first call to this function will determine the best way to run OOMMF
+      and cache it. Normally, subsequent calls will return the OOMMFRunner
+      object from the cache. Setting this parameter to False will cause it to
+      check for available methods again.
+    docker_exe : str
+      The name or path of the docker command.
+    """
+    global _cached_oommf_runner
+    if use_cache and (_cached_oommf_runner is not None):
+        return _cached_oommf_runner
+
+    # Check for $OOMMFTCL environment variable pointing to native OOMMF
+    oommf_tcl_path = os.environ.get('OOMMFTCL', None)
+    if oommf_tcl_path:
+        cmd = ("tclsh", oommf_tcl_path, "boxsi",
+               "+fg", "+version", "-exitondone", "1")
+        try:
+            res = sarge.capture_both(cmd)
+        except FileNotFoundError:
+            log.warning("tclsh was not found")
+        else:
+            if res.returncode:
+                log.warning("OOMMFTCL is set, but there was a problem running oommf.\n"
+                            "stdout:\n{}\n\n"
+                            "stderr:\n{}".format(res.stdout, res.stderr))
+            else:
+                _cached_oommf_runner = NativeOOMMFRunner(oommf_tcl_path)
+                return _cached_oommf_runner
+
+    # Check for docker to run OOMMF in a docker image
+    cmd = (docker_exe, "images")
+    try:
+        res = sarge.capture_both(cmd)
+    except FileNotFoundError:
+        log.warning("docker was not found")
+    else:
+        if res.returncode:
+            log.warning("Error running docker\n"
+                "stdout:\n{}\n\n"
+                "stderr:\n{}".format(res.stdout, res.stderr))
+        else:
+            _cached_oommf_runner = DockerOOMMFRunner(image="joommf/oommf")
+            return _cached_oommf_runner
+
+    # Raise exception if we can't find a way to run OOMMF
+    raise EnvironmentError("Could not run $OOMMFTCL or docker.")
