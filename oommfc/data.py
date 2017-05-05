@@ -29,7 +29,7 @@ class Data(mm.Data):
         _dict = {"Demag": "Demag::Energy",
                  "Exchange": "UniformExchange::Energy",
                  "UniaxialAnisotropy": "UniaxialAnisotropy::Energy",
-                 "Zeeman": "FixedZeeman:zeeman:Energy",
+                 "Zeeman": "FixedZeeman::Energy",
                  "Hamiltonian": "RungeKuttaEvolve:evolver:Totalenergy"}
         td = oc.TimeDriver()
         td.drive(self.system, derive="energy")
@@ -48,7 +48,7 @@ class Data(mm.Data):
                  "Exchange": "Oxs_UniformExchange::Energy density",
                  "UniaxialAnisotropy": ("Oxs_UniaxialAnisotropy::"
                                         "Energy density"),
-                 "Zeeman": "Oxs_FixedZeeman:zeeman:Energy density",
+                 "Zeeman": "Oxs_FixedZeeman::Energy density",
                  "Hamiltonian": ("Oxs_RungeKuttaEvolve:evolver:"
                                  "Total energy density")}
 

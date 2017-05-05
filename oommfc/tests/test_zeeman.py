@@ -5,8 +5,7 @@ import micromagneticmodel.tests as mmt
 class TestZeeman(mmt.TestZeeman):
     def test_script(self):
         for H in self.valid_args:
-            name = 'zeeman_test'
-            zeeman = oc.Zeeman(H, name=name)
+            zeeman = oc.Zeeman(H=H)
 
             script = zeeman._script
             assert script.count("\n") == 10
@@ -16,7 +15,7 @@ class TestZeeman(mmt.TestZeeman):
             lines = script.split("\n")
             assert len(lines) == 11
             assert lines[0] == "# FixedZeeman"
-            assert lines[1] == "Specify Oxs_FixedZeeman:{} {{".format(name)
+            assert lines[1] == "Specify Oxs_FixedZeeman {"
             assert lines[2] == "  field {"
             assert lines[3] == "    Oxs_UniformVectorField {"
             assert lines[4] == "      vector {{{} {} {}}}".format(*H)

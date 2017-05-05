@@ -5,7 +5,7 @@ class Zeeman(mm.Zeeman):
     @property
     def _script(self):
         mif = '# FixedZeeman\n'
-        mif += 'Specify Oxs_FixedZeeman:{} {{\n'.format(self.name)
+        mif += 'Specify Oxs_FixedZeeman {\n'
         mif += '  field {\n'
         mif += '    Oxs_UniformVectorField {\n'
         mif += '      vector {{{} {} {}}}\n'.format(*self.H)
