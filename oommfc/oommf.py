@@ -4,6 +4,7 @@ import os
 import sys
 import time
 import sarge
+from shutil import which
 from subprocess import call, DEVNULL
 
 log = logging.getLogger(__name__)
@@ -80,8 +81,24 @@ class OOMMFRunner:
                    "developers").format(sys.platform)  # pragma: no cover
             raise NotImplementedError(msg)
 
+class ScriptOOMMFRunner(OOMMFRunner):
+    """Run OOMMF on this system, using an oommf executable on $PATH 
+    """
+    def __init__(self, script_name='oommf'):
+        self.script_name = script_name
 
-class NativeOOMMFRunner(OOMMFRunner):
+    def _oommf_cmd_tuple(self):
+        return (self.script_name, )
+
+    def _call(self, argstr):
+        cmd = (self.script_name, "boxsi", "+fg", argstr, "-exitondone", "1")
+        return self._run_cmd(cmd)
+
+    def kill(self, targets=('all',)):
+        sarge.run((self.script_name, "killoommf") + targets)
+
+
+class NativeOOMMFRunner(ScriptOOMMFRunner):
     """Run OOMMF on this system, given a path to oommf.tcl
     
     This requires tclsh to be available.
@@ -94,8 +111,9 @@ class NativeOOMMFRunner(OOMMFRunner):
                argstr, "-exitondone", "1")
         return self._run_cmd(cmd)
 
-    def kill(self, targets=('all',), where=None):
+    def kill(self, targets=('all',)):
         sarge.run(("tclsh", self.oommf_tcl_path, "killoommf") + targets)
+
 
 class DockerOOMMFRunner(OOMMFRunner):
     """Run OOMMF inside a docker image"""
@@ -117,7 +135,7 @@ class DockerOOMMFRunner(OOMMFRunner):
 
 _cached_oommf_runner = None
 
-def get_oommf_runner(use_cache=True, docker_exe='docker'):
+def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
     """Find the best available way to run OOMMF.
     
     Returns an OOMMFRunner object, or raises EnvironmentError if no suitable
@@ -154,6 +172,11 @@ def get_oommf_runner(use_cache=True, docker_exe='docker'):
             else:
                 _cached_oommf_runner = NativeOOMMFRunner(oommf_tcl_path)
                 return _cached_oommf_runner
+
+    oommf_exe_path = which(oommf_exe)
+    if oommf_exe_path:
+        _cached_oommf_runner = ScriptOOMMFRunner(oommf_exe_path)
+        return _cached_oommf_runner
 
     # Check for docker to run OOMMF in a docker image
     cmd = (docker_exe, "images")
