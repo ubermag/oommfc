@@ -1,13 +1,13 @@
-import shutil
-import subprocess
 import sys
 import pytest
+import shutil
+import subprocess
 from testpath import modified_env
-
 from oommfc.oommf import DockerOOMMFRunner, get_oommf_runner
 
 nonexistant_docker = "docker-executable-name-like-this-doesnt-exist"
 
+@pytest.mark.travis
 def test_exception_is_raised_if_no_docker():
     runner = DockerOOMMFRunner(docker_exe=nonexistant_docker)
 
@@ -15,6 +15,7 @@ def test_exception_is_raised_if_no_docker():
     with pytest.raises(FileNotFoundError):
         runner.call(argstr="+version")
 
+@pytest.mark.travis
 def test_docker_installed_not_running():
     if not shutil.which('docker'):
         pytest.skip('docker command not found')
@@ -32,6 +33,7 @@ def test_docker_installed_not_running():
     with pytest.raises(RuntimeError):
         runner.call(argstr="+version")
 
+@pytest.mark.travis
 def test_no_runner_found():
     # Check that we get EnvironmentError if neither OOMMF nor docker are found
     if sys.platform == 'win32' and (
