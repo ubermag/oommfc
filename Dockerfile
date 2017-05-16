@@ -23,5 +23,5 @@ ENV OOMMFWRONGFILE /usr/local/oommfc/Dockerfile
 
 WORKDIR /usr/local
 RUN git clone https://github.com/joommf/oommfc.git
-
 WORKDIR /usr/local/oommfc
+RUN python3 -m pip install .
