@@ -114,6 +114,22 @@ class NativeOOMMFRunner(ScriptOOMMFRunner):
     def kill(self, targets=('all',)):
         sarge.run(("tclsh", self.oommf_tcl_path, "killoommf") + targets)
 
+class WindowsCondaOOMMFRunner(OOMMFRunner):
+    """Run OOMMF in a conda env on Windows.
+    
+    tclsh is not available, so we call oxs.exe directly.
+    """
+    def __init__(self, oommf_root):
+        self.oommf_root = oommf_root
+    
+    def _call(self, argstr):
+        oxs_exe = os.path.join(self.oommf_root, 'app', 'oxs', 'windows-x86_64', 'oxs.exe')
+        boxsi = os.path.join(self.oommf_root, 'app', 'oxs', 'boxsi.tcl')
+        return self._run_cmd([oxs_exe, boxsi, argstr])
+    
+    def kill(self, targets=('all',)):
+        pass
+
 
 class DockerOOMMFRunner(OOMMFRunner):
     """Run OOMMF inside a docker image"""
@@ -173,6 +189,14 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
                 _cached_oommf_runner = NativeOOMMFRunner(oommf_tcl_path)
                 return _cached_oommf_runner
 
+    if sys.platform == 'win32' and (
+            ('Continuum' in sys.version) or ('Anaconda' in sys.version)):
+        # In a conda env on Windows
+        oommf_root = os.path.join(sys.prefix, 'opt', 'oommf')
+        if os.path.isdir(oommf_root):
+            _cached_oommf_runner = WindowsCondaOOMMFRunner(oommf_root)
+            return _cached_oommf_runner
+               
     oommf_exe_path = which(oommf_exe)
     if oommf_exe_path:
         _cached_oommf_runner = ScriptOOMMFRunner(oommf_exe_path)
