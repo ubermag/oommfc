@@ -1,5 +1,6 @@
 import shutil
 import subprocess
+import sys
 import pytest
 from testpath import modified_env
 
@@ -33,6 +34,9 @@ def test_docker_installed_not_running():
 
 def test_no_runner_found():
     # Check that we get EnvironmentError if neither OOMMF nor docker are found
+    if sys.platform == 'win32' and (
+            ('Continuum' in sys.version) or ('Anaconda' in sys.version)):
+        pytest.skip("Can't prevent finding oommmf in windows conda env")
     with modified_env({'OOMMFTCL': None}):
         with pytest.raises(EnvironmentError):
             get_oommf_runner(use_cache=False, docker_exe=nonexistant_docker)
