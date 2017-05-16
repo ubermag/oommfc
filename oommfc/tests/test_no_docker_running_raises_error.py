@@ -39,4 +39,5 @@ def test_no_runner_found():
         pytest.skip("Can't prevent finding oommmf in windows conda env")
     with modified_env({'OOMMFTCL': None}):
         with pytest.raises(EnvironmentError):
-            get_oommf_runner(use_cache=False, docker_exe=nonexistant_docker)
+            get_oommf_runner(use_cache=False, docker_exe=nonexistant_docker,
+                             oommf_exe=nonexistant_docker)
