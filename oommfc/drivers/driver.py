@@ -69,7 +69,7 @@ class Driver(mm.Driver):
                             key=os.path.getctime)
 
         # Update system's magnetisaton.
-        m_field = df.read_oommf_file(last_omf_file)
+        m_field = df.read(last_omf_file)
 
         # Temporary solution for having script in mesh object.
         # Overwrites the df.Mesh with oc.Mesh.

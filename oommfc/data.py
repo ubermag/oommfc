@@ -22,7 +22,7 @@ class Data(mm.Data):
         ohf_file = max(glob.iglob("{}*.ohf".format(dirname)),
                        key=os.path.getctime)
 
-        return df.read_oommf_file(ohf_file)
+        return df.read(ohf_file)
 
     @property
     def energy(self):
@@ -59,4 +59,4 @@ class Data(mm.Data):
         oef_file = max(glob.iglob("{}*.oef".format(dirname)),
                        key=os.path.getctime)
 
-        return df.read_oommf_file(oef_file)
+        return df.read(oef_file)
