@@ -21,7 +21,7 @@ class Driver(mm.Driver):
 
         # Save system's magnetisation configuration omf file.
         omffilename = filenames["omffilename"]
-        system.m.write_oommf_file(omffilename)
+        system.m.write(omffilename)
 
         miffilename = filenames["miffilename"]
         self._save_mif(system, **kwargs)
