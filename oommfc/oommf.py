@@ -189,8 +189,8 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
                 _cached_oommf_runner = NativeOOMMFRunner(oommf_tcl_path)
                 return _cached_oommf_runner
 
-    if sys.platform == 'win32' and (
-            ('Continuum' in sys.version) or ('Anaconda' in sys.version)):
+    if sys.platform == 'win32' and \
+            os.path.isdir(os.path.join(sys.prefix, 'conda-meta')):
         # In a conda env on Windows
         oommf_root = os.path.join(sys.prefix, 'opt', 'oommf')
         if os.path.isdir(oommf_root):
