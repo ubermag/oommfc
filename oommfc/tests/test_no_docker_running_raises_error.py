@@ -1,11 +1,11 @@
 import sys
 import pytest
 import shutil
+import testpath
 import subprocess
-from testpath import modified_env
 from oommfc.oommf import DockerOOMMFRunner, get_oommf_runner
 
-nonexistant_docker = "docker-executable-name-like-this-doesnt-exist"
+nonexistant_docker = "docker-executable-name-like-this-does-not-exist"
 
 @pytest.mark.travis
 def test_exception_is_raised_if_no_docker():
@@ -25,11 +25,9 @@ def test_docker_installed_not_running():
 
     # expect "Cannot connect to the Docker daemon. Is the docker
     # daemon running on this host?'"
-    assert 'Docker' in output
-    assert 'running on this host' in output
+    assert 'Cannot connect to the Docker daemon' in output
 
     runner = DockerOOMMFRunner()
-
     with pytest.raises(RuntimeError):
         runner.call(argstr="+version")
 
@@ -39,7 +37,7 @@ def test_no_runner_found():
     if sys.platform == 'win32' and (
             ('Continuum' in sys.version) or ('Anaconda' in sys.version)):
         pytest.skip("Can't prevent finding oommmf in windows conda env")
-    with modified_env({'OOMMFTCL': None}):
+    with testpath.modified_env({'OOMMFTCL': None}):
         with pytest.raises(EnvironmentError):
             get_oommf_runner(use_cache=False, docker_exe=nonexistant_docker,
                              oommf_exe=nonexistant_docker)
