@@ -18,6 +18,6 @@ VOLUME /var/lib/docker
 CMD ["wrapdocker"]
 
 WORKDIR /usr/local
-RUN git clone https://github.com/joommf/oommfc.git
+COPY . /usr/local/oommfc/
 WORKDIR /usr/local/oommfc
 RUN python3 -m pip install .
