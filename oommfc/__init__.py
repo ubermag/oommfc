@@ -17,7 +17,7 @@ def test():
     import pytest  # pragma: no cover
     args = ["-m", "not travis", "-v", "--pyargs",
             "oommfc"]  # pragma: no cover
-    pytest.main(args)  # pragma: no cover
+    return pytest.main(args)  # pragma: no cover
 
 
 def test_not_oommf():
@@ -25,7 +25,7 @@ def test_not_oommf():
     import pytest  # pragma: no cover
     args = ["-m", "not travis", "-m", "not oommf", "-v",
             "--pyargs", "oommfc"]  # pragma: no cover
-    pytest.main(args)  # pragma: no cover
+    return pytest.main(args)  # pragma: no cover
 
 
 def test_oommf():
@@ -34,7 +34,7 @@ def test_oommf():
     import pytest  # pragma: no cover
     args = ["-m", "oommf and not travis", "-v",
             "--pyargs", "oommfc"]  # pragma: no cover
-    pytest.main(args)  # pragma: no cover
+    return pytest.main(args)  # pragma: no cover
 
 
 def test_oommf_overhead(t=1e-12):
