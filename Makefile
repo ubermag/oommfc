@@ -6,6 +6,10 @@ PYTHON?=python3
 test:
 	$(PYTHON) -m pytest
 
+# run tests as the users would (via test())
+test-test:
+	$(PYTHON) -c "import oommfc as c; import sys; sys.exit(c.test())"
+
 test-coverage:
 	$(PYTHON) -m pytest --cov=$(PROJECT) --cov-config .coveragerc oommfc/tests/*test*
 	@# Touch used to avoid failure of the cat command if file is not created.
@@ -18,7 +22,7 @@ test-ipynb:
 test-docs:
 	$(PYTHON) -m pytest --doctest-modules --ignore=$(PROJECT)/tests $(PROJECT)
 
-test-all: test-coverage test-ipynb test-docs
+test-all: test-test test-coverage test-ipynb test-docs
 
 test-oommf:
 	$(PYTHON) -m pytest -m "oommf"
