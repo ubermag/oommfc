@@ -41,6 +41,8 @@ travis-build:
 	docker run --privileged -e ci_env -ti -d --name testcontainer dockertestimage
 	docker exec testcontainer make test-all
 	docker exec testcontainer make upload-coverage
+	@# show performance metric, might be interesting in future
+	docker exec testcontainer python3 -c "import oommfc as c; c.test_oommf_overhead()"
 	docker stop testcontainer
 	docker rm testcontainer
 
@@ -58,4 +60,3 @@ build-dists:
 
 release: build-dists
 	twine upload dist/*
-
