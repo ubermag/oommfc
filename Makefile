@@ -6,6 +6,10 @@ PYTHON?=python3
 test:
 	$(PYTHON) -m pytest
 
+# run tests as the users would (via test())
+test-test:
+	$(PYTHON) -c "import oommfc as c; import sys; sys.exit(c.test())"
+
 test-coverage:
 	$(PYTHON) -m pytest --cov=$(PROJECT) --cov-config .coveragerc oommfc/tests/*test*
 	@# Touch used to avoid failure of the cat command if file is not created.
@@ -18,7 +22,7 @@ test-ipynb:
 test-docs:
 	$(PYTHON) -m pytest --doctest-modules --ignore=$(PROJECT)/tests $(PROJECT)
 
-test-all: test-coverage test-ipynb test-docs
+test-all: test-test test-coverage test-ipynb test-docs
 
 test-oommf:
 	$(PYTHON) -m pytest -m "oommf"
@@ -37,6 +41,8 @@ travis-build:
 	docker run --privileged -e ci_env -ti -d --name testcontainer dockertestimage
 	docker exec testcontainer make test-all
 	docker exec testcontainer make upload-coverage
+	@# show performance metric, might be interesting in future
+	docker exec testcontainer python3 -c "import oommfc as c; c.test_oommf_overhead()"
 	docker stop testcontainer
 	docker rm testcontainer
 
@@ -54,4 +60,3 @@ build-dists:
 
 release: build-dists
 	twine upload dist/*
-
