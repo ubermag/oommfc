@@ -3,9 +3,8 @@ import logging
 import os
 import sys
 import time
-import sarge
 from shutil import which
-from subprocess import call, DEVNULL
+from subprocess import run, PIPE
 
 log = logging.getLogger(__name__)
 
@@ -15,25 +14,6 @@ class OOMMFRunner:
     Don't use this directly. You should normally use get_oommf_runner() to pick
     a subclass of this class.
     """
-    def _check_return_value(self, ret):
-
-        # there must be at least one ...
-        assert len(ret.commands) > 0, "No commands to report?"
-
-        # then take the last one:
-        command = ret.commands[-1]
-
-        if command.returncode is not 0:
-            stderr = command.stderr.read()
-            stdout = command.stdout.read()
-            cmdstr = " ".join(command.args)
-            print("Error when executing:")
-            print("\tcommand: {}".format(cmdstr))
-            print("\tstdout: {}".format(stdout))
-            print("\tstderr: {}".format(stderr))
-            print("\n")
-
-        return ret
 
     def call(self, argstr):
         # print day and time at which we start calling OOMMF (useful
@@ -52,9 +32,15 @@ class OOMMFRunner:
         print(seconds)
 
         # check exit code
-        val = self._check_return_value(val)
-
         if val.returncode is not 0:
+            stderr = val.stderr.decode('utf-8', 'replace')
+            stdout = val.stdout.decode('utf-8', 'replace')
+            cmdstr = " ".join(val.args)
+            print("Error when executing:")
+            print("\tcommand: {}".format(cmdstr))
+            print("\tstdout: {}".format(stdout))
+            print("\tstderr: {}".format(stderr))
+            print("\n")
             raise RuntimeError("Some problem calling OOMMF.")
 
         return val
@@ -71,16 +57,6 @@ class OOMMFRunner:
         p = self.call(argstr="+platform")
         return p.stderr.text
 
-    def _run_cmd(self, cmd):
-        if sys.platform in ("linux", "darwin"):  # Linux and MacOs
-            return sarge.capture_both(cmd)
-        elif sys.platform.startswith("win"):
-            return sarge.run(cmd)
-        else:
-            msg = ("Cannot handle platform '{}' - please report to "
-                   "developers").format(sys.platform)  # pragma: no cover
-            raise NotImplementedError(msg)
-
 class ScriptOOMMFRunner(OOMMFRunner):
     """Run OOMMF on this system, using an oommf executable on $PATH 
     """
@@ -92,10 +68,10 @@ class ScriptOOMMFRunner(OOMMFRunner):
 
     def _call(self, argstr):
         cmd = (self.script_name, "boxsi", "+fg", argstr, "-exitondone", "1")
-        return self._run_cmd(cmd)
+        return run(cmd, stdout=PIPE, stderr=PIPE)
 
     def kill(self, targets=('all',)):
-        sarge.run((self.script_name, "killoommf") + targets)
+        run((self.script_name, "killoommf") + targets)
 
 
 class NativeOOMMFRunner(ScriptOOMMFRunner):
@@ -109,10 +85,10 @@ class NativeOOMMFRunner(ScriptOOMMFRunner):
     def _call(self, argstr):
         cmd = ("tclsh", self.oommf_tcl_path, "boxsi", "+fg",
                argstr, "-exitondone", "1")
-        return self._run_cmd(cmd)
+        return run(cmd, stdout=PIPE, stderr=PIPE)
 
     def kill(self, targets=('all',)):
-        sarge.run(("tclsh", self.oommf_tcl_path, "killoommf") + targets)
+        run(("tclsh", self.oommf_tcl_path, "killoommf") + targets)
 
 class WindowsCondaOOMMFRunner(OOMMFRunner):
     """Run OOMMF in a conda env on Windows.
@@ -125,7 +101,7 @@ class WindowsCondaOOMMFRunner(OOMMFRunner):
     def _call(self, argstr):
         oxs_exe = os.path.join(self.oommf_root, 'app', 'oxs', 'windows-x86_64', 'oxs.exe')
         boxsi = os.path.join(self.oommf_root, 'app', 'oxs', 'boxsi.tcl')
-        return self._run_cmd([oxs_exe, boxsi, argstr])
+        return run([oxs_exe, boxsi, argstr], stdout=PIPE, stderr=PIPE)
     
     def kill(self, targets=('all',)):
         pass
@@ -138,13 +114,12 @@ class DockerOOMMFRunner(OOMMFRunner):
         self.docker_exe = docker_exe
 
     def _call(self, argstr):
-        cmd = [self.docker_exe, "pull", self.image]
-        self._run_cmd(cmd)
-        cmd = ("{} run -v {}:/io {} /bin/bash -c \"tclsh "
-               "/usr/local/oommf/oommf/oommf.tcl boxsi +fg {} "
-               "-exitondone 1\"").format(self.docker_exe, os.getcwd(),
-                                         self.image, argstr)
-        return self._run_cmd(cmd)
+        run([self.docker_exe, "pull", self.image])
+        cmd = [self.docker_exe, 'run', '-v', os.getcwd()+':/io', self.image,
+               "/bin/bash", "-c",
+               ("tclsh /usr/local/oommf/oommf/oommf.tcl boxsi +fg {} "
+                "-exitondone 1").format(argstr)]
+        return run(cmd, stdout=PIPE, stderr=PIPE)
 
     def kill(self):
         pass # Does this need to do anything?
@@ -177,7 +152,7 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
         cmd = ("tclsh", oommf_tcl_path, "boxsi",
                "+fg", "+version", "-exitondone", "1")
         try:
-            res = sarge.capture_both(cmd)
+            res = run(cmd, stdout=PIPE, stderr=PIPE)
         except FileNotFoundError:
             log.warning("tclsh was not found")
         else:
@@ -205,7 +180,7 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
     # Check for docker to run OOMMF in a docker image
     cmd = (docker_exe, "images")
     try:
-        res = sarge.capture_both(cmd)
+        res = run(cmd, stdout=PIPE, stderr=PIPE)
     except FileNotFoundError:
         log.warning("docker was not found")
     else:
