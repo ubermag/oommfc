@@ -17,7 +17,7 @@ def test_skyrmion():
 
     system = oc.System(name="skyrmion")
     system.hamiltonian = oc.Exchange(A=1.6e-11) + \
-        oc.DMI(D=4e-3, kind="interfacial") + \
+        oc.DMI(D=4e-3, crystalclass="cnv") + \
         oc.UniaxialAnisotropy(K1=0.51e6, K2=0.1, u=(0, 0, 1)) + \
         oc.Demag() + \
         oc.Zeeman(H=(0, 0, 2e5))
