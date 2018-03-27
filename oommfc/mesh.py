@@ -12,10 +12,19 @@ class Mesh(df.Mesh):
         mif += "  zrange {{{} {}}}\n".format(self.pmin[2], self.pmax[2])
         mif += "  name atlas\n"
         mif += "}\n\n"
-        mif += "# RectangularMesh\n"
-        mif += "Specify Oxs_RectangularMesh:{} {{\n".format(self.name)
-        mif += "  cellsize {{{} {} {}}}\n".format(*self.cell)
-        mif += "  atlas Oxs_BoxAtlas:atlas\n"
-        mif += "}\n\n"
+
+        if self.pbc is not None:
+            mif += "# PeriodicRectangularMesh\n"
+            mif += "Specify Oxs_PeriodicRectangularMesh:{} {{\n".format(self.name)
+            mif += "  cellsize {{{} {} {}}}\n".format(*self.cell)
+            mif += "  atlas Oxs_BoxAtlas:atlas\n"
+            mif += "  periodic {}\n".format("".join(sorted(self.pbc)))
+            mif += "}\n\n"
+        else:
+            mif += "# RectangularMesh\n"
+            mif += "Specify Oxs_RectangularMesh:{} {{\n".format(self.name)
+            mif += "  cellsize {{{} {} {}}}\n".format(*self.cell)
+            mif += "  atlas Oxs_BoxAtlas:atlas\n"
+            mif += "}\n\n"
 
         return mif
