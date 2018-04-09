@@ -26,6 +26,7 @@ class OOMMFRunner:
         # measure execution time of OOMMF
         tic = time.time()
         val = self._call(argstr=argstr)
+        self.kill()
 
         toc = time.time()
         seconds = "[{:0.1f}s]".format(toc - tic)
@@ -104,7 +105,9 @@ class WindowsCondaOOMMFRunner(OOMMFRunner):
         return run([oxs_exe, boxsi, argstr], stdout=PIPE, stderr=PIPE)
     
     def kill(self, targets=('all',)):
-        pass
+        oxs_exe = os.path.join(self.oommf_root, 'app', 'oxs', 'windows-x86_64', 'oxs.exe')
+        killoommf = os.path.join(self.oommf_root, 'app', 'mmlaunch', 'killoommf.tcl')
+        return run((oxs_exe, killoommf, argstr) + targets)
 
 
 class DockerOOMMFRunner(OOMMFRunner):
