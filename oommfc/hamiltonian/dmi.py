@@ -13,7 +13,7 @@ class DMI(mm.DMI):
         elif self.crystalclass == "d2d":
             mif = "# DMI of crystallographic class D2d\n"
             mif += "Specify Oxs_DMI_D2d {\n"
-        elif self.kind == "interfacial":
+        elif self.crystalclass == "interfacial":
             mif = "# InterfacialDMI\n"
             mif += "Specify Oxs_DMExchange6Ngbr {\n"
         mif += "  default_D {}\n".format(self.D)
