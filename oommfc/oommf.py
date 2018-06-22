@@ -52,11 +52,11 @@ class OOMMFRunner:
 
     def version(self, where=None):
         p = self.call(argstr="+version")
-        return p.stderr.text.split("oommf.tcl")[-1].strip()
+        return p.stderr.decode('utf-8').split("oommf.tcl")[-1].strip()
 
     def platform(self, where=None):
         p = self.call(argstr="+platform")
-        return p.stderr.text
+        return p.stderr.decode('utf-8')
 
 class ScriptOOMMFRunner(OOMMFRunner):
     """Run OOMMF on this system, using an oommf executable on $PATH 
