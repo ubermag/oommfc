@@ -34,8 +34,8 @@ def test_stdprob1():
     hd = oc.HysteresisDriver()
     hd.drive(system, Hmax=Hmax, Hmin=Hmin, n=n)
 
-    Bx = system.dt["Bx"].as_matrix()
-    mx = system.dt["mx"].as_matrix()
+    Bx = system.dt["Bx"].values
+    mx = system.dt["mx"].values
 
     assert len(mx) == 21
     assert len(Bx) == 21

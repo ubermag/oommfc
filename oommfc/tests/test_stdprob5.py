@@ -51,7 +51,7 @@ def test_stdprob5():
     td = oc.TimeDriver()
     td.drive(system, t=8e-9, n=100)
 
-    mx = system.dt["mx"].as_matrix()
+    mx = system.dt["mx"].values
 
     assert -0.03 < mx.max() < 0
     assert -0.35 < mx.min() < -0.30

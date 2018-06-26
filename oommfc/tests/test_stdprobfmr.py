@@ -46,8 +46,8 @@ def test_stdprobfmr():
     td = oc.TimeDriver()
     td.drive(system, t=T, n=n)
 
-    t = system.dt['t'].as_matrix()
-    my = system.dt['mx'].as_matrix()
+    t = system.dt['t'].values
+    my = system.dt['mx'].values
 
     psd = np.log10(np.abs(scipy.fftpack.fft(my))**2)
     f_axis = scipy.fftpack.fftfreq(4000, d=20e-9/4000)

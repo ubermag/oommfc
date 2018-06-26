@@ -76,8 +76,8 @@ def test_stdprob4():
 
     assert os.path.isfile(figfilename)
 
-    t = system.dt["t"].as_matrix()
-    my = system.dt["my"].as_matrix()
+    t = system.dt["t"].values
+    my = system.dt["my"].values
 
     assert abs(min(t) - 5e-12) < 1e-20
     assert abs(max(t) - 1e-9) < 1e-20
