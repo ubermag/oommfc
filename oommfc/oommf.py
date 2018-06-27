@@ -72,7 +72,10 @@ class ScriptOOMMFRunner(OOMMFRunner):
 
     def _call(self, argstr, need_stderr=False):
         cmd = [self.script_name, "boxsi", "+fg", argstr, "-exitondone", "1"]
-        return sarge.capture_both(cmd)
+        if sys.platform.startswith("win"):
+            return sarge.run(cmd)
+        else:
+            return sarge.capture_both(cmd)
 
     def kill(self, targets=('all',)):
         sarge.capture_both((self.script_name, "killoommf") + targets)
@@ -88,16 +91,13 @@ class NativeOOMMFRunner(ScriptOOMMFRunner):
 
     def _call(self, argstr, need_stderr=False):
         cmd = ("tclsh", self.oommf_tcl_path, "boxsi", "+fg", argstr, "-exitondone", "1")
-        if sys.platform == 'win32':
-            stdout = stderr = None
-            #if need_stderr:
-            #    stderr = PIPE
-        #else:
-        #    stdout = stderr = PIPE
-        return sarge.capture_both(cmd)
+        if sys.platform.startswith("win"):
+            return sarge.run(cmd)
+        else:
+            return sarge.capture_both(cmd)
 
     def kill(self, targets=('all',)):
-        sarge.capture_both(("tclsh", self.oommf_tcl_path, "killoommf") + targets)
+        sarge.run(("tclsh", self.oommf_tcl_path, "killoommf") + targets)
 
 
 class DockerOOMMFRunner(OOMMFRunner):
@@ -145,7 +145,10 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
         cmd = ("tclsh", oommf_tcl_path, "boxsi",
                "+fg", "+version", "-exitondone", "1")
         try:
-            res = sarge.capture_both(cmd)
+            if sys.platform.startswith("win"):
+                res = sarge.run(cmd)
+            else:
+                res = sarge.capture_both(cmd)
         except FileNotFoundError:
             log.warning("tclsh was not found")
         else:
@@ -174,7 +177,10 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
     # Check for docker to run OOMMF in a docker image
     cmd = (docker_exe, "images")
     try:
-        res = sarge.capture_both(cmd)
+        if sys.platform.startswith("win"):
+            res = sarge.run(cmd)
+        else:
+            res = sarge.capture_both(cmd)
     except FileNotFoundError:
         log.warning("docker was not found")
     else:
