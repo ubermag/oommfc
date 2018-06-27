@@ -81,7 +81,9 @@ class ScriptOOMMFRunner(OOMMFRunner):
         #return run(cmd, stdout=PIPE, stderr=PIPE)
 
     def kill(self, targets=('all',)):
-        run((self.script_name, "killoommf") + targets)
+        cmd = (self.script_name, "killoommf") + targets
+        spcall(cmd)
+        #run(cmd)
 
 
 class NativeOOMMFRunner(ScriptOOMMFRunner):
@@ -105,7 +107,9 @@ class NativeOOMMFRunner(ScriptOOMMFRunner):
         #return run(cmd, stdout=stdout, stderr=stderr)
 
     def kill(self, targets=('all',)):
-        run(("tclsh", self.oommf_tcl_path, "killoommf") + targets)
+        cmd = ("tclsh", self.oommf_tcl_path, "killoommf") + targets
+        #run(("tclsh", self.oommf_tcl_path, "killoommf") + targets)
+        spcall(cmd)
 
 
 class DockerOOMMFRunner(OOMMFRunner):
@@ -153,7 +157,8 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
         cmd = ("tclsh", oommf_tcl_path, "boxsi",
                "+fg", "+version", "-exitondone", "1")
         try:
-            res = run(cmd, stdout=PIPE, stderr=PIPE)
+            res = spcall(cmd)
+            #res = run(cmd, stdout=PIPE, stderr=PIPE)
         except FileNotFoundError:
             log.warning("tclsh was not found")
         else:
@@ -182,7 +187,8 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
     # Check for docker to run OOMMF in a docker image
     cmd = (docker_exe, "images")
     try:
-        res = run(cmd, stdout=PIPE, stderr=PIPE)
+        res = spcall(cmd)
+        #res = run(cmd, stdout=PIPE, stderr=PIPE)
     except FileNotFoundError:
         log.warning("docker was not found")
     else:
