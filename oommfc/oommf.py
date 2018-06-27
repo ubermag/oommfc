@@ -39,14 +39,14 @@ class OOMMFRunner:
 
         # check exit code
         if val.returncode is not 0:
-            stderr = val.stderr.decode('utf-8', 'replace')
-            stdout = val.stdout.decode('utf-8', 'replace')
-            cmdstr = " ".join(val.args)
-            print("Error when executing:")
-            print("\tcommand: {}".format(cmdstr))
-            print("\tstdout: {}".format(stdout))
-            print("\tstderr: {}".format(stderr))
-            print("\n")
+            #stderr = val.stderr.decode('utf-8', 'replace')
+            #stdout = val.stdout.decode('utf-8', 'replace')
+            #cmdstr = " ".join(val.args)
+            #print("Error when executing:")
+            #print("\tcommand: {}".format(cmdstr))
+            #print("\tstdout: {}".format(stdout))
+            #print("\tstderr: {}".format(stderr))
+            #print("\n")
             raise RuntimeError("Some problem calling OOMMF.")
 
         return val
