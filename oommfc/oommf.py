@@ -8,6 +8,12 @@ from subprocess import run, PIPE
 
 log = logging.getLogger(__name__)
 
+
+def spcall(cmd):
+    logfile = open("logfile.txt", "w")
+    return run(cmd, stdout=logfile, stderr=logfile)
+
+
 class OOMMFRunner:
     """Base class for running OOMMF.
     
@@ -71,7 +77,8 @@ class ScriptOOMMFRunner(OOMMFRunner):
 
     def _call(self, argstr, need_stderr=False):
         cmd = (self.script_name, "boxsi", "+fg", argstr, "-exitondone", "1")
-        return run(cmd, stdout=PIPE, stderr=PIPE)
+        return spcall(cmd)
+        #return run(cmd, stdout=PIPE, stderr=PIPE)
 
     def kill(self, targets=('all',)):
         run((self.script_name, "killoommf") + targets)
@@ -94,7 +101,8 @@ class NativeOOMMFRunner(ScriptOOMMFRunner):
                 stderr = PIPE
         else:
             stdout = stderr = PIPE
-        return run(cmd, stdout=stdout, stderr=stderr)
+        return spcall(cmd)
+        #return run(cmd, stdout=stdout, stderr=stderr)
 
     def kill(self, targets=('all',)):
         run(("tclsh", self.oommf_tcl_path, "killoommf") + targets)
