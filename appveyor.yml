@@ -1,0 +1,22 @@
+environment:
+  matrix:
+    - CONDA_PY: 35
+      CONDA_INSTALL_LOCN: "C:\\Miniconda35-x64"
+    - CONDA_PY: 36
+      CONDA_INSTALL_LOCN: "C:\\Miniconda36-x64"
+
+platform:
+  - x64
+
+build: off
+
+install:
+  - python -m pip install .
+
+test_script:
+  - python -m pytest -v
+
+#on_success:
+#  You can use this step to upload your artifacts to a public website.
+#  See Appveyor's documentation for more details. Or you can simply
+#  access your wheels from the Appveyor "artifacts" tab for your build.
