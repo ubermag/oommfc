@@ -1,9 +1,9 @@
 environment:
   matrix:
-    - CONDA_PY: 35
-      CONDA_INSTALL_LOCN: "C:\\Miniconda35-x64"
-    - CONDA_PY: 36
-      CONDA_INSTALL_LOCN: "C:\\Miniconda36-x64"
+    - PYTHON_VERSION: 3.5
+      MINICONDA: C:\Miniconda3
+    - PYTHON_VERSION: 3.6
+      MINICONDA: C:\Miniconda3
 
 platform:
   - x64
@@ -11,10 +11,16 @@ platform:
 build: off
 
 install:
-  - python3 -m pip install .
+  - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - "conda create -q -n test-environment python=%PYTHON_VERSION%"
+  - activate test-environment
+  - conda install oommf
+  - pip install pytest .
 
 test_script:
-  - python3 -m pytest -v
+  - python -m pytest -v
 
 #on_success:
 #  You can use this step to upload your artifacts to a public website.
