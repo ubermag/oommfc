@@ -8,12 +8,6 @@ from subprocess import run, PIPE
 
 log = logging.getLogger(__name__)
 
-
-def spcall(cmd):
-    logfile = open("logfile.txt", "w")
-    return run(cmd, stdout=logfile, stderr=logfile)
-
-
 class OOMMFRunner:
     """Base class for running OOMMF.
     
@@ -39,14 +33,14 @@ class OOMMFRunner:
 
         # check exit code
         if val.returncode is not 0:
-            #stderr = val.stderr.decode('utf-8', 'replace')
-            #stdout = val.stdout.decode('utf-8', 'replace')
-            #cmdstr = " ".join(val.args)
-            #print("Error when executing:")
-            #print("\tcommand: {}".format(cmdstr))
-            #print("\tstdout: {}".format(stdout))
-            #print("\tstderr: {}".format(stderr))
-            #print("\n")
+            stderr = val.stderr.decode('utf-8', 'replace')
+            stdout = val.stdout.decode('utf-8', 'replace')
+            cmdstr = " ".join(val.args)
+            print("Error when executing:")
+            print("\tcommand: {}".format(cmdstr))
+            print("\tstdout: {}".format(stdout))
+            print("\tstderr: {}".format(stderr))
+            print("\n")
             raise RuntimeError("Some problem calling OOMMF.")
 
         return val
@@ -77,13 +71,10 @@ class ScriptOOMMFRunner(OOMMFRunner):
 
     def _call(self, argstr, need_stderr=False):
         cmd = (self.script_name, "boxsi", "+fg", argstr, "-exitondone", "1")
-        return spcall(cmd)
-        #return run(cmd, stdout=PIPE, stderr=PIPE)
+        return run(cmd, stdout=PIPE, stderr=PIPE)
 
     def kill(self, targets=('all',)):
-        cmd = (self.script_name, "killoommf") + targets
-        spcall(cmd)
-        #run(cmd)
+        run((self.script_name, "killoommf") + targets)
 
 
 class NativeOOMMFRunner(ScriptOOMMFRunner):
@@ -103,13 +94,10 @@ class NativeOOMMFRunner(ScriptOOMMFRunner):
                 stderr = PIPE
         else:
             stdout = stderr = PIPE
-        return spcall(cmd)
-        #return run(cmd, stdout=stdout, stderr=stderr)
+        return run(cmd, stdout=stdout, stderr=stderr)
 
     def kill(self, targets=('all',)):
-        cmd = ("tclsh", self.oommf_tcl_path, "killoommf") + targets
-        #run(("tclsh", self.oommf_tcl_path, "killoommf") + targets)
-        spcall(cmd)
+        run(("tclsh", self.oommf_tcl_path, "killoommf") + targets)
 
 
 class DockerOOMMFRunner(OOMMFRunner):
@@ -157,8 +145,7 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
         cmd = ("tclsh", oommf_tcl_path, "boxsi",
                "+fg", "+version", "-exitondone", "1")
         try:
-            res = spcall(cmd)
-            #res = run(cmd, stdout=PIPE, stderr=PIPE)
+            res = run(cmd, stdout=PIPE, stderr=PIPE)
         except FileNotFoundError:
             log.warning("tclsh was not found")
         else:
@@ -187,8 +174,7 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
     # Check for docker to run OOMMF in a docker image
     cmd = (docker_exe, "images")
     try:
-        res = spcall(cmd)
-        #res = run(cmd, stdout=PIPE, stderr=PIPE)
+        res = run(cmd, stdout=PIPE, stderr=PIPE)
     except FileNotFoundError:
         log.warning("docker was not found")
     else:
