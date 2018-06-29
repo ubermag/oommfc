@@ -19,9 +19,9 @@ Marijan Beg<sup>1,2</sup>, Ryan A. Pepper<sup>2</sup>, Thomas Kluyver<sup>1</sup
 
 `oommfc` is a Python package that provides:
 
-- Reading, analysis, and plotting of [OOMMF](https://math.nist.gov/oommf/) `.odt` files
+- Interface to Object Oriented MicroMagnetic Framework [OOMMF](https://math.nist.gov/oommf/)
 
-- Conversion of OOMMF `.odt` files to [pandas](https://pandas.pydata.org) dataframes and saving to different file types, such as Excel spreadsheet `.xls`
+- Integration of OOMMF simulations into [Jupyter](http://jupyter.org) notebook
 
 It is available on all major operating systems (Windows, MacOS, Linux) and requires Python 3.5 or higher.
 
@@ -36,6 +36,8 @@ Before installing `oommfc` via `pip`, please make sure you have Python 3.5 or hi
     python3 --version
 
 If you are on Linux, it is likely that you already have Python installed. However, on MacOS and Windows, this is usually not the case. If you do not have Python 3.5 or higher on your machine, we strongly recommend installing the [Anaconda](https://www.anaconda.com/) Python distribution. [Download Anaconda](https://www.anaconda.com/download) for your operating system and follow instructions on the download page. Further information about installing Anaconda can be found [here](https://conda.io/docs/user-guide/install/download.html).
+
+
 
 #### `pip`
 
