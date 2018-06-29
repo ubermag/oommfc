@@ -16,13 +16,14 @@ install:
   - conda update -q conda
   - "conda create -q -n test-environment python=%PYTHON_VERSION%"
   - activate test-environment
-  - conda install --yes oommf --channel conda-forge
-  - pip install pytest .
+  - conda install --channel conda-forge oommf
+  - python -m pip install --upgrade pip pytest nbval .
 
 test_script:
-  - python -m pytest -v
+  - python -c "import oommfc as o; import sys; sys.exit(o.test())"
+  - python -m pytest --nbval docs\ipynb\
+  - python -m pytest --doctest-modules --ignore=oommfc\tests oommfc
 
-#on_success:
-#  You can use this step to upload your artifacts to a public website.
-#  See Appveyor's documentation for more details. Or you can simply
-#  access your wheels from the Appveyor "artifacts" tab for your build.
+notifications:
+  - provider: Slack
+    incoming_webhook: https://hooks.slack.com/services/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
