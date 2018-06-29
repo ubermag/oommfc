@@ -59,7 +59,7 @@ For further information on the `conda` package, dependency, and environment mana
 
 ## Updating
 
-If you used pip to install `oommfc`, you can update to the latest released version in [PyPI](https://pypi.org/) by running
+If you used pip to install `oommfc`, you can update to the latest released version in [PyPI](https://pypi.org/project/oommfc/) by running
 
     python3 -m pip install --upgrade oommfc
 
