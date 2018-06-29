@@ -6,7 +6,7 @@ with open("README.md", 'r+', encoding="utf-8") as f:
 setuptools.setup(
     name='oommfc',
     version="0.8.4",
-    description='A Python-based OOMMF calculator.',
+    description='Python interface to OOMMF integrated into Jupyter notebook.',
     long_description=readme,
     url='https://joommf.github.io',
     author='Marijan Beg, Ryan A. Pepper, Thomas Kluyver, and Hans Fangohr',
