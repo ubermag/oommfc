@@ -37,7 +37,13 @@ Before installing `oommfc` via `pip`, please make sure you have Python 3.5 or hi
 
 If you are on Linux, it is likely that you already have Python installed. However, on MacOS and Windows, this is usually not the case. If you do not have Python 3.5 or higher on your machine, we strongly recommend installing the [Anaconda](https://www.anaconda.com/) Python distribution. [Download Anaconda](https://www.anaconda.com/download) for your operating system and follow instructions on the download page. Further information about installing Anaconda can be found [here](https://conda.io/docs/user-guide/install/download.html).
 
+#### OOMMF requirements
 
+`oommfc` is a Python package used to drive [OOMMF](https://math.nist.gov/oommf/). Therefore, OOMMF is a requirement (dependency) of `oommfc`. If you decide to install `oommfc` using `conda`, then OOMMF will be automatically installed. However, if you decide to use `pip` for `oommfc` installation, we strongly recommend using conda to install OOMMF. You can install OOMMF by running:
+
+    conda install --channel conda-forge oommf
+    
+**Note:** Details on how to install Anaconda Python distribution can be found in the `conda` section.
 
 #### `pip`
 
