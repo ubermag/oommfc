@@ -19,7 +19,7 @@ Marijan Beg<sup>1,2</sup>, Ryan A. Pepper<sup>2</sup>, Thomas Kluyver<sup>1</sup
 
 `oommfc` is a Python package that provides:
 
-- An interface to Object Oriented MicroMagnetic Framework [OOMMF](https://math.nist.gov/oommf/)
+- An interface to the Object Oriented MicroMagnetic Framework [OOMMF](https://math.nist.gov/oommf/)
 
 - Integration of OOMMF simulations into the [Jupyter](http://jupyter.org) notebook
 
