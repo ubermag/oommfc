@@ -21,7 +21,7 @@ install:
 
 test_script:
   - python -c "import oommfc as o; import sys; sys.exit(o.test())"
-  - python -m pytest --nbval docs\ipynb\
+  - python -m pytest --nbval-lax docs\ipynb\
   - python -m pytest --doctest-modules --ignore=oommfc\tests oommfc
 
 notifications:
