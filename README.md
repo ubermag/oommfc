@@ -12,6 +12,7 @@ Marijan Beg<sup>1,2</sup>, Ryan A. Pepper<sup>2</sup>, Thomas Kluyver<sup>1</sup
 |       | [![Build status](https://ci.appveyor.com/api/projects/status/a1cp833x8trei0d8?svg=true)](https://ci.appveyor.com/project/marijanbeg/oommfc) |
 | Coverage | [![codecov](https://codecov.io/gh/joommf/oommfc/branch/master/graph/badge.svg)](https://codecov.io/gh/joommf/oommfc) |
 | Documentation | [![Documentation Status](https://readthedocs.org/projects/oommfc/badge/?version=latest)](http://oommfc.readthedocs.io/en/latest/?badge=latest) |
+| Binder | [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/joommf/oommfc/master?filepath=index.ipynb) |
 | Dependecies | [![Requirements Status](https://requires.io/github/joommf/oommfc/requirements.svg?branch=master)](https://requires.io/github/joommf/oommfc/requirements/?branch=master) |
 | License | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
 
@@ -81,6 +82,10 @@ The most recent development version of `oommfc` that is not yet released can be 
     python3 -m pip install --upgrade oommfc
 
 **Note**: If you do not have `git` on your system, it can be installed by following the instructions [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+
+## Binder
+
+`oommfc` can be used in the cloud via Binder. This does not require you to have anything installed and no files will be created on your machine. To use `oommfc` in the cloud, follow this [link](https://mybinder.org/v2/gh/joommf/oommfc/master?filepath=index.ipynb).
 
 ## Documentation
 
