@@ -18,7 +18,6 @@ RUN chmod +x /usr/local/bin/wrapdocker
 VOLUME /var/lib/docker
 CMD ["wrapdocker"]
 
-WORKDIR /usr/local
 COPY . /usr/local/oommfc/
 WORKDIR /usr/local/oommfc
 RUN python3 -m pip install .

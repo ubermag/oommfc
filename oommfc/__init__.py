@@ -1,3 +1,4 @@
+import pkg_resources
 from .oommf import get_oommf_runner
 from .hamiltonian import Exchange, UniaxialAnisotropy, \
     Demag, Zeeman, DMI, CubicAnisotropy, Hamiltonian
@@ -62,3 +63,6 @@ def test_oommf_overhead(t=1e-12):
     print("oommfc.oommf.get_oommf_runner(): {}".format(get_oommf_runner()))
     mifpath = os.path.realpath('example-macrospin/example-macrospin.mif')
     return time_, mifpath
+
+__version__ = pkg_resources.get_distribution(__name__).version
+__dependencies__ = pkg_resources.require(__name__)
