@@ -3,8 +3,8 @@ import sys
 import time
 import datetime
 import logging
+import subprocess as sp
 from shutil import which
-from subprocess import run, PIPE
 
 log = logging.getLogger(__name__)
     
@@ -16,7 +16,6 @@ class OOMMFRunner:
     of this class.
 
     """
-
     def call(self, argstr, need_stderr=False):
         now = datetime.datetime.now()
         timestamp = '{}/{:02d}/{:02d} {:02d}:{:02d}'.format(now.year,
@@ -27,15 +26,15 @@ class OOMMFRunner:
         print('{}: Running OOMMF ({}) ... '.format(timestamp, argstr), end='')
 
         tic = time.time()
-        returnobject = self._call(argstr=argstr, need_stderr=need_stderr)
+        res = self._call(argstr=argstr, need_stderr=need_stderr)
         toc = time.time()
         seconds = '({:0.1f} s)'.format(toc - tic)
         print(seconds)
 
-        if returnobject.returncode is not 0:
-            stderr = returnobject.stderr.decode('utf-8', 'replace')
-            stdout = returnobject.stdout.decode('utf-8', 'replace')
-            cmdstr = ' '.join(returnobject.args)
+        if res.returncode is not 0:
+            stderr = res.stderr.decode('utf-8', 'replace')
+            stdout = res.stdout.decode('utf-8', 'replace')
+            cmdstr = ' '.join(res.args)
             print('OOMMF error:')
             print('\tcommand: {}'.format(cmdstr))
             print('\tstdout: {}'.format(stdout))
@@ -43,42 +42,43 @@ class OOMMFRunner:
             print('\n')
             raise RuntimeError('Error in OOMMF run.')
 
-        return returnobject
+        return res
 
     def _call(self, argstr, need_stderr=False):
         # This method should be implemented in subclass.
         raise NotImplementedError
 
     def version(self):
-        returnobject = self.call(argstr='+version', need_stderr=True)
-        return returnobject.stderr.decode('utf-8').split('oommf.tcl')[-1].strip()
+        res = self.call(argstr='+version', need_stderr=True)
+        return res.stderr.decode('utf-8').split('oommf.tcl')[-1].strip()
 
     def platform(self):
-        returnobject = self.call(argstr='+platform', need_stderr=True)
-        return returnobject.stderr.decode('utf-8')
+        res = self.call(argstr='+platform', need_stderr=True)
+        return res.stderr.decode('utf-8')
 
     def kill(self, targets=('all',)):
         # This method is probably not needed anymore. Check this.
         raise NotImplementedError
 
+
 class ScriptOOMMFRunner(OOMMFRunner):
-    """Run OOMMF on this system, using an oommf executable on $PATH 
+    """Using oommf executable on $PATH.
+
     """
     def __init__(self, script_name='oommf'):
         self.script_name = script_name
 
     def _call(self, argstr, need_stderr=False):
         cmd = (self.script_name, 'boxsi', '+fg', argstr, '-exitondone', '1')
-        return run(cmd, stdout=PIPE, stderr=PIPE)
+        return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
 
     def kill(self, targets=('all',)):
-        run((self.script_name, 'killoommf') + targets)
+        sp.run((self.script_name, 'killoommf') + targets)
 
 
 class NativeOOMMFRunner(ScriptOOMMFRunner):
-    """Run OOMMF on this system, given a path to oommf.tcl
-    
-    This requires tclsh to be available.
+    """Using path to oommf.tcl
+
     """
     def __init__(self, oommf_tcl_path):
         self.oommf_tcl_path = oommf_tcl_path
@@ -86,16 +86,14 @@ class NativeOOMMFRunner(ScriptOOMMFRunner):
     def _call(self, argstr, need_stderr=False):
         cmd = ('tclsh', self.oommf_tcl_path, 'boxsi', '+fg',
                argstr, '-exitondone', '1')
-        if sys.platform == 'win32':
-            stdout = stderr = None
-            if need_stderr:
-                stderr = PIPE
-        else:
-            stdout = stderr = PIPE
-        return run(cmd, stdout=stdout, stderr=stderr)
 
-    def kill(self, targets=('all',)):
-        run(('tclsh', self.oommf_tcl_path, 'killoommf') + targets)
+        # Not clear why we cannot get stderr and stdout on
+        # win32. Calls to OOMMF get stuck.
+        stdout = stderr = sp.PIPE
+        if sys.platform == 'win32' and not need_stderr:
+            stdout = stderr = None
+
+        return sp.run(cmd, stdout=stdout, stderr=stderr)
 
 
 class DockerOOMMFRunner(OOMMFRunner):
@@ -105,12 +103,12 @@ class DockerOOMMFRunner(OOMMFRunner):
         self.docker_exe = docker_exe
 
     def _call(self, argstr, need_stderr=False):
-        run([self.docker_exe, 'pull', self.image])
+        sp.run([self.docker_exe, 'pull', self.image])
         cmd = [self.docker_exe, 'run', '-v', os.getcwd()+':/io', self.image,
                '/bin/bash', '-c',
                ('tclsh /usr/local/oommf/oommf/oommf.tcl boxsi +fg {} '
                 '-exitondone 1').format(argstr)]
-        return run(cmd, stdout=PIPE, stderr=PIPE)
+        return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
 
     def kill(self):
         pass # Does this need to do anything?
@@ -143,7 +141,7 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
         cmd = ('tclsh', oommf_tcl_path, 'boxsi',
                '+fg', '+version', '-exitondone', '1')
         try:
-            res = run(cmd, stdout=PIPE, stderr=PIPE)
+            res = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
         except FileNotFoundError:
             log.warning('tclsh was not found')
         else:
@@ -172,7 +170,7 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
     # Check for docker to run OOMMF in a docker image
     cmd = (docker_exe, 'images')
     try:
-        res = run(cmd, stdout=PIPE, stderr=PIPE)
+        res = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
     except FileNotFoundError:
         log.warning('docker was not found')
     else:
