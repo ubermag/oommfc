@@ -1,3 +1,6 @@
+*~
+.#*
+*#
 .cache
 .coverage
 .pytest_cache/
@@ -6,3 +9,5 @@ __pycache__/
 build/
 dist/
 oommfc.egg-info/
+docs/ipynb/*
+!docs/ipynb/*.ipynb
