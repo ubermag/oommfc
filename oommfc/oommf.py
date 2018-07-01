@@ -56,10 +56,6 @@ class OOMMFRunner:
         res = self.call(argstr='+platform', need_stderr=True)
         return res.stderr.decode('utf-8')
 
-    def kill(self, targets=('all',)):
-        # This method is probably not needed anymore. Check this.
-        raise NotImplementedError
-
 
 class ScriptOOMMFRunner(OOMMFRunner):
     """Using oommf executable on $PATH.
@@ -71,9 +67,6 @@ class ScriptOOMMFRunner(OOMMFRunner):
     def _call(self, argstr, need_stderr=False):
         cmd = (self.script_name, 'boxsi', '+fg', argstr, '-exitondone', '1')
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
-
-    def kill(self, targets=('all',)):
-        sp.run((self.script_name, 'killoommf') + targets)
 
 
 class NativeOOMMFRunner(ScriptOOMMFRunner):
