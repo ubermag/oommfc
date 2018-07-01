@@ -7,11 +7,11 @@ import subprocess as sp
 from shutil import which
 
 log = logging.getLogger(__name__)
-    
+
 
 class OOMMFRunner:
     """Base class for running OOMMF.
-    
+
     Don't use this directly. Use get_oommf_runner() to pick a subclass
     of this class.
 
@@ -93,13 +93,13 @@ class DockerOOMMFRunner(OOMMFRunner):
     """Run OOMMF in a docker container.
 
     """
-    def __init__(self, docker_exe='docker', docker_image='joommf/oommf'):
-        self.docker_image = docker_image
+    def __init__(self, docker_exe='docker', image='joommf/oommf'):
+        self.image = image
         self.docker_exe = docker_exe
 
     def _call(self, argstr, need_stderr=False):
         cmd = [self.docker_exe, 'run', '-v', os.getcwd()+':/io',
-               self.docker_image, '/bin/bash', '-c',
+               self.image, '/bin/bash', '-c',
                ('tclsh /usr/local/oommf/oommf/oommf.tcl boxsi +fg {} '
                 '-exitondone 1').format(argstr)]
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
@@ -110,10 +110,10 @@ _cached_oommf_runner = None
 
 def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
     """Find the best available way to run OOMMF.
-    
+
     Returns an OOMMFRunner object, or raises EnvironmentError if no suitable
     method is found.
-    
+
     Parameters
     ----------
     use_cache : bool
@@ -149,8 +149,9 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
                 _cached_oommf_runner = TclOOMMFRunner(oommf_tcl)
                 return _cached_oommf_runner
 
-    # OOMMF is installed via conda and oommf.tcl is in opt/oommf (Windows).
-    # This would probably also work on MacOS/Linux, but there we have oommf executable.
+    # OOMMF is installed via conda and oommf.tcl is in opt/oommf
+    # (Windows).  This would probably also work on MacOS/Linux, but
+    # there we have oommf executable.
     if sys.platform == 'win32' and \
             os.path.isdir(os.path.join(sys.prefix, 'conda-meta')):
         oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
@@ -177,7 +178,7 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
                         'stdout:\n{}\n\n'
                         'stderr:\n{}'.format(res.stdout, res.stderr))
         else:
-            _cached_oommf_runner = DockerOOMMFRunner(docker_image='joommf/oommf',
+            _cached_oommf_runner = DockerOOMMFRunner(image='joommf/oommf',
                                                      docker_exe=docker_exe)
             return _cached_oommf_runner
 
