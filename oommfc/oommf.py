@@ -27,15 +27,15 @@ class OOMMFRunner:
         print('{}: Running OOMMF ({}) ... '.format(timestamp, argstr), end='')
 
         tic = time.time()
-        returnvalue = self._call(argstr=argstr, need_stderr=need_stderr)
+        returnobject = self._call(argstr=argstr, need_stderr=need_stderr)
         toc = time.time()
         seconds = '({:0.1f} s)'.format(toc - tic)
         print(seconds)
 
-        if returnvalue.returncode is not 0:
-            stderr = val.stderr.decode('utf-8', 'replace')
-            stdout = val.stdout.decode('utf-8', 'replace')
-            cmdstr = ' '.join(val.args)
+        if returnobject.returncode is not 0:
+            stderr = returnobject.stderr.decode('utf-8', 'replace')
+            stdout = returnobject.stdout.decode('utf-8', 'replace')
+            cmdstr = ' '.join(returnobject.args)
             print('OOMMF error:')
             print('\tcommand: {}'.format(cmdstr))
             print('\tstdout: {}'.format(stdout))
@@ -43,21 +43,22 @@ class OOMMFRunner:
             print('\n')
             raise RuntimeError('Error in OOMMF run.')
 
-        return returnvalue
+        return returnobject
 
     def _call(self, argstr, need_stderr=False):
         # This method should be implemented in subclass.
         raise NotImplementedError
 
     def version(self):
-        p = self.call(argstr='+version', need_stderr=True)
-        return p.stderr.decode('utf-8').split('oommf.tcl')[-1].strip()
+        returnobject = self.call(argstr='+version', need_stderr=True)
+        return returnobject.stderr.decode('utf-8').split('oommf.tcl')[-1].strip()
 
     def platform(self):
-        p = self.call(argstr='+platform', need_stderr=True)
-        return p.stderr.decode('utf-8')
+        returnobject = self.call(argstr='+platform', need_stderr=True)
+        return returnobject.stderr.decode('utf-8')
 
     def kill(self, targets=('all',)):
+        # This method is probably not needed anymore. Check this.
         raise NotImplementedError
 
 class ScriptOOMMFRunner(OOMMFRunner):
