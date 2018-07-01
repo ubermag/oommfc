@@ -67,9 +67,6 @@ class ScriptOOMMFRunner(OOMMFRunner):
     def __init__(self, script_name='oommf'):
         self.script_name = script_name
 
-    def _oommf_cmd_tuple(self):
-        return (self.script_name, )
-
     def _call(self, argstr, need_stderr=False):
         cmd = (self.script_name, 'boxsi', '+fg', argstr, '-exitondone', '1')
         return run(cmd, stdout=PIPE, stderr=PIPE)
