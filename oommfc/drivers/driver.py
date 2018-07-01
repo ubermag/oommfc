@@ -56,7 +56,6 @@ class Driver(mm.Driver):
         miffilename = self._filenames(system)["miffilename"]
         oommf = oc.get_oommf_runner()
         oommf.call(argstr=miffilename)
-        oommf.kill()
 
     def _update_system(self, system):
         self._update_m(system)

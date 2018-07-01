@@ -57,15 +57,15 @@ class OOMMFRunner:
         return res.stderr.decode('utf-8')
 
 
-class TclOOMMFRunner(ScriptOOMMFRunner):
+class TclOOMMFRunner(OOMMFRunner):
     """Using path to oommf.tcl
 
     """
-    def __init__(self, oommf_tcl_path):
-        self.oommf_tcl_path = oommf_tcl_path
+    def __init__(self, oommf_tcl):
+        self.oommf_tcl = oommf_tcl
 
     def _call(self, argstr, need_stderr=False):
-        cmd = ['tclsh', self.oommf_tcl_path, 'boxsi', '+fg',
+        cmd = ['tclsh', self.oommf_tcl, 'boxsi', '+fg',
                argstr, '-exitondone', '1']
 
         # Not clear why we cannot get stderr and stdout on
@@ -77,15 +77,15 @@ class TclOOMMFRunner(ScriptOOMMFRunner):
         return sp.run(cmd, stdout=stdout, stderr=stderr)
 
 
-class ScriptOOMMFRunner(OOMMFRunner):
+class ExeOOMMFRunner(OOMMFRunner):
     """Using oommf executable on $PATH.
 
     """
-    def __init__(self, script_name='oommf'):
-        self.script_name = script_name
+    def __init__(self, oommf_exe='oommf'):
+        self.oommf_exe = oommf_exe
 
     def _call(self, argstr, need_stderr=False):
-        cmd = [self.script_name, 'boxsi', '+fg', argstr, '-exitondone', '1']
+        cmd = [self.oommf_exe, 'boxsi', '+fg', argstr, '-exitondone', '1']
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
 
 
@@ -93,7 +93,7 @@ class DockerOOMMFRunner(OOMMFRunner):
     """Run OOMMF in a docker container.
 
     """
-    def __init__(self, docker_image='joommf/oommf', docker_exe='docker'):
+    def __init__(self, docker_exe='docker', docker_image='joommf/oommf'):
         self.docker_image = docker_image
         self.docker_exe = docker_exe
 
@@ -106,6 +106,7 @@ class DockerOOMMFRunner(OOMMFRunner):
 
 
 _cached_oommf_runner = None
+
 
 def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
     """Find the best available way to run OOMMF.
@@ -121,58 +122,64 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
       object from the cache. Setting this parameter to False will cause it to
       check for available methods again.
     docker_exe : str
-      The name or path of the docker command.
+      The name or path of the docker command
+    oommf_exe : str
+      The name or path of the oommf command
+
     """
     global _cached_oommf_runner
     if use_cache and (_cached_oommf_runner is not None):
         return _cached_oommf_runner
 
-    # Check for $OOMMFTCL environment variable pointing to native OOMMF
-    oommf_tcl_path = os.environ.get('OOMMFTCL', None)
-    if oommf_tcl_path:
-        cmd = ('tclsh', oommf_tcl_path, 'boxsi',
-               '+fg', '+version', '-exitondone', '1')
+    # Check for $OOMMFTCL environment variable pointing to oommf.tcl.
+    oommf_tcl = os.environ.get('OOMMFTCL', None)
+    if oommf_tcl:
+        cmd = ['tclsh', oommf_tcl, 'boxsi',
+               '+fg', '+version', '-exitondone', '1']
         try:
             res = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
         except FileNotFoundError:
-            log.warning('tclsh was not found')
+            log.warning('oommf.tcl was not found.')
         else:
             if res.returncode:
-                log.warning('OOMMFTCL is set, but there was a problem running oommf.\n'
+                log.warning('OOMMFTCL is set, but OOMMF could not be run.\n'
                             'stdout:\n{}\n\n'
                             'stderr:\n{}'.format(res.stdout, res.stderr))
             else:
-                _cached_oommf_runner = TclOOMMFRunner(oommf_tcl_path)
+                _cached_oommf_runner = TclOOMMFRunner(oommf_tcl)
                 return _cached_oommf_runner
 
+    # OOMMF is installed via conda and oommf.tcl is in opt/oommf (Windows).
+    # This would probably also work on MacOS/Linux, but there we have oommf executable.
     if sys.platform == 'win32' and \
             os.path.isdir(os.path.join(sys.prefix, 'conda-meta')):
-        # In a conda env on Windows, would probably also work on Mac/Linux
         oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
         if os.path.isfile(oommf_tcl):
             _cached_oommf_runner = TclOOMMFRunner(oommf_tcl)
             return _cached_oommf_runner
 
-	# 'oommf' available as a command - in a conda env on Mac/Linux, or oommf installed separately
+    # OOMMF available as an executable - in a conda env on
+    # Mac/Linux, or oommf installed separately.
     oommf_exe_path = which(oommf_exe)
     if oommf_exe_path:
-        _cached_oommf_runner = ScriptOOMMFRunner(oommf_exe_path)
+        _cached_oommf_runner = ExeOOMMFRunner(oommf_exe_path)
         return _cached_oommf_runner
 
-    # Check for docker to run OOMMF in a docker image
-    cmd = (docker_exe, 'images')
+    # Check for docker to run OOMMF in a docker image.
+    cmd = [docker_exe, 'images']
     try:
         res = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
     except FileNotFoundError:
-        log.warning('docker was not found')
+        log.warning('Docker was not found.')
     else:
         if res.returncode:
             log.warning('Error running docker\n'
-                'stdout:\n{}\n\n'
-                'stderr:\n{}'.format(res.stdout, res.stderr))
+                        'stdout:\n{}\n\n'
+                        'stderr:\n{}'.format(res.stdout, res.stderr))
         else:
-            _cached_oommf_runner = DockerOOMMFRunner(image='joommf/oommf')
+            _cached_oommf_runner = DockerOOMMFRunner(docker_image='joommf/oommf',
+                                                     docker_exe=docker_exe)
             return _cached_oommf_runner
 
     # Raise exception if we can't find a way to run OOMMF
-    raise EnvironmentError('Could not run $OOMMFTCL or docker.')
+    raise EnvironmentError('Cannot find OOMMF.')
