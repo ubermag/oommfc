@@ -57,19 +57,7 @@ class OOMMFRunner:
         return res.stderr.decode('utf-8')
 
 
-class ScriptOOMMFRunner(OOMMFRunner):
-    """Using oommf executable on $PATH.
-
-    """
-    def __init__(self, script_name='oommf'):
-        self.script_name = script_name
-
-    def _call(self, argstr, need_stderr=False):
-        cmd = (self.script_name, 'boxsi', '+fg', argstr, '-exitondone', '1')
-        return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
-
-
-class NativeOOMMFRunner(ScriptOOMMFRunner):
+class TclOOMMFRunner(ScriptOOMMFRunner):
     """Using path to oommf.tcl
 
     """
@@ -77,8 +65,8 @@ class NativeOOMMFRunner(ScriptOOMMFRunner):
         self.oommf_tcl_path = oommf_tcl_path
 
     def _call(self, argstr, need_stderr=False):
-        cmd = ('tclsh', self.oommf_tcl_path, 'boxsi', '+fg',
-               argstr, '-exitondone', '1')
+        cmd = ['tclsh', self.oommf_tcl_path, 'boxsi', '+fg',
+               argstr, '-exitondone', '1']
 
         # Not clear why we cannot get stderr and stdout on
         # win32. Calls to OOMMF get stuck.
@@ -89,22 +77,33 @@ class NativeOOMMFRunner(ScriptOOMMFRunner):
         return sp.run(cmd, stdout=stdout, stderr=stderr)
 
 
+class ScriptOOMMFRunner(OOMMFRunner):
+    """Using oommf executable on $PATH.
+
+    """
+    def __init__(self, script_name='oommf'):
+        self.script_name = script_name
+
+    def _call(self, argstr, need_stderr=False):
+        cmd = [self.script_name, 'boxsi', '+fg', argstr, '-exitondone', '1']
+        return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
+
+
 class DockerOOMMFRunner(OOMMFRunner):
-    """Run OOMMF inside a docker image"""
-    def __init__(self, image='joommf/oommf', docker_exe='docker'):
-        self.image = image
+    """Run OOMMF in a docker container.
+
+    """
+    def __init__(self, docker_image='joommf/oommf', docker_exe='docker'):
+        self.docker_image = docker_image
         self.docker_exe = docker_exe
 
     def _call(self, argstr, need_stderr=False):
-        sp.run([self.docker_exe, 'pull', self.image])
-        cmd = [self.docker_exe, 'run', '-v', os.getcwd()+':/io', self.image,
-               '/bin/bash', '-c',
+        cmd = [self.docker_exe, 'run', '-v', os.getcwd()+':/io',
+               self.docker_image, '/bin/bash', '-c',
                ('tclsh /usr/local/oommf/oommf/oommf.tcl boxsi +fg {} '
                 '-exitondone 1').format(argstr)]
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
 
-    def kill(self):
-        pass # Does this need to do anything?
 
 _cached_oommf_runner = None
 
@@ -143,7 +142,7 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
                             'stdout:\n{}\n\n'
                             'stderr:\n{}'.format(res.stdout, res.stderr))
             else:
-                _cached_oommf_runner = NativeOOMMFRunner(oommf_tcl_path)
+                _cached_oommf_runner = TclOOMMFRunner(oommf_tcl_path)
                 return _cached_oommf_runner
 
     if sys.platform == 'win32' and \
@@ -151,7 +150,7 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
         # In a conda env on Windows, would probably also work on Mac/Linux
         oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
         if os.path.isfile(oommf_tcl):
-            _cached_oommf_runner = NativeOOMMFRunner(oommf_tcl)
+            _cached_oommf_runner = TclOOMMFRunner(oommf_tcl)
             return _cached_oommf_runner
 
 	# 'oommf' available as a command - in a conda env on Mac/Linux, or oommf installed separately
