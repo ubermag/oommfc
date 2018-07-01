@@ -46,14 +46,14 @@ class OOMMFRunner:
         return returnvalue
 
     def _call(self, argstr, need_stderr=False):
-        # Implement in subclass
+        # This method should be implemented in subclass.
         raise NotImplementedError
 
-    def version(self, where=None):
+    def version(self):
         p = self.call(argstr='+version', need_stderr=True)
         return p.stderr.decode('utf-8').split('oommf.tcl')[-1].strip()
 
-    def platform(self, where=None):
+    def platform(self):
         p = self.call(argstr='+platform', need_stderr=True)
         return p.stderr.decode('utf-8')
 
