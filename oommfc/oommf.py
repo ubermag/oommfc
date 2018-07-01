@@ -29,22 +29,21 @@ class OOMMFRunner:
         tic = time.time()
         returnvalue = self._call(argstr=argstr, need_stderr=need_stderr)
         toc = time.time()
-        seconds = '[{:0.1f} s]'.format(toc - tic)
+        seconds = '({:0.1f} s)'.format(toc - tic)
         print(seconds)
 
-        # check exit code
-        if val.returncode is not 0:
+        if returnvalue.returncode is not 0:
             stderr = val.stderr.decode('utf-8', 'replace')
             stdout = val.stdout.decode('utf-8', 'replace')
             cmdstr = ' '.join(val.args)
-            print('Error when executing:')
+            print('OOMMF error:')
             print('\tcommand: {}'.format(cmdstr))
             print('\tstdout: {}'.format(stdout))
             print('\tstderr: {}'.format(stderr))
             print('\n')
-            raise RuntimeError('Some problem calling OOMMF.')
+            raise RuntimeError('Error in OOMMF run.')
 
-        return val
+        return returnvalue
 
     def _call(self, argstr, need_stderr=False):
         # Implement in subclass
