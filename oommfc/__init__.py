@@ -1,3 +1,4 @@
+import pytest
 import pkg_resources
 from .oommf import get_oommf_runner
 from .hamiltonian import Exchange, UniaxialAnisotropy, \
@@ -15,7 +16,6 @@ from . import examples
 def test():
     """Runs all the tests"""
     get_oommf_runner()  # pragma: no cover
-    import pytest  # pragma: no cover
     args = ["-m", "not travis", "-v", "--pyargs",
             "oommfc"]  # pragma: no cover
     return pytest.main(args)  # pragma: no cover
