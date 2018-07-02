@@ -72,5 +72,5 @@ def test_get_right_oommf_runner():
 
 
 def test_get_oommf_runner():
-    oommf_runner = oo.oommf.get_oommf_runner()
+    oommf_runner = oo.oommf.get_oommf_runner(use_cache=False)
     check_runner(oommf_runner)
