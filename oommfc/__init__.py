@@ -2,6 +2,7 @@ import os
 import time
 import pytest
 import pkg_resources
+import oommfc.oommf
 from .hamiltonian import Exchange, UniaxialAnisotropy, \
     Demag, Zeeman, DMI, CubicAnisotropy, Hamiltonian
 from .dynamics import Precession, Damping, STT, Dynamics
