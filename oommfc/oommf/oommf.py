@@ -111,8 +111,8 @@ class DockerOOMMFRunner(OOMMFRunner):
     def _call(self, argstr, need_stderr=False):
         cmd = [self.docker_exe, 'run', '-v', os.getcwd()+':/io',
                self.image, '/bin/bash', '-c',
-               ('tclsh /usr/local/oommf/oommf/oommf.tcl boxsi +fg {} '
-                '-exitondone 1').format(argstr)]
+               ('tclsh /usr/local/oommf/oommf/oommf.tcl boxsi '
+                '+fg {} -exitondone 1').format(argstr)]
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
 
     def _kill(self, targets=('all',)):

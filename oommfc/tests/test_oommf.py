@@ -4,8 +4,9 @@ import oommfc.oommf as oo
 
 
 def check_runner(oommf_runner):
-    argstr = os.path.join(os.path.dirname(__file__),
-                          'test_files', 'test_oommf.mif')
+    dirname = os.path.join(os.path.dirname(__file__), 'test_files')
+    os.chdir(dirname)
+    argstr = 'test_oommf.mif'
     res = oommf_runner.call(argstr)
     version = oommf_runner.version()
     platform = oommf_runner.platform()
@@ -62,11 +63,11 @@ def test_get_right_oommf_runner():
 
 
     # ExeOOMMFRunner
-    # oommf_runner = oo.get_oommf_runner(use_cache=False,
-    #                                    envvar='wrong_name',
-    #                                    oommf_exe='oommf',
-    #                                    docker_exe='wrong_name')
-    # assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
+    oommf_runner = oo.get_oommf_runner(use_cache=False,
+                                       envvar='wrong_name',
+                                       oommf_exe='oommf',
+                                       docker_exe='wrong_name')
+    assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
 
     # DockerOOMMFRunner
     oommf_runner = oo.get_oommf_runner(use_cache=False,
