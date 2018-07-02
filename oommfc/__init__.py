@@ -1,6 +1,5 @@
 import pytest
 import pkg_resources
-from .oommf import get_oommf_runner
 from .hamiltonian import Exchange, UniaxialAnisotropy, \
     Demag, Zeeman, DMI, CubicAnisotropy, Hamiltonian
 from .dynamics import Precession, Damping, STT, Dynamics

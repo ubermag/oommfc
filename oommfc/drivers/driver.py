@@ -54,7 +54,7 @@ class Driver(mm.Driver):
 
     def _run_simulator(self, system):
         miffilename = self._filenames(system)["miffilename"]
-        oommf = oc.get_oommf_runner()
+        oommf = oc.oommf.get_oommf_runner()
         oommf.call(argstr=miffilename)
 
     def _update_system(self, system):
