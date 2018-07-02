@@ -27,6 +27,7 @@ class OOMMFRunner:
 
         tic = time.time()
         res = self._call(argstr=argstr, need_stderr=need_stderr)
+        self._kill()
         toc = time.time()
         seconds = '({:0.1f} s)'.format(toc - tic)
         print(seconds)
@@ -48,6 +49,10 @@ class OOMMFRunner:
         # This method should be implemented in subclass.
         raise NotImplementedError
 
+    def _kill(self, targets=('all',)):
+        # This method should be implemented in subclass.
+        raise NotImplementedError
+    
     def version(self):
         res = self.call(argstr='+version', need_stderr=True)
         return res.stderr.decode('utf-8').split('oommf.tcl')[-1].strip()
@@ -56,7 +61,7 @@ class OOMMFRunner:
         res = self.call(argstr='+platform', need_stderr=True)
         return res.stderr.decode('utf-8')
 
-
+    
 class TclOOMMFRunner(OOMMFRunner):
     """Using path to oommf.tcl
 
@@ -76,6 +81,9 @@ class TclOOMMFRunner(OOMMFRunner):
 
         return sp.run(cmd, stdout=stdout, stderr=stderr)
 
+    def _kill(self, targets=('all',)):
+        run(("tclsh", self.oommf_tcl, "killoommf") + targets)
+
 
 class ExeOOMMFRunner(OOMMFRunner):
     """Using oommf executable on $PATH.
@@ -87,6 +95,9 @@ class ExeOOMMFRunner(OOMMFRunner):
     def _call(self, argstr, need_stderr=False):
         cmd = [self.oommf_exe, 'boxsi', '+fg', argstr, '-exitondone', '1']
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
+
+    def _kill(self, targets=('all',)):
+        run((self.oommf_exe, "killoommf") + targets)
 
 
 class DockerOOMMFRunner(OOMMFRunner):
@@ -103,6 +114,10 @@ class DockerOOMMFRunner(OOMMFRunner):
                ('tclsh /usr/local/oommf/oommf/oommf.tcl boxsi +fg {} '
                 '-exitondone 1').format(argstr)]
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
+
+    def kill(self, targets=('all',)):
+        # There is no need to kill OOMMF when run inside docker.
+        pass
 
 
 _cached_oommf_runner = None
