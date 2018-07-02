@@ -19,25 +19,21 @@ __version__ = pkg_resources.get_distribution(__name__).version
 __dependencies__ = pkg_resources.require(__name__)
 
 
-def test():
-    """Runs all the tests"""
-    args = ["-m", "not travis", "-v", "--pyargs",
-            "oommfc"]  # pragma: no cover
+def _run_tests(tag):
+    args = ["-m", tag, "-v", "--pyargs", "oommfc"]  # pragma: no cover
     return pytest.main(args)  # pragma: no cover
+
+
+def test():
+    return(_run_tests("not travis"))  # pragma: no cover
 
 
 def test_not_oommf():
-    """ Runs tests that do not need an OOMMF installation"""
-    args = ["-m", "not travis", "-m", "not oommf", "-v",
-            "--pyargs", "oommfc"]  # pragma: no cover
-    return pytest.main(args)  # pragma: no cover
+    return(_run_tests("not oommf and not travis"))  # pragma: no cover
 
 
 def test_oommf():
-    """Runs all tests that require an OOMMF installation."""
-    args = ["-m", "oommf and not travis", "-v",
-            "--pyargs", "oommfc"]  # pragma: no cover
-    return pytest.main(args)  # pragma: no cover
+    return(_run_tests("oommf and not travis"))  # pragma: no cover
 
 
 def test_oommf_overhead(t=1e-12):
