@@ -82,7 +82,7 @@ class TclOOMMFRunner(OOMMFRunner):
         return sp.run(cmd, stdout=stdout, stderr=stderr)
 
     def _kill(self, targets=('all',)):
-        run(("tclsh", self.oommf_tcl, "killoommf") + targets)
+        sp.run(("tclsh", self.oommf_tcl, "killoommf") + targets)
 
 
 class ExeOOMMFRunner(OOMMFRunner):
@@ -97,7 +97,7 @@ class ExeOOMMFRunner(OOMMFRunner):
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
 
     def _kill(self, targets=('all',)):
-        run((self.oommf_exe, "killoommf") + targets)
+        sp.run((self.oommf_exe, "killoommf") + targets)
 
 
 class DockerOOMMFRunner(OOMMFRunner):
