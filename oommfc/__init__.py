@@ -60,6 +60,6 @@ def test_oommf_overhead(t=1e-12):
     stop = time.time()
     time_ = stop - start
     print("Duration of calling OOMMF through oommfc: {:.4}s".format(time_))
-    print("oommfc.oommf.get_oommf_runner(): {}".format(get_oommf_runner()))
+    print("oommfc.oommf.get_oommf_runner(): {}".format(oommfc.oommf.get_oommf_runner()))
     mifpath = os.path.realpath('example-macrospin/example-macrospin.mif')
     return time_, mifpath
