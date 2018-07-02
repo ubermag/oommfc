@@ -115,7 +115,7 @@ class DockerOOMMFRunner(OOMMFRunner):
                 '-exitondone 1').format(argstr)]
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
 
-    def kill(self, targets=('all',)):
+    def _kill(self, targets=('all',)):
         # There is no need to kill OOMMF when run inside docker.
         pass
 
@@ -123,7 +123,8 @@ class DockerOOMMFRunner(OOMMFRunner):
 _cached_oommf_runner = None
 
 
-def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
+def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
+                     oommf_exe='oommf', docker_exe='docker'):
     """Find the best available way to run OOMMF.
 
     Returns an OOMMFRunner object, or raises EnvironmentError if no suitable
@@ -147,7 +148,7 @@ def get_oommf_runner(use_cache=True, docker_exe='docker', oommf_exe='oommf'):
         return _cached_oommf_runner
 
     # Check for $OOMMFTCL environment variable pointing to oommf.tcl.
-    oommf_tcl = os.environ.get('OOMMFTCL', None)
+    oommf_tcl = os.environ.get(envvar, None)
     if oommf_tcl:
         cmd = ['tclsh', oommf_tcl, 'boxsi',
                '+fg', '+version', '-exitondone', '1']
