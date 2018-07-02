@@ -57,11 +57,11 @@ def test_get_right_oommf_runner():
     assert isinstance(oommf_runner, oo.oommf.TclOOMMFRunner)
 
     # ExeOOMMFRunner
-    #oommf_runner = oo.oommf.get_oommf_runner(use_cache=False,
-    #                                         envvar='wrong_name',
-    #                                         oommf_exe='oommf',
-    #                                         docker_exe='wrong_name')
-    #assert isinstance(oommf_runner, oo.oommf.ExeOOMMFRunner)
+    oommf_runner = oo.oommf.get_oommf_runner(use_cache=False,
+                                             envvar='wrong_name',
+                                             oommf_exe='oommf',
+                                             docker_exe='wrong_name')
+    assert isinstance(oommf_runner, oo.oommf.ExeOOMMFRunner)
 
     # DockerOOMMFRunner
     oommf_runner = oo.oommf.get_oommf_runner(use_cache=False,
