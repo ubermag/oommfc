@@ -77,7 +77,7 @@ def test_get_right_oommf_runner():
     assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
 
     # OOMMF cannot be found on the system.
-    with pytest.raises('EnvironmentError'):
+    with pytest.raises(EnvironmentError):
         oommf_runner = oo.get_oommf_runner(use_cache=False,
                                            envvar='wrong_name',
                                            oommf_exe='wrong_name',
