@@ -104,18 +104,6 @@ def test_cached_oommf_runner():
 
 
 @pytest.mark.oommf
-@pytest.mark.skipif(sys.platform != 'win32',
-                    reason='Run on Windows - OOMMF installed via conda')
-def test_cached_oommf_runner():
-    oommf_runner = oo.get_oommf_runner(use_cache=False,
-                                       envvar='wrong_name',
-                                       oommf_exe='wrong_name',
-                                       docker_exe='wrong_name')
-    assert isinstance(oommf_runner, oo.TclOOMMFRunner)
-    check_runner(oommf_runner)
-
-
-@pytest.mark.oommf
 def test_get_oommf_runner():
     oommf_runner = oo.get_oommf_runner(use_cache=False)
     assert isinstance(oommf_runner, oo.OOMMFRunner)
