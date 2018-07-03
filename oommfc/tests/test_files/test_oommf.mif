@@ -52,7 +52,7 @@ Specify Oxs_MinDriver {
     }
   }
   m0 :m0file
-  basename first_notebook
+  basename test_oommf
   scalar_field_output_format {text %\#.15g}
   vector_field_output_format {text %\#.15g}
 }
