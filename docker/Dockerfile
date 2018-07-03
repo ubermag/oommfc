@@ -1,5 +1,7 @@
 FROM joommf/oommf
 
+USER root
+
 RUN apt update -y
 RUN apt install -y apt-transport-https ca-certificates \
       lxc iptables curl python3-pip
