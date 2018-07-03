@@ -1,9 +1,11 @@
 import os
 import shutil
+import pytest
 import oommfc as oc
 import discretisedfield as df
 
 
+@pytest.mark.oommf
 def test_skyrmion():
     name = "skyrmion"
 
