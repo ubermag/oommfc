@@ -8,14 +8,14 @@ class DMI(mm.DMI):
         if self.crystalclass in ["t", "o"] and sys.platform != "win32":
             mif = "# DMI of crystallographic class T(O)\n"
             mif += "Specify Oxs_DMI_T {\n"
-        elif self.crystalclass == "cnv" and sys.platform != "win32":
-            mif = "# DMI of crystallographic class Cnv\n"
-            mif += "Specify Oxs_DMI_Cnv {\n"
         elif self.crystalclass == "d2d" and sys.platform != "win32":
             mif = "# DMI of crystallographic class D2d\n"
             mif += "Specify Oxs_DMI_D2d {\n"
+        elif self.crystalclass == "cnv" and sys.platform != "win32":
+            mif = "# DMI of crystallographic class Cnv\n"
+            mif += "Specify Oxs_DMI_Cnv {\n"
         elif self.crystalclass == "cnv" and sys.platform == "win32":
-            mif = "# InterfacialDMI\n"
+            mif = "# DMI of crystallographic class Cnv\n"
             mif += "Specify Oxs_DMExchange6Ngbr {\n"
         else:
             raise ValueError("The {} crystal class is not supported "
