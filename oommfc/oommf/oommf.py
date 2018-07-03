@@ -4,6 +4,7 @@ import time
 import datetime
 import logging
 import shutil
+import oommfc as oc
 import subprocess as sp
 
 log = logging.getLogger(__name__)
@@ -206,3 +207,33 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
     # If OOMMFRunner was not returned up to this point, we raise an
     # exception.
     raise EnvironmentError('Cannot find OOMMF.')
+
+
+def overhead():
+    """Run a macrospin example for 1 ps through OOMMFC and directly and
+    return the difference in run times.
+
+    Returns
+    -------
+    overhead : float
+      The time difference (overhead) between running OOMMF though
+      oommfc and directly
+
+    """
+    # Running OOMMF through oommfc.
+    system = oc.examples.macrospin()
+    td = oc.TimeDriver()
+    oommfc_start = time.time()
+    td.drive(system, t=1e-12, n=1)
+    oommfc_stop = time.time()
+    oommfc_time = oommfc_stop - oommfc_start
+
+    # Running OOMMF directly.
+    oommf_runner = get_oommf_runner()
+    mifpath = os.path.realpath('example-macrospin/example-macrospin.mif')
+    oommf_start = time.time()
+    oommf_runner.call(mifpath)
+    oommf_stop = time.time()
+    oommf_time = oommf_stop - oommf_start
+
+    return oommfc_time - oommf_time

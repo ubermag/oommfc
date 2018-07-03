@@ -120,3 +120,8 @@ def test_get_oommf_runner():
     oommf_runner = oo.get_oommf_runner(use_cache=False)
     assert isinstance(oommf_runner, oo.OOMMFRunner)
     check_runner(oommf_runner)
+
+
+@pytest.mark.oommf
+def test_overhead():
+    assert isinstance(oo.overhead(), float)
