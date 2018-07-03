@@ -13,7 +13,7 @@ test-travis:
 	$(PYTHON) -m pytest -m "travis"
 
 test-coverage:
-	$(PYTHON) -m pytest --cov=$(PROJECT) --cov-config .coveragerc
+	$(PYTHON) -m pytest -m "not docker" --cov=$(PROJECT) --cov-config .coveragerc
 
 test-docs:
 	$(PYTHON) -m pytest --doctest-modules --ignore=$(PROJECT)/tests $(PROJECT)
