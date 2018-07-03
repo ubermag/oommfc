@@ -1,2 +1,2 @@
-from .oommf import TclOOMMFRunner, ExeOOMMFRunner, \
+from .oommf import OOMMFRunner, TclOOMMFRunner, ExeOOMMFRunner, \
     DockerOOMMFRunner, get_oommf_runner

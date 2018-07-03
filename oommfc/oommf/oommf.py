@@ -3,10 +3,11 @@ import sys
 import time
 import datetime
 import logging
+import shutil
 import subprocess as sp
-from shutil import which
 
 log = logging.getLogger(__name__)
+_cached_oommf_runner = None
 
 
 class OOMMFRunner:
@@ -63,11 +64,11 @@ class OOMMFRunner:
 
     
 class TclOOMMFRunner(OOMMFRunner):
-    """Using path to oommf.tcl
+    """Using path to oommf.tcl.
 
     """
     def __init__(self, oommf_tcl):
-        self.oommf_tcl = oommf_tcl
+        self.oommf_tcl = oommf_tcl  # a path to oommf.tcl
 
     def _call(self, argstr, need_stderr=False):
         cmd = ['tclsh', self.oommf_tcl, 'boxsi', '+fg',
@@ -81,8 +82,8 @@ class TclOOMMFRunner(OOMMFRunner):
 
         return sp.run(cmd, stdout=stdout, stderr=stderr)
 
-    def _kill(self, targets=('all',)):
-        sp.run(("tclsh", self.oommf_tcl, "killoommf") + targets)
+    def _kill(self, targets=['all']):
+        sp.run(["tclsh", self.oommf_tcl, "killoommf"] + targets)
 
 
 class ExeOOMMFRunner(OOMMFRunner):
@@ -93,11 +94,15 @@ class ExeOOMMFRunner(OOMMFRunner):
         self.oommf_exe = oommf_exe
 
     def _call(self, argstr, need_stderr=False):
+        # Here we might need stderr = stdot = None like in
+        # TclOOMMFRunner for Windows.  This is not clear because we
+        # never use ExeOOMMFRunner on Windows.
+
         cmd = [self.oommf_exe, 'boxsi', '+fg', argstr, '-exitondone', '1']
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
 
-    def _kill(self, targets=('all',)):
-        sp.run((self.oommf_exe, "killoommf") + targets)
+    def _kill(self, targets=['all']):
+        sp.run([self.oommf_exe, "killoommf"] + targets)
 
 
 class DockerOOMMFRunner(OOMMFRunner):
@@ -120,9 +125,6 @@ class DockerOOMMFRunner(OOMMFRunner):
         pass
 
 
-_cached_oommf_runner = None
-
-
 def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
                      oommf_exe='oommf', docker_exe='docker'):
     """Find the best available way to run OOMMF.
@@ -137,19 +139,21 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
       and cache it. Normally, subsequent calls will return the OOMMFRunner
       object from the cache. Setting this parameter to False will cause it to
       check for available methods again.
+    envvar : str
+      Name of the environment variable containing the path to oommf.tcl
+    oommf_exe : str
+      The name or path of the executable oommf command
     docker_exe : str
       The name or path of the docker command
-    oommf_exe : str
-      The name or path of the oommf command
 
     """
     global _cached_oommf_runner
     if use_cache and (_cached_oommf_runner is not None):
         return _cached_oommf_runner
 
-    # Check for $OOMMFTCL environment variable pointing to oommf.tcl.
+    # Check for OOMMFTCL environment variable pointing to oommf.tcl.
     oommf_tcl = os.environ.get(envvar, None)
-    if oommf_tcl:
+    if oommf_tcl is not None:
         cmd = ['tclsh', oommf_tcl, 'boxsi',
                '+fg', '+version', '-exitondone', '1']
         try:
@@ -159,27 +163,28 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
         else:
             if res.returncode:
                 log.warning('OOMMFTCL is set, but OOMMF could not be run.\n'
-                            'stdout:\n{}\n\n'
+                            'stdout:\n{}\n'
                             'stderr:\n{}'.format(res.stdout, res.stderr))
             else:
                 _cached_oommf_runner = TclOOMMFRunner(oommf_tcl)
                 return _cached_oommf_runner
 
     # OOMMF is installed via conda and oommf.tcl is in opt/oommf
-    # (Windows).  This would probably also work on MacOS/Linux, but
-    # there we have oommf executable.
+    # (Windows). This would probably also work on MacOS/Linux, but on
+    # these operating systems, when installed via conda, we use
+    # 'oommf' executable.
     if sys.platform == 'win32' and \
-            os.path.isdir(os.path.join(sys.prefix, 'conda-meta')):
+       os.path.isdir(os.path.join(sys.prefix, 'conda-meta')):
         oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
         if os.path.isfile(oommf_tcl):
             _cached_oommf_runner = TclOOMMFRunner(oommf_tcl)
             return _cached_oommf_runner
 
-    # OOMMF available as an executable - in a conda env on
-    # Mac/Linux, or oommf installed separately.
-    oommf_exe_path = which(oommf_exe)
-    if oommf_exe_path:
-        _cached_oommf_runner = ExeOOMMFRunner(oommf_exe_path)
+    # OOMMF available as an executable - in a conda env on Mac/Linux,
+    # or oommf installed separately.
+    oommf_exe = shutil.which(oommf_exe)
+    if oommf_exe:
+        _cached_oommf_runner = ExeOOMMFRunner(oommf_exe)
         return _cached_oommf_runner
 
     # Check for docker to run OOMMF in a docker image.
@@ -191,12 +196,13 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
     else:
         if res.returncode:
             log.warning('Error running docker\n'
-                        'stdout:\n{}\n\n'
+                        'stdout:\n{}\n'
                         'stderr:\n{}'.format(res.stdout, res.stderr))
         else:
-            _cached_oommf_runner = DockerOOMMFRunner(image='joommf/oommf',
-                                                     docker_exe=docker_exe)
+            _cached_oommf_runner = DockerOOMMFRunner(docker_exe=docker_exe,
+                                                     image='joommf/oommf')
             return _cached_oommf_runner
 
-    # Raise exception if we can't find a way to run OOMMF
+    # If OOMMFRunner was not returned up to this point, we raise an
+    # exception.
     raise EnvironmentError('Cannot find OOMMF.')

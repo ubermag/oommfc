@@ -1,4 +1,5 @@
 import os
+import sys
 import pytest
 import oommfc.oommf as oo
 
@@ -16,6 +17,7 @@ def check_runner(oommf_runner):
     assert isinstance(platform, str)
     assert len(platform) is not ''
     assert res.returncode == 0
+
 
 @pytest.mark.oommf
 @pytest.mark.travis
@@ -56,7 +58,6 @@ def test_docker_oommf_runner():
                                        docker_exe='docker')
     assert isinstance(oommf_runner, oo.DockerOOMMFRunner)
 
-    
 
 @pytest.mark.oommf
 @pytest.mark.travis
@@ -68,13 +69,19 @@ def test_get_right_oommf_runner():
                                        docker_exe='wrong_name')
     assert isinstance(oommf_runner, oo.TclOOMMFRunner)
 
-
     # ExeOOMMFRunner
     oommf_runner = oo.get_oommf_runner(use_cache=False,
                                        envvar='wrong_name',
                                        oommf_exe='oommf',
                                        docker_exe='wrong_name')
     assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
+
+    # OOMMF cannot be found on the system.
+    with pytest.raises('EnvironmentError'):
+        oommf_runner = oo.get_oommf_runner(use_cache=False,
+                                           envvar='wrong_name',
+                                           oommf_exe='wrong_name',
+                                           docker_exe='wrong_name')
 
 
 @pytest.mark.oommf
@@ -85,7 +92,7 @@ def test_cached_oommf_runner():
                                        oommf_exe='oommf',
                                        docker_exe='wrong_name')
     assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
-    
+
     oommf_runner = oo.get_oommf_runner(use_cache=True)
     assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
 
@@ -97,7 +104,19 @@ def test_cached_oommf_runner():
 
 
 @pytest.mark.oommf
+@pytest.mark.skipif(sys.platform != 'win32',
+                    reason='Run on Windows - OOMMF installed via conda')
+def test_cached_oommf_runner():
+    oommf_runner = oo.get_oommf_runner(use_cache=False,
+                                       envvar='wrong_name',
+                                       oommf_exe='wrong_name',
+                                       docker_exe='wrong_name')
+    assert isinstance(oommf_runner, oo.TclOOMMFRunner)
+    check_runner(oommf_runner)
+
+
+@pytest.mark.oommf
 def test_get_oommf_runner():
     oommf_runner = oo.get_oommf_runner(use_cache=False)
-    assert isinstance(oommf_runner, oo.TclOOMMFRunner)
+    assert isinstance(oommf_runner, oo.OOMMFRunner)
     check_runner(oommf_runner)
