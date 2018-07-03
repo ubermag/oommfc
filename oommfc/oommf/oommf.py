@@ -35,14 +35,17 @@ class OOMMFRunner:
         print(seconds)
 
         if res.returncode is not 0:
-            stderr = res.stderr.decode('utf-8', 'replace')
-            stdout = res.stdout.decode('utf-8', 'replace')
-            cmdstr = ' '.join(res.args)
-            print('OOMMF error:')
-            print('\tcommand: {}'.format(cmdstr))
-            print('\tstdout: {}'.format(stdout))
-            print('\tstderr: {}'.format(stderr))
-            print('\n')
+            if sys.platform != 'win32':
+                # Only on Linux and MacOS - on Windows we do not get
+                # stderr and stdout.
+                stderr = res.stderr.decode('utf-8', 'replace')
+                stdout = res.stdout.decode('utf-8', 'replace')
+                cmdstr = ' '.join(res.args)
+                print('OOMMF error:')
+                print('\tcommand: {}'.format(cmdstr))
+                print('\tstdout: {}'.format(stdout))
+                print('\tstderr: {}'.format(stderr))
+                print('\n')
             raise RuntimeError('Error in OOMMF run.')
 
         return res
