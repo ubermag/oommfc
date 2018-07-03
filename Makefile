@@ -21,12 +21,6 @@ test-docs:
 test-ipynb:
 	$(PYTHON) -m pytest --nbval-lax $(IPYNBPATH)
 
-test-oommf:
-	$(PYTHON) -m pytest -m "oommf"
-
-test-not-oommf:
-	$(PYTHON) -m pytest -m "not oommf"
-
 test-all: test-test test-coverage test-docs test-ipynb
 
 test-all-travis: test-test test-travis test-coverage test-docs test-ipynb

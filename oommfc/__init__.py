@@ -25,7 +25,7 @@ def _run_tests(tag):
 
 
 def test():
-    return(_run_tests("not travis"))  # pragma: no cover
+    return(_run_tests("not travis and not docker"))  # pragma: no cover
 
 
 def test_not_oommf():
@@ -33,7 +33,11 @@ def test_not_oommf():
 
 
 def test_oommf():
-    return(_run_tests("oommf and not travis"))  # pragma: no cover
+    return(_run_tests("oommf and not travis and not docker"))  # pragma: no cover
+
+
+def test_docker():
+    return(_run_tests("docker"))  # pragma: no cover
 
 
 def test_oommf_overhead(t=1e-12):

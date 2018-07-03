@@ -40,7 +40,7 @@ def test_exe_oommf_runner():
 
 
 @pytest.mark.oommf
-@pytest.mark.travis
+@pytest.mark.docker
 def test_docker_oommf_runner():
     """DockerOOMMFRunner runs when docker is installed.
 
@@ -50,6 +50,13 @@ def test_docker_oommf_runner():
     oommf_runner = oo.DockerOOMMFRunner(docker_exe, image)
     check_runner(oommf_runner)
 
+    oommf_runner = oo.get_oommf_runner(use_cache=False,
+                                       envvar='wrong_name',
+                                       oommf_exe='wrong_name',
+                                       docker_exe='docker')
+    assert isinstance(oommf_runner, oo.DockerOOMMFRunner)
+
+    
 
 @pytest.mark.oommf
 @pytest.mark.travis
@@ -69,12 +76,24 @@ def test_get_right_oommf_runner():
                                        docker_exe='wrong_name')
     assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
 
-    # DockerOOMMFRunner
+
+@pytest.mark.oommf
+@pytest.mark.travis
+def test_cached_oommf_runner():
     oommf_runner = oo.get_oommf_runner(use_cache=False,
                                        envvar='wrong_name',
+                                       oommf_exe='oommf',
+                                       docker_exe='wrong_name')
+    assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
+    
+    oommf_runner = oo.get_oommf_runner(use_cache=True)
+    assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
+
+    oommf_runner = oo.get_oommf_runner(use_cache=True,
+                                       envvar='OOMMFTCL',
                                        oommf_exe='wrong_name',
-                                       docker_exe='docker')
-    assert isinstance(oommf_runner, oo.DockerOOMMFRunner)
+                                       docker_exe='wrong_name')
+    assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
 
 
 @pytest.mark.oommf
@@ -82,22 +101,3 @@ def test_get_oommf_runner():
     oommf_runner = oo.get_oommf_runner(use_cache=False)
     assert isinstance(oommf_runner, oo.TclOOMMFRunner)
     check_runner(oommf_runner)
-
-
-@pytest.mark.oommf
-@pytest.mark.travis
-def test_cached_oommf_runner():
-    oommf_runner = oo.get_oommf_runner(use_cache=False,
-                                       envvar='wrong_name',
-                                       oommf_exe='wrong_name',
-                                       docker_exe='docker')
-    assert isinstance(oommf_runner, oo.DockerOOMMFRunner)
-    
-    oommf_runner = oo.get_oommf_runner(use_cache=True)
-    assert isinstance(oommf_runner, oo.DockerOOMMFRunner)
-
-    oommf_runner = oo.get_oommf_runner(use_cache=True,
-                                       envvar='OOMMFTCL',
-                                       oommf_exe='wrong_name',
-                                       docker_exe='wrong_name')
-    assert isinstance(oommf_runner, oo.DockerOOMMFRunner)
