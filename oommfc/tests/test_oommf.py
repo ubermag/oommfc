@@ -128,6 +128,11 @@ def test_overhead():
 
 
 @pytest.mark.oommf
+def test_status():
+    assert oo.status() == 0
+
+
+@pytest.mark.oommf
 def test_runtimeerror():
     oommf_runner = oo.get_oommf_runner(use_cache=False)
     with pytest.raises(RuntimeError):

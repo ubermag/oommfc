@@ -212,8 +212,23 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
     raise EnvironmentError('Cannot find OOMMF.')
 
 
+def status():
+    """Run a macrospin example for 1 ps through oommfc and print the OOMMF
+    status.
+
+    """
+    try:
+        system = oc.examples.macrospin()
+        td = oc.TimeDriver()
+        td.drive(system, t=1e-12, n=1)
+        print('OOMMF found and running.')
+        return 0
+    except (EnvironmentError, RuntimeError):
+        print("Cannot find OOMMF.")
+        return 1
+
 def overhead():
-    """Run a macrospin example for 1 ps through OOMMFC and directly and
+    """Run a macrospin example for 1 ps through oommfc and directly and
     return the difference in run times.
 
     Returns
