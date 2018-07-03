@@ -125,3 +125,10 @@ def test_get_oommf_runner():
 @pytest.mark.oommf
 def test_overhead():
     assert isinstance(oo.overhead(), float)
+
+
+@pytest.mark.oommf
+def test_runtimeerror():
+    oommf_runner = oo.get_oommf_runner(use_cache=False)
+    with pytest.raises(RuntimeError):
+        oommf_runner.call("+wrong_argstr")
