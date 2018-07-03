@@ -20,21 +20,22 @@ __dependencies__ = pkg_resources.require(__name__)
 
 
 def _run_tests(tag):
-    args = ["-m", tag, "-v", "--pyargs", "oommfc"]  # pragma: no cover
+    args = ['-m', tag, '-v', '--pyargs', 'oommfc']  # pragma: no cover
     return pytest.main(args)  # pragma: no cover
 
 
 def test():
-    return(_run_tests("not travis and not docker"))  # pragma: no cover
+    return(_run_tests('not travis and not docker'))  # pragma: no cover
 
 
 def test_not_oommf():
-    return(_run_tests("not oommf and not travis"))  # pragma: no cover
+    return(_run_tests('not oommf and not travis'))  # pragma: no cover
 
 
 def test_oommf():
-    return(_run_tests("oommf and not travis and not docker"))  # pragma: no cover
+    return(_run_tests('oommf and not travis '
+                      'and not docker'))  # pragma: no cover
 
 
 def test_docker():
-    return(_run_tests("docker"))  # pragma: no cover
+    return(_run_tests('docker'))  # pragma: no cover
