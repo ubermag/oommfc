@@ -16,6 +16,8 @@ setuptools.setup(
     install_requires=['scipy',
                       'micromagneticmodel',
                       'oommfodt'],
+    package_data={'oommfc.tests': ['test_files/test_oommf.mif',
+                                   'test_files/m0.omf']},
     classifiers=['Development Status :: 3 - Alpha',
                  'License :: OSI Approved :: BSD License',
                  'Programming Language :: Python :: 3 :: Only',
