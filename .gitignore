@@ -10,4 +10,4 @@ docs/ipynb/*
 __pycache__/
 build/
 dist/
-oommfc.egg-info/
+*.egg-info/
