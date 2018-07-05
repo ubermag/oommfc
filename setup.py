@@ -5,7 +5,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setuptools.setup(
     name='oommfc',
-    version='0.8.6',
+    version='0.8.7',
     description='Python interface to OOMMF integrated into Jupyter notebook.',
     long_description=long_description,
     long_description_content_type='text/markdown',
