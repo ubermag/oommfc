@@ -13,7 +13,7 @@ class Mesh(df.Mesh):
         mif += "  name atlas\n"
         mif += "}\n\n"
 
-        if self.pbc is not None:
+        if self.pbc:
             mif += "# PeriodicRectangularMesh\n"
             mif += "Specify Oxs_PeriodicRectangularMesh:{} {{\n".format(self.name)
             mif += "  cellsize {{{} {} {}}}\n".format(*self.cell)

@@ -1,0 +1,64 @@
+# MIF 2.1
+
+# BoxAtlas
+Specify Oxs_BoxAtlas:atlas {
+  xrange {0 5e-09}
+  yrange {0 5e-09}
+  zrange {0 5e-09}
+  name atlas
+}
+
+# RectangularMesh
+Specify Oxs_RectangularMesh:mesh {
+  cellsize {1e-09 1e-09 1e-09}
+  atlas Oxs_BoxAtlas:atlas
+}
+
+# UniformExchange
+Specify Oxs_UniformExchange {
+  A 1e-12
+}
+
+# Demag
+Specify Oxs_Demag {}
+
+# FixedZeeman
+Specify Oxs_FixedZeeman {
+  field {
+    Oxs_UniformVectorField {
+      vector {8000000.0 0 0}
+    }
+  }
+  multiplier 1
+}
+
+# m0 file
+Specify Oxs_FileVectorField:m0file {
+   atlas :atlas
+   file m0.omf
+}
+
+# CGEvolver
+Specify Oxs_CGEvolve {}
+
+# MinDriver
+Specify Oxs_MinDriver {
+  evolver Oxs_CGEvolve
+  stopping_mxHxm 0.01
+  mesh :mesh
+  Ms {
+    Oxs_VecMagScalarField {
+      field :m0file
+    }
+  }
+  m0 :m0file
+  basename test_oommf
+  scalar_field_output_format {text %\#.15g}
+  vector_field_output_format {text %\#.15g}
+}
+
+Destination table mmArchive
+Destination mags mmArchive
+
+Schedule DataTable table Stage 1
+Schedule Oxs_MinDriver::Magnetization mags Stage 1
