@@ -48,9 +48,12 @@ class OOMMFRunner:
                 print('\n')
             errors_path = self._boxsi_errors_path()
             if os.path.exists(errors_path):
+                print('{}:'.format(errors_path))
                 error_log = open(errors_path, 'r').read()
-                for e in error_log.rsplit('\n[Boxsi', 2):
-                    print('\n[Boxsi', e)
+                for e in error_log.rsplit('\n\n', 2)[1:]:
+                    print('\n')
+                    for l in e.split('\n'):
+                        print('\t{}'.format(l))
             raise RuntimeError('Error in OOMMF run.')
 
         return res
