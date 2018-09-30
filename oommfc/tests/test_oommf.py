@@ -18,6 +18,9 @@ def check_runner(oommf_runner):
     assert len(platform) is not ''
     assert res.returncode == 0
 
+    with pytest.raises(Exception):
+        res = oommf_runner.call('test_oommf_fail.mif')
+
 
 @pytest.mark.oommf
 @pytest.mark.travis
