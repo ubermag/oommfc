@@ -46,6 +46,11 @@ class OOMMFRunner:
                 print('\tstdout: {}'.format(stdout))
                 print('\tstderr: {}'.format(stderr))
                 print('\n')
+            errors_path = self._boxsi_errors_path()
+            if os.path.exists(errors_path):
+                error_log = open(errors_path, 'r').read()
+                for e in error_log.rsplit('\n[Boxsi', 2):
+                    print('\n[Boxsi', e)
             raise RuntimeError('Error in OOMMF run.')
 
         return res
@@ -57,7 +62,11 @@ class OOMMFRunner:
     def _kill(self, targets=('all',)):
         # This method should be implemented in subclass.
         raise NotImplementedError
-    
+
+    def _boxsi_errors_path(self):
+        # This method should be implemented in subclass.
+        raise NotImplementedError
+
     def version(self):
         res = self.call(argstr='+version', need_stderr=True)
         return res.stderr.decode('utf-8').split('oommf.tcl')[-1].strip()
@@ -66,7 +75,7 @@ class OOMMFRunner:
         res = self.call(argstr='+platform', need_stderr=True)
         return res.stderr.decode('utf-8')
 
-    
+
 class TclOOMMFRunner(OOMMFRunner):
     """Using path to oommf.tcl.
 
@@ -89,6 +98,10 @@ class TclOOMMFRunner(OOMMFRunner):
     def _kill(self, targets=['all']):
         sp.run(["tclsh", self.oommf_tcl, "killoommf"] + targets)
 
+    def _boxsi_errors_path(self):
+        path = os.path.split(self.oommf_tcl)[0]
+        return os.path.join(path, 'boxsi.errors')
+
 
 class ExeOOMMFRunner(OOMMFRunner):
     """Using oommf executable on $PATH.
@@ -108,11 +121,26 @@ class ExeOOMMFRunner(OOMMFRunner):
     def _kill(self, targets=['all']):
         sp.run([self.oommf_exe, "killoommf"] + targets)
 
+    def _boxsi_errors_path(self):
+        def find_tcl():
+            exe = open(self.oommf_exe, 'r').read()
+            for l in exe.split(' '):
+                if 'oommf.tcl' in l:
+                    return l
+            return ''
+
+        oommf_tcl = find_tcl()
+        path = os.path.split(oommf_tcl)[0]
+        return os.path.join(path, 'boxsi.errors')
+
 
 class DockerOOMMFRunner(OOMMFRunner):
     """Run OOMMF in a docker container.
 
     """
+
+    tcl_path = '/usr/local/oommf/oommf/'
+
     def __init__(self, docker_exe='docker', image='joommf/oommf'):
         self.image = image
         self.docker_exe = docker_exe
@@ -120,13 +148,16 @@ class DockerOOMMFRunner(OOMMFRunner):
     def _call(self, argstr, need_stderr=False):
         cmd = [self.docker_exe, 'run', '-v', os.getcwd()+':/io',
                self.image, '/bin/bash', '-c',
-               ('tclsh /usr/local/oommf/oommf/oommf.tcl boxsi '
-                '+fg {} -exitondone 1').format(argstr)]
+               ('tclsh {}oommf.tcl boxsi '
+                '+fg {} -exitondone 1').format(self.tcl_path, argstr)]
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
 
     def _kill(self, targets=('all',)):
         # There is no need to kill OOMMF when run inside docker.
         pass
+
+    def _boxsi_errors_path(self):
+        return '{}boxsi.errors'.format(self.tcl_path)
 
 
 def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
