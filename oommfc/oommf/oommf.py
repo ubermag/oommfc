@@ -50,7 +50,10 @@ class OOMMFRunner:
             if os.path.exists(errors_path):
                 print('{}:'.format(errors_path))
                 error_log = open(errors_path, 'r').read()
-                for e in error_log.rsplit('\n\n', 2)[1:]:
+                il_idx = error_log.rfind("infolog")
+                if il_idx > -1:
+                    idx = error_log.rfind("\n", 0, il_idx)
+                    e = error_log[idx:]
                     print('\n')
                     for l in e.split('\n'):
                         print('\t{}'.format(l))
