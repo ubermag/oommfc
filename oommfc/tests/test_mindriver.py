@@ -31,7 +31,7 @@ class TestMinDriver(TestDriver):
         md._makedir(self.system)
         md._save_mif(self.system)
 
-        miffilename = os.path.join("tds", "tds.mif")
+        miffilename = os.path.join("tds", "run-{}".format(self.system.run_number), "tds.mif")
         assert os.path.isfile(miffilename)
 
         lines = open(miffilename, "r").readlines()
@@ -46,16 +46,16 @@ class TestMinDriver(TestDriver):
 
         md.drive(self.system)
 
-        dirname = os.path.join("tds", "")
+        dirname = os.path.join("tds", "run-{}".format(self.system.run_number-1))
         assert os.path.exists(dirname)
-        miffilename = os.path.join("tds", "tds.mif")
+        miffilename = os.path.join(dirname, "tds.mif")
         assert os.path.isfile(miffilename)
 
-        omf_files = list(glob.iglob("tds/*.omf"))
-        odt_files = list(glob.iglob("tds/*.odt"))
+        omf_files = list(glob.iglob("{}/*.omf".format(dirname)))
+        odt_files = list(glob.iglob("{}/*.odt".format(dirname)))
 
         assert len(omf_files) == 2
-        omffilename = os.path.join("tds", "m0.omf")
+        omffilename = os.path.join(dirname, "m0.omf")
         assert omffilename in omf_files
 
         assert len(odt_files) == 1

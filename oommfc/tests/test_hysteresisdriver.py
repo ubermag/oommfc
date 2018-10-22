@@ -33,7 +33,7 @@ class TestHysteresisDriver(TestDriver):
         hd._makedir(self.system)
         hd._save_mif(self.system, Hmin=(0, 0, 0), Hmax=(1, 1, 1), n=10)
 
-        miffilename = os.path.join("tds", "tds.mif")
+        miffilename = os.path.join("tds", "run-{}".format(self.system.run_number), "tds.mif")
         assert os.path.isfile(miffilename)
 
         lines = open(miffilename, "r").readlines()
@@ -48,16 +48,16 @@ class TestHysteresisDriver(TestDriver):
 
         hd.drive(self.system, Hmin=(0, 0, 0), Hmax=(1, 1, 1), n=10)
 
-        dirname = os.path.join("tds", "")
+        dirname = os.path.join("tds", "run-{}".format(self.system.run_number-1))
         assert os.path.exists(dirname)
-        miffilename = os.path.join("tds", "tds.mif")
+        miffilename = os.path.join(dirname, "tds.mif")
         assert os.path.isfile(miffilename)
 
-        omf_files = list(glob.iglob("tds/*.omf"))
-        odt_files = list(glob.iglob("tds/*.odt"))
+        omf_files = list(glob.iglob("{}/*.omf".format(dirname)))
+        odt_files = list(glob.iglob("{}/*.odt".format(dirname)))
 
         assert len(omf_files) == 22
-        omffilename = os.path.join("tds", "m0.omf")
+        omffilename = os.path.join(dirname, "m0.omf")
         assert omffilename in omf_files
 
         assert len(odt_files) == 1

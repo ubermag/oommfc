@@ -248,7 +248,7 @@ def overhead():
 
     # Running OOMMF directly.
     oommf_runner = get_oommf_runner()
-    mifpath = os.path.realpath('example-macrospin/example-macrospin.mif')
+    mifpath = os.path.realpath('example-macrospin/run-0/example-macrospin.mif')
     oommf_start = time.time()
     oommf_runner.call(mifpath)
     oommf_stop = time.time()

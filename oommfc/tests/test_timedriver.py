@@ -39,7 +39,7 @@ class TestTimeDriver(TestDriver):
         driver._makedir(self.system)
         driver._save_mif(self.system, t=t, n=n)
 
-        miffilename = os.path.join("tds", "tds.mif")
+        miffilename = os.path.join("tds", "run-{}".format(self.system.run_number), "tds.mif")
         assert os.path.isfile(miffilename)
 
         lines = open(miffilename, "r").readlines()
@@ -55,14 +55,15 @@ class TestTimeDriver(TestDriver):
         md.drive(self.system, t=0.1e-9, n=10)
 
         assert os.path.exists("tds")
-        miffilename = os.path.join("tds", "tds.mif")
+        dirname = os.path.join("tds", "run-{}".format(self.system.run_number-1))
+        miffilename = os.path.join(dirname, "tds.mif")
         assert os.path.isfile(miffilename)
 
-        omf_files = list(glob.iglob("tds/*.omf"))
-        odt_files = list(glob.iglob("tds/*.odt"))
+        omf_files = list(glob.iglob("{}/*.omf".format(dirname)))
+        odt_files = list(glob.iglob("{}/*.odt".format(dirname)))
 
         assert len(omf_files) == 11
-        omffilename = os.path.join("tds", "m0.omf")
+        omffilename = os.path.join(dirname, "m0.omf")
         assert omffilename in omf_files
 
         assert len(odt_files) == 1

@@ -33,23 +33,42 @@ def test_multiple_runs():
 
     md = oc.MinDriver()
     md.drive(system)  # updates system.m in-place
-
     
-    dirname = os.path.join(name, "")
-    subdirname =  os.path.join(dirname, 'run-0')
-    miffilename = os.path.join(subdirname, "{}.mif".format(name))
+    dirname = os.path.join(name, "run-0")
+    miffilename = os.path.join(dirname, "{}.mif".format(name))
     assert os.path.exists(dirname)
-    assert os.path.exists(subdirname)
     assert os.path.isfile(miffilename)
 
-
-    mif_file  = list(glob.iglob("{}/*.mif".format(subdirname)))
-    omf_files = list(glob.iglob("{}/*.omf".format(subdirname)))
-    odt_files = list(glob.iglob("{}/*.odt".format(subdirname)))
+    mif_file  = list(glob.iglob("{}/*.mif".format(dirname)))
+    omf_files = list(glob.iglob("{}/*.omf".format(dirname)))
+    odt_files = list(glob.iglob("{}/*.odt".format(dirname)))
 
     assert len(mif_file) == 1
     assert len(omf_files) > 1
-    omffilename = os.path.join(subdirname, "m0.omf")
+    omffilename = os.path.join(dirname, "m0.omf")
     assert omffilename in omf_files
 
     assert len(odt_files) >= 1
+
+    td = oc.TimeDriver()
+    td.drive(system, t=100e-12, n=10)  # updates system.m in-place
+
+    dirname = os.path.join(name, "run-1")
+    miffilename = os.path.join(dirname, "{}.mif".format(name))
+    assert os.path.exists(dirname)
+    assert os.path.isfile(miffilename)
+
+    mif_file  = list(glob.iglob("{}/*.mif".format(dirname)))
+    omf_files = list(glob.iglob("{}/*.omf".format(dirname)))
+    odt_files = list(glob.iglob("{}/*.odt".format(dirname)))
+
+    assert len(mif_file) == 1
+    assert len(omf_files) == 11
+    omffilename = os.path.join(dirname, "m0.omf")
+    assert omffilename in omf_files
+
+    assert len(odt_files) >= 1
+
+    shutil.rmtree(name)
+
+

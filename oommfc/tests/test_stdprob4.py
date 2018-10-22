@@ -34,16 +34,16 @@ def test_stdprob4():
     md = oc.MinDriver()
     md.drive(system)  # updates system.m in-place
 
-    dirname = os.path.join(name, "")
-    miffilename = os.path.join(name, "{}.mif".format(name))
+    dirname = os.path.join(name, "run-{}".format(system.run_number-1))
+    miffilename = os.path.join(dirname, "{}.mif".format(name))
     assert os.path.exists(dirname)
     assert os.path.isfile(miffilename)
 
-    omf_files = list(glob.iglob("{}/*.omf".format(name)))
-    odt_files = list(glob.iglob("{}/*.odt".format(name)))
+    omf_files = list(glob.iglob("{}/*.omf".format(dirname)))
+    odt_files = list(glob.iglob("{}/*.odt".format(dirname)))
 
     assert len(omf_files) == 2
-    omffilename = os.path.join(name, "m0.omf")
+    omffilename = os.path.join(dirname, "m0.omf")
     assert omffilename in omf_files
 
     assert len(odt_files) == 1
@@ -56,25 +56,19 @@ def test_stdprob4():
     td = oc.TimeDriver()
     td.drive(system, t=1e-9, n=200)
 
-    dirname = os.path.join(name, "")
-    miffilename = os.path.join(name, "{}.mif".format(name))
+    dirname = os.path.join(name, "run-{}".format(system.run_number-1))
+    miffilename = os.path.join(dirname, "{}.mif".format(name))
     assert os.path.exists(dirname)
     assert os.path.isfile(miffilename)
 
-    omf_files = list(glob.iglob("{}/*.omf".format(name)))
-    odt_files = list(glob.iglob("{}/*.odt".format(name)))
+    omf_files = list(glob.iglob("{}/*.omf".format(dirname)))
+    odt_files = list(glob.iglob("{}/*.odt".format(dirname)))
 
     assert len(omf_files) == 201
-    omffilename = os.path.join(name, "m0.omf")
+    omffilename = os.path.join(dirname, "m0.omf")
     assert omffilename in omf_files
 
     assert len(odt_files) == 1
-
-    myplot = system.dt.plot("t", "my")
-    figfilename = os.path.join(name, "stdprob4-t-my.pdf")
-    myplot.figure.savefig(figfilename)
-
-    assert os.path.isfile(figfilename)
 
     t = system.dt["t"].values
     my = system.dt["my"].values
