@@ -31,6 +31,9 @@ class Driver(mm.Driver):
         if "derive" not in kwargs:
             self._update_system(system)
 
+        # Increase counter
+        system.run_number += 1
+
     def _makedir(self, system):
         """
         Create directory where OOMMF files are saved.
@@ -38,6 +41,10 @@ class Driver(mm.Driver):
         dirname = self._filenames(system)["dirname"]
         if not os.path.exists(dirname):
             os.makedirs(dirname)
+
+        subdirname = self._filenames(system)['subdirname']
+        if not os.path.exists(subdirname):
+            os.makedirs(subdirname)
 
     def _save_mif(self, system, **kwargs):
         """
@@ -63,8 +70,8 @@ class Driver(mm.Driver):
 
     def _update_m(self, system):
         # Find last omf file.
-        dirname = self._filenames(system)["dirname"]
-        last_omf_file = max(glob.iglob("{}*.omf".format(dirname)),
+        subdirname = self._filenames(system)["subdirname"]
+        last_omf_file = max(glob.iglob("{}/*.omf".format(subdirname)),
                             key=os.path.getctime)
 
         # Update system's magnetisaton.
@@ -78,8 +85,8 @@ class Driver(mm.Driver):
 
     def _update_dt(self, system):
         # Find last odt file.
-        dirname = self._filenames(system)["dirname"]
-        last_odt_file = max(glob.iglob("{}*.odt".format(dirname)),
+        subdirname = self._filenames(system)["subdirname"]
+        last_odt_file = max(glob.iglob("{}/*.odt".format(subdirname)),
                             key=os.path.getctime)
 
         # Update system's datatable.
@@ -87,11 +94,13 @@ class Driver(mm.Driver):
 
     def _filenames(self, system):
         dirname = os.path.join(system.name, "")
-        omffilename = os.path.join(dirname, "m0.omf")
-        miffilename = os.path.join(dirname, "{}.mif".format(system.name))
+        subdirname = os.path.join(dirname, 'run-{}'.format(system.run_number))
+        omffilename = os.path.join(subdirname, "m0.omf")
+        miffilename = os.path.join(subdirname, "{}.mif".format(system.name))
 
         filenames = {}
         filenames["dirname"] = dirname
+        filenames["subdirname"] = subdirname
         filenames["omffilename"] = omffilename
         filenames["miffilename"] = miffilename
 
