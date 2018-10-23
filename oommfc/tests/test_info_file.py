@@ -1,4 +1,5 @@
 import os
+import re
 import glob
 import json
 import shutil
@@ -9,7 +10,7 @@ import pytest
 
 
 @pytest.mark.oommf
-def test_multiple_runs():
+def test_info_file():
     name = "info_file"
 
     # Remove any previous simulation directories.
@@ -40,6 +41,13 @@ def test_multiple_runs():
     infofile = os.path.join(dirname, "info.json")
     assert os.path.exists(dirname)
     assert os.path.isfile(infofile)
+    
+    with open(infofile) as f:
+        info = json.loads(f.read())
+    assert 'date' in info.keys()
+    assert 'time' in info.keys()
+    assert re.findall('[0-9]{4}-[0-9]{2}-[0-9]{2}', info['date']) is not []
+    assert re.findall('[0-9]{2}:[0-9]{2}', info['time']) is not []
 
     td.drive(system, t=50e-12, n=20)  # updates system.m in-place
     
