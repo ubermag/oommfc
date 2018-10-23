@@ -222,6 +222,7 @@ def status():
         td = oc.TimeDriver()
         td.drive(system, t=1e-12, n=1)
         print('OOMMF found and running.')
+        shutil.rmtree('example-macrospin')
         return 0
     except (EnvironmentError, RuntimeError):
         print("Cannot find OOMMF.")
@@ -248,10 +249,11 @@ def overhead():
 
     # Running OOMMF directly.
     oommf_runner = get_oommf_runner()
-    mifpath = os.path.realpath('example-macrospin/run-0/example-macrospin.mif')
+    mifpath = os.path.realpath('example-macrospin/drive-0/example-macrospin.mif')
     oommf_start = time.time()
     oommf_runner.call(mifpath)
     oommf_stop = time.time()
     oommf_time = oommf_stop - oommf_start
+    shutil.rmtree('example-macrospin')
 
     return oommfc_time - oommf_time

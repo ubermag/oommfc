@@ -1,6 +1,7 @@
 import os
 import sys
 import pytest
+import shutil
 import oommfc.oommf as oo
 
 
@@ -17,6 +18,13 @@ def check_runner(oommf_runner):
     assert isinstance(platform, str)
     assert len(platform) is not ''
     assert res.returncode == 0
+
+    files = os.listdir(dirname)
+    for f in files:
+        if f.endswith(".odt"):
+            os.remove(os.path.join(dirname, f))
+        elif f.endswith(".omf") and f.startswith("test_oommf-Oxs"):
+            os.remove(os.path.join(dirname, f))
 
 
 @pytest.mark.oommf
