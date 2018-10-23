@@ -1,5 +1,6 @@
 import os
 import glob
+import json
 import oommfodt
 import micromagneticmodel as mm
 import discretisedfield as df
@@ -30,6 +31,9 @@ class Driver(mm.Driver):
 
         if "derive" not in kwargs:
             self._update_system(system)
+
+        # info to json file
+        self._write_info(system)
 
         # Increase counter
         system.run_number += 1
@@ -105,3 +109,10 @@ class Driver(mm.Driver):
         filenames["miffilename"] = miffilename
 
         return filenames
+
+    def _write_info(self, system):
+        dirname = self._filenames(system)["subdirname"]
+        filename = "{}/info.json".format(dirname)
+        with open(filename, "w") as f:
+            f.write(json.dumps({}))
+
