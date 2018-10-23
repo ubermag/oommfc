@@ -5,6 +5,7 @@ import oommfodt
 import micromagneticmodel as mm
 import discretisedfield as df
 import oommfc as oc
+from datetime import datetime
 
 
 class Driver(mm.Driver):
@@ -113,6 +114,11 @@ class Driver(mm.Driver):
     def _write_info(self, system):
         dirname = self._filenames(system)["subdirname"]
         filename = "{}/info.json".format(dirname)
+
+        info = {}
+        info['date'] = datetime.now().strftime('%Y-%m-%d')
+        info['time'] = datetime.now().strftime('%H:%M')
+
         with open(filename, "w") as f:
-            f.write(json.dumps({}))
+            f.write(json.dumps(info))
 
