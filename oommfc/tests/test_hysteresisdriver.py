@@ -33,7 +33,7 @@ class TestHysteresisDriver(TestDriver):
         hd._makedir(self.system)
         hd._save_mif(self.system, Hmin=(0, 0, 0), Hmax=(1, 1, 1), n=10)
 
-        miffilename = os.path.join("tds", "run-{}".format(self.system.run_number), "tds.mif")
+        miffilename = os.path.join("tds", "drive-{}".format(self.system.drive_number), "tds.mif")
         assert os.path.isfile(miffilename)
 
         lines = open(miffilename, "r").readlines()
@@ -48,7 +48,7 @@ class TestHysteresisDriver(TestDriver):
 
         hd.drive(self.system, Hmin=(0, 0, 0), Hmax=(1, 1, 1), n=10)
 
-        dirname = os.path.join("tds", "run-{}".format(self.system.run_number-1))
+        dirname = os.path.join("tds", "drive-{}".format(self.system.drive_number-1))
         assert os.path.exists(dirname)
         miffilename = os.path.join(dirname, "tds.mif")
         assert os.path.isfile(miffilename)

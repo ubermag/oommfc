@@ -37,7 +37,7 @@ class Driver(mm.Driver):
         self._write_info(system)
 
         # Increase counter
-        system.run_number += 1
+        system.drive_number += 1
 
     def _makedir(self, system):
         """
@@ -99,7 +99,7 @@ class Driver(mm.Driver):
 
     def _filenames(self, system):
         dirname = os.path.join(system.name, "")
-        subdirname = os.path.join(dirname, 'run-{}'.format(system.run_number))
+        subdirname = os.path.join(dirname, 'drive-{}'.format(system.drive_number))
         omffilename = os.path.join(subdirname, "m0.omf")
         miffilename = os.path.join(subdirname, "{}.mif".format(system.name))
 

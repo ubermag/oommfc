@@ -34,7 +34,7 @@ def test_stdprob4():
     md = oc.MinDriver()
     md.drive(system)  # updates system.m in-place
 
-    dirname = os.path.join(name, "run-{}".format(system.run_number-1))
+    dirname = os.path.join(name, "drive-{}".format(system.drive_number-1))
     miffilename = os.path.join(dirname, "{}.mif".format(name))
     assert os.path.exists(dirname)
     assert os.path.isfile(miffilename)
@@ -56,7 +56,7 @@ def test_stdprob4():
     td = oc.TimeDriver()
     td.drive(system, t=1e-9, n=200)
 
-    dirname = os.path.join(name, "run-{}".format(system.run_number-1))
+    dirname = os.path.join(name, "drive-{}".format(system.drive_number-1))
     miffilename = os.path.join(dirname, "{}.mif".format(name))
     assert os.path.exists(dirname)
     assert os.path.isfile(miffilename)
