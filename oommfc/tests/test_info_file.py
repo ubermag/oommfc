@@ -36,14 +36,14 @@ def test_multiple_runs():
     td = oc.TimeDriver()
     td.drive(system, t=25e-12, n=10)  # updates system.m in-place
     
-    dirname = os.path.join(name, "run-0")
+    dirname = os.path.join(name, "drive-0")
     infofile = os.path.join(dirname, "info.json")
     assert os.path.exists(dirname)
     assert os.path.isfile(infofile)
 
     td.drive(system, t=50e-12, n=20)  # updates system.m in-place
     
-    dirname = os.path.join(name, "run-1")
+    dirname = os.path.join(name, "drive-1")
     infofile = os.path.join(dirname, "info.json")
     assert os.path.exists(dirname)
     assert os.path.isfile(infofile)

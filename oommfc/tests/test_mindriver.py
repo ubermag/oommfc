@@ -31,7 +31,7 @@ class TestMinDriver(TestDriver):
         md._makedir(self.system)
         md._save_mif(self.system)
 
-        miffilename = os.path.join("tds", "run-{}".format(self.system.run_number), "tds.mif")
+        miffilename = os.path.join("tds", "drive-{}".format(self.system.drive_number), "tds.mif")
         assert os.path.isfile(miffilename)
 
         lines = open(miffilename, "r").readlines()
@@ -46,7 +46,7 @@ class TestMinDriver(TestDriver):
 
         md.drive(self.system)
 
-        dirname = os.path.join("tds", "run-{}".format(self.system.run_number-1))
+        dirname = os.path.join("tds", "drive-{}".format(self.system.drive_number-1))
         assert os.path.exists(dirname)
         miffilename = os.path.join(dirname, "tds.mif")
         assert os.path.isfile(miffilename)

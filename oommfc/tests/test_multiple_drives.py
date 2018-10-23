@@ -34,7 +34,7 @@ def test_multiple_runs():
     md = oc.MinDriver()
     md.drive(system)  # updates system.m in-place
     
-    dirname = os.path.join(name, "run-0")
+    dirname = os.path.join(name, "drive-0")
     miffilename = os.path.join(dirname, "{}.mif".format(name))
     assert os.path.exists(dirname)
     assert os.path.isfile(miffilename)
@@ -53,7 +53,7 @@ def test_multiple_runs():
     td = oc.TimeDriver()
     td.drive(system, t=100e-12, n=10)  # updates system.m in-place
 
-    dirname = os.path.join(name, "run-1")
+    dirname = os.path.join(name, "drive-1")
     miffilename = os.path.join(dirname, "{}.mif".format(name))
     assert os.path.exists(dirname)
     assert os.path.isfile(miffilename)

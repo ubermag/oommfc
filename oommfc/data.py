@@ -18,7 +18,7 @@ class Data(mm.Data):
         td = oc.TimeDriver()
         td.drive(self.system, derive=_dict[self.cls])
 
-        dirname = os.path.join(self.system.name, 'run-{}'.format(self.system.run_number-1))
+        dirname = os.path.join(self.system.name, 'drive-{}'.format(self.system.drive_number-1))
         ohf_file = max(glob.iglob("{}/*.ohf".format(dirname)),
                        key=os.path.getctime)
 
@@ -34,7 +34,7 @@ class Data(mm.Data):
         td = oc.TimeDriver()
         td.drive(self.system, derive="energy")
 
-        dirname = os.path.join(self.system.name, 'run-{}'.format(self.system.run_number-1))
+        dirname = os.path.join(self.system.name, 'drive-{}'.format(self.system.drive_number-1))
         odt_file = max(glob.iglob("{}/*.odt".format(dirname)),
                        key=os.path.getctime)
 
@@ -55,7 +55,7 @@ class Data(mm.Data):
         td = oc.TimeDriver()
         td.drive(self.system, derive=_dict[self.cls])
 
-        dirname = os.path.join(self.system.name, 'run-{}'.format(self.system.run_number-1))
+        dirname = os.path.join(self.system.name, 'drive-{}'.format(self.system.drive_number-1))
         oef_file = max(glob.iglob("{}/*.oef".format(dirname)),
                        key=os.path.getctime)
 

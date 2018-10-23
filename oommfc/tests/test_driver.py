@@ -30,5 +30,5 @@ class TestDriver:
 
         assert len(filenames.keys()) == 4
         assert filenames["dirname"] == os.path.join("tds", "")
-        assert filenames["omffilename"] == os.path.join("tds", "run-0", "m0.omf")
-        assert filenames["miffilename"] == os.path.join("tds", "run-0", "tds.mif")
+        assert filenames["omffilename"] == os.path.join("tds", "drive-0", "m0.omf")
+        assert filenames["miffilename"] == os.path.join("tds", "drive-0", "tds.mif")
