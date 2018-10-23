@@ -41,4 +41,11 @@ def test_multiple_runs():
     assert os.path.exists(dirname)
     assert os.path.isfile(infofile)
 
+    td.drive(system, t=50e-12, n=20)  # updates system.m in-place
+    
+    dirname = os.path.join(name, "run-1")
+    infofile = os.path.join(dirname, "info.json")
+    assert os.path.exists(dirname)
+    assert os.path.isfile(infofile)
+
     shutil.rmtree(name)
