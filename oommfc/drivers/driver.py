@@ -39,14 +39,12 @@ class Driver(mm.Driver):
         system.drive_number += 1
 
     def _filenames(self, system):
-        dirname = os.path.join(system.name, "")
-        subdirname = os.path.join(system.name, 'drive-{}'.format(system.drive_number))
-        omffilename = os.path.join(subdirname, "m0.omf")
-        miffilename = os.path.join(subdirname, "{}.mif".format(system.name))
+        dirname = os.path.join(system.name, 'drive-{}'.format(system.drive_number))
+        omffilename = os.path.join(dirname, "m0.omf")
+        miffilename = os.path.join(dirname, "{}.mif".format(system.name))
 
         filenames = {}
         filenames["dirname"] = dirname
-        filenames["subdirname"] = subdirname
         filenames["omffilename"] = omffilename
         filenames["miffilename"] = miffilename
 
@@ -56,13 +54,9 @@ class Driver(mm.Driver):
         """
         Create directory where OOMMF files are saved.
         """
-        dirname = self._filenames(system)["dirname"]
+        dirname = self._filenames(system)['dirname']
         if not os.path.exists(dirname):
             os.makedirs(dirname)
-
-        subdirname = self._filenames(system)['subdirname']
-        if not os.path.exists(subdirname):
-            os.makedirs(subdirname)
 
     def _save_mif(self, system, **kwargs):
         """
@@ -88,8 +82,8 @@ class Driver(mm.Driver):
 
     def _update_m(self, system):
         # Find last omf file.
-        subdirname = self._filenames(system)["subdirname"]
-        last_omf_file = max(glob.iglob("{}/*.omf".format(subdirname)),
+        dirname = self._filenames(system)["dirname"]
+        last_omf_file = max(glob.iglob("{}/*.omf".format(dirname)),
                             key=os.path.getctime)
 
         # Update system's magnetisaton.
@@ -103,15 +97,15 @@ class Driver(mm.Driver):
 
     def _update_dt(self, system):
         # Find last odt file.
-        subdirname = self._filenames(system)["subdirname"]
-        last_odt_file = max(glob.iglob("{}/*.odt".format(subdirname)),
+        dirname = self._filenames(system)["dirname"]
+        last_odt_file = max(glob.iglob("{}/*.odt".format(dirname)),
                             key=os.path.getctime)
 
         # Update system's datatable.
         system.dt = oo.read(last_odt_file)
 
     def _write_info(self, system):
-        dirname = self._filenames(system)["subdirname"]
+        dirname = self._filenames(system)["dirname"]
         filename = "{}/info.json".format(dirname)
 
         info = {}
