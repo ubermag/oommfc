@@ -1,11 +1,11 @@
 import os
 import glob
 import json
+import datetime
 import oommfc as oc
 import oommfodt as oo
 import discretisedfield as df
 import micromagneticmodel as mm
-import datetime
 
 
 class Driver(mm.Driver):
@@ -19,7 +19,8 @@ class Driver(mm.Driver):
                                     'drive-{}'.format(system.drive_number))
 
         self.omffilename = os.path.join(self.dirname, "m0.omf")
-        self.miffilename = os.path.join(self.dirname, "{}.mif".format(system.name))
+        self.miffilename = os.path.join(self.dirname,
+                                        "{}.mif".format(system.name))
         self.jsonfilename = os.path.join(self.dirname, "info.json")
 
         # Make a directory inside which OOMMF will be run.
@@ -89,6 +90,3 @@ class Driver(mm.Driver):
         last_odt_file = max(glob.iglob(os.path.join(self.dirname, '*.odt')),
                             key=os.path.getctime)
         system.dt = oo.read(last_odt_file)
-
-    
-
