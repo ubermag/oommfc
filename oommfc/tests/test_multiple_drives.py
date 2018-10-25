@@ -8,21 +8,21 @@ import pytest
 
 
 @pytest.mark.oommf
-def test_stdprob4():
-    name = "stdprob4"
+def test_multiple_runs():
+    name = "multiple_runs"
 
     # Remove any previous simulation directories.
     if os.path.exists(name):
         shutil.rmtree(name)
 
-    L, d, th = 500e-9, 125e-9, 3e-9   # (m)
-    cellsize = (5e-9, 5e-9, 3e-9)  # (m)
-    mesh = oc.Mesh((0, 0, 0), (L, d, th), cellsize)
+    L = 10e-9   # (m)
+    cellsize = (5e-9, 5e-9, 5e-9)  # (m)
+    mesh = oc.Mesh((0, 0, 0), (L, L, L), cellsize)
 
     system = oc.System(name=name)
 
     A = 1.3e-11  # (J/m)
-    system.hamiltonian = oc.Exchange(A) + oc.Demag()
+    system.hamiltonian = oc.Exchange(A)
 
     gamma = 2.211e5  # (m/As)
     alpha = 0.02
@@ -33,51 +33,40 @@ def test_stdprob4():
 
     md = oc.MinDriver()
     md.drive(system)  # updates system.m in-place
-
-    dirname = os.path.join(name, "drive-{}".format(system.drive_number-1))
+    
+    dirname = os.path.join(name, "drive-0")
     miffilename = os.path.join(dirname, "{}.mif".format(name))
     assert os.path.exists(dirname)
     assert os.path.isfile(miffilename)
 
+    mif_file  = list(glob.iglob("{}/*.mif".format(dirname)))
     omf_files = list(glob.iglob("{}/*.omf".format(dirname)))
     odt_files = list(glob.iglob("{}/*.odt".format(dirname)))
 
-    assert len(omf_files) == 2
+    assert len(mif_file) == 1
+    assert len(omf_files) > 1
     omffilename = os.path.join(dirname, "m0.omf")
     assert omffilename in omf_files
 
-    assert len(odt_files) == 1
-
-    shutil.rmtree(name)
-
-    H = (-24.6e-3/oc.mu0, 4.3e-3/oc.mu0, 0)
-    system.hamiltonian += oc.Zeeman(H)
+    assert len(odt_files) >= 1
 
     td = oc.TimeDriver()
-    td.drive(system, t=1e-9, n=200)
+    td.drive(system, t=100e-12, n=10)  # updates system.m in-place
 
-    dirname = os.path.join(name, "drive-{}".format(system.drive_number-1))
+    dirname = os.path.join(name, "drive-1")
     miffilename = os.path.join(dirname, "{}.mif".format(name))
     assert os.path.exists(dirname)
     assert os.path.isfile(miffilename)
 
+    mif_file  = list(glob.iglob("{}/*.mif".format(dirname)))
     omf_files = list(glob.iglob("{}/*.omf".format(dirname)))
     odt_files = list(glob.iglob("{}/*.odt".format(dirname)))
 
-    assert len(omf_files) == 201
+    assert len(mif_file) == 1
+    assert len(omf_files) == 11
     omffilename = os.path.join(dirname, "m0.omf")
     assert omffilename in omf_files
 
-    assert len(odt_files) == 1
-
-    t = system.dt["t"].values
-    my = system.dt["my"].values
-
-    assert abs(min(t) - 5e-12) < 1e-20
-    assert abs(max(t) - 1e-9) < 1e-20
-
-    # Eye-norm test.
-    assert 0.7 < max(my) < 0.8
-    assert -0.5 < min(my) < -0.4
+    assert len(odt_files) >= 1
 
     shutil.rmtree(name)

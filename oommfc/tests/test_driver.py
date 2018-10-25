@@ -14,21 +14,3 @@ class TestDriver:
         self.system.dynamics += oc.Precession(2.211e5)
         self.system.dynamics += oc.Damping(0.02)
         self.system.m = df.Field(mesh, value=(0, 1, 0), norm=8e5)
-
-    def test_makedir(self):
-        driver = oc.Driver()
-        driver._makedir(self.system)
-
-        dirname = "{}/".format(self.system.name)
-        assert os.path.exists(dirname)
-
-        os.system("rm -r {}".format(dirname))
-
-    def test_filenames(self):
-        driver = oc.Driver()
-        filenames = driver._filenames(self.system)
-
-        assert len(filenames.keys()) == 3
-        assert filenames["dirname"] == os.path.join("tds", "")
-        assert filenames["omffilename"] == os.path.join("tds", "m0.omf")
-        assert filenames["miffilename"] == os.path.join("tds", "tds.mif")

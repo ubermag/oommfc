@@ -25,37 +25,22 @@ class TestMinDriver(TestDriver):
         assert "Oxs_MinDriver" in script
         assert "Oxs_FileVectorField" in script
 
-    def test_save_mif(self):
-        md = oc.MinDriver()
-
-        md._makedir(self.system)
-        md._save_mif(self.system)
-
-        miffilename = os.path.join("tds", "tds.mif")
-        assert os.path.isfile(miffilename)
-
-        lines = open(miffilename, "r").readlines()
-        assert lines[0] == "# MIF 2.1\n"
-        assert lines[-1][-1] == "1"
-
-        shutil.rmtree("tds")
-
     @pytest.mark.oommf
     def test_drive(self):
         md = oc.MinDriver()
 
         md.drive(self.system)
 
-        dirname = os.path.join("tds", "")
+        dirname = os.path.join("tds", "drive-{}".format(self.system.drive_number-1))
         assert os.path.exists(dirname)
-        miffilename = os.path.join("tds", "tds.mif")
+        miffilename = os.path.join(dirname, "tds.mif")
         assert os.path.isfile(miffilename)
 
-        omf_files = list(glob.iglob("tds/*.omf"))
-        odt_files = list(glob.iglob("tds/*.odt"))
+        omf_files = list(glob.iglob(os.path.join(dirname, '*.omf')))
+        odt_files = list(glob.iglob(os.path.join(dirname, '*.odt')))
 
         assert len(omf_files) == 2
-        omffilename = os.path.join("tds", "m0.omf")
+        omffilename = os.path.join(dirname, "m0.omf")
         assert omffilename in omf_files
 
         assert len(odt_files) == 1

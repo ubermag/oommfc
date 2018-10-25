@@ -32,22 +32,6 @@ class TestTimeDriver(TestDriver):
         gamma = self.system.dynamics.precession.gamma
         assert lines[3] == "  gamma_G {}".format(gamma)
 
-    def test_save_mif(self):
-        driver = oc.TimeDriver()
-        t = 1e-9
-        n = 120
-        driver._makedir(self.system)
-        driver._save_mif(self.system, t=t, n=n)
-
-        miffilename = os.path.join("tds", "tds.mif")
-        assert os.path.isfile(miffilename)
-
-        lines = open(miffilename, "r").readlines()
-        assert lines[0] == "# MIF 2.1\n"
-        assert lines[-1][-1] == "1"
-
-        shutil.rmtree("tds")
-
     @pytest.mark.oommf
     def test_drive(self):
         md = oc.TimeDriver()
@@ -55,14 +39,15 @@ class TestTimeDriver(TestDriver):
         md.drive(self.system, t=0.1e-9, n=10)
 
         assert os.path.exists("tds")
-        miffilename = os.path.join("tds", "tds.mif")
+        dirname = os.path.join("tds", "drive-{}".format(self.system.drive_number-1))
+        miffilename = os.path.join(dirname, "tds.mif")
         assert os.path.isfile(miffilename)
 
-        omf_files = list(glob.iglob("tds/*.omf"))
-        odt_files = list(glob.iglob("tds/*.odt"))
+        omf_files = list(glob.iglob(os.path.join(dirname, '*.omf')))
+        odt_files = list(glob.iglob(os.path.join(dirname, '*.odt')))
 
         assert len(omf_files) == 11
-        omffilename = os.path.join("tds", "m0.omf")
+        omffilename = os.path.join(dirname, "m0.omf")
         assert omffilename in omf_files
 
         assert len(odt_files) == 1

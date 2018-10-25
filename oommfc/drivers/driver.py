@@ -1,98 +1,92 @@
 import os
 import glob
-import oommfodt
-import micromagneticmodel as mm
-import discretisedfield as df
+import json
+import datetime
 import oommfc as oc
+import oommfodt as oo
+import discretisedfield as df
+import micromagneticmodel as mm
 
 
 class Driver(mm.Driver):
     def drive(self, system, **kwargs):
-        """
-        Drive the system.
-
-        """
+        # This method is implemented in the derived class (TimeDriver,
+        # MinDriver,...).
         self._check_args(**kwargs)
 
-        filenames = self._filenames(system)
+        # Generate the necessary filenames.
+        self.dirname = os.path.join(system.name,
+                                    'drive-{}'.format(system.drive_number))
 
-        # Make a directory for saving OOMMF files.
-        self._makedir(system)
+        self.omffilename = os.path.join(self.dirname, "m0.omf")
+        self.miffilename = os.path.join(self.dirname,
+                                        "{}.mif".format(system.name))
+        self.jsonfilename = os.path.join(self.dirname, "info.json")
 
-        # Save system's magnetisation configuration omf file.
-        omffilename = filenames["omffilename"]
-        system.m.write(omffilename)
+        # Make a directory inside which OOMMF will be run.
+        self._makedir()
 
-        miffilename = filenames["miffilename"]
-        self._save_mif(system, **kwargs)
+        # Generate and save mif file.
+        self._makemif(system, **kwargs)
 
-        self._run_simulator(system)
+        # Save system's initial magnetisation omf file.
+        self._makeomf(system)
 
+        # Create json info file.
+        self._makejson()
+
+        # Run OOMMF.
+        self._run_oommf()
+
+        # Update system's m and dt attributes if the derivation of E,
+        # Heff, or energy density was not asked.
         if "derive" not in kwargs:
-            self._update_system(system)
+            self._update_m(system)
+            self._update_dt(system)
 
-    def _makedir(self, system):
-        """
-        Create directory where OOMMF files are saved.
-        """
-        dirname = self._filenames(system)["dirname"]
-        if not os.path.exists(dirname):
-            os.makedirs(dirname)
+        # Increase the system's drive_number counter.
+        system.drive_number += 1
 
-    def _save_mif(self, system, **kwargs):
-        """
-        Save OOMMF configuration mif file.
-        """
+    def _makedir(self):
+        if not os.path.exists(self.dirname):
+            os.makedirs(self.dirname)
+
+    def _makemif(self, system, **kwargs):
         mif = "# MIF 2.1\n\n"
         mif += system._script
         mif += self._script(system, **kwargs)
 
-        miffilename = self._filenames(system)["miffilename"]
-        miffile = open(miffilename, "w")
-        miffile.write(mif)
-        miffile.close()
+        with open(self.miffilename, "w") as miffile:
+            miffile.write(mif)
 
-    def _run_simulator(self, system):
-        miffilename = self._filenames(system)["miffilename"]
+    def _makeomf(self, system):
+        system.m.write(self.omffilename)
+
+    def _makejson(self):
+        info = {}
+        info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
+        info['time'] = datetime.datetime.now().strftime('%H:%M:%S')
+
+        with open(self.jsonfilename, "w") as jsonfile:
+            jsonfile.write(json.dumps(info))
+
+    def _run_oommf(self):
         oommf = oc.oommf.get_oommf_runner()
-        oommf.call(argstr=miffilename)
-
-    def _update_system(self, system):
-        self._update_m(system)
-        self._update_dt(system)
+        oommf.call(argstr=self.miffilename)
 
     def _update_m(self, system):
-        # Find last omf file.
-        dirname = self._filenames(system)["dirname"]
-        last_omf_file = max(glob.iglob("{}*.omf".format(dirname)),
+        last_omf_file = max(glob.iglob(os.path.join(self.dirname, '*.omf')),
                             key=os.path.getctime)
-
-        # Update system's magnetisaton.
         m_field = df.read(last_omf_file)
 
-        # Temporary solution for having script in mesh object.
-        # Overwrites the df.Mesh with oc.Mesh.
+        # This line exists because the mesh generated in df.read
+        # method comes from the discrtisedfield module where the
+        # _script method is not implemented.
         m_field.mesh = system.m.mesh
 
         system.m = m_field
 
     def _update_dt(self, system):
-        # Find last odt file.
-        dirname = self._filenames(system)["dirname"]
-        last_odt_file = max(glob.iglob("{}*.odt".format(dirname)),
+        last_odt_file = max(glob.iglob(os.path.join(self.dirname, '*.odt')),
                             key=os.path.getctime)
-
-        # Update system's datatable.
-        system.dt = oommfodt.read(last_odt_file)
-
-    def _filenames(self, system):
-        dirname = os.path.join(system.name, "")
-        omffilename = os.path.join(dirname, "m0.omf")
-        miffilename = os.path.join(dirname, "{}.mif".format(system.name))
-
-        filenames = {}
-        filenames["dirname"] = dirname
-        filenames["omffilename"] = omffilename
-        filenames["miffilename"] = miffilename
-
-        return filenames
+        system.dt = oo.read(last_odt_file)
