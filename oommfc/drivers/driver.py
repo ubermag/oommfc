@@ -1,31 +1,30 @@
 import os
 import glob
 import json
-import oommfodt
-import micromagneticmodel as mm
-import discretisedfield as df
 import oommfc as oc
-from datetime import datetime
+import oommfodt as oo
+import discretisedfield as df
+import micromagneticmodel as mm
+import datetime
 
 
 class Driver(mm.Driver):
     def drive(self, system, **kwargs):
-        """
-        Drive the system.
-
-        """
+        # This method is implemented in the derived class (TimeDriver,
+        # MinDriver,...).
         self._check_args(**kwargs)
 
-        filenames = self._filenames(system)
+        # Generate the necessary filenames.
+        self.filenames = self._filenames(system)
 
         # Make a directory for saving OOMMF files.
         self._makedir(system)
 
         # Save system's magnetisation configuration omf file.
-        omffilename = filenames["omffilename"]
+        omffilename = self.filenames["omffilename"]
         system.m.write(omffilename)
 
-        miffilename = filenames["miffilename"]
+        miffilename = self.filenames["miffilename"]
         self._save_mif(system, **kwargs)
 
         self._run_simulator(system)
@@ -39,6 +38,20 @@ class Driver(mm.Driver):
         # Increase counter
         system.drive_number += 1
 
+    def _filenames(self, system):
+        dirname = os.path.join(system.name, "")
+        subdirname = os.path.join(system.name, 'drive-{}'.format(system.drive_number))
+        omffilename = os.path.join(subdirname, "m0.omf")
+        miffilename = os.path.join(subdirname, "{}.mif".format(system.name))
+
+        filenames = {}
+        filenames["dirname"] = dirname
+        filenames["subdirname"] = subdirname
+        filenames["omffilename"] = omffilename
+        filenames["miffilename"] = miffilename
+
+        return filenames
+    
     def _makedir(self, system):
         """
         Create directory where OOMMF files are saved.
@@ -95,29 +108,15 @@ class Driver(mm.Driver):
                             key=os.path.getctime)
 
         # Update system's datatable.
-        system.dt = oommfodt.read(last_odt_file)
-
-    def _filenames(self, system):
-        dirname = os.path.join(system.name, "")
-        subdirname = os.path.join(dirname, 'drive-{}'.format(system.drive_number))
-        omffilename = os.path.join(subdirname, "m0.omf")
-        miffilename = os.path.join(subdirname, "{}.mif".format(system.name))
-
-        filenames = {}
-        filenames["dirname"] = dirname
-        filenames["subdirname"] = subdirname
-        filenames["omffilename"] = omffilename
-        filenames["miffilename"] = miffilename
-
-        return filenames
+        system.dt = oo.read(last_odt_file)
 
     def _write_info(self, system):
         dirname = self._filenames(system)["subdirname"]
         filename = "{}/info.json".format(dirname)
 
         info = {}
-        info['date'] = datetime.now().strftime('%Y-%m-%d')
-        info['time'] = datetime.now().strftime('%H:%M:%S')
+        info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
+        info['time'] = datetime.datetime.now().strftime('%H:%M:%S')
 
         with open(filename, "w") as f:
             f.write(json.dumps(info))
