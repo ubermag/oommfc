@@ -36,7 +36,7 @@ class Driver(mm.Driver):
         self._makejson()
 
         # Run OOMMF.
-        self._run_simulator()
+        self._run_oommf()
 
         # Update system's m and dt attributes if the derivation of E,
         # Heff, or energy density was not asked.
@@ -70,7 +70,7 @@ class Driver(mm.Driver):
         with open(self.jsonfilename, "w") as jsonfile:
             jsonfile.write(json.dumps(info))
 
-    def _run_simulator(self):
+    def _run_oommf(self):
         oommf = oc.oommf.get_oommf_runner()
         oommf.call(argstr=self.miffilename)
 
