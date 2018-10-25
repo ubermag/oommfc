@@ -15,9 +15,12 @@ class Driver(mm.Driver):
         self._check_args(**kwargs)
 
         # Generate the necessary filenames.
-        self.dirname = os.path.join(system.name, 'drive-{}'.format(system.drive_number))
+        self.dirname = os.path.join(system.name,
+                                    'drive-{}'.format(system.drive_number))
+
         self.omffilename = os.path.join(self.dirname, "m0.omf")
         self.miffilename = os.path.join(self.dirname, "{}.mif".format(system.name))
+        self.jsonfilename = os.path.join(self.dirname, "info.json")
 
         # Make a directory inside which OOMMF will be run.
         self._makedir()
@@ -26,17 +29,21 @@ class Driver(mm.Driver):
         self._makemif(system, **kwargs)
 
         # Save system's initial magnetisation omf file.
-        self._makeomf()
+        self._makeomf(system)
 
-        self._run_simulator(system)
+        # Create json info file.
+        self._makejson(system)
 
+        # Run OOMMF.
+        self._run_simulator()
+
+        # Update system's m and dt attributes if the derivation of E,
+        # Heff, or energy density was not asked.
         if "derive" not in kwargs:
-            self._update_system(system)
+            self._update_m(system)
+            self._update_dt(system)
 
-        # info to json file
-        self._write_info(system)
-
-        # Increase counter
+        # Increase the system's drive_number counter.
         system.drive_number += 1
 
     def _makedir(self):
@@ -48,50 +55,40 @@ class Driver(mm.Driver):
         mif += system._script
         mif += self._script(system, **kwargs)
 
-        miffile = open(self.miffilename, "w")
-        miffile.write(mif)
-        miffile.close()
+        with open(self.miffilename, "w") as miffile:
+            miffile.write(mif)
 
-    def _makeomf(self):
+    def _makeomf(self, system):
         system.m.write(self.omffilename)
 
-    def _run_simulator(self, system):
+    def _makejson(self, system):
+        info = {}
+        info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
+        info['time'] = datetime.datetime.now().strftime('%H:%M:%S')
+
+        with open(self.jsonfilename, "w") as jsonfile:
+            jsonfile.write(json.dumps(info))
+
+    def _run_simulator(self):
         oommf = oc.oommf.get_oommf_runner()
         oommf.call(argstr=self.miffilename)
 
-    def _update_system(self, system):
-        self._update_m(system)
-        self._update_dt(system)
-
     def _update_m(self, system):
-        # Find last omf file.
-        last_omf_file = max(glob.iglob("{}/*.omf".format(self.dirname)),
+        last_omf_file = max(glob.iglob(os.path.join(self.dirname, '*.omf')),
                             key=os.path.getctime)
-
-        # Update system's magnetisaton.
         m_field = df.read(last_omf_file)
 
-        # Temporary solution for having script in mesh object.
-        # Overwrites the df.Mesh with oc.Mesh.
+        # This line exists because the mesh generated in df.read
+        # method comes from the discrtisedfield module where the
+        # _script method is not implemented.
         m_field.mesh = system.m.mesh
 
         system.m = m_field
 
     def _update_dt(self, system):
-        # Find last odt file.
-        last_odt_file = max(glob.iglob("{}/*.odt".format(self.dirname)),
+        last_odt_file = max(glob.iglob(os.path.join(self.dirname, '*.odt')),
                             key=os.path.getctime)
-
-        # Update system's datatable.
         system.dt = oo.read(last_odt_file)
 
-    def _write_info(self, system):
-        filename = "{}/info.json".format(self.dirname)
-
-        info = {}
-        info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
-        info['time'] = datetime.datetime.now().strftime('%H:%M:%S')
-
-        with open(filename, "w") as f:
-            f.write(json.dumps(info))
+    
 
