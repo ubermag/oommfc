@@ -25,21 +25,6 @@ class TestMinDriver(TestDriver):
         assert "Oxs_MinDriver" in script
         assert "Oxs_FileVectorField" in script
 
-    def test_save_mif(self):
-        md = oc.MinDriver()
-
-        md._makedir(self.system)
-        md._save_mif(self.system)
-
-        miffilename = os.path.join("tds", "drive-{}".format(self.system.drive_number), "tds.mif")
-        assert os.path.isfile(miffilename)
-
-        lines = open(miffilename, "r").readlines()
-        assert lines[0] == "# MIF 2.1\n"
-        assert lines[-1][-1] == "1"
-
-        shutil.rmtree("tds")
-
     @pytest.mark.oommf
     def test_drive(self):
         md = oc.MinDriver()

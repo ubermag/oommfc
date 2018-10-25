@@ -15,17 +15,18 @@ class Driver(mm.Driver):
         self._check_args(**kwargs)
 
         # Generate the necessary filenames.
-        self.filenames = self._filenames(system)
+        self.dirname = os.path.join(system.name, 'drive-{}'.format(system.drive_number))
+        self.omffilename = os.path.join(self.dirname, "m0.omf")
+        self.miffilename = os.path.join(self.dirname, "{}.mif".format(system.name))
 
-        # Make a directory for saving OOMMF files.
-        self._makedir(system)
+        # Make a directory inside which OOMMF will be run.
+        self._makedir()
 
-        # Save system's magnetisation configuration omf file.
-        omffilename = self.filenames["omffilename"]
-        system.m.write(omffilename)
+        # Generate and save mif file.
+        self._makemif(system, **kwargs)
 
-        miffilename = self.filenames["miffilename"]
-        self._save_mif(system, **kwargs)
+        # Save system's initial magnetisation omf file.
+        self._makeomf()
 
         self._run_simulator(system)
 
@@ -38,43 +39,25 @@ class Driver(mm.Driver):
         # Increase counter
         system.drive_number += 1
 
-    def _filenames(self, system):
-        dirname = os.path.join(system.name, 'drive-{}'.format(system.drive_number))
-        omffilename = os.path.join(dirname, "m0.omf")
-        miffilename = os.path.join(dirname, "{}.mif".format(system.name))
+    def _makedir(self):
+        if not os.path.exists(self.dirname):
+            os.makedirs(self.dirname)
 
-        filenames = {}
-        filenames["dirname"] = dirname
-        filenames["omffilename"] = omffilename
-        filenames["miffilename"] = miffilename
-
-        return filenames
-    
-    def _makedir(self, system):
-        """
-        Create directory where OOMMF files are saved.
-        """
-        dirname = self._filenames(system)['dirname']
-        if not os.path.exists(dirname):
-            os.makedirs(dirname)
-
-    def _save_mif(self, system, **kwargs):
-        """
-        Save OOMMF configuration mif file.
-        """
+    def _makemif(self, system, **kwargs):
         mif = "# MIF 2.1\n\n"
         mif += system._script
         mif += self._script(system, **kwargs)
 
-        miffilename = self._filenames(system)["miffilename"]
-        miffile = open(miffilename, "w")
+        miffile = open(self.miffilename, "w")
         miffile.write(mif)
         miffile.close()
 
+    def _makeomf(self):
+        system.m.write(self.omffilename)
+
     def _run_simulator(self, system):
-        miffilename = self._filenames(system)["miffilename"]
         oommf = oc.oommf.get_oommf_runner()
-        oommf.call(argstr=miffilename)
+        oommf.call(argstr=self.miffilename)
 
     def _update_system(self, system):
         self._update_m(system)
@@ -82,8 +65,7 @@ class Driver(mm.Driver):
 
     def _update_m(self, system):
         # Find last omf file.
-        dirname = self._filenames(system)["dirname"]
-        last_omf_file = max(glob.iglob("{}/*.omf".format(dirname)),
+        last_omf_file = max(glob.iglob("{}/*.omf".format(self.dirname)),
                             key=os.path.getctime)
 
         # Update system's magnetisaton.
@@ -97,16 +79,14 @@ class Driver(mm.Driver):
 
     def _update_dt(self, system):
         # Find last odt file.
-        dirname = self._filenames(system)["dirname"]
-        last_odt_file = max(glob.iglob("{}/*.odt".format(dirname)),
+        last_odt_file = max(glob.iglob("{}/*.odt".format(self.dirname)),
                             key=os.path.getctime)
 
         # Update system's datatable.
         system.dt = oo.read(last_odt_file)
 
     def _write_info(self, system):
-        dirname = self._filenames(system)["dirname"]
-        filename = "{}/info.json".format(dirname)
+        filename = "{}/info.json".format(self.dirname)
 
         info = {}
         info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')

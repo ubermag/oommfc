@@ -32,22 +32,6 @@ class TestTimeDriver(TestDriver):
         gamma = self.system.dynamics.precession.gamma
         assert lines[3] == "  gamma_G {}".format(gamma)
 
-    def test_save_mif(self):
-        driver = oc.TimeDriver()
-        t = 1e-9
-        n = 120
-        driver._makedir(self.system)
-        driver._save_mif(self.system, t=t, n=n)
-
-        miffilename = os.path.join("tds", "drive-{}".format(self.system.drive_number), "tds.mif")
-        assert os.path.isfile(miffilename)
-
-        lines = open(miffilename, "r").readlines()
-        assert lines[0] == "# MIF 2.1\n"
-        assert lines[-1][-1] == "1"
-
-        shutil.rmtree("tds")
-
     @pytest.mark.oommf
     def test_drive(self):
         md = oc.TimeDriver()
