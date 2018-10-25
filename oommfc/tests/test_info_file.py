@@ -47,7 +47,7 @@ def test_info_file():
     assert 'date' in info.keys()
     assert 'time' in info.keys()
     assert re.findall('[0-9]{4}-[0-9]{2}-[0-9]{2}', info['date']) is not []
-    assert re.findall('[0-9]{2}:[0-9]{2}', info['time']) is not []
+    assert re.findall('[0-9]{2}:[0-9]{2}-[0-9]{2}', info['time']) is not []
 
     td.drive(system, t=50e-12, n=20)  # updates system.m in-place
     

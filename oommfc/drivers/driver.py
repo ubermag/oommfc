@@ -117,7 +117,7 @@ class Driver(mm.Driver):
 
         info = {}
         info['date'] = datetime.now().strftime('%Y-%m-%d')
-        info['time'] = datetime.now().strftime('%H:%M')
+        info['time'] = datetime.now().strftime('%H:%M:%S')
 
         with open(filename, "w") as f:
             f.write(json.dumps(info))
