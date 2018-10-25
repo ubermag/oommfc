@@ -70,5 +70,3 @@ def test_multiple_runs():
     assert len(odt_files) >= 1
 
     shutil.rmtree(name)
-
-

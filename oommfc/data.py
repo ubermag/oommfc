@@ -9,33 +9,33 @@ import micromagneticmodel as mm
 class Data(mm.Data):
     @property
     def effective_field(self):
-        _dict = {"Demag": "Oxs_Demag::Field",
-                 "Exchange": "Oxs_UniformExchange::Field",
-                 "UniaxialAnisotropy": "Oxs_UniaxialAnisotropy::Field",
-                 "Zeeman": "Oxs_FixedZeeman::Field",
-                 "Hamiltonian": "Oxs_RungeKuttaEvolve:evolver:Total field"}
+        _dict = {'Demag': 'Oxs_Demag::Field',
+                 'Exchange': 'Oxs_UniformExchange::Field',
+                 'UniaxialAnisotropy': 'Oxs_UniaxialAnisotropy::Field',
+                 'Zeeman': 'Oxs_FixedZeeman::Field',
+                 'Hamiltonian': 'Oxs_RungeKuttaEvolve:evolver:Total field'}
 
         td = oc.TimeDriver()
         td.drive(self.system, derive=_dict[self.cls])
 
         dirname = os.path.join(self.system.name, 'drive-{}'.format(self.system.drive_number-1))
-        ohf_file = max(glob.iglob("{}/*.ohf".format(dirname)),
+        ohf_file = max(glob.iglob(os.path.join(dirname, '*.ohf')),
                        key=os.path.getctime)
 
         return df.read(ohf_file)
 
     @property
     def energy(self):
-        _dict = {"Demag": "Demag::Energy",
-                 "Exchange": "UniformExchange::Energy",
-                 "UniaxialAnisotropy": "UniaxialAnisotropy::Energy",
-                 "Zeeman": "FixedZeeman::Energy",
-                 "Hamiltonian": "RungeKuttaEvolve:evolver:Totalenergy"}
+        _dict = {'Demag': 'Demag::Energy',
+                 'Exchange': 'UniformExchange::Energy',
+                 'UniaxialAnisotropy': 'UniaxialAnisotropy::Energy',
+                 'Zeeman': 'FixedZeeman::Energy',
+                 'Hamiltonian': 'RungeKuttaEvolve:evolver:Totalenergy'}
         td = oc.TimeDriver()
-        td.drive(self.system, derive="energy")
+        td.drive(self.system, derive='energy')
 
         dirname = os.path.join(self.system.name, 'drive-{}'.format(self.system.drive_number-1))
-        odt_file = max(glob.iglob("{}/*.odt".format(dirname)),
+        odt_file = max(glob.iglob(os.path.join(dirname, '*.odt')),
                        key=os.path.getctime)
 
         dt = oommfodt.read(odt_file, replace_columns=False)
@@ -44,19 +44,19 @@ class Data(mm.Data):
 
     @property
     def energy_density(self):
-        _dict = {"Demag": "Oxs_Demag::Energy density",
-                 "Exchange": "Oxs_UniformExchange::Energy density",
-                 "UniaxialAnisotropy": ("Oxs_UniaxialAnisotropy::"
-                                        "Energy density"),
-                 "Zeeman": "Oxs_FixedZeeman::Energy density",
-                 "Hamiltonian": ("Oxs_RungeKuttaEvolve:evolver:"
-                                 "Total energy density")}
+        _dict = {'Demag': 'Oxs_Demag::Energy density',
+                 'Exchange': 'Oxs_UniformExchange::Energy density',
+                 'UniaxialAnisotropy': ('Oxs_UniaxialAnisotropy::'
+                                        'Energy density'),
+                 'Zeeman': 'Oxs_FixedZeeman::Energy density',
+                 'Hamiltonian': ('Oxs_RungeKuttaEvolve:evolver:'
+                                 'Total energy density')}
 
         td = oc.TimeDriver()
         td.drive(self.system, derive=_dict[self.cls])
 
         dirname = os.path.join(self.system.name, 'drive-{}'.format(self.system.drive_number-1))
-        oef_file = max(glob.iglob("{}/*.oef".format(dirname)),
+        oef_file = max(glob.iglob(os.path.join(dirname, '*.oef')),
                        key=os.path.getctime)
 
         return df.read(oef_file)

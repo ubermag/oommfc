@@ -36,8 +36,8 @@ class TestMinDriver(TestDriver):
         miffilename = os.path.join(dirname, "tds.mif")
         assert os.path.isfile(miffilename)
 
-        omf_files = list(glob.iglob("{}/*.omf".format(dirname)))
-        odt_files = list(glob.iglob("{}/*.odt".format(dirname)))
+        omf_files = list(glob.iglob(os.path.join(dirname, '*.omf')))
+        odt_files = list(glob.iglob(os.path.join(dirname, '*.odt')))
 
         assert len(omf_files) == 2
         omffilename = os.path.join(dirname, "m0.omf")
