@@ -67,6 +67,9 @@ def test_stdprob3():
         md = oc.MinDriver()
         md.drive(system)
 
+        if os.path.exists(name):
+            shutil.rmtree(name)
+
         return system
 
     def energy_difference(L):
@@ -78,4 +81,5 @@ def test_stdprob3():
     cross_section = bisect(energy_difference, 8, 9, xtol=0.1)
     assert 8.4 < cross_section < 8.5
 
-    shutil.rmtree(name)
+    if os.path.exists(name):
+        shutil.rmtree(name)

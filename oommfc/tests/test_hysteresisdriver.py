@@ -27,6 +27,9 @@ class TestHysteresisDriver(TestDriver):
         assert 'Oxs_MinDriver' in script
         assert 'Oxs_FileVectorField' in script
 
+        if os.path.exists('tds'):
+            shutil.rmtree('tds')
+
     @pytest.mark.oommf
     def test_drive(self):
         hd = oc.HysteresisDriver()
@@ -47,4 +50,5 @@ class TestHysteresisDriver(TestDriver):
 
         assert len(odt_files) == 1
 
-        shutil.rmtree('tds')
+        if os.path.exists('tds'):
+            shutil.rmtree('tds')
