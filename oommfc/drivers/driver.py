@@ -66,6 +66,7 @@ class Driver(mm.Driver):
         info = {}
         info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
         info['time'] = datetime.datetime.now().strftime('%H:%M:%S')
+        info['driver'] = self.__class__.__name__
 
         with open(self.jsonfilename, "w") as jsonfile:
             jsonfile.write(json.dumps(info))

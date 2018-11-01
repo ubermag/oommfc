@@ -46,8 +46,10 @@ def test_info_file():
         info = json.loads(f.read())
     assert 'date' in info.keys()
     assert 'time' in info.keys()
-    assert re.findall('[0-9]{4}-[0-9]{2}-[0-9]{2}', info['date']) is not []
-    assert re.findall('[0-9]{2}:[0-9]{2}-[0-9]{2}', info['time']) is not []
+    assert 'driver' in info.keys()
+    assert re.findall(r'\d{4}-\d{2}-\d{2}', info['date']) is not []
+    assert re.findall(r'\d{2}:\d{2}-\d{2}', info['time']) is not []
+    assert info['driver'] == 'TimeDriver'
 
     td.drive(system, t=50e-12, n=20)  # updates system.m in-place
     
