@@ -28,7 +28,7 @@ class TimeDriver(Driver):
 
         if not stt:
             mif = "# RungeKuttaEvolver\n"
-            mif += "Specify Oxs_RungeKuttaEvolve:evolver {\n"
+            mif += "Specify Oxs_RungeKuttaEvolve {\n"
             mif += "  alpha {}\n".format(alpha)
             mif += "  gamma_G {}\n".format(gamma)
             mif += "}\n\n"

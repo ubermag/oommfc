@@ -60,6 +60,10 @@ def test_stdprob3():
             oc.Demag()
         system.m = df.Field(mesh, value=m_init, norm=Ms)
 
+        # Remove any previous simulation directories.
+        if os.path.exists(name):
+            shutil.rmtree(name)
+        
         md = oc.MinDriver()
         md.drive(system)
 

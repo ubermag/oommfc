@@ -13,7 +13,7 @@ class Data(mm.Data):
                  'Exchange': 'Oxs_UniformExchange::Field',
                  'UniaxialAnisotropy': 'Oxs_UniaxialAnisotropy::Field',
                  'Zeeman': 'Oxs_FixedZeeman::Field',
-                 'Hamiltonian': 'Oxs_RungeKuttaEvolve:evolver:Total field'}
+                 'Hamiltonian': 'Oxs_RungeKuttaEvolve::Total field'}
 
         td = oc.TimeDriver()
         td.drive(self.system, derive=_dict[self.cls])
@@ -30,7 +30,7 @@ class Data(mm.Data):
                  'Exchange': 'UniformExchange::Energy',
                  'UniaxialAnisotropy': 'UniaxialAnisotropy::Energy',
                  'Zeeman': 'FixedZeeman::Energy',
-                 'Hamiltonian': 'RungeKuttaEvolve:evolver:Totalenergy'}
+                 'Hamiltonian': 'RungeKuttaEvolve::Totalenergy'}
         td = oc.TimeDriver()
         td.drive(self.system, derive='energy')
 
@@ -38,7 +38,7 @@ class Data(mm.Data):
         odt_file = max(glob.iglob(os.path.join(dirname, '*.odt')),
                        key=os.path.getctime)
 
-        dt = oommfodt.read(odt_file, replace_columns=False)
+        dt = oommfodt.read(odt_file, rename=False)
 
         return dt[_dict[self.cls]][0]
 
@@ -49,7 +49,7 @@ class Data(mm.Data):
                  'UniaxialAnisotropy': ('Oxs_UniaxialAnisotropy::'
                                         'Energy density'),
                  'Zeeman': 'Oxs_FixedZeeman::Energy density',
-                 'Hamiltonian': ('Oxs_RungeKuttaEvolve:evolver:'
+                 'Hamiltonian': ('Oxs_RungeKuttaEvolve::'
                                  'Total energy density')}
 
         td = oc.TimeDriver()
