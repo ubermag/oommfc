@@ -75,9 +75,11 @@ class Driver(mm.Driver):
         oommf.call(argstr=self.miffilename)
 
     def _update_m(self, system):
-        last_omf_file = max(glob.iglob(os.path.join(self.dirname, '*.omf')),
-                            key=os.path.getctime)
-        m_field = df.read(last_omf_file)
+        # An example .omf filename is:
+        # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
+        omffiles = glob.iglob(os.path.join(self.dirname, '{}*.omf'.format(system.name)))
+        lastomffile = sorted(omffiles)[-1]
+        m_field = df.read(lastomffile)
 
         # This line exists because the mesh generated in df.read
         # method comes from the discrtisedfield module where the
@@ -87,6 +89,4 @@ class Driver(mm.Driver):
         system.m = m_field
 
     def _update_dt(self, system):
-        last_odt_file = max(glob.iglob(os.path.join(self.dirname, '*.odt')),
-                            key=os.path.getctime)
-        system.dt = oo.read(last_odt_file)
+        system.dt = oo.read(os.path.join(self.dirname, '{}.odt'.format(system.name)))
