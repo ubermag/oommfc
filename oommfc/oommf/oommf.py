@@ -220,7 +220,7 @@ def status():
     try:
         system = oc.examples.macrospin()
         td = oc.TimeDriver()
-        td.drive(system, t=1e-12, n=1)
+        td.drive(system, t=1e-12, n=1, overwrite=True)
         print('OOMMF found and running.')
         shutil.rmtree('example-macrospin')
         return 0
@@ -243,7 +243,7 @@ def overhead():
     system = oc.examples.macrospin()
     td = oc.TimeDriver()
     oommfc_start = time.time()
-    td.drive(system, t=1e-12, n=1)
+    td.drive(system, t=1e-12, n=1, overwrite=True)
     oommfc_stop = time.time()
     oommfc_time = oommfc_stop - oommfc_start
 

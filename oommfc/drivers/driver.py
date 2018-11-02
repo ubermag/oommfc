@@ -13,7 +13,7 @@ class Driver(mm.Driver):
     def drive(self, system, overwrite=False, **kwargs):
         # This method is implemented in the derived class (TimeDriver,
         # MinDriver,...).
-        self._check_args(**kwargs)
+        self._checkargs(**kwargs)
 
         # Generate the necessary filenames.
         self.dirname = os.path.join(system.name,
@@ -34,14 +34,14 @@ class Driver(mm.Driver):
         # Generate and save mif file.
         self._makemif(system, **kwargs)
 
-        # Save system's initial magnetisation omf file.
+        # Save system's initial magnetisation m0.omf file.
         self._makeomf(system)
 
         # Create json info file.
-        self._makejson()
+        self._makejson(**kwargs)
 
         # Run OOMMF.
-        self._run_oommf()
+        self._runoommf()
 
         # Update system's m and dt attributes if the derivation of E,
         # Heff, or energy density was not asked.
@@ -52,6 +52,9 @@ class Driver(mm.Driver):
         # Increase the system's drive_number counter.
         system.drive_number += 1
 
+    def _checkargs(self, **kwargs):
+        raise NotImplementedError('This method is defined in a derived class')
+        
     def _checkdir(self, system, overwrite=False):
         if os.path.exists(self.dirname):
             if not overwrite:
@@ -79,7 +82,7 @@ class Driver(mm.Driver):
     def _makeomf(self, system):
         system.m.write(self.omffilename)
 
-    def _makejson(self):
+    def _makejson(self, **kwargs):
         info = {}
         info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
         info['time'] = datetime.datetime.now().strftime('%H:%M:%S')
@@ -88,7 +91,7 @@ class Driver(mm.Driver):
         with open(self.jsonfilename, 'w') as jsonfile:
             jsonfile.write(json.dumps(info))
 
-    def _run_oommf(self):
+    def _runoommf(self):
         oommf = oc.oommf.get_oommf_runner()
         oommf.call(argstr=self.miffilename)
 

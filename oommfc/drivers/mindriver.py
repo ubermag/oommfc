@@ -36,5 +36,5 @@ class MinDriver(Driver):
 
         return mif
 
-    def _check_args(self, **kwargs):
+    def _checkargs(self, **kwargs):
         pass

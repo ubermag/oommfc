@@ -46,7 +46,7 @@ class HysteresisDriver(Driver):
 
         return mif
 
-    def _check_args(self, **kwargs):
+    def _checkargs(self, **kwargs):
         Hmin = kwargs["Hmin"]
         Hmax = kwargs["Hmax"]
         n = kwargs["n"]

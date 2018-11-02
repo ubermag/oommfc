@@ -22,7 +22,7 @@ class TimeDriver(Driver):
         meshname = system.m.mesh.name
         systemname = system.name
         if "derive" in kwargs:
-            t, n = 1e-20, 1
+            t, n = 1e-25, 1
         else:
             t, n = kwargs["t"], kwargs["n"]
 
@@ -91,7 +91,7 @@ class TimeDriver(Driver):
 
         return mif
 
-    def _check_args(self, **kwargs):
+    def _checkargs(self, **kwargs):
         if "derive" in kwargs:
             pass
         else:
