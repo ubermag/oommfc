@@ -24,6 +24,7 @@ Contents:
    ipynb/spatially_varying_parameters
    ipynb/exporting-data
    ipynb/derived_fields
+   ipynb/stray-field
    ipynb/support
    ipynb/acknowledgements
    ipynb/how-to-cite
