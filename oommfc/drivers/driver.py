@@ -38,7 +38,7 @@ class Driver(mm.Driver):
         self._makeomf(system)
 
         # Create json info file.
-        self._makejson(**kwargs)
+        self._makejson(system, **kwargs)
 
         # Run OOMMF.
         self._runoommf()
@@ -54,7 +54,7 @@ class Driver(mm.Driver):
 
     def _checkargs(self, **kwargs):
         raise NotImplementedError('This method is defined in a derived class')
-        
+
     def _checkdir(self, system, overwrite=False):
         if os.path.exists(self.dirname):
             if not overwrite:
@@ -82,11 +82,13 @@ class Driver(mm.Driver):
     def _makeomf(self, system):
         system.m.write(self.omffilename)
 
-    def _makejson(self, **kwargs):
+    def _makejson(self, system, **kwargs):
         info = {}
+        info['drive_number'] = system.drive_number
         info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
         info['time'] = datetime.datetime.now().strftime('%H:%M:%S')
         info['driver'] = self.__class__.__name__
+        info['args'] = kwargs
 
         with open(self.jsonfilename, 'w') as jsonfile:
             jsonfile.write(json.dumps(info))
@@ -98,7 +100,8 @@ class Driver(mm.Driver):
     def _update_m(self, system):
         # An example .omf filename is:
         # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
-        omffiles = glob.iglob(os.path.join(self.dirname, '{}*.omf'.format(system.name)))
+        omffiles = glob.iglob(os.path.join(self.dirname,
+                                           f'{system.name}*.omf'))
         lastomffile = sorted(omffiles)[-1]
         m_field = df.read(lastomffile)
 
@@ -110,4 +113,5 @@ class Driver(mm.Driver):
         system.m = m_field
 
     def _update_dt(self, system):
-        system.dt = oo.read(os.path.join(self.dirname, '{}.odt'.format(system.name)))
+        system.dt = oo.read(os.path.join(self.dirname,
+                                         f'{system.name}.odt'))
