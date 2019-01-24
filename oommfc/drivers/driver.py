@@ -54,7 +54,7 @@ class Driver(mm.Driver):
 
     def _checkargs(self, **kwargs):
         raise NotImplementedError('This method is defined in a derived class')
-        
+
     def _checkdir(self, system, overwrite=False):
         if os.path.exists(self.dirname):
             if not overwrite:
@@ -100,7 +100,8 @@ class Driver(mm.Driver):
     def _update_m(self, system):
         # An example .omf filename is:
         # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
-        omffiles = glob.iglob(os.path.join(self.dirname, '{}*.omf'.format(system.name)))
+        omffiles = glob.iglob(os.path.join(self.dirname,
+                                           f'{system.name}*.omf'))
         lastomffile = sorted(omffiles)[-1]
         m_field = df.read(lastomffile)
 
@@ -112,4 +113,5 @@ class Driver(mm.Driver):
         system.m = m_field
 
     def _update_dt(self, system):
-        system.dt = oo.read(os.path.join(self.dirname, '{}.odt'.format(system.name)))
+        system.dt = oo.read(os.path.join(self.dirname,
+                                         f'{system.name}.odt'))
