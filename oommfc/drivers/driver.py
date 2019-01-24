@@ -38,7 +38,7 @@ class Driver(mm.Driver):
         self._makeomf(system)
 
         # Create json info file.
-        self._makejson(**kwargs)
+        self._makejson(system, **kwargs)
 
         # Run OOMMF.
         self._runoommf()
@@ -82,11 +82,13 @@ class Driver(mm.Driver):
     def _makeomf(self, system):
         system.m.write(self.omffilename)
 
-    def _makejson(self, **kwargs):
+    def _makejson(self, system, **kwargs):
         info = {}
+        info['drive_number'] = system.drive_number
         info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
         info['time'] = datetime.datetime.now().strftime('%H:%M:%S')
         info['driver'] = self.__class__.__name__
+        info['args'] = kwargs
 
         with open(self.jsonfilename, 'w') as jsonfile:
             jsonfile.write(json.dumps(info))
