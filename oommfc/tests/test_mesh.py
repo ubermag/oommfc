@@ -1,8 +1,8 @@
 import oommfc as oc
-import discretisedfield.tests as dft
+import discretisedfield as dft
 
 
-class TestMesh(dft.TestMesh):
+class TestMesh(dft.Mesh):
     def test_script_no_pbc(self):
         for p1, p2, cell in self.valid_args:
             name = "test_mesh"
