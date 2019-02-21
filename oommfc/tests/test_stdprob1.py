@@ -1,5 +1,5 @@
-import shutil
 import pytest
+import shutil
 import oommfc as oc
 import discretisedfield as df
 
