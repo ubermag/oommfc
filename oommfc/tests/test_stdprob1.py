@@ -1,5 +1,5 @@
-import shutil
 import pytest
+import shutil
 import oommfc as oc
 import discretisedfield as df
 
@@ -32,7 +32,7 @@ def test_stdprob1():
     n = 10
 
     hd = oc.HysteresisDriver()
-    hd.drive(system, Hmax=Hmax, Hmin=Hmin, n=n)
+    hd.drive(system, Hmax=Hmax, Hmin=Hmin, n=n, overwrite=True)
 
     Bx = system.dt["Bx"].values
     mx = system.dt["mx"].values
