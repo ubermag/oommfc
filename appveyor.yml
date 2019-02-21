@@ -18,8 +18,8 @@ install:
   - activate test-environment
   - conda install --channel conda-forge oommf
   - python -m pip install --upgrade pip pytest nbval .
-  - python -m pip uninstall -y numpy
-  - conda install numpy  # numpy conflict temporary solution
+  - python -m pip uninstall -y numpy scipy
+  - conda install numpy scipy # numpy conflict temporary solution
 
 test_script:
   - python -c "import oommfc as o; import sys; sys.exit(o.test())"
