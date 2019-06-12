@@ -113,5 +113,5 @@ class Driver(mm.Driver):
         system.m = m_field
 
     def _update_dt(self, system):
-        system.dt = oo.read(os.path.join(self.dirname,
+        system.dt = oo.oommf_read(os.path.join(self.dirname,
                                          f'{system.name}.odt'))
