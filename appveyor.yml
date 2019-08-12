@@ -1,7 +1,5 @@
 environment:
   matrix:
-    - PYTHON_VERSION: 3.6
-      MINICONDA: C:\Miniconda3-x64
     - PYTHON_VERSION: 3.7
       MINICONDA: C:\Miniconda3-x64
 
@@ -25,7 +23,3 @@ test_script:
   - python -c "import oommfc as o; import sys; sys.exit(o.test())"
   - python -m pytest --nbval-lax docs\ipynb\
   - python -m pytest --doctest-modules --ignore=oommfc\tests oommfc
-
-notifications:
-  - provider: Slack
-    incoming_webhook: https://hooks.slack.com/services/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
