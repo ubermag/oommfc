@@ -1,7 +1,7 @@
 import os
 import glob
-import oommfodt
 import oommfc as oc
+import ubermagtable as ut
 import discretisedfield as df
 import micromagneticmodel as mm
 
@@ -22,7 +22,7 @@ class Data(mm.Data):
         ohf_file = max(glob.iglob(os.path.join(dirname, '*.ohf')),
                        key=os.path.getctime)
 
-        return df.read(ohf_file)
+        return df.Field.fromfile(ohf_file)
 
     @property
     def energy(self):
@@ -30,7 +30,7 @@ class Data(mm.Data):
                  'Exchange': 'UniformExchange::Energy',
                  'UniaxialAnisotropy': 'UniaxialAnisotropy::Energy',
                  'Zeeman': 'FixedZeeman::Energy',
-                 'Hamiltonian': 'RungeKuttaEvolve::Totalenergy'}
+                 'Hamiltonian': 'RungeKuttaEvolve::Total energy'}
         td = oc.TimeDriver()
         td.drive(self.system, derive='energy')
 
@@ -38,7 +38,7 @@ class Data(mm.Data):
         odt_file = max(glob.iglob(os.path.join(dirname, '*.odt')),
                        key=os.path.getctime)
 
-        dt = oommfodt.read(odt_file, rename=False)
+        dt = ut.read(odt_file, rename=False)
 
         return dt[_dict[self.cls]][0]
 
@@ -59,4 +59,4 @@ class Data(mm.Data):
         oef_file = max(glob.iglob(os.path.join(dirname, '*.oef')),
                        key=os.path.getctime)
 
-        return df.read(oef_file)
+        return df.Field.fromfile(oef_file)

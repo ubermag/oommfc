@@ -4,7 +4,7 @@ import json
 import shutil
 import datetime
 import oommfc as oc
-import oommfodt as oo
+import ubermagtable as ut
 import discretisedfield as df
 import micromagneticmodel as mm
 
@@ -103,7 +103,7 @@ class Driver(mm.Driver):
         omffiles = glob.iglob(os.path.join(self.dirname,
                                            f'{system.name}*.omf'))
         lastomffile = sorted(omffiles)[-1]
-        m_field = df.read(lastomffile)
+        m_field = df.Field.fromfile(lastomffile)
 
         # This line exists because the mesh generated in df.read
         # method comes from the discrtisedfield module where the
@@ -113,5 +113,5 @@ class Driver(mm.Driver):
         system.m = m_field
 
     def _update_dt(self, system):
-        system.dt = oo.oommf_read(os.path.join(self.dirname,
+        system.dt = ut.read(os.path.join(self.dirname,
                                          f'{system.name}.odt'))

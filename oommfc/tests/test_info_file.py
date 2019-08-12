@@ -18,14 +18,14 @@ def test_info_file():
         shutil.rmtree(name)
 
     L = 30e-9   # (m)
-    cellsize = (10e-9, 15e-9, 5e-9)  # (m)
+    cell = (10e-9, 15e-9, 5e-9)  # (m)
     A = 1.3e-11  # (J/m)
     Ms = 8e5  # (A/m)
     H = (1e6, 0.0, 2e5)  # (A/m)
     gamma = 2.211e5  # (m/As)
     alpha = 0.02
 
-    mesh = oc.Mesh((0, 0, 0), (L, L, L), cellsize)
+    mesh = oc.Mesh(p1=(0, 0, 0), p2=(L, L, L), cell=cell)
     system = oc.System(name=name)
     system.hamiltonian = oc.Exchange(A=A) + oc.Zeeman(H=H)
     system.dynamics = oc.Precession(gamma) + oc.Damping(alpha)

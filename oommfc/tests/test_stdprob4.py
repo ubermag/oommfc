@@ -16,8 +16,8 @@ def test_stdprob4():
         shutil.rmtree(name)
 
     L, d, th = 500e-9, 125e-9, 3e-9   # (m)
-    cellsize = (5e-9, 5e-9, 3e-9)  # (m)
-    mesh = oc.Mesh((0, 0, 0), (L, d, th), cellsize)
+    cell = (5e-9, 5e-9, 3e-9)  # (m)
+    mesh = oc.Mesh(p1=(0, 0, 0), p2=(L, d, th), cell=cell)
 
     system = oc.System(name=name)
 

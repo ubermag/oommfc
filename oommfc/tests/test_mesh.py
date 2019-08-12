@@ -4,9 +4,9 @@ import discretisedfield.tests as dft
 
 class TestMesh(dft.TestMesh):
     def test_script_no_pbc(self):
-        for p1, p2, cell in self.valid_args:
+        for p1, p2, n, cell in self.valid_args:
             name = "test_mesh"
-            mesh = oc.Mesh(p1, p2, cell, name=name)
+            mesh = oc.Mesh(p1=p1, p2=p2, n=n, cell=cell, name=name)
 
             script = mesh._script
             assert script.count("\n") == 14
@@ -34,15 +34,15 @@ class TestMesh(dft.TestMesh):
             # Assert RectangularMesh script
             assert lines[8] == "# RectangularMesh"
             assert lines[9] == "Specify Oxs_RectangularMesh:{} {{".format(name)
-            assert lines[10] == "  cellsize {{{} {} {}}}".format(*cell)
+            assert lines[10] == "  cellsize {{{} {} {}}}".format(*mesh.cell)
             assert lines[11] == "  atlas Oxs_BoxAtlas:atlas"
             assert lines[12] == "}"
 
     def test_script_pbc(self):
-        for p1, p2, cell in self.valid_args:
+        for p1, p2, n, cell in self.valid_args:
             pbc = "xy"
             name = "test_mesh"
-            mesh = oc.Mesh(p1, p2, cell, pbc=pbc, name=name)
+            mesh = oc.Mesh(p1=p1, p2=p2, n=n, cell=cell, pbc=pbc, name=name)
 
             script = mesh._script
             assert script.count("\n") == 15
@@ -71,7 +71,7 @@ class TestMesh(dft.TestMesh):
             assert lines[8] == "# PeriodicRectangularMesh"
             assert lines[9] == ("Specify Oxs_PeriodicRectangularMesh:{} "
                                 "{{".format(name))
-            assert lines[10] == "  cellsize {{{} {} {}}}".format(*cell)
+            assert lines[10] == "  cellsize {{{} {} {}}}".format(*mesh.cell)
             assert lines[11] == "  atlas Oxs_BoxAtlas:atlas"
             assert lines[12] == "  periodic xy"
             assert lines[13] == "}"

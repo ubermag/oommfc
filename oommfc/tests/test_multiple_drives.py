@@ -16,8 +16,8 @@ def test_multiple_runs():
         shutil.rmtree(name)
 
     L = 10e-9   # (m)
-    cellsize = (5e-9, 5e-9, 5e-9)  # (m)
-    mesh = oc.Mesh((0, 0, 0), (L, L, L), cellsize)
+    cell = (5e-9, 5e-9, 5e-9)  # (m)
+    mesh = oc.Mesh(p1=(0, 0, 0), p2=(L, L, L), cell=cell)
 
     system = oc.System(name=name)
 
