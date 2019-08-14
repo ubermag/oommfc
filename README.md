@@ -9,9 +9,9 @@ Marijan Beg<sup>1,2</sup>, Ryan A. Pepper<sup>2</sup>, Thomas Kluyver<sup>1</sup
 | Latest release | [![PyPI version](https://badge.fury.io/py/oommfc.svg)](https://badge.fury.io/py/oommfc) |
 |                | [![Anaconda-Server Badge](https://anaconda.org/conda-forge/oommfc/badges/version.svg)](https://anaconda.org/conda-forge/oommfc) |
 | Build | [![Build Status](https://travis-ci.org/joommf/oommfc.svg?branch=master)](https://travis-ci.org/joommf/oommfc) |
-|       | [![Build status](https://ci.appveyor.com/api/projects/status/a1cp833x8trei0d8?svg=true)](https://ci.appveyor.com/project/marijanbeg/oommfc) |
+|       | [![Build status](https://ci.appveyor.com/api/projects/status/dsbae0ntj4coa9hl?svg=true)](https://ci.appveyor.com/project/marijanbeg/oommfc) |
 | Coverage | [![codecov](https://codecov.io/gh/joommf/oommfc/branch/master/graph/badge.svg)](https://codecov.io/gh/joommf/oommfc) |
-| Documentation | [![Documentation Status](https://readthedocs.org/projects/oommfc/badge/?version=latest)](http://oommfc.readthedocs.io/en/latest/?badge=latest) |
+| Documentation | [![Documentation Status](https://readthedocs.org/projects/oommfc/badge/?version=latest)](https://oommfc.readthedocs.io/en/latest/?badge=latest) |
 | Binder | [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ubermag/oommfc/master?filepath=docs%2Fipynb%2Findex.ipynb) |
 | License | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
 
