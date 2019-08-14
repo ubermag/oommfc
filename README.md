@@ -13,7 +13,6 @@ Marijan Beg<sup>1,2</sup>, Ryan A. Pepper<sup>2</sup>, Thomas Kluyver<sup>1</sup
 | Coverage | [![codecov](https://codecov.io/gh/joommf/oommfc/branch/master/graph/badge.svg)](https://codecov.io/gh/joommf/oommfc) |
 | Documentation | [![Documentation Status](https://readthedocs.org/projects/oommfc/badge/?version=latest)](http://oommfc.readthedocs.io/en/latest/?badge=latest) |
 | Binder | [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/joommf/oommfc/master?filepath=index.ipynb) |
-| Dependecies | [![Requirements Status](https://requires.io/github/joommf/oommfc/requirements.svg?branch=master)](https://requires.io/github/joommf/oommfc/requirements/?branch=master) |
 | License | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
 
 ## About
