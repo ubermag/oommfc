@@ -32,7 +32,7 @@ upload-coverage:
 travis-build: SHELL:=/bin/bash
 travis-build:
 	ci_env=`bash <(curl -s https://codecov.io/env)`
-	docker build -f docker/Dockerfile -t dockertestimage .
+	docker build -f Dockerfile -t dockertestimage .
 	docker run -e ci_env -ti -d --name testcontainer dockertestimage
 	docker exec testcontainer make test-all-travis
 	docker exec testcontainer make upload-coverage
@@ -40,7 +40,7 @@ travis-build:
 	docker rm testcontainer
 
 test-docker:
-	docker build -f docker/Dockerfile -t dockertestimage .
+	docker build -f Dockerfile -t dockertestimage .
 	docker exec testcontainer find . -name '*.pyc' -delete
 	docker run -ti -d --name testcontainer dockertestimage
 	docker exec testcontainer make test-all-travis

@@ -1,4 +1,3 @@
 include README.md
 include LICENSE
-include oommfc/tests/test_files/test_omf.mif
-include oommfc/tests/test_files/m0.omf
+recursive-include oommfc/tests/test_files *

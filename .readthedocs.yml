@@ -1,7 +1,8 @@
+build:
+    image: latest
+
 python:
-  version: 3
-  pip_install: true
-  requirements_file: docs/requirements.txt
-  
-# For more fields that can be specified here, see:
-# http://docs.readthedocs.io/en/latest/yaml-config.html
+    version: 3.7
+    setup_py_install: true
+
+requirements_file: docs/requirements.txt

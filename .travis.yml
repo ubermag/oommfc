@@ -5,6 +5,3 @@ services:
 
 script:
   - make travis-build
-
-notifications:
-  slack: joommf:eqKxGPXuUP3LxnOfxg7GWgDF
