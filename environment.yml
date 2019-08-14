@@ -1,0 +1,5 @@
+name: oommfc-environment
+channels:
+  - conda-forge
+dependencies:
+  - oommfc
