@@ -47,7 +47,7 @@ class TestTimeDriver(TestDriver):
         odt_files = list(glob.iglob(os.path.join(dirname, '*.odt')))
 
         assert len(omf_files) == 11
-        omffilename = os.path.join(dirname, "m0.omf")
+        omffilename = os.path.join(dirname, "initial_magnetisation.omf")
         assert omffilename in omf_files
 
         assert len(odt_files) == 1

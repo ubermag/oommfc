@@ -45,7 +45,7 @@ def test_multiple_runs():
 
     assert len(mif_file) == 1
     assert len(omf_files) > 1
-    omffilename = os.path.join(dirname, "m0.omf")
+    omffilename = os.path.join(dirname, "initial_magnetisation.omf")
     assert omffilename in omf_files
 
     assert len(odt_files) >= 1
@@ -64,7 +64,7 @@ def test_multiple_runs():
 
     assert len(mif_file) == 1
     assert len(omf_files) == 11
-    omffilename = os.path.join(dirname, "m0.omf")
+    omffilename = os.path.join(dirname, "initial_magnetisation.omf")
     assert omffilename in omf_files
 
     assert len(odt_files) >= 1

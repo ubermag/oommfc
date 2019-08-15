@@ -55,6 +55,8 @@ class TimeDriver(Driver):
         mif += oc.util.mif_file_vector_field(m0filename,
                                              'initial_magnetisation',
                                              'atlas')
+        mif += oc.util.mif_vec_mag_scalar_field('initial_magnetisation',
+                                                'initial_magnetisation_norm')
 
         mif += "# TimeDriver\n"
         mif += "Specify Oxs_TimeDriver {\n"
@@ -67,11 +69,7 @@ class TimeDriver(Driver):
         elif "derive" in kwargs:
             mif += "  total_iteration_limit {}\n".format(1)
 
-        mif += "  Ms {\n"
-        mif += "    Oxs_VecMagScalarField {\n"
-        mif += "      field :initial_magnetisation\n"
-        mif += "    }\n"
-        mif += "  }\n"
+        mif += "  Ms :initial_magnetisation_norm\n"
         mif += "  m0 :initial_magnetisation\n"
         mif += "  basename {}\n".format(systemname)
         mif += "  scalar_field_output_format {text %\#.15g}\n"

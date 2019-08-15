@@ -1,4 +1,4 @@
-def mif_file_vector_field(filename, name, atlas):
+def mif_file_vector_field(filename, name, atlas='atlas'):
     mif = f'# {name} file\n'
     mif += f'Specify Oxs_FileVectorField:{name} {{\n'
     mif += f'   file {filename}\n'
@@ -7,5 +7,11 @@ def mif_file_vector_field(filename, name, atlas):
 
     return mif
 
-def mif_vec_mag_scalar_field(filename):
-    pass
+
+def mif_vec_mag_scalar_field(field, name):
+    mif = f'# {name} norm\n'
+    mif += f'Specify Oxs_VecMagScalarField:{name} {{\n'
+    mif += f'    field :{field}\n'
+    mif += '}\n\n'
+
+    return mif
