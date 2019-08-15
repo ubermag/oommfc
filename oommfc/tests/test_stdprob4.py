@@ -43,7 +43,7 @@ def test_stdprob4():
     odt_files = list(glob.iglob("{}/*.odt".format(dirname)))
 
     assert len(omf_files) == 2
-    omffilename = os.path.join(dirname, "m0.omf")
+    omffilename = os.path.join(dirname, "initial_magnetisation.omf")
     assert omffilename in omf_files
 
     assert len(odt_files) == 1
@@ -65,7 +65,7 @@ def test_stdprob4():
     odt_files = list(glob.iglob("{}/*.odt".format(dirname)))
 
     assert len(omf_files) == 201
-    omffilename = os.path.join(dirname, "m0.omf")
+    omffilename = os.path.join(dirname, "initial_magnetisation.omf")
     assert omffilename in omf_files
 
     assert len(odt_files) == 1

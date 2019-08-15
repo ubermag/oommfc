@@ -3,6 +3,7 @@ from .driver import Driver
 
 class HysteresisDriver(Driver):
     def _script(self, system, **kwargs):
+        system.m.write('initial_magnetisation.omf')
         meshname = system.m.mesh.name
         systemname = system.name
         Hmin = kwargs["Hmin"]
@@ -12,7 +13,7 @@ class HysteresisDriver(Driver):
         mif = "# m0 file\n"
         mif += "Specify Oxs_FileVectorField:m0file {\n"
         mif += "   atlas :atlas\n"
-        mif += "   file m0.omf\n"
+        mif += "   file initial_magnetisation.omf\n"
         mif += "}\n\n"
 
         mif += "# UZeeman\n"
