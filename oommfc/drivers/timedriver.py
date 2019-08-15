@@ -1,8 +1,11 @@
+import oommfc as oc
 from .driver import Driver
 
 
 class TimeDriver(Driver):
     def _script(self, system, **kwargs):
+        m0filename = 'initial_magnetisation.omf'
+        system.m.write(m0filename)
         try:
             alpha = system.dynamics.damping.alpha
         except AttributeError:
@@ -49,11 +52,11 @@ class TimeDriver(Driver):
             mif += "}\n\n"
             evolver = "Anv_SpinTEvolve"
 
-        mif += "# m0 file\n"
-        mif += "Specify Oxs_FileVectorField:m0file {\n"
-        mif += "   atlas :atlas\n"
-        mif += "   file m0.omf\n"
-        mif += "}\n\n"
+        mif += oc.util.mif_file_vector_field(m0filename,
+                                             'initial_magnetisation',
+                                             'atlas')
+        mif += oc.util.mif_vec_mag_scalar_field('initial_magnetisation',
+                                                'initial_magnetisation_norm')
 
         mif += "# TimeDriver\n"
         mif += "Specify Oxs_TimeDriver {\n"
@@ -66,12 +69,8 @@ class TimeDriver(Driver):
         elif "derive" in kwargs:
             mif += "  total_iteration_limit {}\n".format(1)
 
-        mif += "  Ms {\n"
-        mif += "    Oxs_VecMagScalarField {\n"
-        mif += "      field :m0file\n"
-        mif += "    }\n"
-        mif += "  }\n"
-        mif += "  m0 :m0file\n"
+        mif += "  Ms :initial_magnetisation_norm\n"
+        mif += "  m0 :initial_magnetisation\n"
         mif += "  basename {}\n".format(systemname)
         mif += "  scalar_field_output_format {text %\#.15g}\n"
         mif += "  vector_field_output_format {text %\#.15g}\n"

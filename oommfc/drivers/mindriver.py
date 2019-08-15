@@ -1,16 +1,17 @@
+import oommfc as oc
 from .driver import Driver
 
 
 class MinDriver(Driver):
     def _script(self, system):
+        m0filename = 'initial_magnetisation.omf'
+        system.m.write(m0filename)
         meshname = system.m.mesh.name
         systemname = system.name
 
-        mif = "# m0 file\n"
-        mif += "Specify Oxs_FileVectorField:m0file {\n"
-        mif += "   atlas :atlas\n"
-        mif += "   file m0.omf\n"
-        mif += "}\n\n"
+        mif = oc.util.mif_file_vector_field(m0filename,
+                                            'initial_magnetisation',
+                                            'atlas')
 
         mif += "# CGEvolver\n"
         mif += "Specify Oxs_CGEvolve {}\n\n"
@@ -21,10 +22,10 @@ class MinDriver(Driver):
         mif += "  mesh :{}\n".format(meshname)
         mif += "  Ms {\n"
         mif += "    Oxs_VecMagScalarField {\n"
-        mif += "      field :m0file\n"
+        mif += "      field :initial_magnetisation\n"
         mif += "    }\n"
         mif += "  }\n"
-        mif += "  m0 :m0file\n"
+        mif += "  m0 :initial_magnetisation\n"
         mif += "  basename {}\n".format(systemname)
         mif += "  scalar_field_output_format {text %\#.15g}\n"
         mif += "  vector_field_output_format {text %\#.15g}\n"
