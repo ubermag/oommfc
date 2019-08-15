@@ -13,15 +13,6 @@ class TestHysteresisDriver(TestDriver):
         script = hd._script(self.system, Hmin=(0, 0, 0),
                             Hmax=(10, 10, 10), n=10)
 
-        assert script[0] == '#'
-        assert script[-1] == '1'
-        assert script.count('#') == 6
-        assert script.count('Specify') == 4
-        assert script.count('Destination') == 2
-        assert script.count('Schedule') == 2
-        assert script.count('mmArchive') == 2
-        assert script.count('Stage') == 2
-
         assert 'Oxs_UZeeman' in script
         assert 'Oxs_CGEvolve' in script
         assert 'Oxs_MinDriver' in script

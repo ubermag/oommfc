@@ -4,14 +4,18 @@ from .driver import Driver
 
 class MinDriver(Driver):
     def _script(self, system):
+        # Save initial magnetisation.
         m0filename = 'initial_magnetisation.omf'
         system.m.write(m0filename)
+
         meshname = system.m.mesh.name
         systemname = system.name
 
         mif = oc.util.mif_file_vector_field(m0filename,
                                             'initial_magnetisation',
                                             'atlas')
+        mif += oc.util.mif_vec_mag_scalar_field('initial_magnetisation',
+                                                'initial_magnetisation_norm')
 
         mif += "# CGEvolver\n"
         mif += "Specify Oxs_CGEvolve {}\n\n"
@@ -20,11 +24,7 @@ class MinDriver(Driver):
         mif += "  evolver Oxs_CGEvolve\n"
         mif += "  stopping_mxHxm 0.01\n"
         mif += "  mesh :{}\n".format(meshname)
-        mif += "  Ms {\n"
-        mif += "    Oxs_VecMagScalarField {\n"
-        mif += "      field :initial_magnetisation\n"
-        mif += "    }\n"
-        mif += "  }\n"
+        mif += "  Ms :initial_magnetisation_norm\n"
         mif += "  m0 :initial_magnetisation\n"
         mif += "  basename {}\n".format(systemname)
         mif += "  scalar_field_output_format {text %\#.15g}\n"

@@ -4,6 +4,7 @@ from .driver import Driver
 
 class TimeDriver(Driver):
     def _script(self, system, **kwargs):
+        # Save initial magnetisation.
         m0filename = 'initial_magnetisation.omf'
         system.m.write(m0filename)
         try:
