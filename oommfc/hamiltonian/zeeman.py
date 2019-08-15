@@ -1,17 +1,17 @@
+import oommfc.util as ou
 import micromagneticmodel as mm
 
 
 class Zeeman(mm.Zeeman):
     @property
     def _script(self):
-        mif = '# FixedZeeman\n'
+        Hmif, Hname = ou.setup_vector_parameter(self.H, 'ze_H')
+
+        mif = ''
+        mif += Hmif
+        mif += '# FixedZeeman\n'
         mif += 'Specify Oxs_FixedZeeman {\n'
-        mif += '  field {\n'
-        mif += '    Oxs_UniformVectorField {\n'
-        mif += '      vector {{{} {} {}}}\n'.format(*self.H)
-        mif += '    }\n'
-        mif += '  }\n'
-        mif += '  multiplier 1\n'
+        mif += f'  field {Hname}\n'
         mif += '}\n\n'
 
         return mif
