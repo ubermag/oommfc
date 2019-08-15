@@ -17,19 +17,29 @@ class Driver(mm.Driver):
 
         # Generate the necessary filenames.
         self.dirname = os.path.join(system.name,
-                                    'drive-{}'.format(system.drive_number))
+                                    f'drive-{system.drive_number}')
         self.omffilename = os.path.join(self.dirname, 'm0.omf')
         self.miffilename = os.path.join(self.dirname,
-                                        '{}.mif'.format(system.name))
+                                        f'{system.name}.mif')
         self.jsonfilename = os.path.join(self.dirname, 'info.json')
 
         # Check whether a directory with the same name as system.name
         # already exists. If it does, warn the user and tell him that
         # he should pass overwrite=True to the drive method.
-        self._checkdir(system, overwrite=overwrite)
+        if os.path.exists(self.dirname):
+            if not overwrite:
+                msg = (f'Directory with name={self.dirname} already exists. '
+                       'If you want to overwrite it, pass overwrite=True '
+                       'to the drive method. Otherwise, change the name '
+                       'of the system or delete the directory by running '
+                       'system.delete().')
+                raise FileExistsError(msg)
+            else:
+                shutil.rmtree(system.name)
 
         # Make a directory inside which OOMMF will be run.
-        self._makedir()
+        if not os.path.exists(self.dirname):
+            os.makedirs(self.dirname)
 
         # Generate and save mif file.
         self._makemif(system, **kwargs)
@@ -54,22 +64,6 @@ class Driver(mm.Driver):
 
     def _checkargs(self, **kwargs):
         raise NotImplementedError('This method is defined in a derived class')
-
-    def _checkdir(self, system, overwrite=False):
-        if os.path.exists(self.dirname):
-            if not overwrite:
-                msg = ('Directory with name={} already exists. If you want '
-                       'to overwrite it, pass overwrite=True to the drive '
-                       'method. Otherwise, change the name of the system '
-                       'or delete the directory by running '
-                       'system.delete().'.format(self.dirname))
-                raise FileExistsError(msg)
-            else:
-                shutil.rmtree(system.name)
-
-    def _makedir(self):
-        if not os.path.exists(self.dirname):
-            os.makedirs(self.dirname)
 
     def _makemif(self, system, **kwargs):
         mif = '# MIF 2.1\n\n'
