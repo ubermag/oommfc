@@ -50,7 +50,7 @@ def test_stdprob4():
 
     shutil.rmtree(name)
 
-    H = (-24.6e-3/oc.mu0, 4.3e-3/oc.mu0, 0)
+    H = (-24.6e-3/oc.consts.mu0, 4.3e-3/oc.consts.mu0, 0)
     system.hamiltonian += oc.Zeeman(H)
 
     td = oc.TimeDriver()

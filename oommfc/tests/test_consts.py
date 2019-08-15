@@ -1,5 +1,5 @@
-import micromagneticmodel.tests as mmt
+import numbers
+import oommfc as oc
 
 
-class TestConsts(mmt.TestConsts):
-    pass
+assert isinstance(oc.consts.mu0, numbers.Real)

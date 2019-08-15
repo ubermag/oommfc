@@ -27,8 +27,8 @@ def test_stdprob1():
         oc.Demag()
     system.m = df.Field(mesh, value=(-10, -1, 0), norm=Ms)
 
-    Hmax = (50e-3/oc.mu0, 0.87275325e-3/oc.mu0, 0)
-    Hmin = (-50e-3/oc.mu0, -0.87275325e-3/oc.mu0, 0)
+    Hmax = (50e-3/oc.consts.mu0, 0.87275325e-3/oc.consts.mu0, 0)
+    Hmin = (-50e-3/oc.consts.mu0, -0.87275325e-3/oc.consts.mu0, 0)
     n = 10
 
     hd = oc.HysteresisDriver()

@@ -1,64 +1,130 @@
 import os
 import shutil
-import pytest
+import numpy as np
 import oommfc as oc
 import discretisedfield as df
-import micromagneticmodel.tests as mmt
 
 
-class TestCubicAnisotropy(mmt.TestCubicAnisotropy):
-    def test_script(self):
-        for K1, u1, u2 in self.valid_args:
-            anisotropy = oc.CubicAnisotropy(K1=K1, u1=u1, u2=u2)
-            script = anisotropy._script
+class TestUniaxialAnisotropy:
+    def setup(self):
+        p1 = (-7e-9, 0, 0)
+        p2 = (7e-9, 5e-9, 4e-9)
+        cell = (1e-9, 1e-9, 2e-9)
+        self.mesh = oc.Mesh(p1=p1, p2=p2, cell=cell)
 
-            assert script.count("\n") == 7
-            assert script[0] == "#"
-            assert script[-1] == "\n"
-            lines = script.split("\n")
-            assert len(lines) == 8
-            assert lines[0] == "# CubicAnisotropy"
-            assert lines[2] == "  K1 {}".format(K1)
-            assert lines[3] == "  axis1 {{{} {} {}}}".format(*u1)
-            assert lines[4] == "  axis2 {{{} {} {}}}".format(*u2)
-            assert lines[5] == "}"
+    def test_scalar_vector_vector(self):
+        name = 'ca_scalar_vector_vector'
+        if os.path.exists(name):
+            shutil.rmtree(name)
+        
+        K1 = 1e5
+        u1 = (0, 0, 1)
+        u2 = (0, 1, 0)
+        Ms = 1e6
 
+        system = oc.System(name=name)
+        system.hamiltonian = oc.CubicAnisotropy(K1=K1, u1=u1, u2=u2)
 
-@pytest.mark.oommf
-def test_relax_with_cubicanisotropy():
-    name = "cubic_anisotropy"
-    L = 100e-9
-    d = 5e-9
-    Ms = 8e6
+        def m_fun(pos):
+            x, y, z = pos
+            if x <= 0:
+                return (0, 0.2, 1)
+            else:
+                return (0, 1, 0.2)
 
-    # Remove any previous simulation directories.
-    if os.path.exists(name):
-        shutil.rmtree(name)
+        system.m = df.Field(self.mesh, dim=3, value=m_fun, norm=Ms)
 
-    system = oc.System(name=name)
-    system.hamiltonian = oc.CubicAnisotropy(K1=5e6,
-                                            u1=(1, 0, 0),
-                                            u2=(0, 1, 0))
+        md = oc.MinDriver()
+        md.drive(system)
 
-    mesh = oc.Mesh(p1=(0, 0, 0), p2=(L, L, L), cell=(d, d, d))
+        value = system.m((-1e-9, 2e-9, 2e-9))
+        assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-    def m_init(pos):
-        x, y, z = pos
-        if x < 30e-9:
-            return (0.7, 0.1, 0.3)
-        elif x > 70e-9:
-            return (0.1, 0.7, 0.3)
-        else:
-            return (0.3, 0.1, 0.7)
+        value = system.m((1e-9, 2e-9, 2e-9))
+        assert np.linalg.norm(np.subtract(value, (0, Ms, 0))) < 1e-3
 
-    system.m = df.Field(mesh, value=m_init, norm=Ms)
+        if os.path.exists(name):
+            shutil.rmtree(name)
 
-    md = oc.MinDriver()
-    md.drive(system)
+    def test_field_vector_vector(self):
+        name = 'ua_field_vector_vector'
+        if os.path.exists(name):
+            shutil.rmtree(name)
 
-    comp_value = 0.99*Ms
-    assert system.m((10e-9, 0, 0))[0] > comp_value
-    assert system.m((50e-9, 0, 0))[2] > comp_value
-    assert system.m((80e-9, 0, 0))[1] > comp_value
+        def K1_fun(pos):
+            x, y, z = pos
+            if x <= 0:
+                return 0
+            else:
+                return 1e5
 
-    shutil.rmtree(name)
+        K1 = df.Field(self.mesh, dim=1, value=K1_fun)
+        u1 = (0, 0, 1)
+        u2 = (0, 1, 0)
+        Ms = 1e6
+
+        system = oc.System(name=name)
+        system.hamiltonian = oc.CubicAnisotropy(K1=K1, u1=u1, u2=u2)
+        system.m = df.Field(self.mesh, dim=3, value=(0, 0.3, 1), norm=Ms)
+
+        md = oc.MinDriver()
+        md.drive(system)
+
+        value = system.m((-2e-9, 1e-9, 1e-9))
+        assert np.linalg.norm(np.cross(value, (0, 0.3*Ms, Ms))) < 1e-3
+
+        value = system.m((2e-9, 2e-9, 2e-9))
+        assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
+
+        if os.path.exists(name):
+            shutil.rmtree(name)
+
+    def test_field_field_field(self):
+        name = 'ca_field_field_field'
+        if os.path.exists(name):
+            shutil.rmtree(name)
+
+        def K1_fun(pos):
+            x, y, z = pos
+            if -2e-9 <= x <= 2e-9:
+                return 0
+            else:
+                return 1e5
+
+        def u1_fun(pos):
+            x, y, z = pos
+            if x <= 0:
+                return (0, 1, 0)
+            else:
+                return (0, 0, 1)
+
+        def u2_fun(pos):
+            x, y, z = pos
+            if x <= 0:
+                return (0, 0, 1)
+            else:
+                return (0, 1, 0)
+
+        K1 = df.Field(self.mesh, dim=1, value=K1_fun)
+        u1 = df.Field(self.mesh, dim=3, value=u1_fun)
+        u2 = df.Field(self.mesh, dim=3, value=u2_fun)
+        Ms = 1e6
+
+        system = oc.System(name=name)
+        system.hamiltonian = oc.CubicAnisotropy(K1=K1, u1=u1, u2=u2)
+        system.m = df.Field(self.mesh, dim=3, value=(0, 0.3, 1), norm=Ms)
+
+        md = oc.MinDriver()
+        md.drive(system)
+
+        value = system.m((0, 0, 0))
+        assert np.linalg.norm(np.cross(value, (0, 0.3*Ms, Ms))) < 1e-3
+
+        value = system.m((3e-9, 2e-9, 2e-9))
+        assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
+
+        value = system.m((-3e-9, 2e-9, 2e-9))
+        assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
+
+        if os.path.exists(name):
+            shutil.rmtree(name)

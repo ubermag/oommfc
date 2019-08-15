@@ -44,8 +44,8 @@ def test_stdprob3():
         lex = cubesize/L  # exchange length.
 
         Km = 1e6  # magnetostatic energy density (J/m**3)
-        Ms = np.sqrt(2*Km/oc.mu0)  # magnetisation saturation (A/m)
-        A = 0.5 * oc.mu0 * Ms**2 * lex**2  # exchange energy constant
+        Ms = np.sqrt(2*Km/oc.consts.mu0)  # magnetisation saturation (A/m)
+        A = 0.5 * oc.consts.mu0 * Ms**2 * lex**2  # exchange energy constant
         K = 0.1*Km  # Uniaxial anisotropy constant
         u = (0, 0, 1)  # Uniaxial anisotropy easy-axis
 

@@ -37,6 +37,4 @@ class TestHamiltonian:
         assert "A" in script
         assert "K1" in script
         assert "axis" in script
-        assert "multiplier" in script
-        assert "vector" in script
         assert "field" in script

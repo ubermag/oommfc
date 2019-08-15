@@ -13,7 +13,7 @@ def bar():
 
     system.hamiltonian = oc.Exchange(A=A) + oc.Demag() + oc.Zeeman(H=H)
     alpha = 0.2
-    system.dynamics = oc.Precession(gamma=oc.gamma0) + oc.Damping(alpha=alpha)
+    system.dynamics = oc.Precession(gamma=oc.consts.gamma0) + oc.Damping(alpha=alpha)
     Ms = 8e6  # A/m
     system.m = df.Field(mesh, value=(1, 0, 1), norm=Ms)
 
