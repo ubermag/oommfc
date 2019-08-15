@@ -75,6 +75,7 @@ class Driver(mm.Driver):
             # df.Field.fromfile method comes from the discretisedfield
             # module where the _script method is not implemented.
             m_field.mesh = system.m.mesh
+            system.m = m_field
 
             # Update system's datatable.
             system.dt = ut.read(f'{system.name}.odt')
