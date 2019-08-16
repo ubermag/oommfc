@@ -3,7 +3,7 @@ import numpy as np
 import discretisedfield as df
 
 
-def mif_file_vector_field(filename, name, atlas='atlas'):
+def mif_file_vector_field(filename, name, atlas='main_atlas'):
     mif = f'# {name} file\n'
     mif += f'Specify Oxs_FileVectorField:{name} {{\n'
     mif += f'   file {filename}\n'
@@ -17,6 +17,18 @@ def mif_vec_mag_scalar_field(field, name):
     mif = f'# {name}\n'
     mif += f'Specify Oxs_VecMagScalarField:{name} {{\n'
     mif += f'    field :{field}\n'
+    mif += '}\n\n'
+
+    return mif
+
+
+def mif_box_atlas(pmin, pmax, name='atlas'):
+    mif = f'# BoxAtlas for {name}_atlas\n'
+    mif += f'Specify Oxs_BoxAtlas:{name}_atlas {{\n'
+    mif += f'  xrange {{{pmin[0]} {pmax[0]}}}\n'
+    mif += f'  yrange {{{pmin[1]} {pmax[1]}}}\n'
+    mif += f'  zrange {{{pmin[2]} {pmax[2]}}}\n'
+    mif += f'  name {name}\n'
     mif += '}\n\n'
 
     return mif

@@ -16,7 +16,7 @@ class HysteresisDriver(Driver):
 
         mif = oc.util.mif_file_vector_field(m0filename,
                                             'initial_magnetisation',
-                                            'atlas')
+                                            'main_atlas')
         mif += oc.util.mif_vec_mag_scalar_field('initial_magnetisation',
                                                 'initial_magnetisation_norm')
         mif += "# UZeeman\n"

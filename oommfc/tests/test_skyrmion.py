@@ -51,4 +51,4 @@ def test_skyrmion():
     # Check the magnetisation at the sample edge.
     assert system.m((50e-9, 0, 0))[2]/Ms > 0
 
-    shutil.rmtree(name)
+    #shutil.rmtree(name)

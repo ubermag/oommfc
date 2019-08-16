@@ -1,77 +1,113 @@
+import os
+import shutil
+import numpy as np
 import oommfc as oc
-import discretisedfield.tests as dft
+import discretisedfield as df
 
 
-class TestMesh(dft.TestMesh):
-    def test_script_no_pbc(self):
-        for p1, p2, n, cell in self.valid_args:
-            name = "test_mesh"
-            mesh = oc.Mesh(p1=p1, p2=p2, n=n, cell=cell, name=name)
+class TestMesh:
+    def setup(self):
+        self.p1 = (-7e-9, -5e-9, -4e-9)
+        self.p2 = (7e-9, 5e-9, 4e-9)
+        self.cell = (1e-9, 1e-9, 1e-9)
+        self.pbc = 'xyz'
+        self.regions = {'r1': df.Region(p1=(-7e-9, -5e-9, -4e-9),
+                                        p2=(7e-9, 0, 4e-9)),
+                        'r2': df.Region(p1=(-7e-9, 0, -4e-9),
+                                        p2=(7e-9, 2e-9, 4e-9)),
+                        'r3': df.Region(p1=(-7e-9, 2e-9, -4e-9),
+                                        p2=(7e-9, 5e-9, 4e-9))}
 
-            script = mesh._script
-            assert script.count("\n") == 14
-            assert script[0] == "#"
-            assert script[-1] == "\n"
+    def test_single_nopbc(self):
+        name = 'mh_single_nopbc'
+        if os.path.exists(name):
+            shutil.rmtree(name)
 
-            lines = script.split("\n")
-            assert len(lines) == 15
+        Ms = 1e6
+        H = (0, 0, 5e6)
 
-            # Assert BoxAtlas script
-            assert lines[0] == "# BoxAtlas"
-            assert lines[1] == "Specify Oxs_BoxAtlas:atlas {"
-            assert lines[2] == "  xrange {{{} {}}}".format(mesh.pmin[0],
-                                                           mesh.pmax[0])
-            assert lines[3] == "  yrange {{{} {}}}".format(mesh.pmin[1],
-                                                           mesh.pmax[1])
-            assert lines[4] == "  zrange {{{} {}}}".format(mesh.pmin[2],
-                                                           mesh.pmax[2])
-            assert lines[5] == "  name atlas"
-            assert lines[6] == "}"
+        mesh = oc.Mesh(p1=self.p1, p2=self.p2, cell=self.cell)
 
-            # Empty line between BoxAtlas and RectangularMesh
-            assert lines[7] == ""
+        system = oc.System(name=name)
+        system.hamiltonian = oc.Zeeman(H=H)
+        system.m = df.Field(mesh, dim=3, value=(1, 0, 0), norm=Ms)
 
-            # Assert RectangularMesh script
-            assert lines[8] == "# RectangularMesh"
-            assert lines[9] == "Specify Oxs_RectangularMesh:{} {{".format(name)
-            assert lines[10] == "  cellsize {{{} {} {}}}".format(*mesh.cell)
-            assert lines[11] == "  atlas Oxs_BoxAtlas:atlas"
-            assert lines[12] == "}"
+        md = oc.MinDriver()
+        md.drive(system)
 
-    def test_script_pbc(self):
-        for p1, p2, n, cell in self.valid_args:
-            pbc = "xy"
-            name = "test_mesh"
-            mesh = oc.Mesh(p1=p1, p2=p2, n=n, cell=cell, pbc=pbc, name=name)
+        value = system.m(mesh.random_point())
+        assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-            script = mesh._script
-            assert script.count("\n") == 15
-            assert script[0] == "#"
-            assert script[-1] == "\n"
+        if os.path.exists(name):
+            shutil.rmtree(name)
 
-            lines = script.split("\n")
-            assert len(lines) == 16
+    def test_multi_nopbc(self):
+        name = 'mh_multi_nopbc'
+        if os.path.exists(name):
+            shutil.rmtree(name)
 
-            # Assert BoxAtlas script
-            assert lines[0] == "# BoxAtlas"
-            assert lines[1] == "Specify Oxs_BoxAtlas:atlas {"
-            assert lines[2] == "  xrange {{{} {}}}".format(mesh.pmin[0],
-                                                           mesh.pmax[0])
-            assert lines[3] == "  yrange {{{} {}}}".format(mesh.pmin[1],
-                                                           mesh.pmax[1])
-            assert lines[4] == "  zrange {{{} {}}}".format(mesh.pmin[2],
-                                                           mesh.pmax[2])
-            assert lines[5] == "  name atlas"
-            assert lines[6] == "}"
+        Ms = 1e6
+        H = (0, 0, 5e6)
 
-            # Empty line between BoxAtlas and RectangularMesh
-            assert lines[7] == ""
+        mesh = oc.Mesh(p1=self.p1, p2=self.p2,
+                       cell=self.cell, regions=self.regions)
 
-            # Assert RectangularMesh script
-            assert lines[8] == "# PeriodicRectangularMesh"
-            assert lines[9] == ("Specify Oxs_PeriodicRectangularMesh:{} "
-                                "{{".format(name))
-            assert lines[10] == "  cellsize {{{} {} {}}}".format(*mesh.cell)
-            assert lines[11] == "  atlas Oxs_BoxAtlas:atlas"
-            assert lines[12] == "  periodic xy"
-            assert lines[13] == "}"
+        system = oc.System(name=name)
+        system.hamiltonian = oc.Zeeman(H=H)
+        system.m = df.Field(mesh, dim=3, value=(1, 0, 0), norm=Ms)
+
+        md = oc.MinDriver()
+        md.drive(system)
+
+        value = system.m(mesh.random_point())
+        assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
+
+        if os.path.exists(name):
+            shutil.rmtree(name)
+
+    def test_single_pbc(self):
+        name = 'mh_single_pbc'
+        if os.path.exists(name):
+            shutil.rmtree(name)
+
+        Ms = 1e6
+        H = (0, 0, 5e6)
+
+        mesh = oc.Mesh(p1=self.p1, p2=self.p2, cell=self.cell, pbc=self.pbc)
+
+        system = oc.System(name=name)
+        system.hamiltonian = oc.Zeeman(H=H)
+        system.m = df.Field(mesh, dim=3, value=(1, 0, 0), norm=Ms)
+
+        md = oc.MinDriver()
+        md.drive(system)
+
+        value = system.m(mesh.random_point())
+        assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
+
+        if os.path.exists(name):
+            shutil.rmtree(name)
+
+    def test_multi_pbc(self):
+        name = 'mh_multi_pbc'
+        if os.path.exists(name):
+            shutil.rmtree(name)
+
+        Ms = 1e6
+        H = (0, 0, 5e6)
+
+        mesh = oc.Mesh(p1=self.p1, p2=self.p2, cell=self.cell,
+                       pbc=self.pbc, regions=self.regions)
+
+        system = oc.System(name=name)
+        system.hamiltonian = oc.Zeeman(H=H)
+        system.m = df.Field(mesh, dim=3, value=(1, 0, 0), norm=Ms)
+
+        md = oc.MinDriver()
+        md.drive(system)
+
+        value = system.m(mesh.random_point())
+        assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
+
+        if os.path.exists(name):
+            shutil.rmtree(name)
