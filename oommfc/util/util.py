@@ -22,13 +22,31 @@ def mif_vec_mag_scalar_field(field, name):
     return mif
 
 
-def mif_box_atlas(pmin, pmax, name='atlas'):
-    mif = f'# BoxAtlas for {name}_atlas\n'
-    mif += f'Specify Oxs_BoxAtlas:{name}_atlas {{\n'
-    mif += f'  xrange {{{pmin[0]} {pmax[0]}}}\n'
-    mif += f'  yrange {{{pmin[1]} {pmax[1]}}}\n'
-    mif += f'  zrange {{{pmin[2]} {pmax[2]}}}\n'
-    mif += f'  name {name}\n'
+def mif_atlas_vector_field(value, name, atlas='main_atlas'):
+    mif = f'# {name}\n'
+    mif += f'Specify Oxs_AtlasVectorField:{name} {{\n'
+    mif += f'  atlas :{atlas}\n'
+    mif += '  default_value {{{} {} {}}}\n'.format(*value['default'])
+    mif += '  values {\n'
+    for region, val in value.items():
+        if region != 'default':
+            mif += '    {} {{{} {} {}}}\n'.format(region, *val)
+    mif += '  }'
+    mif += '}\n\n'
+
+    return mif
+
+
+def mif_atlas_scalar_field(value, name, atlas='main_atlas'):
+    mif = f'# {name}\n'
+    mif += f'Specify Oxs_AtlasScalarField:{name} {{\n'
+    mif += f'  atlas :{atlas}\n'
+    mif += '  default_value {}\n'.format(value['default'])
+    mif += '  values {\n'
+    for region, val in value.items():
+        if region != 'default':
+            mif += f'    {region} {val}\n'
+    mif += '  }'
     mif += '}\n\n'
 
     return mif
@@ -43,6 +61,11 @@ def setup_scalar_parameter(parameter, name):
         mif = mif_file_vector_field(f'{name}.ovf', f'{name}')
         mif += mif_vec_mag_scalar_field(f'{name}', f'{name}_norm')
         return mif, f'{name}_norm'
+    elif isinstance(parameter, dict):
+        if 'default' not in parameter.keys():
+            parameter['default'] = 0
+        mif = mif_atlas_scalar_field(parameter, f'{name}')
+        return mif, f'{name}'
     elif isinstance(parameter, numbers.Real):
         return '', f'{parameter}'
 
@@ -55,5 +78,22 @@ def setup_vector_parameter(parameter, name):
         parameter.write(f'{name}.ovf')
         mif = mif_file_vector_field(f'{name}.ovf', f'{name}')
         return mif, f'{name}'
+    elif isinstance(parameter, dict):
+        if 'default' not in parameter.keys():
+            parameter['default'] = (0, 0, 0)
+        mif = mif_atlas_vector_field(parameter, f'{name}')
+        return mif, f'{name}'
     elif isinstance(parameter, (tuple, list, np.ndarray)):
         return '', '{{{} {} {}}}'.format(*parameter)
+
+
+def mif_box_atlas(pmin, pmax, name='atlas'):
+    mif = f'# BoxAtlas for {name}_atlas\n'
+    mif += f'Specify Oxs_BoxAtlas:{name}_atlas {{\n'
+    mif += f'  xrange {{{pmin[0]} {pmax[0]}}}\n'
+    mif += f'  yrange {{{pmin[1]} {pmax[1]}}}\n'
+    mif += f'  zrange {{{pmin[2]} {pmax[2]}}}\n'
+    mif += f'  name {name}\n'
+    mif += '}\n\n'
+
+    return mif
