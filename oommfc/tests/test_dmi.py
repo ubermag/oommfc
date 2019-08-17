@@ -1,52 +1,80 @@
-import sys
-import pytest
+import os
+import shutil
+import random
+import numpy as np
 import oommfc as oc
-import micromagneticmodel.tests as mmt
+import discretisedfield as df
 
 
-def check_script(script, contains):
-    assert script.count('\n') == 9
-    assert script[0] == '#'
-    assert script[-1] == '\n'
+class TestDMI:
+    def setup(self):
+        self.p1 = (-100e-9, 0, 0)
+        self.p2 = (100e-9, 1e-9, 1e-9)
+        self.cell = (1e-9, 1e-9, 1e-9)
+        self.regions = {'r1': df.Region(p1=(-100e-9, 0, 0), p2=(0, 1e-9, 1e-9)),
+                        'r2': df.Region(p1=(0, 0, 0), p2=(100e-9, 1e-9, 1e-9))}
 
-    for content in contains:
-        assert content in script
-            
-class TestDMI(mmt.TestDMI):
-    @pytest.mark.skipif(sys.platform == 'win32',
-                        reason='Crystalographic class not supported on Windows.')
-    def test_script_to(self):
-        for D in self.valid_args:
-            dmi = oc.DMI(D, crystalclass='t')
-            check_script(dmi._script, contains=['Oxs_DMI_T'])
+    def test_scalar(self):
+        name = 'dm_scalar'
+        if os.path.exists(name):
+            shutil.rmtree(name)
 
-            dmi = oc.DMI(D, crystalclass='o')
-            check_script(dmi._script, contains=['Oxs_DMI_T'])
+        D = 1e-3
+        Ms = 1e6
 
-    @pytest.mark.skipif(sys.platform == 'win32',
-                        reason='Crystalographic class not supported on Windows.')
-    def test_script_d2d(self):
-        for D in self.valid_args:
-            dmi = oc.DMI(D, crystalclass='d2d')
-            check_script(dmi._script, contains=['Oxs_DMI_D2d'])
+        mesh = oc.Mesh(p1=self.p1, p2=self.p2, cell=self.cell)
 
-    @pytest.mark.skipif(sys.platform == 'win32',
-                        reason='Crystalographic class not supported on Windows.')
-    def test_script_cnv_linux_mac(self):
-        for D in self.valid_args:
-            dmi = oc.DMI(D, crystalclass='cnv')
-            check_script(dmi._script, contains=['Oxs_DMI_Cnv'])
+        system = oc.System(name=name)
+        system.hamiltonian = oc.DMI(D=D, crystalclass='Cnv')
 
-    @pytest.mark.skipif(sys.platform != 'win32',
-                        reason='Crystalographic class not supported on Windows.')
-    def test_script_cnv_win(self):
-        for D in self.valid_args:
-            dmi = oc.DMI(D, crystalclass='cnv')
-            check_script(dmi._script, contains=['Oxs_DMExchange6Ngbr'])
+        def m_value(pos):
+            return [2*random.random()-1 for i in range(3)]
 
-    @pytest.mark.skipif(sys.platform != 'win32',
-                        reason='Crystalographic class not supported on Windows.')
-    def test_valueerror(self):
-        with pytest.raises(ValueError):
-            dmi = oc.DMI(D=1, crystalclass='t')
-            dmi._script
+        system.m = df.Field(mesh, dim=3, value=m_value, norm=Ms)
+        
+        md = oc.MinDriver()
+        md.drive(system)
+
+        # There are 4N cells in the mesh. Because of that the average
+        # should be 0.
+        assert np.linalg.norm(system.m.average) < 1
+
+        if os.path.exists(name):
+            shutil.rmtree(name)
+
+    def test_dict(self):
+        name = 'dm_dict'
+        if os.path.exists(name):
+            shutil.rmtree(name)
+
+        D = {'r1': 0, 'r2': 1e-3}
+        Ms = 1e6
+
+        mesh = oc.Mesh(p1=self.p1, p2=self.p2, cell=self.cell,
+                       regions=self.regions)
+
+        system = oc.System(name=name)
+        system.hamiltonian = oc.DMI(D=D, crystalclass='Cnv')
+
+        def m_value(pos):
+            return [2*random.random()-1 for i in range(3)]
+
+        system.m = df.Field(mesh, dim=3, value=m_value, norm=Ms)
+        
+        md = oc.MinDriver()
+        md.drive(system)
+
+        r1_mesh = df.Mesh(p1=self.regions['r1'].pmin, p2=self.regions['r1'].pmax,
+                          cell=self.cell)
+        r2_mesh = df.Mesh(p1=self.regions['r2'].pmin, p2=self.regions['r2'].pmax,
+                          cell=self.cell)
+        r1_field = df.Field(r1_mesh, dim=3, value=system.m)
+        r2_field = df.Field(r2_mesh, dim=3, value=system.m)
+        
+        assert np.linalg.norm(r1_field.average) > 1
+        # There are 4N cells in the region with D!=0. Because of that
+        # the average should be 0.
+        assert np.linalg.norm(r2_field.average) < 1
+
+        if os.path.exists(name):
+            shutil.rmtree(name)
