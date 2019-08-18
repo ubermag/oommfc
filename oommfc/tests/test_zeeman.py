@@ -33,8 +33,7 @@ class TestZeeman:
         value = system.m(mesh.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
     def test_field(self):
         name = 'ze_field'
@@ -66,8 +65,7 @@ class TestZeeman:
         value = system.m((2e-9, 2e-9, 2e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
     def test_dict(self):
         name = 'ze_dict'
@@ -93,5 +91,4 @@ class TestZeeman:
         value = system.m((2e-9, 2e-9, 2e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()

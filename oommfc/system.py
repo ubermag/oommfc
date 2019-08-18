@@ -1,3 +1,5 @@
+import os
+import shutil
 import micromagneticmodel as mm
 
 
@@ -11,3 +13,7 @@ class System(mm.System):
 
     def total_energy(self):
         return self.dt.tail(1)['E'][0]
+
+    def delete(self):
+        if os.path.exists(f'{self.name}'):
+            shutil.rmtree(self.name)

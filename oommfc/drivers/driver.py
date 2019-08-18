@@ -23,26 +23,33 @@ class Driver(mm.Driver):
         # already exists. If it does, warn the user and tell him that
         # he should pass overwrite=True to the drive method.
         if os.path.exists(dirname):
-            if not overwrite:
+            if overwrite:
+                shutil.rmtree(system.name)
+            else:
                 msg = (f'Directory with name={dirname} already exists. '
                        'If you want to overwrite it, pass overwrite=True '
                        'to the drive method. Otherwise, change the name '
                        'of the system or delete the directory by running '
                        'system.delete().')
                 raise FileExistsError(msg)
-            else:
-                shutil.rmtree(system.name)
 
         # Make a directory inside which OOMMF will be run.
         if not os.path.exists(dirname):
             os.makedirs(dirname)
 
-        # Change directory to self.dirname
+        # Change directory to dirname
         cwd = os.getcwd()
         os.chdir(dirname)
 
         # Generate and save mif file.
-        mif = '# MIF 2.1\n\n'
+        mif = '# MIF 2.2\n\n'
+        # Output options
+        mif += 'SetOptions {\n'
+        mif += f'  basename {system.name}\n'
+        mif += '  scalar_output_format %.12g\n'
+        mif += '  scalar_field_output_format {text %#.15g}\n'
+        mif += '  vector_field_output_format {text %#.15g}\n'
+        mif += '}\n\n'
         mif += system._script
         mif += self._script(system, **kwargs)
         with open(miffilename, 'w') as miffile:
@@ -87,5 +94,4 @@ class Driver(mm.Driver):
         system.drive_number += 1
 
     def _checkargs(self, **kwargs):
-        msg = 'This method must be defined in a derived class'
-        raise NotImplementedError(msg)
+        raise NotImplementedError

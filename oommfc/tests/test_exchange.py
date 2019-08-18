@@ -37,8 +37,7 @@ class TestExchange:
 
         assert abs(np.linalg.norm(system.m.average) - Ms) < 1e-3
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
     def test_dict(self):
         name = 'ex_dict'
@@ -72,8 +71,7 @@ class TestExchange:
         value2 = system.m((1e-9, 2e-9, 3e-9))
         assert np.linalg.norm(np.subtract(value1, value2)) < 1
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
     def test_field(self):
         name = 'ex_field'
@@ -105,5 +103,4 @@ class TestExchange:
 
         assert abs(np.linalg.norm(system.m.average) - Ms) < 1e-3
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()

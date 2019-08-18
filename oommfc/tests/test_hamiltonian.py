@@ -34,8 +34,7 @@ class TestHamiltonian:
         value = system.m(mesh.random_point())
         assert np.linalg.norm(np.subtract(value, (Ms, 0, 0))) < 1e-3
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
     def test_exchange_uniaxialanisotropy(self):
         name = 'hm_exchange_uniaxialanisotropy'
@@ -60,8 +59,7 @@ class TestHamiltonian:
         value = system.m(mesh.random_point())
         assert np.linalg.norm(np.subtract(value, (Ms, 0, 0))) < 1e-3
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
     def test_exchange_cubicanisotropy(self):
         name = 'hm_exchange_cubicanisotropy'
@@ -87,8 +85,7 @@ class TestHamiltonian:
         value = system.m(mesh.random_point())
         assert np.linalg.norm(np.subtract(value, (Ms, 0, 0))) < 1e-3
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
     def test_exchange_dmi_zeeman(self):
         name = 'hm_exchange_dmi_zeeman'
@@ -116,8 +113,7 @@ class TestHamiltonian:
         value = system.m(mesh.random_point())
         assert np.linalg.norm(np.subtract(value, (Ms, 0, 0))) < 1
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
     def test_exchange_dmi_zeeman_uniaxialanisotropy_demag(self):
         name = 'exchange_dmi_zeeman_uniaxialanisotropy'
@@ -147,8 +143,7 @@ class TestHamiltonian:
         value = system.m(mesh.random_point())
         assert np.linalg.norm(np.subtract(value, (Ms, 0, 0))) < 1
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
 
 

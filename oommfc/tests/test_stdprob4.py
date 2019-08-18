@@ -7,9 +7,8 @@ import discretisedfield as df
 import pytest
 
 
-@pytest.mark.oommf
 def test_stdprob4():
-    name = "stdprob4"
+    name = 'stdprob4'
 
     # Remove any previous simulation directories.
     if os.path.exists(name):
@@ -34,16 +33,16 @@ def test_stdprob4():
     md = oc.MinDriver()
     md.drive(system)  # updates system.m in-place
 
-    dirname = os.path.join(name, "drive-{}".format(system.drive_number-1))
-    miffilename = os.path.join(dirname, "{}.mif".format(name))
+    dirname = os.path.join(name, 'drive-{}'.format(system.drive_number-1))
+    miffilename = os.path.join(dirname, '{}.mif'.format(name))
     assert os.path.exists(dirname)
     assert os.path.isfile(miffilename)
 
-    omf_files = list(glob.iglob("{}/*.omf".format(dirname)))
-    odt_files = list(glob.iglob("{}/*.odt".format(dirname)))
+    omf_files = list(glob.iglob('{}/*.omf'.format(dirname)))
+    odt_files = list(glob.iglob('{}/*.odt'.format(dirname)))
 
     assert len(omf_files) == 2
-    omffilename = os.path.join(dirname, "initial_magnetisation.omf")
+    omffilename = os.path.join(dirname, 'm0.omf')
     assert omffilename in omf_files
 
     assert len(odt_files) == 1
@@ -56,22 +55,22 @@ def test_stdprob4():
     td = oc.TimeDriver()
     td.drive(system, t=1e-9, n=200)
 
-    dirname = os.path.join(name, "drive-{}".format(system.drive_number-1))
-    miffilename = os.path.join(dirname, "{}.mif".format(name))
+    dirname = os.path.join(name, 'drive-{}'.format(system.drive_number-1))
+    miffilename = os.path.join(dirname, '{}.mif'.format(name))
     assert os.path.exists(dirname)
     assert os.path.isfile(miffilename)
 
-    omf_files = list(glob.iglob("{}/*.omf".format(dirname)))
-    odt_files = list(glob.iglob("{}/*.odt".format(dirname)))
+    omf_files = list(glob.iglob('{}/*.omf'.format(dirname)))
+    odt_files = list(glob.iglob('{}/*.odt'.format(dirname)))
 
     assert len(omf_files) == 201
-    omffilename = os.path.join(dirname, "initial_magnetisation.omf")
+    omffilename = os.path.join(dirname, 'm0.omf')
     assert omffilename in omf_files
 
     assert len(odt_files) == 1
 
-    t = system.dt["t"].values
-    my = system.dt["my"].values
+    t = system.dt['t'].values
+    my = system.dt['my'].values
 
     assert abs(min(t) - 5e-12) < 1e-20
     assert abs(max(t) - 1e-9) < 1e-20

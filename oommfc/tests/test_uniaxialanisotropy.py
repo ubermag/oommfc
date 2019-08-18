@@ -34,8 +34,7 @@ class TestUniaxialAnisotropy:
         value = system.m(mesh.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
     def test_field_vector(self):
         name = 'ua_field_vector'
@@ -68,8 +67,7 @@ class TestUniaxialAnisotropy:
         value = system.m((2e-9, 2e-9, 2e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
     def test_scalar_field(self):
         name = 'ua_scalar_field'
@@ -102,8 +100,7 @@ class TestUniaxialAnisotropy:
         value = system.m((2e-9, 2e-9, 2e-9))
         assert np.linalg.norm(np.subtract(value, (0, Ms, 0))) < 1e-3
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
     def test_field_field(self):
         name = 'ua_field_field'
@@ -146,8 +143,7 @@ class TestUniaxialAnisotropy:
         value = system.m((0, 0, 0))
         assert np.linalg.norm(np.cross(value, (Ms, Ms, 0))) < 1e-3
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
     def test_dict_vector(self):
         name = 'ua_dict_vector'
@@ -173,8 +169,7 @@ class TestUniaxialAnisotropy:
         value = system.m((2e-9, 2e-9, 2e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
     def test_field_dict(self):
         name = 'ua_field_dict'
@@ -217,5 +212,4 @@ class TestUniaxialAnisotropy:
         value = system.m((0, 0, 0))
         assert np.linalg.norm(np.cross(value, (Ms, Ms, 0))) < 1e-3
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()

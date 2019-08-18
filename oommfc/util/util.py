@@ -52,6 +52,16 @@ def mif_atlas_scalar_field(value, name, atlas='main_atlas'):
     return mif
 
 
+def setup_m0(parameter, name):
+    if not isinstance(parameter, df.Field) or parameter.dim != 3:
+        msg = 'Parameter must be a vector (dim=3) field.'
+        raise ValueError(msg)
+    parameter.write(f'{name}.omf')
+    mif = mif_file_vector_field(f'{name}.omf', f'{name}')
+    mif += mif_vec_mag_scalar_field(f'{name}', f'{name}_norm')
+    return mif, f'{name}', f'{name}_norm'
+
+
 def setup_scalar_parameter(parameter, name):
     if isinstance(parameter, df.Field):
         if parameter.dim != 1:

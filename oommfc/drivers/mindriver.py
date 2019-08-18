@@ -1,39 +1,63 @@
 import oommfc as oc
+import oommfc.util as ou
 from .driver import Driver
 
 
 class MinDriver(Driver):
+    _allowed_kwargs = ['evolver',
+                       'stopping_mxHxm',
+                       'stage_iteration_limit',
+                       'total_iteration_limit',
+                       'stage_count',
+                       'stage_count_check',
+                       'checkpoint_file',
+                       'checkpoint_interval',
+                       'checkpoint_disposal',
+                       'start_iteration',
+                       'start_stage',
+                       'start_stage_iteration',
+                       'start_stage_start_time',
+                       'start_stage_elapsed_time',
+                       'start_last_timestep',
+                       'normalize_aveM_output',
+                       'report_max_spin_angle',
+                       'report_wall_time']
+
     def _script(self, system):
         # Save initial magnetisation.
-        m0filename = 'initial_magnetisation.omf'
-        system.m.write(m0filename)
+        m0mif, m0name, Msname = ou.setup_m0(system.m, 'm0')
+        mif = m0mif
 
-        meshname = system.m.mesh.name
-        systemname = system.name
+        # Evolver
+        if not hasattr(self, 'evolver'):
+            self.evolver = oc.CGEvolver()
+        if isinstance(self.evolver, oc.CGEvolver):
+            mif += self.evolver._script
+        else:
+            msg = 'Evolver must be CGEvolver.'
+            raise ValueError(msg)
 
-        mif = oc.util.mif_file_vector_field(m0filename,
-                                            'initial_magnetisation',
-                                            'main_atlas')
-        mif += oc.util.mif_vec_mag_scalar_field('initial_magnetisation',
-                                                'initial_magnetisation_norm')
+        # Minimisation driver
+        mif += '# MinDriver\n'
+        mif += 'Specify Oxs_MinDriver {\n'
+        mif += '  evolver :evolver\n'
+        mif += '  mesh :mesh\n'
+        mif += f'  Ms :{Msname}\n'
+        mif += f'  m0 :{m0name}\n'
+        # Setting stopping mxHxm default value.
+        if not hasattr(self, 'stopping_mxHxm'):
+            self.stopping_mxHxm = 0.01
+        # Other parameters for MinDriver
+        for kwarg in self._allowed_kwargs:
+            if hasattr(self, kwarg) and kwarg != 'evolver':
+                mif += f'  {kwarg} {getattr(self, kwarg)}\n'
+        mif += '}\n\n'
 
-        mif += "# CGEvolver\n"
-        mif += "Specify Oxs_CGEvolve {}\n\n"
-        mif += "# MinDriver\n"
-        mif += "Specify Oxs_MinDriver {\n"
-        mif += "  evolver Oxs_CGEvolve\n"
-        mif += "  stopping_mxHxm 0.01\n"
-        mif += "  mesh :{}\n".format(meshname)
-        mif += "  Ms :initial_magnetisation_norm\n"
-        mif += "  m0 :initial_magnetisation\n"
-        mif += "  basename {}\n".format(systemname)
-        mif += "  scalar_field_output_format {text %\#.15g}\n"
-        mif += "  vector_field_output_format {text %\#.15g}\n"
-        mif += "}\n\n"
-        mif += "Destination table mmArchive\n"
-        mif += "Destination mags mmArchive\n\n"
-        mif += "Schedule DataTable table Stage 1\n"
-        mif += "Schedule Oxs_MinDriver::Magnetization mags Stage 1"
+        # Saving results
+        mif += 'Destination table mmArchive\n'
+        mif += 'Destination mags mmArchive\n\n'
+        mif += 'Schedule DataTable table Stage 1\n'
+        mif += 'Schedule Oxs_MinDriver::Magnetization mags Stage 1'
 
         return mif
 

@@ -40,8 +40,7 @@ class TestDMI:
         # should be 0.
         assert np.linalg.norm(system.m.average) < 1
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
     def test_dict(self):
         name = 'dm_dict'
@@ -77,8 +76,7 @@ class TestDMI:
         # the average should be 0.
         assert np.linalg.norm(r2_field.average) < 1
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
     def test_crystalclass(self):
         name = 'dm_crystalclass'
@@ -110,5 +108,4 @@ class TestDMI:
                 # average should be 0.
                 assert np.linalg.norm(system.m.average) < 1
 
-                if os.path.exists(name):
-                    shutil.rmtree(name)
+                system.delete()

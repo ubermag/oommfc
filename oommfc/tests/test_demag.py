@@ -41,8 +41,7 @@ class TestDemag:
         value = system.m((-9.5e-9, 0.5e-9, 0.5e-9))
         value = system.m((9.5e-9, 0.5e-9, 0.5e-9))
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
     def test_demag_asymptotic_radius(self):
         p1 = (0, 0, 0)
@@ -63,5 +62,4 @@ class TestDemag:
         md = oc.MinDriver()
         md.drive(system)
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
