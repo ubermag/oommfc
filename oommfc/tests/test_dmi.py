@@ -1,4 +1,5 @@
 import os
+import sys
 import shutil
 import random
 import numpy as np
@@ -78,3 +79,36 @@ class TestDMI:
 
         if os.path.exists(name):
             shutil.rmtree(name)
+
+    def test_crystalclass(self):
+        name = 'dm_crystalclass'
+
+        D = 1e-3
+        Ms = 1e6
+
+        mesh = oc.Mesh(p1=self.p1, p2=self.p2, cell=self.cell)
+
+        def m_value(pos):
+            return [2*random.random()-1 for i in range(3)]
+        
+        for crystalclass in ['Cnv', 'T', 'O', 'D2d']:
+            if crystalclass != 'Cnv' and sys.platform == 'win32':
+                pass
+            else:
+                if os.path.exists(name):
+                    shutil.rmtree(name)
+
+                system = oc.System(name=name)
+                system.hamiltonian = oc.DMI(D=D, crystalclass=crystalclass)
+
+                system.m = df.Field(mesh, dim=3, value=m_value, norm=Ms)
+        
+                md = oc.MinDriver()
+                md.drive(system)
+
+                # There are 4N cells in the mesh. Because of that the
+                # average should be 0.
+                assert np.linalg.norm(system.m.average) < 1
+
+                if os.path.exists(name):
+                    shutil.rmtree(name)
