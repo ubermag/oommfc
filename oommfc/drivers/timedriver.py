@@ -59,6 +59,7 @@ class TimeDriver(Driver):
         # For deriving, a small timestep is chosen.
         if 'derive' in kwargs:
             t, n = 1e-25, 1
+            self.total_iteration_limit = 1
         else:
             t, n = kwargs['t'], kwargs['n']
 
@@ -80,10 +81,11 @@ class TimeDriver(Driver):
         # Saving results
         mif += 'Destination table mmArchive\n'
         mif += 'Destination mags mmArchive\n'
-        
+        mif += 'Destination archive mmArchive\n\n'
+
         if 'derive' in kwargs:
             if 'ield' in kwargs['derive'] or 'density' in kwargs['derive']:
-                mif += ('Schedule \'{}\' archive '
+                mif += ('Schedule \"{}\" archive '
                         'Step 1'.format(kwargs['derive']))
             else:
                 mif += 'Schedule DataTable table Stage 1\n'

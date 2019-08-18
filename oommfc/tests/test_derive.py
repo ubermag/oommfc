@@ -5,7 +5,6 @@ import oommfc as oc
 import discretisedfield as df
 
 
-@pytest.mark.oommf
 class TestDerive:
     def setup(self):
         self.name = "derive_tests"
