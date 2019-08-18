@@ -41,7 +41,6 @@ travis-build:
 
 test-docker:
 	docker build -f docker/Dockerfile -t dockertestimage .
-	docker exec testcontainer find . -name '*.pyc' -delete
 	docker run -ti -d --name testcontainer dockertestimage
 	docker exec testcontainer make test-all-travis
 	docker stop testcontainer

@@ -4,6 +4,13 @@ import micromagneticmodel as mm
 
 
 class System(mm.System):
+    """
+    Examples
+    --------
+    >>> import oommfc as oc
+    >>> system = oc.System(name='mysystem')
+
+    """
     @property
     def _script(self):
         mif = self.m.mesh._script

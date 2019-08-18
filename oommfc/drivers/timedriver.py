@@ -120,4 +120,20 @@ mif = '# SpinTransferTorqueEvolver\n'
             mif += '  beta {}\n'.format(beta)
             mif += '}\n\n'
             evolver = 'Anv_SpinTEvolve'
+
+
+Specify Anv_SpinTEvolve {
+  do_precess 1
+  gamma_LL 2.21e5
+  method rkf54s
+  alpha 0.005
+  fixed_spins {
+  	atlas fixed
+  }
+  u {Oxs_UniformScalarField {
+   value 100
+	}}
+  beta 0.04
+  	
+}
 """
