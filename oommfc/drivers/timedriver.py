@@ -27,17 +27,23 @@ class TimeDriver(Driver):
         m0mif, m0name, Msname = ou.setup_m0(system.m, 'm0')
         mif = m0mif
 
-        # Evolver
-        if not hasattr(self, 'evolver'):
-            self.evolver = oc.RungeKuttaEvolver()
-
         # Extract dynamics equation parameters.
-        gamma, alpha = None, None
+        gamma, alpha, u, beta = None, None, None, None
         for term in system.dynamics.terms:
             if isinstance(term, oc.Precession):
                 gamma = term.gamma
             if isinstance(term, oc.Damping):
                 alpha = term.alpha
+            if isinstance(term, oc.ZhangLi):
+                u = term.u
+                beta = term.beta
+
+        # Evolver
+        if not hasattr(self, 'evolver'):
+            if u is not None:
+                self.evolver = oc.SpinTEvolver()
+            else:
+                self.evolver = oc.RungeKuttaEvolver()
 
         if gamma is not None:
             self.evolver.gamma_G = gamma
@@ -49,11 +55,18 @@ class TimeDriver(Driver):
         else:
             self.evolver.alpha = 0
 
+        if u is not None:
+            self.evolver.u = u
+        if beta is not None:
+            self.evolver.beta = beta
+
         # Evolver script
-        if isinstance(self.evolver, (oc.EulerEvolver, oc.RungeKuttaEvolver)):
+        if isinstance(self.evolver, (oc.EulerEvolver, oc.RungeKuttaEvolver,
+                                     oc.SpinTEvolver)):
             mif += self.evolver._script
         else:
-            msg = 'Evolver must be either EulerEvolver or RungeKuttaEvolver.'
+            msg = ('Evolver must be either EulerEvolver, '
+                   'RungeKuttaEvolver, or SpinTEvolver')
             raise ValueError(msg)
 
         # For deriving, a small timestep is chosen.

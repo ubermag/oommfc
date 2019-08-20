@@ -10,7 +10,7 @@ from scipy.optimize import bisect
 
 @pytest.mark.oommf
 def test_stdprob5():
-    name = "stdprob5"
+    name = 'stdprob5'
 
     # Remove any previous simulation directories.
     if os.path.exists(name):
@@ -25,14 +25,14 @@ def test_stdprob5():
     Ms = 8e5  # saturation magnetisation (A/m)
     A = 1.3e-11  # exchange energy constant (J/m)
 
-    # Dynamics (LLG + STT equation) parameters
+    # Dynamics (LLG + ZhangLi equation) parameters
     gamma = 2.211e5  # gyromagnetic ratio (m/As)
     alpha = 0.1  # Gilbert damping
     ux = -72.35  # velocity in x direction
     beta = 0.05  # non-adiabatic STT parameter
 
     system = oc.System(name=name)
-    mesh = oc.Mesh(p1=(0, 0, 0), p2=(100e-9, 100e-9, 10e-9),
+    mesh = oc.Mesh(p1=(0, 0, 0), p2=(lx, ly, lz),
                    cell=(5e-9, 5e-9, 5e-9))
     system.hamiltonian = oc.Exchange(A) + oc.Demag()
 
@@ -46,14 +46,15 @@ def test_stdprob5():
     md.drive(system)
 
     system.dynamics += oc.Precession(gamma) + oc.Damping(alpha) + \
-        oc.STT(u=(ux, 0, 0), beta=beta)
+        oc.ZhangLi(u=ux, beta=beta)
 
     td = oc.TimeDriver()
     td.drive(system, t=8e-9, n=100)
 
-    mx = system.dt["mx"].values
+    mx = system.dt['mx'].values
 
-    assert -0.03 < mx.max() < 0
     assert -0.35 < mx.min() < -0.30
+    assert -0.03 < mx.max() < 0
+    
 
-    shutil.rmtree(name)
+    system.delete()

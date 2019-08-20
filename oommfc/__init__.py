@@ -7,9 +7,10 @@ import oommfc.util
 import oommfc.consts
 from .hamiltonian import Exchange, UniaxialAnisotropy, \
     Demag, Zeeman, DMI, CubicAnisotropy, Hamiltonian
-from .dynamics import Precession, Damping, STT, Dynamics
+from .dynamics import Precession, Damping, ZhangLi, Dynamics
 from .drivers import MinDriver, TimeDriver
-from .evolvers import CGEvolver, EulerEvolver, RungeKuttaEvolver
+from .evolvers import CGEvolver, EulerEvolver, RungeKuttaEvolver, \
+    SpinTEvolver
 from .mesh import Mesh
 from .system import System
 from .data import Data

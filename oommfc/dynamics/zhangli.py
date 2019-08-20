@@ -1,5 +1,5 @@
 import micromagneticmodel as mm
 
 
-class STT(mm.STT):
+class ZhangLi(mm.ZhangLi):
     pass

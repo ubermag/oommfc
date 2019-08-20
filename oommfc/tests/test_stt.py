@@ -3,10 +3,8 @@ import oommfc as oc
 import micromagneticmodel.tests as mmt
 
 
-class TestSTT(mmt.TestSTT):
+class TestZhangLi:
     def test_script(self):
-        for arg in self.valid_args:
-            u, beta = arg
-            stt = oc.STT(u, beta)
-            with pytest.raises(NotImplementedError):
-                stt._script()
+        zhangli = oc.ZhangLi(u=1e5, beta=0.5)
+        with pytest.raises(NotImplementedError):
+            zhangli._script()
