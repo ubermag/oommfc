@@ -18,3 +18,7 @@ API Reference
    zhangli
    dynamics
    system
+   cgevolver
+   eulerevolver
+   rungekuttaevolver
+   spintevolver
