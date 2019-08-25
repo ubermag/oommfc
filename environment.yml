@@ -2,4 +2,5 @@ name: oommfc-environment
 channels:
   - conda-forge
 dependencies:
+  - python=3.7
   - oommfc
