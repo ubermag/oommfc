@@ -5,6 +5,7 @@ API Reference
    :maxdepth: 2
    :caption: Contents:
 
+   mesh
    exchange
    zeeman
    uniaxialanisotropy
