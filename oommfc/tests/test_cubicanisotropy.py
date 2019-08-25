@@ -5,7 +5,7 @@ import oommfc as oc
 import discretisedfield as df
 
 
-class TestUniaxialAnisotropy:
+class TestCubicAnisotropy:
     def setup(self):
         self.p1 = (-7e-9, 0, 0)
         self.p2 = (7e-9, 5e-9, 4e-9)
@@ -49,7 +49,7 @@ class TestUniaxialAnisotropy:
         system.delete()
 
     def test_field_vector_vector(self):
-        name = 'ua_field_vector_vector'
+        name = 'ca_field_vector_vector'
         if os.path.exists(name):
             shutil.rmtree(name)
 
@@ -134,7 +134,7 @@ class TestUniaxialAnisotropy:
         system.delete()
 
     def test_dict_vector_vector(self):
-        name = 'ua_dict_vector_vector'
+        name = 'ca_dict_vector_vector'
         if os.path.exists(name):
             shutil.rmtree(name)
 

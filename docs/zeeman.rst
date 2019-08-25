@@ -1,7 +1,7 @@
-``oommfc.System``
+``oommfc.Zeeman``
 =================
 
-.. autoclass:: oommfc.System
+.. autoclass:: oommfc.Zeeman
    :members:
    :inherited-members:
    :no-undoc-members:

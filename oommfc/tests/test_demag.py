@@ -49,7 +49,7 @@ class TestDemag:
         cell = (1e-9, 2e-9, 4e-9)
         mesh = oc.Mesh(p1=p1, p2=p2, cell=cell)
 
-        name = 'demag'
+        name = 'demag_asymptotic_radius'
         if os.path.exists(name):
             shutil.rmtree(name)
 
