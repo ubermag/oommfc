@@ -11,6 +11,24 @@ import micromagneticmodel as mm
 
 class Driver(mm.Driver):
     def drive(self, system, overwrite=False, **kwargs):
+        """Drives the system object.
+
+        This method takes a `oommfc.System` object and drives in the
+        phase space. If `overwrite=True` is passed then the directory
+        with all previously created files will be deleted before the
+        run is executed. This method accepts any other arguments that
+        could be required by the specific driver. After the drive is
+        executed, the magnetisation and datatable of the system's
+        object will be updated.
+
+        Parameters
+        ----------
+        system : oommfc.System
+          System object to be driven
+        overwrite : bool
+          If True, then the previously created files will be deleted.
+
+        """
         # This method is implemented in the derived class.
         self._checkargs(**kwargs)
 

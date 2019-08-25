@@ -48,7 +48,7 @@ class System(mm.System):
     >>> n = (5, 5, 5)
     >>> mesh = oc.Mesh(p1=p1, p2=p2, n=n)
     ...
-    >>> system = oc.System(name='musystem')
+    >>> system = oc.System(name='mysystem')
     >>> system.m = df.Field(mesh, dim=3, value=(0, 0, 1), norm=1e6)
     >>> system.hamiltonian = oc.Exchange(A=1e-11) + oc.Demag()
     >>> system.dynamics = oc.Precession(gamma=mm.consts.gamma0) + \

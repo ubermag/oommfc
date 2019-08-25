@@ -22,3 +22,5 @@ API Reference
    eulerevolver
    rungekuttaevolver
    spintevolver
+   mindriver
+   timedriver
