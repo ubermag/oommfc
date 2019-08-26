@@ -19,4 +19,5 @@ Tutorials
    ipynb/10-tutorial-standard-problem-fmr
    ipynb/11-tutorial-deriving-fields
    ipynb/12-tutorial-stray-field
+   ipynb/13-tutorial-skyrmion
    ipynb/15-tutorial-other
