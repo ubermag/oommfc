@@ -58,8 +58,10 @@ class ZhangLi(mm.ZhangLi):
     >>> p1 = (0, 0, 0)
     >>> p2 = (5e-9, 5e-9, 8e-9)
     >>> n = (5, 5, 8)
-    >>> regions = {'region1': df.Region(p1=(0, 0, 0), p2=(5e-9, 5e-9, 4e-9)),
-    ...            'region1': df.Region(p1=(0, 0, 4e-9), p2=(5e-9, 5e-9, 8e-9))}
+    >>> regions = {'region1': df.Region(p1=(0, 0, 0),
+    ...                                 p2=(5e-9, 5e-9, 4e-9)),
+    ...            'region1': df.Region(p1=(0, 0, 4e-9),
+    ...                                 p2=(5e-9, 5e-9, 8e-9))}
     >>> mesh = oc.Mesh(p1=p1, p2=p2, n=n, regions=regions)
     ...
     >>> u = {'region1': 0.1, 'region2': 0.01}

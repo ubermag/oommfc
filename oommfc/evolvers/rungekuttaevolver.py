@@ -4,7 +4,7 @@ import micromagneticmodel as mm
 
 class RungeKuttaEvolver(mm.Evolver):
     """Runge-Kutta evolver.
-    
+
     This class is used for collecting additional parameters, which
     cannot be extracted from the dynamics equation, but could be
     passed to `Oxs_RungeKuttaEvolve`. Only parameters which are
@@ -52,11 +52,13 @@ class RungeKuttaEvolver(mm.Evolver):
         # Prepare spatially varying fields.
         mif = ''
         if hasattr(self, 'gamma_G'):
-            gammamif, gammaname = ou.setup_scalar_parameter(self.gamma_G, 'pr_gamma')
+            gammamif, gammaname = ou.setup_scalar_parameter(self.gamma_G,
+                                                            'pr_gamma')
             self.gamma_G = gammaname
             mif += gammamif
         if hasattr(self, 'alpha'):
-            alphamif, alphaname = ou.setup_scalar_parameter(self.alpha, 'dp_alpha')
+            alphamif, alphaname = ou.setup_scalar_parameter(self.alpha,
+                                                            'dp_alpha')
             self.alpha = alphaname
             mif += alphamif
 

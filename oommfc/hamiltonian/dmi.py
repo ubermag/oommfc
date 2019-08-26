@@ -20,7 +20,7 @@ class DMI(mm.DMI):
            D\\mathbf{m} \\cdot \\left( \\frac{\\partial
            \\mathbf{m}}{\\partial x} \\times \\hat{x} - \\frac{\\partial
            \\mathbf{m}}{\partial y} \\times \\hat{y} \\right), &
-           \\text{for}\\,\\,D_{2d} \\\\ 
+           \\text{for}\\,\\,D_{2d} \\\\
            \\end{array} \\right.
 
     `D` can be either contant in space or spatially varying. If it is
@@ -62,8 +62,10 @@ class DMI(mm.DMI):
     >>> p1 = (0, 0, 0)
     >>> p2 = (5e-9, 5e-9, 8e-9)
     >>> n = (5, 5, 8)
-    >>> regions = {'region1': df.Region(p1=(0, 0, 0), p2=(5e-9, 5e-9, 4e-9)),
-    ...            'region1': df.Region(p1=(0, 0, 4e-9), p2=(5e-9, 5e-9, 8e-9))}
+    >>> regions = {'region1': df.Region(p1=(0, 0, 0),
+    ...                                 p2=(5e-9, 5e-9, 4e-9)),
+    ...            'region1': df.Region(p1=(0, 0, 4e-9),
+    ...                                 p2=(5e-9, 5e-9, 8e-9))}
     >>> mesh = oc.Mesh(p1=p1, p2=p2, n=n, regions=regions)
     ...
     >>> D = {'region1': 1e-3, 'region2': 0, 'region1:region2': 0.5e-3}

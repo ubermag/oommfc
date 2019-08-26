@@ -57,7 +57,7 @@ class OOMMFRunner:
     def _kill(self, targets=('all',)):
         # This method should be implemented in subclass.
         raise NotImplementedError
-    
+
     def version(self):
         res = self.call(argstr='+version', need_stderr=True)
         return res.stderr.decode('utf-8').split('oommf.tcl')[-1].strip()
@@ -66,7 +66,7 @@ class OOMMFRunner:
         res = self.call(argstr='+platform', need_stderr=True)
         return res.stderr.decode('utf-8')
 
-    
+
 class TclOOMMFRunner(OOMMFRunner):
     """Using path to oommf.tcl.
 
@@ -227,6 +227,7 @@ def status():
     except (EnvironmentError, RuntimeError):
         print("Cannot find OOMMF.")
         return 1
+
 
 def overhead():
     """Run a macrospin example for 1 ps through oommfc and directly and

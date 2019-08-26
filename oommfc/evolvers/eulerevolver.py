@@ -3,7 +3,7 @@ import micromagneticmodel as mm
 
 class EulerEvolver(mm.Evolver):
     """Euler evolver.
-    
+
     This class is used for collecting additional parameters, which
     cannot be extracted from the dynamics equation, but could be
     passed to `Oxs_EulerEvolve`. Only parameters which are defined in

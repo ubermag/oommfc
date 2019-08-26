@@ -20,7 +20,8 @@ class Dynamics(mm.Dynamics):
 
     >>> import oommfc as oc
     ...
-    >>> dynamics = oc.Precession(gamma=oc.consts.gamma0) + oc.Damping(alpha=0.1)
+    >>> dynamics = oc.Precession(gamma=oc.consts.gamma0) + \
+          oc.Damping(alpha=0.1)
 
     """
     pass

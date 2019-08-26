@@ -5,7 +5,7 @@ from .driver import Driver
 
 class TimeDriver(Driver):
     """Time driver.
-    
+
     This class is used for collecting additional parameters, which
     could be passed to `Oxs_TimeDriver`. Only parameters which are
     defined in `_allowed_kwargs` can be passed.
@@ -140,37 +140,3 @@ class TimeDriver(Driver):
             if kwargs['n'] <= 0 or not isinstance(kwargs['n'], int):
                 msg = 'Positive integer number of steps expected (n>0)'
                 raise ValueError(msg)
-
-
-"""
-mif = '# SpinTransferTorqueEvolver\n'
-            mif += 'Specify Anv_SpinTEvolve {\n'
-            mif += '  do_precess 1\n'
-            mif += '  gamma_G {}\n'.format(gamma)
-            mif += '  alpha {}\n'.format(alpha)
-            mif += '  method rkf54s\n'
-            mif += '  u {\n'
-            mif += '    Oxs_UniformScalarField {\n'
-            mif += '      value {}\n'.format(u[0])
-            mif += '    }\n'
-            mif += '  }\n'
-            mif += '  beta {}\n'.format(beta)
-            mif += '}\n\n'
-            evolver = 'Anv_SpinTEvolve'
-
-
-Specify Anv_SpinTEvolve {
-  do_precess 1
-  gamma_LL 2.21e5
-  method rkf54s
-  alpha 0.005
-  fixed_spins {
-  	atlas fixed
-  }
-  u {Oxs_UniformScalarField {
-   value 100
-	}}
-  beta 0.04
-  	
-}
-"""

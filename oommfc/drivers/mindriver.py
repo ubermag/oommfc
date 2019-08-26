@@ -5,7 +5,7 @@ from .driver import Driver
 
 class MinDriver(Driver):
     """Minimisation driver.
-    
+
     This class is used for collecting additional parameters, which
     could be passed to `Oxs_MinDriver`. Only parameters which are
     defined in `_allowed_kwargs` can be passed.

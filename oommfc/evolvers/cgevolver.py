@@ -3,7 +3,7 @@ import micromagneticmodel as mm
 
 class CGEvolver(mm.Evolver):
     """Conjugate-Gradient evolver.
-    
+
     This class is used for collecting additional parameters, which
     cannot be extracted from the dynamics equation, but could be
     passed to `Oxs_CGEvolve`. Only parameters which are defined in
