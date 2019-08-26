@@ -21,12 +21,12 @@ class TestSystem:
         A = 1e-12
         H = (0, 0, 1e7)
         Ms = 1e6
-        
+
         system = oc.System(name=name)
         system.hamiltonian = oc.Zeeman(H=H) + oc.Exchange(A=A)
         system.dynamics = oc.Damping(alpha=1)
         system.m = df.Field(mesh, dim=3, value=(0, 0.1, 1), norm=Ms)
-        
+
         td = oc.TimeDriver()
         td.drive(system, t=0.5e-9, n=50)
 

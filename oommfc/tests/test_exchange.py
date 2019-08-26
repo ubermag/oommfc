@@ -11,8 +11,10 @@ class TestExchange:
         self.p1 = (-5e-9, -5e-9, -3e-9)
         self.p2 = (5e-9, 5e-9, 3e-9)
         self.n = (10, 10, 10)
-        self.regions = {'r1': df.Region(p1=(-5e-9, -5e-9, -3e-9), p2=(5e-9, 0, 3e-9)),
-                        'r2': df.Region(p1=(-5e-9, 0, -3e-9), p2=(5e-9, 5e-9, 3e-9))}
+        self.regions = {'r1': df.Region(p1=(-5e-9, -5e-9, -3e-9),
+                                        p2=(5e-9, 0, 3e-9)),
+                        'r2': df.Region(p1=(-5e-9, 0, -3e-9),
+                                        p2=(5e-9, 5e-9, 3e-9))}
 
     def test_scalar(self):
         name = 'ex_scalar'
@@ -31,7 +33,7 @@ class TestExchange:
             return [2*random.random()-1 for i in range(3)]
 
         system.m = df.Field(mesh, dim=3, value=m_value, norm=Ms)
-        
+
         md = oc.MinDriver()
         md.drive(system)
 
@@ -57,7 +59,7 @@ class TestExchange:
             return [2*random.random()-1 for i in range(3)]
 
         system.m = df.Field(mesh, dim=3, value=m_value, norm=Ms)
-        
+
         md = oc.MinDriver()
         md.drive(system)
 
@@ -97,7 +99,7 @@ class TestExchange:
             return [2*random.random()-1 for i in range(3)]
 
         system.m = df.Field(mesh, dim=3, value=m_value, norm=Ms)
-        
+
         md = oc.MinDriver()
         md.drive(system)
 

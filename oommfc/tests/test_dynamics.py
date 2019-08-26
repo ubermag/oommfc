@@ -11,8 +11,10 @@ class TestDynamics:
         self.p1 = (-5e-9, -5e-9, -3e-9)
         self.p2 = (5e-9, 5e-9, 3e-9)
         self.n = (10, 10, 10)
-        self.regions = {'r1': df.Region(p1=(-5e-9, -5e-9, -3e-9), p2=(5e-9, 0, 3e-9)),
-                        'r2': df.Region(p1=(-5e-9, 0, -3e-9), p2=(5e-9, 5e-9, 3e-9))}
+        self.regions = {'r1': df.Region(p1=(-5e-9, -5e-9, -3e-9),
+                                        p2=(5e-9, 0, 3e-9)),
+                        'r2': df.Region(p1=(-5e-9, 0, -3e-9),
+                                        p2=(5e-9, 5e-9, 3e-9))}
 
     def test_scalar_scalar(self):
         name = 'dy_scalar_scalar'
@@ -30,7 +32,7 @@ class TestDynamics:
         system.hamiltonian = oc.Zeeman(H=H)
         system.dynamics = oc.Precession(gamma=gamma) + oc.Damping(alpha=alpha)
         system.m = df.Field(mesh, dim=3, value=(0, 0.1, 1), norm=Ms)
-        
+
         td = oc.TimeDriver()
         td.drive(system, t=0.2e-9, n=50)
 
@@ -57,7 +59,7 @@ class TestDynamics:
         system.hamiltonian = oc.Zeeman(H=H)
         system.dynamics = oc.Precession(gamma=gamma) + oc.Damping(alpha=alpha)
         system.m = df.Field(mesh, dim=3, value=(0, 0.1, 1), norm=Ms)
-        
+
         td = oc.TimeDriver()
         td.drive(system, t=0.2e-9, n=50)
 
@@ -101,7 +103,7 @@ class TestDynamics:
         system.hamiltonian = oc.Zeeman(H=H)
         system.dynamics = oc.Precession(gamma=gamma) + oc.Damping(alpha=alpha)
         system.m = df.Field(mesh, dim=3, value=(0, 0.1, 1), norm=Ms)
-        
+
         td = oc.TimeDriver()
         td.drive(system, t=0.2e-9, n=50)
 

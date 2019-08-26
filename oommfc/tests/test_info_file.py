@@ -9,9 +9,8 @@ import discretisedfield as df
 import pytest
 
 
-@pytest.mark.oommf
 def test_info_file():
-    name = "info_file"
+    name = 'info_file'
 
     # Remove any previous simulation directories.
     if os.path.exists(name):
@@ -28,18 +27,19 @@ def test_info_file():
     mesh = oc.Mesh(p1=(0, 0, 0), p2=(L, L, L), cell=cell)
     system = oc.System(name=name)
     system.hamiltonian = oc.Exchange(A=A) + oc.Zeeman(H=H)
-    system.dynamics = oc.Precession(gamma) + oc.Damping(alpha)
+    system.dynamics = oc.Precession(gamma=gamma) + \
+        oc.Damping(alpha=alpha)
     system.m = df.Field(mesh, value=(0.0, 0.25, 0.1), norm=Ms)
 
     # First (0) drive
     td = oc.TimeDriver()
     td.drive(system, t=25e-12, n=10)
-    
-    dirname = os.path.join(name, "drive-0")
-    infofile = os.path.join(dirname, "info.json")
+
+    dirname = os.path.join(name, 'drive-0')
+    infofile = os.path.join(dirname, 'info.json')
     assert os.path.exists(dirname)
     assert os.path.isfile(infofile)
-    
+
     with open(infofile) as f:
         info = json.loads(f.read())
     assert 'drive_number' in info.keys()
@@ -59,9 +59,9 @@ def test_info_file():
     # Second (1) drive
     md = oc.MinDriver()
     md.drive(system)
-    
-    dirname = os.path.join(name, "drive-1")
-    infofile = os.path.join(dirname, "info.json")
+
+    dirname = os.path.join(name, 'drive-1')
+    infofile = os.path.join(dirname, 'info.json')
     assert os.path.exists(dirname)
     assert os.path.isfile(infofile)
 
@@ -80,4 +80,4 @@ def test_info_file():
     assert isinstance(info['args'], dict)
     assert info['args'] == {}
 
-    shutil.rmtree(name)
+    system.delete()

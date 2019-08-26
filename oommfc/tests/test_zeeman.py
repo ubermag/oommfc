@@ -10,8 +10,10 @@ class TestZeeman:
         self.p1 = (-10e-9, -5e-9, -3e-9)
         self.p2 = (10e-9, 5e-9, 3e-9)
         self.cell = (1e-9, 1e-9, 1e-9)
-        self.regions = {'r1': df.Region(p1=(-10e-9, -5e-9, -3e-9), p2=(10e-9, 0, 3e-9)),
-                        'r2': df.Region(p1=(-10e-9, 0, -3e-9), p2=(10e-9, 5e-9, 3e-9))}
+        self.regions = {'r1': df.Region(p1=(-10e-9, -5e-9, -3e-9),
+                                        p2=(10e-9, 0, 3e-9)),
+                        'r2': df.Region(p1=(-10e-9, 0, -3e-9),
+                                        p2=(10e-9, 5e-9, 3e-9))}
 
     def test_vector(self):
         name = 'ze_vector'
@@ -48,7 +50,7 @@ class TestZeeman:
                 return (0, 0, 1e6)
 
         mesh = oc.Mesh(p1=self.p1, p2=self.p2, cell=self.cell)
-            
+
         H = df.Field(mesh, dim=3, value=value_fun)
         Ms = 1e6
 
@@ -74,7 +76,7 @@ class TestZeeman:
 
         mesh = oc.Mesh(p1=self.p1, p2=self.p2, cell=self.cell,
                        regions=self.regions)
-            
+
         H = {'r1': (1, 0, 0), 'r2': (0, 0, 1)}
         Ms = 1e6
 

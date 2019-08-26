@@ -19,17 +19,18 @@ def test_multiple_runs():
 
     system = oc.System(name=name)
     system.hamiltonian = oc.Exchange(A=A) + oc.Zeeman(H=H)
-    system.dynamics = oc.Precession(gamma=oc.consts.gamma0) + oc.Damping(alpha=1)
+    system.dynamics = oc.Precession(gamma=oc.consts.gamma0) + \
+        oc.Damping(alpha=1)
     system.m = df.Field(mesh, dim=3, value=(0, 0.1, 1), norm=Ms)
 
     md = oc.MinDriver()
     md.drive(system)
-    
+
     dirname = os.path.join(name, 'drive-0')
     assert os.path.exists(dirname)
 
     system.hamiltonian.zeeman.H = (1e6, 0, 0)
-    
+
     td = oc.TimeDriver()
     td.drive(system, t=100e-12, n=10)
 

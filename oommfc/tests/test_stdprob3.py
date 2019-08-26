@@ -8,9 +8,8 @@ import discretisedfield as df
 from scipy.optimize import bisect
 
 
-@pytest.mark.oommf
 def test_stdprob3():
-    name = "stdprob3"
+    name = 'stdprob3'
 
     # Remove any previous simulation directories.
     if os.path.exists(name):
@@ -60,15 +59,12 @@ def test_stdprob3():
             oc.Demag()
         system.m = df.Field(mesh, value=m_init, norm=Ms)
 
-        # Remove any previous simulation directories.
-        if os.path.exists(name):
-            shutil.rmtree(name)
-        
+        system.delete()
+
         md = oc.MinDriver()
         md.drive(system)
 
-        if os.path.exists(name):
-            shutil.rmtree(name)
+        system.delete()
 
         return system
 
@@ -80,6 +76,3 @@ def test_stdprob3():
 
     cross_section = bisect(energy_difference, 8, 9, xtol=0.1)
     assert 8.4 < cross_section < 8.5
-
-    if os.path.exists(name):
-        shutil.rmtree(name)

@@ -5,26 +5,30 @@ import oommfc as oc
 import discretisedfield as df
 
 
-@pytest.mark.oommf
 def test_skyrmion():
-    name = "skyrmion"
+    name = 'skyrmion'
 
     # Remove any previous simulation directories.
     if os.path.exists(name):
         shutil.rmtree(name)
 
+    Ms = 1.1e6
+    A = 1.6e-11
+    D = 4e-3
+    K = 0.51e6
+    u = (0, 0, 1)
+    H = (0, 0, 2e5)
+
     mesh = oc.Mesh(p1=(-50e-9, -50e-9, 0),
                    p2=(50e-9, 50e-9, 10e-9),
                    cell=(5e-9, 5e-9, 5e-9))
 
-    system = oc.System(name="skyrmion")
-    system.hamiltonian = oc.Exchange(A=1.6e-11) + \
-        oc.DMI(D=4e-3, crystalclass="cnv") + \
-        oc.UniaxialAnisotropy(K1=0.51e6, K2=0.1, u=(0, 0, 1)) + \
+    system = oc.System(name=name)
+    system.hamiltonian = oc.Exchange(A=A) + \
+        oc.DMI(D=D, crystalclass='Cnv') + \
+        oc.UniaxialAnisotropy(K1=K, u=u) + \
         oc.Demag() + \
-        oc.Zeeman(H=(0, 0, 2e5))
-
-    Ms = 1.1e6
+        oc.Zeeman(H=H)
 
     def Ms_fun(pos):
         x, y, z = pos
@@ -46,9 +50,12 @@ def test_skyrmion():
     md.drive(system)
 
     # Check the magnetisation at the sample centre.
-    assert system.m((0, 0, 0))[2]/Ms < -0.97
+    value = system.m((0, 0, 0))
+    print(value)
+    assert value[2]/Ms < -0.97
 
     # Check the magnetisation at the sample edge.
-    assert system.m((50e-9, 0, 0))[2]/Ms > 0
+    value = system.m((50e-9, 0, 0))
+    assert value[2]/Ms > 0.5
 
-    #shutil.rmtree(name)
+    system.delete()

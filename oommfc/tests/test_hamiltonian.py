@@ -10,8 +10,10 @@ class TestHamiltonian:
         self.p1 = (0, 0, 0)
         self.p2 = (10e-9, 5e-9, 3e-9)
         self.cell = (1e-9, 1e-9, 1e-9)
-        self.regions = {'r1': df.Region(p1=(0, 0, 0), p2=(5e-9, 5e-9, 3e-9)),
-                        'r2': df.Region(p1=(5e-9, 0, 0), p2=(10e-9, 5e-9, 3e-9))}
+        self.regions = {'r1': df.Region(p1=(0, 0, 0),
+                                        p2=(5e-9, 5e-9, 3e-9)),
+                        'r2': df.Region(p1=(5e-9, 0, 0),
+                                        p2=(10e-9, 5e-9, 3e-9))}
 
     def test_exchange_zeeman(self):
         name = 'hm_exchange_zeeman'
@@ -50,7 +52,8 @@ class TestHamiltonian:
                        regions=self.regions)
 
         system = oc.System(name=name)
-        system.hamiltonian = oc.Exchange(A=A) + oc.UniaxialAnisotropy(K1=K1, u=u)
+        system.hamiltonian = oc.Exchange(A=A) + \
+            oc.UniaxialAnisotropy(K1=K1, u=u)
         system.m = df.Field(mesh, dim=3, value=(0.5, 1, 0), norm=Ms)
 
         md = oc.MinDriver()
@@ -76,7 +79,8 @@ class TestHamiltonian:
                        regions=self.regions)
 
         system = oc.System(name=name)
-        system.hamiltonian = oc.Exchange(A=A) + oc.CubicAnisotropy(K1=K1, u1=u1, u2=u2)
+        system.hamiltonian = oc.Exchange(A=A) + \
+            oc.CubicAnisotropy(K1=K1, u1=u1, u2=u2)
         system.m = df.Field(mesh, dim=3, value=(1, 0.3, 0), norm=Ms)
 
         md = oc.MinDriver()
@@ -103,7 +107,8 @@ class TestHamiltonian:
         Ms = 1e6
 
         system = oc.System(name=name)
-        system.hamiltonian = oc.Exchange(A=A) + oc.DMI(D=D, crystalclass='Cnv') + \
+        system.hamiltonian = oc.Exchange(A=A) + \
+            oc.DMI(D=D, crystalclass='Cnv') + \
             oc.Zeeman(H=H)
         system.m = df.Field(mesh, dim=3, value=(1, 0.3, 0), norm=Ms)
 
@@ -133,8 +138,11 @@ class TestHamiltonian:
         Ms = 1e5
 
         system = oc.System(name=name)
-        system.hamiltonian = oc.Exchange(A=A) + oc.DMI(D=D, crystalclass='Cnv') + \
-            oc.UniaxialAnisotropy(K1=K1, u=u) + oc.Zeeman(H=H) + oc.Demag()
+        system.hamiltonian = oc.Exchange(A=A) + \
+            oc.DMI(D=D, crystalclass='Cnv') + \
+            oc.UniaxialAnisotropy(K1=K1, u=u) + \
+            oc.Zeeman(H=H) + \
+            oc.Demag()
         system.m = df.Field(mesh, dim=3, value=(1, 0.3, 0), norm=Ms)
 
         md = oc.MinDriver()
@@ -144,8 +152,3 @@ class TestHamiltonian:
         assert np.linalg.norm(np.subtract(value, (Ms, 0, 0))) < 1
 
         system.delete()
-
-
-
-
-

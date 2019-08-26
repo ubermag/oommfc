@@ -19,7 +19,7 @@ class TestCubicAnisotropy:
             shutil.rmtree(name)
 
         mesh = oc.Mesh(p1=self.p1, p2=self.p2, cell=self.cell)
-        
+
         K1 = 1e5
         u1 = (0, 0, 1)
         u2 = (0, 1, 0)

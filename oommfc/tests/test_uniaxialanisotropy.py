@@ -10,14 +10,16 @@ class TestUniaxialAnisotropy:
         self.p1 = (-7e-9, -5e-9, -4e-9)
         self.p2 = (7e-9, 5e-9, 4e-9)
         self.cell = (1e-9, 1e-9, 1e-9)
-        self.regions = {'r1': df.Region(p1=(-7e-9, -5e-9, -4e-9), p2=(0, 5e-9, 4e-9)),
-                        'r2': df.Region(p1=(0, -5e-9, -4e-9), p2=(7e-9, 5e-9, 4e-9))}
+        self.regions = {'r1': df.Region(p1=(-7e-9, -5e-9, -4e-9),
+                                        p2=(0, 5e-9, 4e-9)),
+                        'r2': df.Region(p1=(0, -5e-9, -4e-9),
+                                        p2=(7e-9, 5e-9, 4e-9))}
 
     def test_scalar_vector(self):
         name = 'ua_scalar_vector'
         if os.path.exists(name):
             shutil.rmtree(name)
-        
+
         K1 = 1e5
         u = (0, 0, 1)
         Ms = 1e6

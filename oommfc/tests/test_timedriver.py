@@ -20,7 +20,7 @@ class TestTimeDriver:
         self.precession = oc.Precession(gamma=oc.consts.gamma0)
         self.damping = oc.Damping(alpha=1)
         self.m = df.Field(self.mesh, dim=3, value=(0, 0.1, 1), norm=self.Ms)
-    
+
     def test_noevolver_nodriver(self):
         name = 'td_noevolver_nodriver'
         if os.path.exists(name):
@@ -130,7 +130,7 @@ class TestTimeDriver:
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) > 1e3
 
         system.delete()
-        
+
     def test_output_files(self):
         name = 'td_output_files'
         if os.path.exists(name):

@@ -8,7 +8,6 @@ import discretisedfield as df
 from scipy.optimize import bisect
 
 
-@pytest.mark.oommf
 def test_stdprob5():
     name = 'stdprob5'
 
@@ -34,7 +33,7 @@ def test_stdprob5():
     system = oc.System(name=name)
     mesh = oc.Mesh(p1=(0, 0, 0), p2=(lx, ly, lz),
                    cell=(5e-9, 5e-9, 5e-9))
-    system.hamiltonian = oc.Exchange(A) + oc.Demag()
+    system.hamiltonian = oc.Exchange(A=A) + oc.Demag()
 
     def m_vortex(pos):
         x, y, z = pos[0]/1e-9-50, pos[1]/1e-9-50, pos[2]/1e-9
@@ -45,8 +44,8 @@ def test_stdprob5():
     md = oc.MinDriver()
     md.drive(system)
 
-    system.dynamics += oc.Precession(gamma) + oc.Damping(alpha) + \
-        oc.ZhangLi(u=ux, beta=beta)
+    system.dynamics += oc.Precession(gamma=gamma) + \
+        oc.Damping(alpha=alpha) + oc.ZhangLi(u=ux, beta=beta)
 
     td = oc.TimeDriver()
     td.drive(system, t=8e-9, n=100)
@@ -55,6 +54,5 @@ def test_stdprob5():
 
     assert -0.35 < mx.min() < -0.30
     assert -0.03 < mx.max() < 0
-    
 
     system.delete()
