@@ -16,6 +16,7 @@ Marijan Beg<sup>1,2</sup>, Ryan A. Pepper<sup>2</sup>, Thomas Kluyver<sup>1</sup
 | Platforms | [![Platforms](https://anaconda.org/conda-forge/oommfc/badges/platforms.svg)](https://anaconda.org/conda-forge/oommfc) |
 | Downloads | [![Downloads](https://anaconda.org/conda-forge/oommfc/badges/downloads.svg)](https://anaconda.org/conda-forge/oommfc) |
 | License | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
+| DOI | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3539494.svg)](https://doi.org/10.5281/zenodo.3539494) |
 
 ## About
 
@@ -53,7 +54,7 @@ If you use this package in your research, please cite it as:
 
 1. M. Beg, R. A. Pepper, and H. Fangohr. User interfaces for computational science: A domain specific language for OOMMF embedded in Python. [AIP Advances, 7, 56025](http://aip.scitation.org/doi/10.1063/1.4977225) (2017).
 
-2. DOI will be available soon
+2. M. Beg, R. A. Pepper, T. Kluyver, and H. Fangohr. ubermag/oommfc: Python interface to OOMMF integrated into Jupyter notebook. Zenodo. http://doi.org/10.5281/zenodo.3539494 (2019).
 
 ## Acknowledgements
 
