@@ -31,7 +31,9 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.doctest',
               'sphinx.ext.napoleon',
               'sphinx.ext.mathjax',
-              'nbsphinx']
+              'nbsphinx',
+              'nbsphinx_link',
+              'jupyter_sphinx.execute']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
