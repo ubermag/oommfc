@@ -4,5 +4,6 @@ traittypes
 traitlets
 numpy
 jupyter_sphinx>=0.1.4
+nbformat
 nbsphinx
 nbsphinx_link
