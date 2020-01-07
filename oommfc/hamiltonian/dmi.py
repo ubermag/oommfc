@@ -84,7 +84,8 @@ class DMI(mm.DMI):
             oxs = 'Oxs_DMExchange6Ngbr'
         else:
             raise ValueError(f'The {self.crystalclass} crystal class is not '
-                             f'supported on {sys.platform} platform.')
+                             f'supported on {sys.platform} platform. Only '
+                             f'Cnv crystal class is supported.')
 
         mif = f'# DMI of crystallographic class {self.crystalclass}\n'
         mif += f'Specify {oxs} {{\n'
