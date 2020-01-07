@@ -20,4 +20,5 @@ Tutorials
    ipynb/11-tutorial-deriving-fields
    ipynb/12-tutorial-stray-field
    ipynb/13-tutorial-skyrmion
-   ipynb/14-tutorial-other
+   ipynb/14-tutorial-periodic-boundary-conditions
+   ipynb/15-tutorial-other
