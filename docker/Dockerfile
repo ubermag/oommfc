@@ -3,9 +3,8 @@ FROM joommf/oommf
 USER root
 
 RUN apt update -y
-RUN apt install -y apt-transport-https ca-certificates \
-      lxc iptables curl python3-pip
-RUN python3 -m pip install --upgrade pip pytest-cov scipy nbval testpath \
+RUN apt install -y git python3-pip curl
+RUN python3 -m pip install --upgrade pip pytest-cov scipy nbval pycodestyle \
       git+git://github.com/ubermag/ubermagutil.git \
       git+git://github.com/ubermag/discretisedfield.git \
       git+git://github.com/ubermag/micromagneticmodel.git \

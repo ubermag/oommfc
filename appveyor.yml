@@ -6,7 +6,7 @@ environment:
 platform:
   - x64
 
-build: off
+build: false
 
 install:
   - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
@@ -15,9 +15,10 @@ install:
   - "conda create -q -n test-environment python=%PYTHON_VERSION%"
   - activate test-environment
   - conda install --channel conda-forge oommf
-  - python -m pip install --upgrade pip pytest nbval .
+  - python -m pip install --upgrade pip nbval pycodestyle .
 
 test_script:
   - python -c "import oommfc as oc; import sys; sys.exit(oc.test())"
-  - python -m pytest --nbval-lax docs\ipynb\
-  - python -m pytest --doctest-modules --ignore=oommfc\tests oommfc
+  - python -m pytest -v --doctest-modules --ignore=oommfc\tests oommfc
+  - python -m pytest -v --nbval docs\ipynb\
+  - python -m pycodestyle --filename=*.py .
