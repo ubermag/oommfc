@@ -52,10 +52,10 @@ class TimeDriver(Driver):
         mif = m0mif
 
         # Extract dynamics equation parameters.
-        gamma, alpha, u, beta = None, None, None, None
+        gamma0, alpha, u, beta = None, None, None, None
         for term in system.dynamics:
             if isinstance(term, mm.Precession):
-                gamma = term.gamma
+                gamma0 = term.gamma0
             if isinstance(term, mm.Damping):
                 alpha = term.alpha
             if isinstance(term, mm.ZhangLi):
@@ -69,8 +69,8 @@ class TimeDriver(Driver):
             else:
                 self.evolver = oc.RungeKuttaEvolver()
 
-        if gamma is not None:
-            self.evolver.gamma_G = gamma
+        if gamma0 is not None:
+            self.evolver.gamma_G = gamma0
         else:
             self.evolver.do_precess = 0  # do_precess default value is 1
 
