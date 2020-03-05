@@ -12,32 +12,6 @@ def energy_script(container):
 
 
 def exchange_script(term):
-    """Returns calculator's script.
-
-    Parameters
-    ----------
-    mesh : micromagneticmodel.Exchange
-
-        Exchange object.
-
-    Returns
-    -------
-    str
-
-        Calculator's script.
-
-    Examples
-    --------
-    1. Getting calculator's script.
-
-    >>> import micromagneticmodel as mm
-    >>> import oommfc as oc
-    ...
-    >>> term = mm.Exchange(A=1e-12)
-    >>> oc.script.exchange(term)
-    ...
-
-    """
     if isinstance(term.A, numbers.Real):
         mif = '# UniformExchange\n'
         mif += 'Specify Oxs_UniformExchange {\n'
@@ -71,5 +45,18 @@ def exchange_script(term):
         mif += 'Specify Oxs_ExchangePtwise {\n'
         mif += f'  A {Aname}\n'
         mif += '}\n\n'
+
+    return mif
+
+
+def zeeman_script(term):
+    Hmif, Hname = oc.script.setup_vector_parameter(term.H, 'zeeman_H')
+
+    mif = ''
+    mif += Hmif
+    mif += '# FixedZeeman\n'
+    mif += 'Specify Oxs_FixedZeeman {\n'
+    mif += f'  field {Hname}\n'
+    mif += '}\n\n'
 
     return mif
