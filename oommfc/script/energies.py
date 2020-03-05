@@ -118,3 +118,19 @@ def dmi_script(term):
         raise TypeError(msg)
 
     return mif
+
+
+def uniaxialanisotropy_script(term):
+    kmif, kname = oc.script.setup_scalar_parameter(term.K, 'ua_K')
+    umif, uname = oc.script.setup_vector_parameter(term.u, 'ua_u')
+
+    mif = ''
+    mif += kmif
+    mif += umif
+    mif += '# UniaxialAnisotropy\n'
+    mif += 'Specify Oxs_UniaxialAnisotropy {\n'
+    mif += f'  K1 {kname}\n'
+    mif += f'  axis {uname}\n'
+    mif += '}\n\n'
+
+    return mif
