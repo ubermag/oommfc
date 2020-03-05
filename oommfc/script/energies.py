@@ -60,3 +60,12 @@ def zeeman_script(term):
     mif += '}\n\n'
 
     return mif
+
+def demag_script(term):
+    mif = '# Demag\n'
+    mif += 'Specify Oxs_Demag {\n'
+    if hasattr(term, 'asymptotic_radius'):
+        mif += f'  asymptotic_radius {term.asymptotic_radius}\n'
+    mif += '}\n\n'
+
+    return mif
