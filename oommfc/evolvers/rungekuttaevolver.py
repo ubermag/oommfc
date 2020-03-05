@@ -1,4 +1,4 @@
-import oommfc.util as ou
+import oommfc as oc
 import micromagneticmodel as mm
 
 
@@ -52,12 +52,12 @@ class RungeKuttaEvolver(mm.Evolver):
         # Prepare spatially varying fields.
         mif = ''
         if hasattr(self, 'gamma_G'):
-            gammamif, gammaname = ou.setup_scalar_parameter(self.gamma_G,
+            gammamif, gammaname = oc.script.setup_scalar_parameter(self.gamma_G,
                                                             'pr_gamma')
             self.gamma_G = gammaname
             mif += gammamif
         if hasattr(self, 'alpha'):
-            alphamif, alphaname = ou.setup_scalar_parameter(self.alpha,
+            alphamif, alphaname = oc.script.setup_scalar_parameter(self.alpha,
                                                             'dp_alpha')
             self.alpha = alphaname
             mif += alphamif

@@ -1,5 +1,4 @@
 import oommfc as oc
-import oommfc.util as ou
 from .driver import Driver
 
 
@@ -49,7 +48,7 @@ class MinDriver(Driver):
 
     def _script(self, system):
         # Save initial magnetisation.
-        m0mif, m0name, Msname = ou.setup_m0(system.m, 'm0')
+        m0mif, m0name, Msname = oc.script.setup_m0(system.m, 'm0')
         mif = m0mif
 
         # Evolver

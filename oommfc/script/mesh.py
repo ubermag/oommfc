@@ -1,4 +1,4 @@
-import oommfc.util as ou
+import oommfc as oc
 
 
 def mesh_script(mesh):
@@ -38,7 +38,8 @@ def mesh_script(mesh):
         # The mesh is composed of subregions. Multiple BoxAtlas scripts are
         # generated and the main MultiAtlas.
         for name, subregion in mesh.subregions.items():
-            mif += ou.box_atlas(subregion.pmin, subregion.pmax, name=name)
+            mif += oc.script.box_atlas(subregion.pmin, subregion.pmax,
+                                       name=name)
         mif += '# MultiAtlas\n'
         mif += 'Specify Oxs_MultiAtlas:main_atlas {\n'
         for name in mesh.subregions.keys():
@@ -49,7 +50,7 @@ def mesh_script(mesh):
         mif += '}\n\n'
     else:
         # There are no subregions in the mesh.
-        mif += ou.box_atlas(mesh.region.pmin, mesh.region.pmax, name='main')
+        mif += oc.script.box_atlas(mesh.region.pmin, mesh.region.pmax, name='main')
 
     if mesh.pbc:
         mif += '# PeriodicRectangularMesh\n'

@@ -3,11 +3,10 @@ import time
 import pytest
 import pkg_resources
 import oommfc.oommf
-import oommfc.util
 import oommfc.script
-from .hamiltonian import Exchange, UniaxialAnisotropy, \
-    Demag, Zeeman, DMI, CubicAnisotropy
-from .dynamics import Precession, Damping, ZhangLi, Dynamics
+# from .hamiltonian import Exchange, UniaxialAnisotropy, \
+#     Demag, Zeeman, DMI, CubicAnisotropy
+# from .dynamics import Precession, Damping, ZhangLi, Dynamics
 from .drivers import MinDriver, TimeDriver
 from .evolvers import CGEvolver, EulerEvolver, RungeKuttaEvolver, \
     SpinTEvolver

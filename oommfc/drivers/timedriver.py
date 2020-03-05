@@ -1,5 +1,4 @@
 import oommfc as oc
-import oommfc.util as ou
 from .driver import Driver
 
 
@@ -48,7 +47,7 @@ class TimeDriver(Driver):
 
     def _script(self, system, **kwargs):
         # Save initial magnetisation.
-        m0mif, m0name, Msname = ou.setup_m0(system.m, 'm0')
+        m0mif, m0name, Msname = ou.script.setup_m0(system.m, 'm0')
         mif = m0mif
 
         # Extract dynamics equation parameters.

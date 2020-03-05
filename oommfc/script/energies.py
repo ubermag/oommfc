@@ -1,13 +1,12 @@
 import numbers
 import oommfc as oc
-import oommfc.util as ou
 import discretisedfield as df
 
 
 def energy_script(container):
     mif = ''
     for term in container:
-        mif += globals()[f'{term.name}_script'](term)  #]getattr(oc, f'{term.name}_script')(term)
+        mif += globals()[f'{term.name}_script'](term)
 
     return mif
 
@@ -66,7 +65,7 @@ def exchange_script(term):
         mif += '}\n\n'
 
     elif isinstance(term.A, df.Field):
-        Amif, Aname = ou.setup_scalar_parameter(term.A, 'exchange_A')
+        Amif, Aname = oc.script.setup_scalar_parameter(term.A, 'exchange_A')
         mif = Amif
         mif += '# ExchangePtwise\n'
         mif += 'Specify Oxs_ExchangePtwise {\n'

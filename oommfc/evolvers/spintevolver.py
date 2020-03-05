@@ -1,4 +1,4 @@
-import oommfc.util as ou
+import oommfc as oc
 import micromagneticmodel as mm
 
 
@@ -41,17 +41,17 @@ class SpinTEvolver(mm.Evolver):
         # Prepare spatially varying fields.
         mif = ''
         if hasattr(self, 'gamma_G'):
-            gammamif, gammaname = ou.setup_scalar_parameter(self.gamma_G,
+            gammamif, gammaname = ou.script.setup_scalar_parameter(self.gamma_G,
                                                             'pr_gamma')
             self.gamma_G = gammaname
             mif += gammamif
         if hasattr(self, 'alpha'):
-            alphamif, alphaname = ou.setup_scalar_parameter(self.alpha,
+            alphamif, alphaname = ou.script.setup_scalar_parameter(self.alpha,
                                                             'dp_alpha')
             self.alpha = alphaname
             mif += alphamif
         if hasattr(self, 'u'):
-            umif, uname = ou.setup_scalar_parameter(self.u, 'zl_alpha')
+            umif, uname = ou.script.setup_scalar_parameter(self.u, 'zl_alpha')
             self.u = uname
             mif += umif
 
