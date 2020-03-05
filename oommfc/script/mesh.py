@@ -51,7 +51,7 @@ def mesh_script(mesh):
         # There are no subregions in the mesh.
         mif += ou.box_atlas(mesh.region.pmin, mesh.region.pmax, name='main')
 
-    if self.pbc:
+    if mesh.pbc:
         mif += '# PeriodicRectangularMesh\n'
         mif += 'Specify Oxs_PeriodicRectangularMesh:mesh {\n'
         mif += '  cellsize {{ {} {} {} }}\n'.format(*mesh.cell)

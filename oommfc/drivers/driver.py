@@ -1,32 +1,59 @@
-import os
+import abc#
+import os#
 import glob
 import json
-import shutil
+import shutil#
 import datetime
 import oommfc as oc
 import ubermagtable as ut
 import discretisedfield as df
-import micromagneticmodel as mm
+import micromagneticmodel as mm#
 
 
 class Driver(mm.Driver):
     def drive(self, system, overwrite=False, **kwargs):
-        """Drives the system object.
+        """Drives the system in phase space.
 
-        This method takes a `oommfc.System` object and drives in the
-        phase space. If `overwrite=True` is passed then the directory
-        with all previously created files will be deleted before the
-        run is executed. This method accepts any other arguments that
-        could be required by the specific driver. After the drive is
-        executed, the magnetisation and datatable of the system's
-        object will be updated.
+        Takes ``micromagneticmodel.System`` and drives it in the phase space.
+        If ``overwrite=True`` is passed, the directory with all previously
+        created files will be deleted before the system is run. This method
+        accepts any other arguments that could be required by the specific
+        driver. After the drive is executed, system's magnetisation and
+        datatable will be updated.
 
         Parameters
         ----------
-        system : oommfc.System
-          System object to be driven
+        system : micromagneticmodel.System
+
+          System to be driven.
+
         overwrite : bool
-          If True, then the previously created files will be deleted.
+
+          If ``True``, previously created files will be deleted. Defaults to
+          ``False``.
+
+        Examples
+        --------
+        1. Drive system using minimisation driver (``MinDriver``).
+
+        >>> import micromagneticmodel as mm
+        >>> import discretisedfield as df
+        >>> import oommfc as oc
+        ...
+        >>> system = mm.System(name='my_cool_system')
+        >>> system.energy = mm.Exchange(A=1e-12) + mm.Zeeman(H=(0, 0, 1e6))
+        >>> mesh = mm.Mesh(p1=(0, 0, 0), p2=(1e-9, 1e-9, 10e-9), n=(1, 1, 10))
+        >>> system.m = df.Field(mesh, dim=3, value=(1, 1, 1), norm=1e6)
+        ...
+        >>> md = oc.MinDriver()
+        >>> md.drive(system)
+
+        2. Drive system using time driver (``TimeDriver``).
+
+        >>> system.energy.zeeman.H = (0, 1e6, 0)
+        ...
+        >>> td = oc.TimeDriver()
+        >>> td.drive(system, t=0.1e-9, n=10)
 
         """
         # This method is implemented in the derived class.
@@ -37,18 +64,15 @@ class Driver(mm.Driver):
         miffilename = f'{system.name}.mif'
         jsonfilename = 'info.json'
 
-        # Check whether a directory with the same name as system.name
-        # already exists. If it does, warn the user and tell him that
-        # he should pass overwrite=True to the drive method.
+        # Check whether a directory with the same name as system.name already
+        # exists. If it does, warn the user and tell him that he should pass
+        # overwrite=True to the drive method.
         if os.path.exists(dirname):
             if overwrite:
                 shutil.rmtree(system.name)
             else:
-                msg = (f'Directory with name={dirname} already exists. '
-                       'If you want to overwrite it, pass overwrite=True '
-                       'to the drive method. Otherwise, change the name '
-                       'of the system or delete the directory by running '
-                       'system.delete().')
+                msg = (f'Directory {dirname} already exists. To overwrite '
+                       'it, pass overwrite=True to the drive method.')
                 raise FileExistsError(msg)
 
         # Make a directory inside which OOMMF will be run.
@@ -68,12 +92,12 @@ class Driver(mm.Driver):
         mif += '  scalar_field_output_format {text %#.15g}\n'
         mif += '  vector_field_output_format {text %#.15g}\n'
         mif += '}\n\n'
-        mif += system._script
+        mif += oc.script.system_script(system)
         mif += self._script(system, **kwargs)
         with open(miffilename, 'w') as miffile:
             miffile.write(mif)
 
-        # Create json info file.
+        # Generate and save json info file.
         info = {}
         info['drive_number'] = system.drive_number
         info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
@@ -87,7 +111,7 @@ class Driver(mm.Driver):
         oommf = oc.oommf.get_oommf_runner()
         oommf.call(argstr=miffilename)
 
-        # Update system's m and dt attributes if the derivation of E,
+        # Update system's m and datatable attributes if the derivation of E,
         # Heff, or energy density was not asked.
         if 'derive' not in kwargs:
             # Update system's magnetisation. An example .omf filename:
@@ -99,7 +123,6 @@ class Driver(mm.Driver):
             # This line exists because the mesh generated in
             # df.Field.fromfile method comes from the discretisedfield
             # module where the _script method is not implemented.
-            m_field.mesh = system.m.mesh
             system.m = m_field
 
             # Update system's datatable.
@@ -111,5 +134,11 @@ class Driver(mm.Driver):
         # Increase the system's drive_number counter.
         system.drive_number += 1
 
+    def delete(self, system):
+        dirname = os.path.join(system.name, f'drive-{system.drive_number}')
+        if os.path.exists(dirname):
+            shutil.rmtree(system.name)
+
+    @abc.abstractmethod
     def _checkargs(self, **kwargs):
-        raise NotImplementedError
+        pass  # pragma: no cover

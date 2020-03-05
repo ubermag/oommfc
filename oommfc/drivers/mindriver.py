@@ -28,24 +28,24 @@ class MinDriver(Driver):
     AttributeError: ...
 
     """
-    _allowed_kwargs = ['evolver',
-                       'stopping_mxHxm',
-                       'stage_iteration_limit',
-                       'total_iteration_limit',
-                       'stage_count',
-                       'stage_count_check',
-                       'checkpoint_file',
-                       'checkpoint_interval',
-                       'checkpoint_disposal',
-                       'start_iteration',
-                       'start_stage',
-                       'start_stage_iteration',
-                       'start_stage_start_time',
-                       'start_stage_elapsed_time',
-                       'start_last_timestep',
-                       'normalize_aveM_output',
-                       'report_max_spin_angle',
-                       'report_wall_time']
+    _allowed_attributes = ['evolver',
+                           'stopping_mxHxm',
+                           'stage_iteration_limit',
+                           'total_iteration_limit',
+                           'stage_count',
+                           'stage_count_check',
+                           'checkpoint_file',
+                           'checkpoint_interval',
+                           'checkpoint_disposal',
+                           'start_iteration',
+                           'start_stage',
+                           'start_stage_iteration',
+                           'start_stage_start_time',
+                           'start_stage_elapsed_time',
+                           'start_last_timestep',
+                           'normalize_aveM_output',
+                           'report_max_spin_angle',
+                           'report_wall_time']
 
     def _script(self, system):
         # Save initial magnetisation.
@@ -72,7 +72,7 @@ class MinDriver(Driver):
         if not hasattr(self, 'stopping_mxHxm'):
             self.stopping_mxHxm = 0.01
         # Other parameters for MinDriver
-        for kwarg in self._allowed_kwargs:
+        for kwarg in self._allowed_attributes:
             if hasattr(self, kwarg) and kwarg != 'evolver':
                 mif += f'  {kwarg} {getattr(self, kwarg)}\n'
         mif += '}\n\n'

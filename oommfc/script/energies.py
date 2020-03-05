@@ -1,9 +1,18 @@
 import numbers
+import oommfc as oc
 import oommfc.util as ou
 import discretisedfield as df
 
 
-def exchange(term):
+def energy_script(container):
+    mif = ''
+    for term in container:
+        mif += globals()[f'{term.name}_script'](term)  #]getattr(oc, f'{term.name}_script')(term)
+
+    return mif
+
+
+def exchange_script(term):
     """Returns calculator's script.
 
     Parameters

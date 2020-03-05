@@ -45,13 +45,16 @@ def mif_atlas_scalar_field(value, name, atlas='main_atlas'):
     return mif
 
 
-def setup_m0(parameter, name):
-    if not isinstance(parameter, df.Field) or parameter.dim != 3:
-        msg = 'Parameter must be a vector (dim=3) field.'
+def setup_m0(field, name):
+    if not isinstance(field, df.Field):
+        msg = f'Cannot use {type(field)} for magnetisation.'
+        raise TypeError(msg)
+    if field.dim != 3:
+        msg = f'Cannot use dim={field.dim} field for magnetisation'
         raise ValueError(msg)
-    parameter.write(f'{name}.omf')
-    mif = mif_file_vector_field(f'{name}.omf', f'{name}')
-    mif += mif_vec_mag_scalar_field(f'{name}', f'{name}_norm')
+    field.write(f'{name}.omf')
+    mif = file_vector_field(f'{name}.omf', f'{name}', 'main_atlas')
+    mif += vector_norm_scalar_field(f'{name}', f'{name}_norm')
     return mif, f'{name}', f'{name}_norm'
 
 

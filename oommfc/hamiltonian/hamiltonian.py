@@ -1,7 +1,7 @@
 import micromagneticmodel as mm
 
 
-class Hamiltonian(mm.Hamiltonian):
+class Hamiltonian(mm.Energy):
     """Hamiltonian
 
     This class implements the sum of individual energy terms. It is

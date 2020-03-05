@@ -4,16 +4,13 @@ import pytest
 import pkg_resources
 import oommfc.oommf
 import oommfc.util
-import oommfc.consts
+import oommfc.script
 from .hamiltonian import Exchange, UniaxialAnisotropy, \
-    Demag, Zeeman, DMI, CubicAnisotropy, Hamiltonian
+    Demag, Zeeman, DMI, CubicAnisotropy
 from .dynamics import Precession, Damping, ZhangLi, Dynamics
 from .drivers import MinDriver, TimeDriver
 from .evolvers import CGEvolver, EulerEvolver, RungeKuttaEvolver, \
     SpinTEvolver
-from .mesh import Mesh
-from .system import System
-from .data import Data
 from . import examples
 
 
