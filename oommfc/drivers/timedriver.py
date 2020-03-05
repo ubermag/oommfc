@@ -1,5 +1,6 @@
 import oommfc as oc
 from .driver import Driver
+import micromagneticmodel as mm
 
 
 class TimeDriver(Driver):
@@ -27,37 +28,37 @@ class TimeDriver(Driver):
     AttributeError: ...
 
     """
-    _allowed_kwargs = ['evolver',
-                       'stopping_dm_dt',
-                       'stage_iteration_limit',
-                       'total_iteration_limit',
-                       'stage_count_check',
-                       'checkpoint_file',
-                       'checkpoint_interval',
-                       'checkpoint_disposal',
-                       'start_iteration',
-                       'start_stage',
-                       'start_stage_iteration',
-                       'start_stage_start_time',
-                       'start_stage_elapsed_time',
-                       'start_last_timestep',
-                       'normalize_aveM_output',
-                       'report_max_spin_angle',
-                       'report_wall_time']
+    _allowed_attributes = ['evolver',
+                           'stopping_dm_dt',
+                           'stage_iteration_limit',
+                           'total_iteration_limit',
+                           'stage_count_check',
+                           'checkpoint_file',
+                           'checkpoint_interval',
+                           'checkpoint_disposal',
+                           'start_iteration',
+                           'start_stage',
+                           'start_stage_iteration',
+                           'start_stage_start_time',
+                           'start_stage_elapsed_time',
+                           'start_last_timestep',
+                           'normalize_aveM_output',
+                           'report_max_spin_angle',
+                           'report_wall_time']
 
     def _script(self, system, **kwargs):
         # Save initial magnetisation.
-        m0mif, m0name, Msname = ou.script.setup_m0(system.m, 'm0')
+        m0mif, m0name, Msname = oc.script.setup_m0(system.m, 'm0')
         mif = m0mif
 
         # Extract dynamics equation parameters.
         gamma, alpha, u, beta = None, None, None, None
-        for term in system.dynamics.terms:
-            if isinstance(term, oc.Precession):
+        for term in system.dynamics:
+            if isinstance(term, mm.Precession):
                 gamma = term.gamma
-            if isinstance(term, oc.Damping):
+            if isinstance(term, mm.Damping):
                 alpha = term.alpha
-            if isinstance(term, oc.ZhangLi):
+            if isinstance(term, mm.ZhangLi):
                 u = term.u
                 beta = term.beta
 
@@ -109,9 +110,9 @@ class TimeDriver(Driver):
         mif += f'  stopping_time {t/n}\n'
         mif += f'  stage_count {n}\n'
         # Other parameters for TimeDriver
-        for kwarg in self._allowed_kwargs:
-            if hasattr(self, kwarg) and kwarg != 'evolver':
-                mif += f'  {kwarg} {getattr(self, kwarg)}\n'
+        for attr in self._allowed_attributes:
+            if hasattr(self, attr) and attr != 'evolver':
+                mif += f'  {attr} {getattr(self, attr)}\n'
         mif += '}\n\n'
 
         # Saving results
