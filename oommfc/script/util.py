@@ -55,7 +55,27 @@ def setup_m0(field, name):
     field.write(f'{name}.omf')
     mif = file_vector_field(f'{name}.omf', f'{name}', 'main_atlas')
     mif += vector_norm_scalar_field(f'{name}', f'{name}_norm')
+    
     return mif, f'{name}', f'{name}_norm'
+
+
+def file_vector_field(filename, name, atlas):
+    mif = f'# {name} file\n'
+    mif += f'Specify Oxs_FileVectorField:{name} {{\n'
+    mif += f'  file {filename}\n'
+    mif += f'  atlas :{atlas}\n'
+    mif += '}\n\n'
+
+    return mif
+
+
+def vector_norm_scalar_field(field, name):
+    mif = f'# {name}\n'
+    mif += f'Specify Oxs_VecMagScalarField:{name} {{\n'
+    mif += f'    field :{field}\n'
+    mif += '}\n\n'
+
+    return mif
 
 
 def setup_scalar_parameter(parameter, name):
@@ -81,25 +101,6 @@ def setup_scalar_parameter(parameter, name):
 
     elif isinstance(parameter, numbers.Real):
         return '', f'{parameter}'
-
-
-def file_vector_field(filename, name, atlas):
-    mif = f'# {name} file\n'
-    mif += f'Specify Oxs_FileVectorField:{name} {{\n'
-    mif += f'  file {filename}\n'
-    mif += f'  atlas :{atlas}\n'
-    mif += '}\n\n'
-
-    return mif
-
-
-def vector_norm_scalar_field(field, name):
-    mif = f'# {name}\n'
-    mif += f'Specify Oxs_VecMagScalarField:{name} {{\n'
-    mif += f'    field :{field}\n'
-    mif += '}\n\n'
-
-    return mif
 
 
 def setup_vector_parameter(parameter, name):

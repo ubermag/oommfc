@@ -71,7 +71,7 @@ class Driver(mm.Driver):
             if overwrite:
                 shutil.rmtree(system.name)
             else:
-                msg = (f'Directory {dirname} already exists. To overwrite '
+                msg = (f'Directory {system.name} already exists. To overwrite '
                        'it, pass overwrite=True to the drive method.')
                 raise FileExistsError(msg)
 
@@ -83,7 +83,7 @@ class Driver(mm.Driver):
         cwd = os.getcwd()
         os.chdir(dirname)
 
-        # Generate and save mif file.
+        # Generate mif file.
         mif = '# MIF 2.2\n\n'
         # Output options
         mif += 'SetOptions {\n'
@@ -92,8 +92,14 @@ class Driver(mm.Driver):
         mif += '  scalar_field_output_format {text %#.15g}\n'
         mif += '  vector_field_output_format {text %#.15g}\n'
         mif += '}\n\n'
-        mif += oc.script.system_script(system)
+        # Mesh and energy scripts.
+        mif += oc.script.mesh_script(system.m.mesh)
+        mif += oc.script.energy_script(system.energy)
+
+        # Driver script. kwargs are passed for TimeDriver.
         mif += self._script(system, **kwargs)
+
+        # Save mif file.
         with open(miffilename, 'w') as miffile:
             miffile.write(mif)
 
@@ -118,15 +124,10 @@ class Driver(mm.Driver):
             # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
             omffiles = glob.iglob(f'{system.name}*.omf')
             lastomffile = sorted(omffiles)[-1]
-            m_field = df.Field.fromfile(lastomffile)
-
-            # This line exists because the mesh generated in
-            # df.Field.fromfile method comes from the discretisedfield
-            # module where the _script method is not implemented.
-            system.m = m_field
+            system.m = df.Field.fromfile(lastomffile)
 
             # Update system's datatable.
-            system.dt = ut.read(f'{system.name}.odt')
+            system.table = ut.read(f'{system.name}.odt')
 
         # Change directory back to cwd.
         os.chdir(cwd)
@@ -135,8 +136,7 @@ class Driver(mm.Driver):
         system.drive_number += 1
 
     def delete(self, system):
-        dirname = os.path.join(system.name, f'drive-{system.drive_number}')
-        if os.path.exists(dirname):
+        if os.path.exists(system.name):
             shutil.rmtree(system.name)
 
     @abc.abstractmethod

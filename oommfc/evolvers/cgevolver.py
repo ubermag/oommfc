@@ -4,20 +4,17 @@ import micromagneticmodel as mm
 class CGEvolver(mm.Evolver):
     """Conjugate-Gradient evolver.
 
-    This class is used for collecting additional parameters, which
-    cannot be extracted from the dynamics equation, but could be
-    passed to `Oxs_CGEvolve`. Only parameters which are defined in
-    `_allowed_kwargs` can be passed.
+    Only parameters which are defined in ``_allowed_attributes`` can be passed.
 
     Examples
     --------
-    1. Defining evolver
+    1. Defining evolver with a keyword argument.
 
     >>> import oommfc as oc
     ...
     >>> evolver = oc.CGEvolver(method='Polak-Ribiere')
 
-    2. Passing an argument which is not allowed
+    2. Passing an argument which is not allowed.
 
     >>> import oommfc as oc
     ...
@@ -40,9 +37,9 @@ class CGEvolver(mm.Evolver):
     def _script(self):
         mif = '# CGEvolver\n'
         mif += 'Specify Oxs_CGEvolve:evolver {\n'
-        for kwarg in self._allowed_attributes:
-            if hasattr(self, kwarg):
-                mif += f'  {kwarg} {getattr(self, kwarg)}\n'
+        for attr in self._allowed_attributes:
+            if hasattr(self, attr):
+                mif += f'  {attr} {getattr(self, attr)}\n'
         mif += '}\n\n'
 
         return mif

@@ -4,4 +4,3 @@ from .util import file_vector_field, vector_norm_scalar_field, \
 
 from .mesh import mesh_script
 from .energies import energy_script
-from .system import system_script

@@ -3,15 +3,13 @@ from .driver import Driver
 
 
 class MinDriver(Driver):
-    """Minimisation driver.
+    """Energy minimisation driver.
 
-    This class is used for collecting additional parameters, which
-    could be passed to `Oxs_MinDriver`. Only parameters which are
-    defined in `_allowed_kwargs` can be passed.
+    Only parameters which are defined in ``_allowed_attributes`` can be passed.
 
     Examples
     --------
-    1. Defining driver
+    1. Defining driver with no keyword arguments.
 
     >>> import oommfc as oc
     ...
@@ -57,8 +55,8 @@ class MinDriver(Driver):
         if isinstance(self.evolver, oc.CGEvolver):
             mif += self.evolver._script
         else:
-            msg = 'Evolver must be CGEvolver.'
-            raise ValueError(msg)
+            msg = f'Cannot use {type(self.evolver)} for evolver.'
+            raise TypeError(msg)
 
         # Minimisation driver
         mif += '# MinDriver\n'
@@ -67,13 +65,16 @@ class MinDriver(Driver):
         mif += '  mesh :mesh\n'
         mif += f'  Ms :{Msname}\n'
         mif += f'  m0 :{m0name}\n'
+
         # Setting stopping mxHxm default value.
         if not hasattr(self, 'stopping_mxHxm'):
             self.stopping_mxHxm = 0.01
+
         # Other parameters for MinDriver
-        for kwarg in self._allowed_attributes:
-            if hasattr(self, kwarg) and kwarg != 'evolver':
-                mif += f'  {kwarg} {getattr(self, kwarg)}\n'
+        for attr in self._allowed_attributes:
+            if hasattr(self, attr) and attr != 'evolver':
+                mif += f'  {attr} {getattr(self, attr)}\n'
+
         mif += '}\n\n'
 
         # Saving results
