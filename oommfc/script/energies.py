@@ -1,3 +1,4 @@
+import sys
 import numbers
 import oommfc as oc
 import discretisedfield as df
@@ -20,7 +21,7 @@ def exchange_script(term):
 
     elif isinstance(term.A, dict):
         if 'default' in term.A.keys():
-            default_value = self.A['default']
+            default_value = term.A['default']
         else:
             default_value = 0
         mif = '# Exchange6Ngbr\n'
@@ -61,11 +62,59 @@ def zeeman_script(term):
 
     return mif
 
+
 def demag_script(term):
     mif = '# Demag\n'
     mif += 'Specify Oxs_Demag {\n'
     if hasattr(term, 'asymptotic_radius'):
         mif += f'  asymptotic_radius {term.asymptotic_radius}\n'
     mif += '}\n\n'
+
+    return mif
+
+
+def dmi_script(term):
+    if term.crystalclass in ['T', 'O'] and sys.platform != 'win32':
+        oxs = 'Oxs_DMI_T'
+    elif term.crystalclass == 'D2d' and sys.platform != 'win32':
+        oxs = 'Oxs_DMI_D2d'
+    elif term.crystalclass == 'Cnv' and sys.platform != 'win32':
+        oxs = 'Oxs_DMI_Cnv'
+    elif term.crystalclass == 'Cnv' and sys.platform == 'win32':
+        oxs = 'Oxs_DMExchange6Ngbr'
+    else:
+        raise ValueError(f'The {term.crystalclass} crystal class is not '
+                         f'supported on {sys.platform} platform.')
+
+    mif = f'# DMI of crystallographic class {term.crystalclass}\n'
+    mif += f'Specify {oxs} {{\n'
+    if isinstance(term.D, numbers.Real):
+        mif += f'  default_D {term.D}\n'
+        mif += '  atlas :main_atlas\n'
+        mif += '  D {\n'
+        mif += f'    main main {term.D}\n'
+        mif += '  }\n'
+        mif += '}\n\n'
+
+    elif isinstance(term.D, dict):
+        if 'default' in term.D.keys():
+            default_value = term.D['default']
+        else:
+            default_value = 0
+        mif += f'  default_D {default_value}\n'
+        mif += '  atlas :main_atlas\n'
+        mif += '  D {\n'
+        for key, value in term.D.items():
+            if key != 'default':
+                if ':' in key:
+                    region1, region2 = key.split(':')
+                else:
+                    region1, region2 = key, key
+                mif += f'    {region1} {region2} {value}\n'
+        mif += '  }\n'
+        mif += '}\n\n'
+    else:
+        msg = f'Type {type(term.D)} not supported.'
+        raise TypeError(msg)
 
     return mif

@@ -124,7 +124,7 @@ class Driver(mm.Driver):
             # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
             omffiles = glob.iglob(f'{system.name}*.omf')
             lastomffile = sorted(omffiles)[-1]
-            system.m = df.Field.fromfile(lastomffile)
+            system.m.value = df.Field.fromfile(lastomffile)
 
             # Update system's datatable.
             system.table = ut.read(f'{system.name}.odt')
