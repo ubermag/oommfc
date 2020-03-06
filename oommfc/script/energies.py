@@ -135,6 +135,7 @@ def uniaxialanisotropy_script(term):
 
     return mif
 
+
 def cubicanisotropy_script(term):
     kmif, kname = oc.script.setup_scalar_parameter(term.K, 'ca_K')
     u1mif, u1name = oc.script.setup_vector_parameter(term.u1, 'ca_u1')

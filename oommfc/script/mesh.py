@@ -49,7 +49,8 @@ def mesh_script(mesh):
         mif += '}\n\n'
     else:
         # There are no subregions in the mesh.
-        mif += oc.script.box_atlas(mesh.region.pmin, mesh.region.pmax, name='main')
+        mif += oc.script.box_atlas(mesh.region.pmin, mesh.region.pmax,
+                                   name='main')
 
     if mesh.pbc:
         mif += '# PeriodicRectangularMesh\n'

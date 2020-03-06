@@ -32,10 +32,6 @@ upload-coverage: SHELL:=/bin/bash
 upload-coverage:
 	bash <(curl -s https://codecov.io/bash) -t $(CODECOVTOKEN)
 
-upload-coverage: SHELL:=/bin/bash
-upload-coverage:
-	bash <(curl -s https://codecov.io/bash) -t $(CODECOVTOKEN)
-
 travis-build: SHELL:=/bin/bash
 travis-build:
 	ci_env=`bash <(curl -s https://codecov.io/env)`

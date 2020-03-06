@@ -41,13 +41,13 @@ class SpinTEvolver(mm.Evolver):
         # Prepare spatially varying fields.
         mif = ''
         if hasattr(self, 'gamma_G'):
-            gammamif, gammaname = oc.script.setup_scalar_parameter(self.gamma_G,
-                                                            'pr_gamma')
+            gammamif, gammaname = oc.script.setup_scalar_parameter(
+                self.gamma_G, 'pr_gamma')
             self.gamma_G = gammaname
             mif += gammamif
         if hasattr(self, 'alpha'):
-            alphamif, alphaname = oc.script.setup_scalar_parameter(self.alpha,
-                                                            'dp_alpha')
+            alphamif, alphaname = oc.script.setup_scalar_parameter(
+                self.alpha, 'dp_alpha')
             self.alpha = alphaname
             mif += alphamif
         if hasattr(self, 'u'):

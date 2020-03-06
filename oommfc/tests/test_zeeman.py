@@ -39,7 +39,6 @@ class TestZeeman:
 
         md.delete(system)
 
-
     def test_dict(self):
         name = 'zeeman_dict'
         if os.path.exists(name):
@@ -65,7 +64,6 @@ class TestZeeman:
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
         md.delete(system)
-
 
     def test_field(self):
         name = 'zeeman_field'

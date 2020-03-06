@@ -1,13 +1,13 @@
-import abc#
-import os#
+import abc
+import os
 import glob
 import json
-import shutil#
+import shutil
 import datetime
 import oommfc as oc
 import ubermagtable as ut
 import discretisedfield as df
-import micromagneticmodel as mm#
+import micromagneticmodel as mm
 
 
 class Driver(mm.Driver):
