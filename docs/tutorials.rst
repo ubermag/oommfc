@@ -12,7 +12,6 @@ Tutorials
    ipynb/03-tutorial-uniaxialanisotropy
    ipynb/04-tutorial-dmi
    ipynb/05-tutorial-cubicanisotropy
-   ipynb/06-tutorial-spatially-varying-parameter
    ipynb/07-tutorial-standard-problem3
    ipynb/08-tutorial-standard-problem4
    ipynb/09-tutorial-standard-problem5
