@@ -6,6 +6,7 @@ import logging
 import shutil
 import oommfc as oc
 import subprocess as sp
+import discretisedfield as df
 
 log = logging.getLogger(__name__)
 _cached_oommf_runner = None
@@ -217,12 +218,12 @@ def status():
     status.
 
     """
+    system = oc.examples.macrospin()
     try:
-        system = oc.examples.macrospin()
         td = oc.TimeDriver()
         td.drive(system, t=1e-12, n=1, overwrite=True)
         print('OOMMF found and running.')
-        shutil.rmtree('example-macrospin')
+        shutil.rmtree('example_macrospin')
         return 0
     except (EnvironmentError, RuntimeError):
         print("Cannot find OOMMF.")
@@ -232,13 +233,11 @@ def status():
 def overhead():
     """Run a macrospin example for 1 ps through oommfc and directly and
     return the difference in run times.
-
     Returns
     -------
     overhead : float
       The time difference (overhead) between running OOMMF though
       oommfc and directly
-
     """
     # Running OOMMF through oommfc.
     system = oc.examples.macrospin()
@@ -250,12 +249,12 @@ def overhead():
 
     # Running OOMMF directly.
     oommf_runner = get_oommf_runner()
-    mifpath = os.path.realpath(os.path.join('example-macrospin', 'drive-0',
-                                            'example-macrospin.mif'))
+    mifpath = os.path.realpath(os.path.join('example_macrospin', 'drive-0',
+                                            'example_macrospin.mif'))
     oommf_start = time.time()
     oommf_runner.call(mifpath)
     oommf_stop = time.time()
     oommf_time = oommf_stop - oommf_start
-    shutil.rmtree('example-macrospin')
+    shutil.rmtree('example_macrospin')
 
     return oommfc_time - oommf_time

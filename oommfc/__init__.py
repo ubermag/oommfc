@@ -2,6 +2,7 @@ import pytest
 import pkg_resources
 import oommfc.oommf
 import oommfc.script
+import oommfc.examples
 from .compute import compute
 from .drivers import MinDriver, TimeDriver
 from .evolvers import CGEvolver, EulerEvolver, RungeKuttaEvolver, \

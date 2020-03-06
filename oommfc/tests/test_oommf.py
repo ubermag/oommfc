@@ -106,12 +106,12 @@ def test_get_oommf_runner():
     check_runner(oommf_runner)
 
 
-def test_overhead():
-    assert isinstance(oo.overhead(), float)
-
-
 def test_status():
     assert oo.status() == 0
+
+
+def test_overhead():
+    assert isinstance(oo.overhead(), float)
 
 
 def test_runtimeerror():
