@@ -1,7 +1,0 @@
-``oommfc.System``
-=================
-
-.. autoclass:: oommfc.System
-   :members:
-   :inherited-members:
-   :no-undoc-members:
