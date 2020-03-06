@@ -1,2 +1,1 @@
-from .bar import bar
-from .macrospin import macrospin
+from .examples import macrospin

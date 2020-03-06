@@ -1,1 +1,0 @@
-from micromagneticmodel.consts import *

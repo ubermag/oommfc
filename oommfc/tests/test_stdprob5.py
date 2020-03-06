@@ -1,11 +1,9 @@
 import os
-import glob
 import shutil
-import pytest
 import numpy as np
 import oommfc as oc
 import discretisedfield as df
-from scipy.optimize import bisect
+import micromagneticmodel as mm
 
 
 def test_stdprob5():
@@ -25,34 +23,37 @@ def test_stdprob5():
     A = 1.3e-11  # exchange energy constant (J/m)
 
     # Dynamics (LLG + ZhangLi equation) parameters
-    gamma = 2.211e5  # gyromagnetic ratio (m/As)
+    gamma0 = 2.211e5  # gyromagnetic ratio (m/As)
     alpha = 0.1  # Gilbert damping
     ux = -72.35  # velocity in x direction
     beta = 0.05  # non-adiabatic STT parameter
 
-    system = oc.System(name=name)
-    mesh = oc.Mesh(p1=(0, 0, 0), p2=(lx, ly, lz),
-                   cell=(5e-9, 5e-9, 5e-9))
-    system.hamiltonian = oc.Exchange(A=A) + oc.Demag()
+    system = mm.System(name=name)
+    p1 = (0, 0, 0)
+    p2 = (lx, ly, lz)
+    cell = (5e-9, 5e-9, 5e-9)
+    region = df.Region(p1=p1, p2=p2)
+    mesh = df.Mesh(region=region, cell=cell)
+    system.energy = mm.Exchange(A=A) + mm.Demag()
 
     def m_vortex(pos):
         x, y, z = pos[0]/1e-9-50, pos[1]/1e-9-50, pos[2]/1e-9
         return (-y, x, 10)
 
-    system.m = df.Field(mesh, value=m_vortex, norm=Ms)
+    system.m = df.Field(mesh, dim=3, value=m_vortex, norm=Ms)
 
     md = oc.MinDriver()
     md.drive(system)
 
-    system.dynamics += oc.Precession(gamma=gamma) + \
-        oc.Damping(alpha=alpha) + oc.ZhangLi(u=ux, beta=beta)
+    system.dynamics += (mm.Precession(gamma0=gamma0) +
+                        mm.Damping(alpha=alpha) + mm.ZhangLi(u=ux, beta=beta))
 
     td = oc.TimeDriver()
     td.drive(system, t=8e-9, n=100)
 
-    mx = system.dt['mx'].values
+    mx = system.table['mx'].values
 
     assert -0.35 < mx.min() < -0.30
     assert -0.03 < mx.max() < 0
 
-    system.delete()
+    td.delete(system)

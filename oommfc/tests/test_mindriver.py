@@ -4,6 +4,7 @@ import shutil
 import oommfc as oc
 import numpy as np
 import discretisedfield as df
+import micromagneticmodel as mm
 
 
 class TestMinDriver:
@@ -14,87 +15,88 @@ class TestMinDriver:
         self.Ms = 1e6
         A = 1e-12
         H = (0, 0, 1e6)
-        self.mesh = oc.Mesh(p1=p1, p2=p2, n=n)
-        self.hamiltonian = oc.Exchange(A=A) + oc.Zeeman(H=H)
+        region = df.Region(p1=p1, p2=p2)
+        self.mesh = df.Mesh(region=region, n=n)
+        self.energy = mm.Exchange(A=A) + mm.Zeeman(H=H)
         self.m = df.Field(self.mesh, dim=3, value=(0, 1, 0), norm=self.Ms)
 
     def test_noevolver_nodriver(self):
-        name = 'md_noevolver_nodriver'
+        name = 'mindriver_noevolver_nodriver'
         if os.path.exists(name):
             shutil.rmtree(name)
 
-        system = oc.System(name=name)
-        system.hamiltonian = self.hamiltonian
+        system = mm.System(name=name)
+        system.energy = self.energy
         system.m = self.m
 
         md = oc.MinDriver()
         md.drive(system)
 
-        value = system.m(self.mesh.random_point())
+        value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1e-3
 
-        system.delete()
+        md.delete(system)
 
     def test_evolver_nodriver(self):
-        name = 'md_evolver_nodriver'
+        name = 'mindriver_evolver_nodriver'
         if os.path.exists(name):
             shutil.rmtree(name)
 
-        system = oc.System(name=name)
-        system.hamiltonian = self.hamiltonian
+        system = mm.System(name=name)
+        system.energy = self.energy
         system.m = self.m
 
         evolver = oc.CGEvolver(method='Polak-Ribiere')
         md = oc.MinDriver(evolver=evolver)
         md.drive(system)
 
-        value = system.m(self.mesh.random_point())
+        value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1e-3
 
-        system.delete()
+        md.delete(system)
 
     def test_noevolver_driver(self):
-        name = 'md_noevolver_driver'
+        name = 'mindriver_noevolver_driver'
         if os.path.exists(name):
             shutil.rmtree(name)
 
-        system = oc.System(name=name)
-        system.hamiltonian = self.hamiltonian
+        system = mm.System(name=name)
+        system.energy = self.energy
         system.m = self.m
 
         md = oc.MinDriver(stopping_mxHxm=0.1)
         md.drive(system)
 
-        value = system.m(self.mesh.random_point())
+        value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1e-3
 
-        system.delete()
+        md.delete(system)
 
     def test_evolver_driver(self):
-        name = 'md_evolver_driver'
+        name = 'mindriver_evolver_driver'
         if os.path.exists(name):
             shutil.rmtree(name)
 
-        system = oc.System(name=name)
-        system.hamiltonian = self.hamiltonian
+        system = mm.System(name=name)
+        system.energy = self.energy
         system.m = self.m
 
         evolver = oc.CGEvolver(method='Polak-Ribiere')
         md = oc.MinDriver(evolver=evolver, stopping_mxHxm=0.1)
         md.drive(system)
 
-        value = system.m(self.mesh.random_point())
+        value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1e-3
 
-        system.delete()
+        md.delete(system)
 
     def test_output_files(self):
-        name = 'md_output_files'
+        name = 'mindriver_output_files'
         if os.path.exists(name):
             shutil.rmtree(name)
 
-        system = oc.System(name=name)
-        system.hamiltonian = self.hamiltonian
+        system = mm.System(name=name)
+        system.energy = self.energy
         system.m = self.m
 
         md = oc.MinDriver()
@@ -111,4 +113,4 @@ class TestMinDriver:
         omffilename = os.path.join(dirname, 'm0.omf')
         assert omffilename in omf_files
 
-        system.delete()
+        md.delete(system)

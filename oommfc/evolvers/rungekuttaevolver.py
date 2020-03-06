@@ -1,4 +1,4 @@
-import oommfc.util as ou
+import oommfc as oc
 import micromagneticmodel as mm
 
 
@@ -28,45 +28,45 @@ class RungeKuttaEvolver(mm.Evolver):
     AttributeError: ...
 
     """
-    _allowed_kwargs = ['alpha',
-                       'gamma_LL',
-                       'gamma_G',
-                       'do_precess',
-                       'allow_signed_gamma',
-                       'min_timestep',
-                       'max_timestep',
-                       'start_dm',
-                       'start_dt',
-                       'stage_start',
-                       'error_rate',
-                       'absolute_step_error',
-                       'relative_step_error',
-                       'energy_precision',
-                       'min_step_headroom',
-                       'max_step_headroom',
-                       'reject_goal',
-                       'method']
+    _allowed_attributes = ['alpha',
+                           'gamma_LL',
+                           'gamma_G',
+                           'do_precess',
+                           'allow_signed_gamma',
+                           'min_timestep',
+                           'max_timestep',
+                           'start_dm',
+                           'start_dt',
+                           'stage_start',
+                           'error_rate',
+                           'absolute_step_error',
+                           'relative_step_error',
+                           'energy_precision',
+                           'min_step_headroom',
+                           'max_step_headroom',
+                           'reject_goal',
+                           'method']
 
     @property
     def _script(self):
         # Prepare spatially varying fields.
         mif = ''
         if hasattr(self, 'gamma_G'):
-            gammamif, gammaname = ou.setup_scalar_parameter(self.gamma_G,
-                                                            'pr_gamma')
+            gammamif, gammaname = oc.script.setup_scalar_parameter(
+                self.gamma_G, 'pr_gamma')
             self.gamma_G = gammaname
             mif += gammamif
         if hasattr(self, 'alpha'):
-            alphamif, alphaname = ou.setup_scalar_parameter(self.alpha,
-                                                            'dp_alpha')
+            alphamif, alphaname = oc.script.setup_scalar_parameter(
+                self.alpha, 'dp_alpha')
             self.alpha = alphaname
             mif += alphamif
 
         mif += '# RungeKuttaEvolver\n'
         mif += 'Specify Oxs_RungeKuttaEvolve:evolver {\n'
-        for kwarg in self._allowed_kwargs:
-            if hasattr(self, kwarg):
-                mif += f'  {kwarg} {getattr(self, kwarg)}\n'
+        for attr in self._allowed_attributes:
+            if hasattr(self, attr):
+                mif += f'  {attr} {getattr(self, attr)}\n'
         mif += '}\n\n'
 
         return mif

@@ -1,18 +1,15 @@
 import oommfc as oc
-import oommfc.util as ou
 from .driver import Driver
 
 
 class MinDriver(Driver):
-    """Minimisation driver.
+    """Energy minimisation driver.
 
-    This class is used for collecting additional parameters, which
-    could be passed to `Oxs_MinDriver`. Only parameters which are
-    defined in `_allowed_kwargs` can be passed.
+    Only parameters which are defined in ``_allowed_attributes`` can be passed.
 
     Examples
     --------
-    1. Defining driver
+    1. Defining driver with no keyword arguments.
 
     >>> import oommfc as oc
     ...
@@ -28,28 +25,28 @@ class MinDriver(Driver):
     AttributeError: ...
 
     """
-    _allowed_kwargs = ['evolver',
-                       'stopping_mxHxm',
-                       'stage_iteration_limit',
-                       'total_iteration_limit',
-                       'stage_count',
-                       'stage_count_check',
-                       'checkpoint_file',
-                       'checkpoint_interval',
-                       'checkpoint_disposal',
-                       'start_iteration',
-                       'start_stage',
-                       'start_stage_iteration',
-                       'start_stage_start_time',
-                       'start_stage_elapsed_time',
-                       'start_last_timestep',
-                       'normalize_aveM_output',
-                       'report_max_spin_angle',
-                       'report_wall_time']
+    _allowed_attributes = ['evolver',
+                           'stopping_mxHxm',
+                           'stage_iteration_limit',
+                           'total_iteration_limit',
+                           'stage_count',
+                           'stage_count_check',
+                           'checkpoint_file',
+                           'checkpoint_interval',
+                           'checkpoint_disposal',
+                           'start_iteration',
+                           'start_stage',
+                           'start_stage_iteration',
+                           'start_stage_start_time',
+                           'start_stage_elapsed_time',
+                           'start_last_timestep',
+                           'normalize_aveM_output',
+                           'report_max_spin_angle',
+                           'report_wall_time']
 
     def _script(self, system):
         # Save initial magnetisation.
-        m0mif, m0name, Msname = ou.setup_m0(system.m, 'm0')
+        m0mif, m0name, Msname = oc.script.setup_m0(system.m, 'm0')
         mif = m0mif
 
         # Evolver
@@ -58,8 +55,8 @@ class MinDriver(Driver):
         if isinstance(self.evolver, oc.CGEvolver):
             mif += self.evolver._script
         else:
-            msg = 'Evolver must be CGEvolver.'
-            raise ValueError(msg)
+            msg = f'Cannot use {type(self.evolver)} for evolver.'
+            raise TypeError(msg)
 
         # Minimisation driver
         mif += '# MinDriver\n'
@@ -68,13 +65,16 @@ class MinDriver(Driver):
         mif += '  mesh :mesh\n'
         mif += f'  Ms :{Msname}\n'
         mif += f'  m0 :{m0name}\n'
+
         # Setting stopping mxHxm default value.
         if not hasattr(self, 'stopping_mxHxm'):
             self.stopping_mxHxm = 0.01
+
         # Other parameters for MinDriver
-        for kwarg in self._allowed_kwargs:
-            if hasattr(self, kwarg) and kwarg != 'evolver':
-                mif += f'  {kwarg} {getattr(self, kwarg)}\n'
+        for attr in self._allowed_attributes:
+            if hasattr(self, attr) and attr != 'evolver':
+                mif += f'  {attr} {getattr(self, attr)}\n'
+
         mif += '}\n\n'
 
         # Saving results

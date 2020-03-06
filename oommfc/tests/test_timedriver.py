@@ -5,6 +5,7 @@ import pytest
 import oommfc as oc
 import numpy as np
 import discretisedfield as df
+import micromagneticmodel as mm
 
 
 class TestTimeDriver:
@@ -15,37 +16,38 @@ class TestTimeDriver:
         self.Ms = 1e6
         A = 1e-12
         H = (0, 0, 1e6)
-        self.mesh = oc.Mesh(p1=p1, p2=p2, n=n)
-        self.hamiltonian = oc.Exchange(A=A) + oc.Zeeman(H=H)
-        self.precession = oc.Precession(gamma=oc.consts.gamma0)
-        self.damping = oc.Damping(alpha=1)
+        region = df.Region(p1=p1, p2=p2)
+        self.mesh = df.Mesh(region=region, n=n)
+        self.energy = mm.Exchange(A=A) + mm.Zeeman(H=H)
+        self.precession = mm.Precession(gamma0=mm.consts.gamma0)
+        self.damping = mm.Damping(alpha=1)
         self.m = df.Field(self.mesh, dim=3, value=(0, 0.1, 1), norm=self.Ms)
 
     def test_noevolver_nodriver(self):
-        name = 'td_noevolver_nodriver'
+        name = 'timedriver_noevolver_nodriver'
         if os.path.exists(name):
             shutil.rmtree(name)
 
-        system = oc.System(name=name)
-        system.hamiltonian = self.hamiltonian
+        system = mm.System(name=name)
+        system.energy = self.energy
         system.dynamics = self.precession + self.damping
         system.m = self.m
 
         td = oc.TimeDriver()
         td.drive(system, t=0.2e-9, n=50)
 
-        value = system.m(self.mesh.random_point())
+        value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1
 
-        system.delete()
+        td.delete(system)
 
     def test_rungekutta_evolver_nodriver(self):
-        name = 'td_rungekutta_evolver_nodriver'
+        name = 'timedriver_rungekutta_evolver_nodriver'
         if os.path.exists(name):
             shutil.rmtree(name)
 
-        system = oc.System(name=name)
-        system.hamiltonian = self.hamiltonian
+        system = mm.System(name=name)
+        system.energy = self.energy
         system.dynamics = self.precession + self.damping
         system.m = self.m
 
@@ -53,18 +55,18 @@ class TestTimeDriver:
         td = oc.TimeDriver(evolver=evolver)
         td.drive(system, t=0.2e-9, n=50)
 
-        value = system.m(self.mesh.random_point())
+        value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1
 
-        system.delete()
+        td.delete(system)
 
     def test_euler_evolver_nodriver(self):
-        name = 'td_euler_evolver_nodriver'
+        name = 'timedriver_euler_evolver_nodriver'
         if os.path.exists(name):
             shutil.rmtree(name)
 
-        system = oc.System(name=name)
-        system.hamiltonian = self.hamiltonian
+        system = mm.System(name=name)
+        system.energy = self.energy
         system.dynamics = self.precession + self.damping
         system.m = self.m
 
@@ -72,72 +74,72 @@ class TestTimeDriver:
         td = oc.TimeDriver(evolver=evolver)
         td.drive(system, t=0.2e-9, n=50)
 
-        value = system.m(self.mesh.random_point())
+        value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1
 
-        system.delete()
+        td.delete(system)
 
     def test_noevolver_driver(self):
-        name = 'td_noevolver_driver'
+        name = 'timedriver_noevolver_driver'
         if os.path.exists(name):
             shutil.rmtree(name)
 
-        system = oc.System(name=name)
-        system.hamiltonian = self.hamiltonian
+        system = mm.System(name=name)
+        system.energy = self.energy
         system.dynamics = self.precession + self.damping
         system.m = self.m
 
         td = oc.TimeDriver(stopping_dm_dt=0.01)
         td.drive(system, t=0.3e-9, n=50)
 
-        value = system.m(self.mesh.random_point())
+        value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1
 
-        system.delete()
+        td.delete(system)
 
     def test_noprecession(self):
-        name = 'td_noprecession'
+        name = 'timedriver_noprecession'
         if os.path.exists(name):
             shutil.rmtree(name)
 
-        system = oc.System(name=name)
-        system.hamiltonian = self.hamiltonian
+        system = mm.System(name=name)
+        system.energy = self.energy
         system.dynamics = self.damping
         system.m = self.m
 
         td = oc.TimeDriver()
         td.drive(system, t=0.2e-9, n=50)
 
-        value = system.m(self.mesh.random_point())
+        value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1
 
-        system.delete()
+        td.delete(system)
 
     def test_nodamping(self):
-        name = 'td_nodamping'
+        name = 'timedriver_nodamping'
         if os.path.exists(name):
             shutil.rmtree(name)
 
-        system = oc.System(name=name)
-        system.hamiltonian = self.hamiltonian
+        system = mm.System(name=name)
+        system.energy = self.energy
         system.dynamics = self.precession
         system.m = self.m
 
         td = oc.TimeDriver()
         td.drive(system, t=0.2e-9, n=50)
 
-        value = system.m(self.mesh.random_point())
+        value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) > 1e3
 
-        system.delete()
+        td.delete(system)
 
     def test_output_files(self):
-        name = 'td_output_files'
+        name = 'timedriver_output_files'
         if os.path.exists(name):
             shutil.rmtree(name)
 
-        system = oc.System(name=name)
-        system.hamiltonian = self.hamiltonian
+        system = mm.System(name=name)
+        system.energy = self.energy
         system.dynamics = self.precession + self.damping
         system.m = self.m
 
@@ -155,15 +157,15 @@ class TestTimeDriver:
         omffilename = os.path.join(dirname, 'm0.omf')
         assert omffilename in omf_files
 
-        system.delete()
+        td.delete(system)
 
     def test_drive_exception(self):
-        name = 'td_exception'
+        name = 'timedriver_exception'
         if os.path.exists(name):
             shutil.rmtree(name)
 
-        system = oc.System(name=name)
-        system.hamiltonian = self.hamiltonian
+        system = mm.System(name=name)
+        system.energy = self.energy
         system.dynamics = self.precession + self.damping
         system.m = self.m
 
@@ -173,4 +175,4 @@ class TestTimeDriver:
         with pytest.raises(ValueError):
             td.drive(system, t=0.1e-9, n=-10)
 
-        system.delete()
+        td.delete(system)

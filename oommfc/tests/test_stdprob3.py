@@ -1,11 +1,10 @@
 import os
-import glob
 import shutil
-import pytest
 import numpy as np
 import oommfc as oc
 import discretisedfield as df
-from scipy.optimize import bisect
+import micromagneticmodel as mm
+from scipy.optimize import bisect  # This is why scipy is a dependency.
 
 
 def test_stdprob3():
@@ -43,28 +42,26 @@ def test_stdprob3():
         lex = cubesize/L  # exchange length.
 
         Km = 1e6  # magnetostatic energy density (J/m**3)
-        Ms = np.sqrt(2*Km/oc.consts.mu0)  # magnetisation saturation (A/m)
-        A = 0.5 * oc.consts.mu0 * Ms**2 * lex**2  # exchange energy constant
+        Ms = np.sqrt(2*Km/mm.consts.mu0)  # magnetisation saturation (A/m)
+        A = 0.5 * mm.consts.mu0 * Ms**2 * lex**2  # exchange energy constant
         K = 0.1*Km  # Uniaxial anisotropy constant
         u = (0, 0, 1)  # Uniaxial anisotropy easy-axis
 
         p1 = (0, 0, 0)  # Minimum sample coordinate.
         p2 = (cubesize, cubesize, cubesize)  # Maximum sample coordinate.
         cell = (cellsize, cellsize, cellsize)  # Discretisation.
-        mesh = oc.Mesh(p1=(0, 0, 0), p2=(cubesize, cubesize, cubesize),
-                       cell=(cellsize, cellsize, cellsize))
+        region = df.Region(p1=p1, p2=p2)
+        mesh = df.Mesh(region=region, cell=cell)
 
-        system = oc.System(name=name)
-        system.hamiltonian = oc.Exchange(A) + oc.UniaxialAnisotropy(K, u) + \
-            oc.Demag()
-        system.m = df.Field(mesh, value=m_init, norm=Ms)
-
-        system.delete()
+        system = mm.System(name=name)
+        system.energy = (mm.Exchange(A=A) + mm.UniaxialAnisotropy(K=K, u=u) +
+                         mm.Demag())
+        system.m = df.Field(mesh, dim=3, value=m_init, norm=Ms)
 
         md = oc.MinDriver()
         md.drive(system)
 
-        system.delete()
+        md.delete(system)
 
         return system
 
@@ -72,7 +69,10 @@ def test_stdprob3():
         vortex = minimise_system_energy(L, m_init_vortex)
         flower = minimise_system_energy(L, m_init_flower)
 
-        return vortex.total_energy() - flower.total_energy()
+        Evortex = vortex.table.tail(1)['E'][0]
+        Eflower = flower.table.tail(1)['E'][0]
+
+        return Evortex - Eflower
 
     cross_section = bisect(energy_difference, 8, 9, xtol=0.1)
     assert 8.4 < cross_section < 8.5

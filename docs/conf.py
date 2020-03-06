@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'oommfc'
-copyright = '2019, Marijan Beg, Ryan A. Pepper, Thomas Kluyver, and Hans Fangohr'
+copyright = '2020, Marijan Beg and Hans Fangohr'
 author = 'Marijan Beg, Ryan A. Pepper, Thomas Kluyver, and Hans Fangohr'
 
 
@@ -28,12 +28,9 @@ author = 'Marijan Beg, Ryan A. Pepper, Thomas Kluyver, and Hans Fangohr'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc',
-              'sphinx.ext.doctest',
               'sphinx.ext.napoleon',
               'sphinx.ext.mathjax',
-              'nbsphinx',
-              'nbsphinx_link',
-              'jupyter_sphinx.execute']
+              'nbsphinx']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

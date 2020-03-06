@@ -13,17 +13,20 @@ test-travis:
 	$(PYTHON) -m pytest -m "travis"
 
 test-coverage:
-	$(PYTHON) -m pytest -m "not docker" --cov=$(PROJECT) --cov-config .coveragerc
+	$(PYTHON) -m pytest -v -m "not docker" --cov=$(PROJECT) --cov-config .coveragerc
 
 test-docs:
-	$(PYTHON) -m pytest --doctest-modules --ignore=$(PROJECT)/tests $(PROJECT)
+	$(PYTHON) -m pytest -v --doctest-modules --ignore=$(PROJECT)/tests $(PROJECT)
 
 test-ipynb:
-	$(PYTHON) -m pytest --nbval-lax $(IPYNBPATH)
+	$(PYTHON) -m pytest -v --nbval-lax $(IPYNBPATH)
 
-test-all: test-test test-coverage test-docs test-ipynb
+test-pycodestyle:
+	$(PYTHON) -m pycodestyle --filename=*.py .
 
-test-all-travis: test-test test-travis test-coverage test-docs test-ipynb
+test-all: test-test test-coverage test-docs test-ipynb test-pycodestyle
+
+test-all-travis: test-test test-travis test-coverage test-docs test-ipynb test-pycodestyle
 
 upload-coverage: SHELL:=/bin/bash
 upload-coverage:
@@ -42,6 +45,7 @@ travis-build:
 test-docker:
 	docker build -f docker/Dockerfile -t dockertestimage .
 	docker run -ti -d --name testcontainer dockertestimage
+	docker exec testcontainer find . -name '*.pyc' -delete
 	docker exec testcontainer make test-all-travis
 	docker stop testcontainer
 	docker rm testcontainer
