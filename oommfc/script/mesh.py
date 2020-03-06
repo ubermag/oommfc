@@ -29,8 +29,7 @@ def mesh_script(mesh):
     >>> region = df.Region(p1=p1, p2=p2)
     >>> mesh = df.Mesh(region=region, n=n)
     >>> oc.script.mesh_script(mesh)
-    # BoxAtlas
-    ...
+    '# BoxAtlas...'
 
     """
     mif = ''

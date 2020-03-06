@@ -42,11 +42,12 @@ class Driver(mm.Driver):
         ...
         >>> system = mm.System(name='my_cool_system')
         >>> system.energy = mm.Exchange(A=1e-12) + mm.Zeeman(H=(0, 0, 1e6))
-        >>> mesh = mm.Mesh(p1=(0, 0, 0), p2=(1e-9, 1e-9, 10e-9), n=(1, 1, 10))
+        >>> mesh = df.Mesh(p1=(0, 0, 0), p2=(1e-9, 1e-9, 10e-9), n=(1, 1, 10))
         >>> system.m = df.Field(mesh, dim=3, value=(1, 1, 1), norm=1e6)
         ...
         >>> md = oc.MinDriver()
         >>> md.drive(system)
+        202...
 
         2. Drive system using time driver (``TimeDriver``).
 
@@ -54,6 +55,11 @@ class Driver(mm.Driver):
         ...
         >>> td = oc.TimeDriver()
         >>> td.drive(system, t=0.1e-9, n=10)
+        202...
+
+        3. Delete files.
+
+        >>> td.delete(system)
 
         """
         # This method is implemented in the derived class.
