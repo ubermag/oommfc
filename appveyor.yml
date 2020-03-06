@@ -20,5 +20,5 @@ install:
 test_script:
   - python -c "import oommfc as oc; import sys; sys.exit(oc.test())"
   - python -m pytest -v --doctest-modules --ignore=oommfc\tests oommfc
-  - python -m pytest -v --nbval docs\ipynb\
+  - python -m pytest -v --nbval-lax docs\ipynb\
   - python -m pycodestyle --filename=*.py .
