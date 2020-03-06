@@ -4,3 +4,7 @@ from .util import file_vector_field, vector_norm_scalar_field, \
 
 from .mesh import mesh_script
 from .energies import energy_script
+
+#, exchange_scipt, zeeman_script, \
+    #demag_script, dmi_script, uniaxialanisotropy_script, \
+    #cubicanisotropy_script

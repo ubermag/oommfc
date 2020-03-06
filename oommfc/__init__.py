@@ -2,10 +2,10 @@ import pytest
 import pkg_resources
 import oommfc.oommf
 import oommfc.script
+from .compute import compute, get_script
 from .drivers import MinDriver, TimeDriver
 from .evolvers import CGEvolver, EulerEvolver, RungeKuttaEvolver, \
     SpinTEvolver
-from . import examples
 
 
 __version__ = pkg_resources.get_distribution(__name__).version
