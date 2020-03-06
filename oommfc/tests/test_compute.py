@@ -1,4 +1,5 @@
 import os
+import sys
 import shutil
 import pytest
 import oommfc as oc
@@ -22,7 +23,6 @@ class TestCompute:
         self.system.energy = (mm.Exchange(A=1e-12) +
                               mm.Demag() +
                               mm.Zeeman(H=(8e6, 0, 0)) +
-                              mm.DMI(D=5e-3, crystalclass='T') +
                               mm.UniaxialAnisotropy(K=1e4, u=(0, 0, 1)) +
                               mm.CubicAnisotropy(K=1e3, u1=(1, 0, 0),
                                                  u2=(0, 1, 0)))
@@ -53,14 +53,19 @@ class TestCompute:
             shutil.rmtree(self.system.name)
 
     def test_dmi(self):
-        term = self.system.energy.dmi
-        for crystalclass in ['T', 'Cnv', 'D2d']:
-            term.crystalclass = crystalclass
-            assert isinstance(oc.compute(term, 'energy', self.system), float)
-            assert isinstance(oc.compute(term, 'energy_density', self.system),
-                              df.Field)
-            assert isinstance(oc.compute(term, 'effective_field', self.system),
-                              df.Field)
+        if sys.platform != 'win32':
+            self.system.energy += mm.DMI(D=5e-3, crystalclass='T')
+            term = self.system.energy.dmi
+            for crystalclass in ['T', 'Cnv', 'D2d']:
+                term.crystalclass = crystalclass
+                assert isinstance(oc.compute(term, 'energy', self.system),
+                                  float)
+                assert isinstance(oc.compute(term, 'energy_density',
+                                             self.system),
+                                  df.Field)
+                assert isinstance(oc.compute(term, 'effective_field',
+                                             self.system),
+                                  df.Field)
 
-        if os.path.exists(self.system.name):
-            shutil.rmtree(self.system.name)
+            if os.path.exists(self.system.name):
+                shutil.rmtree(self.system.name)
