@@ -3,10 +3,9 @@ import re
 import glob
 import json
 import shutil
-import pytest
 import oommfc as oc
 import discretisedfield as df
-import pytest
+import micromagneticmodel as mm
 
 
 def test_info_file():
@@ -21,15 +20,15 @@ def test_info_file():
     A = 1.3e-11  # (J/m)
     Ms = 8e5  # (A/m)
     H = (1e6, 0.0, 2e5)  # (A/m)
-    gamma = 2.211e5  # (m/As)
+    gamma0 = 2.211e5  # (m/As)
     alpha = 0.02
 
-    mesh = oc.Mesh(p1=(0, 0, 0), p2=(L, L, L), cell=cell)
-    system = oc.System(name=name)
-    system.hamiltonian = oc.Exchange(A=A) + oc.Zeeman(H=H)
-    system.dynamics = oc.Precession(gamma=gamma) + \
-        oc.Damping(alpha=alpha)
-    system.m = df.Field(mesh, value=(0.0, 0.25, 0.1), norm=Ms)
+    region = df.Region(p1=(0, 0, 0), p2=(L, L, L))
+    mesh = df.Mesh(region=region, cell=cell)
+    system = mm.System(name=name)
+    system.energy = mm.Exchange(A=A) + mm.Zeeman(H=H)
+    system.dynamics = mm.Precession(gamma0=gamma0) + mm.Damping(alpha=alpha)
+    system.m = df.Field(mesh, dim=3, value=(0.0, 0.25, 0.1), norm=Ms)
 
     # First (0) drive
     td = oc.TimeDriver()
@@ -80,4 +79,4 @@ def test_info_file():
     assert isinstance(info['args'], dict)
     assert info['args'] == {}
 
-    system.delete()
+    md.delete(system)
