@@ -6,4 +6,4 @@ dependencies:
   - pip
   - oommf
   - pip:
-    - oommfc==0.8.12
+    - oommfc==0.8.13
