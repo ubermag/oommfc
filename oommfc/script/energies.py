@@ -153,3 +153,27 @@ def cubicanisotropy_script(term):
     mif += '}\n\n'
 
     return mif
+
+
+def magnetoelastic_script(term):
+    B1mif, B1name = oc.script.setup_scalar_parameter(term.B1, 'mel_B1')
+    B2mif, B2name = oc.script.setup_scalar_parameter(term.B2, 'mel_B2')
+    ediagmif, ediagname = oc.script.setup_vector_parameter(
+        term.e_diag, 'mel_ediag')
+    eoffdiagmif, eoffdiagname = oc.script.setup_vector_parameter(
+        term.e_offdiag, 'mel_eoffdiag')
+
+    mif = ''
+    mif += B1mif
+    mif += B2mif
+    mif += ediagmif
+    mif += eoffdiagmif
+    mif += '# MagnetoElastic\n'
+    mif += 'Specify YY_FixedMEL {\n'
+    mif += f'  B1 {B1name}\n'
+    mif += f'  B2 {B2name}\n'
+    mif += f'  e_diag_field {ediagname}\n'
+    mif += f'  e_offdiag_field {eoffdiagname}\n'
+    mif += '}\n\n'
+
+    return mif

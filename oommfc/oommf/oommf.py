@@ -114,7 +114,7 @@ class DockerOOMMFRunner(OOMMFRunner):
     """Run OOMMF in a docker container.
 
     """
-    def __init__(self, docker_exe='docker', image='joommf/oommf'):
+    def __init__(self, docker_exe='docker', image='ubermag/oommf'):
         self.image = image
         self.docker_exe = docker_exe
 
@@ -205,7 +205,7 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
                         'stderr:\n{}'.format(res.stdout, res.stderr))
         else:
             _cached_oommf_runner = DockerOOMMFRunner(docker_exe=docker_exe,
-                                                     image='joommf/oommf')
+                                                     image='ubermag/oommf')
             return _cached_oommf_runner
 
     # If OOMMFRunner was not returned up to this point, we raise an
