@@ -1,4 +1,4 @@
-``oommfc.compute``
-==================
+``oommfc.delete``
+=================
 
 .. autofunction:: oommfc.delete
