@@ -32,14 +32,3 @@ class CGEvolver(mm.Evolver):
                            'line_minimum_relwidth',
                            'energy_precision',
                            'method']
-
-    @property
-    def _script(self):
-        mif = '# CGEvolver\n'
-        mif += 'Specify Oxs_CGEvolve:evolver {\n'
-        for attr in self._allowed_attributes:
-            if hasattr(self, attr):
-                mif += f'  {attr} {getattr(self, attr)}\n'
-        mif += '}\n\n'
-
-        return mif

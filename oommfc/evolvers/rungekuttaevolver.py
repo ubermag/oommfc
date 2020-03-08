@@ -46,27 +46,3 @@ class RungeKuttaEvolver(mm.Evolver):
                            'max_step_headroom',
                            'reject_goal',
                            'method']
-
-    @property
-    def _script(self):
-        # Prepare spatially varying fields.
-        mif = ''
-        if hasattr(self, 'gamma_G'):
-            gammamif, gammaname = oc.script.setup_scalar_parameter(
-                self.gamma_G, 'pr_gamma')
-            self.gamma_G = gammaname
-            mif += gammamif
-        if hasattr(self, 'alpha'):
-            alphamif, alphaname = oc.script.setup_scalar_parameter(
-                self.alpha, 'dp_alpha')
-            self.alpha = alphaname
-            mif += alphamif
-
-        mif += '# RungeKuttaEvolver\n'
-        mif += 'Specify Oxs_RungeKuttaEvolve:evolver {\n'
-        for attr in self._allowed_attributes:
-            if hasattr(self, attr):
-                mif += f'  {attr} {getattr(self, attr)}\n'
-        mif += '}\n\n'
-
-        return mif

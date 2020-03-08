@@ -40,7 +40,7 @@ def exchange_script(term):
         mif += '}\n\n'
 
     elif isinstance(term.A, df.Field):
-        Amif, Aname = oc.script.setup_scalar_parameter(term.A, 'exchange_A')
+        Amif, Aname = oc.scripts.setup_scalar_parameter(term.A, 'exchange_A')
         mif = Amif
         mif += '# ExchangePtwise\n'
         mif += 'Specify Oxs_ExchangePtwise {\n'
@@ -51,7 +51,7 @@ def exchange_script(term):
 
 
 def zeeman_script(term):
-    Hmif, Hname = oc.script.setup_vector_parameter(term.H, 'zeeman_H')
+    Hmif, Hname = oc.scripts.setup_vector_parameter(term.H, 'zeeman_H')
 
     mif = ''
     mif += Hmif
@@ -121,8 +121,8 @@ def dmi_script(term):
 
 
 def uniaxialanisotropy_script(term):
-    kmif, kname = oc.script.setup_scalar_parameter(term.K, 'ua_K')
-    umif, uname = oc.script.setup_vector_parameter(term.u, 'ua_u')
+    kmif, kname = oc.scripts.setup_scalar_parameter(term.K, 'ua_K')
+    umif, uname = oc.scripts.setup_vector_parameter(term.u, 'ua_u')
 
     mif = ''
     mif += kmif
@@ -137,9 +137,9 @@ def uniaxialanisotropy_script(term):
 
 
 def cubicanisotropy_script(term):
-    kmif, kname = oc.script.setup_scalar_parameter(term.K, 'ca_K')
-    u1mif, u1name = oc.script.setup_vector_parameter(term.u1, 'ca_u1')
-    u2mif, u2name = oc.script.setup_vector_parameter(term.u2, 'ca_u2')
+    kmif, kname = oc.scripts.setup_scalar_parameter(term.K, 'ca_K')
+    u1mif, u1name = oc.scripts.setup_vector_parameter(term.u1, 'ca_u1')
+    u2mif, u2name = oc.scripts.setup_vector_parameter(term.u2, 'ca_u2')
 
     mif = ''
     mif += kmif
@@ -156,11 +156,11 @@ def cubicanisotropy_script(term):
 
 
 def magnetoelastic_script(term):
-    B1mif, B1name = oc.script.setup_scalar_parameter(term.B1, 'mel_B1')
-    B2mif, B2name = oc.script.setup_scalar_parameter(term.B2, 'mel_B2')
-    ediagmif, ediagname = oc.script.setup_vector_parameter(
+    B1mif, B1name = oc.scripts.setup_scalar_parameter(term.B1, 'mel_B1')
+    B2mif, B2name = oc.scripts.setup_scalar_parameter(term.B2, 'mel_B2')
+    ediagmif, ediagname = oc.scripts.setup_vector_parameter(
         term.e_diag, 'mel_ediag')
-    eoffdiagmif, eoffdiagname = oc.script.setup_vector_parameter(
+    eoffdiagmif, eoffdiagname = oc.scripts.setup_vector_parameter(
         term.e_offdiag, 'mel_eoffdiag')
 
     mif = ''

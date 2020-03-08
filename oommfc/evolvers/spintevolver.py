@@ -35,31 +35,3 @@ class SpinTEvolver(mm.Evolver):
                            'u',
                            'beta',
                            'method']
-
-    @property
-    def _script(self):
-        # Prepare spatially varying fields.
-        mif = ''
-        if hasattr(self, 'gamma_G'):
-            gammamif, gammaname = oc.script.setup_scalar_parameter(
-                self.gamma_G, 'pr_gamma')
-            self.gamma_G = gammaname
-            mif += gammamif
-        if hasattr(self, 'alpha'):
-            alphamif, alphaname = oc.script.setup_scalar_parameter(
-                self.alpha, 'dp_alpha')
-            self.alpha = alphaname
-            mif += alphamif
-        if hasattr(self, 'u'):
-            umif, uname = oc.script.setup_scalar_parameter(self.u, 'zl_alpha')
-            self.u = uname
-            mif += umif
-
-        mif += '# Zhang-Li evolver\n'
-        mif += 'Specify Anv_SpinTEvolve:evolver {\n'
-        for attr in self._allowed_attributes:
-            if hasattr(self, attr):
-                mif += f'  {attr} {getattr(self, attr)}\n'
-        mif += '}\n\n'
-
-        return mif

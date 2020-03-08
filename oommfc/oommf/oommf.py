@@ -7,6 +7,7 @@ import shutil
 import oommfc as oc
 import subprocess as sp
 import discretisedfield as df
+import micromagneticmodel as mm
 
 log = logging.getLogger(__name__)
 _cached_oommf_runner = None
@@ -218,15 +219,15 @@ def status():
     status.
 
     """
-    system = oc.examples.macrospin()
+    system = mm.examples.macrospin()
     try:
         td = oc.TimeDriver()
         td.drive(system, t=1e-12, n=1, overwrite=True)
         print('OOMMF found and running.')
-        shutil.rmtree('example_macrospin')
+        td.delete(system)
         return 0
     except (EnvironmentError, RuntimeError):
-        print("Cannot find OOMMF.")
+        print('Cannot find OOMMF.')
         return 1
 
 
@@ -240,7 +241,7 @@ def overhead():
       oommfc and directly
     """
     # Running OOMMF through oommfc.
-    system = oc.examples.macrospin()
+    system = mm.examples.macrospin()
     td = oc.TimeDriver()
     oommfc_start = time.time()
     td.drive(system, t=1e-12, n=1, overwrite=True)
@@ -249,12 +250,13 @@ def overhead():
 
     # Running OOMMF directly.
     oommf_runner = get_oommf_runner()
-    mifpath = os.path.realpath(os.path.join('example_macrospin', 'drive-0',
-                                            'example_macrospin.mif'))
+    mifpath = os.path.realpath(os.path.join('macrospin',
+                                            'drive-0',
+                                            'macrospin.mif'))
     oommf_start = time.time()
     oommf_runner.call(mifpath)
     oommf_stop = time.time()
     oommf_time = oommf_stop - oommf_start
-    shutil.rmtree('example_macrospin')
+    td.delete(system)
 
     return oommfc_time - oommf_time

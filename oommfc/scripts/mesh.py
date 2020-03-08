@@ -2,42 +2,12 @@ import oommfc as oc
 
 
 def mesh_script(mesh):
-    """Returns calculator's script.
-
-    Parameters
-    ----------
-    mesh : discretisedfield.Mesh
-
-        Mesh object.
-
-    Returns
-    -------
-    str
-
-        Calculator's script.
-
-    Examples
-    --------
-    1. Getting calculator's script.
-
-    >>> import discretisedfield as df
-    >>> import oommfc as oc
-    ...
-    >>> p1 = (0, 0, 0)
-    >>> p2 = (10, 10, 10)
-    >>> n = (5, 5, 5)
-    >>> region = df.Region(p1=p1, p2=p2)
-    >>> mesh = df.Mesh(region=region, n=n)
-    >>> oc.script.mesh_script(mesh)
-    '# BoxAtlas...'
-
-    """
     mif = ''
     if mesh.subregions:
         # The mesh is composed of subregions. Multiple BoxAtlas scripts are
         # generated and the main MultiAtlas.
         for name, subregion in mesh.subregions.items():
-            mif += oc.script.box_atlas(subregion.pmin, subregion.pmax,
+            mif += oc.scripts.box_atlas(subregion.pmin, subregion.pmax,
                                        name=name)
         mif += '# MultiAtlas\n'
         mif += 'Specify Oxs_MultiAtlas:main_atlas {\n'
@@ -49,7 +19,7 @@ def mesh_script(mesh):
         mif += '}\n\n'
     else:
         # There are no subregions in the mesh.
-        mif += oc.script.box_atlas(mesh.region.pmin, mesh.region.pmax,
+        mif += oc.scripts.box_atlas(mesh.region.pmin, mesh.region.pmax,
                                    name='main')
 
     if mesh.pbc:

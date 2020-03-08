@@ -1,7 +1,6 @@
 import os
 import sys
 import shutil
-import pytest
 import oommfc as oc
 import discretisedfield as df
 import micromagneticmodel as mm
@@ -31,14 +30,14 @@ class TestCompute:
 
     def test_energy(self):
         for term in self.system.energy:
-            assert isinstance(oc.compute(term, 'energy', self.system), float)
+            assert isinstance(oc.compute(term.energy, self.system), float)
 
         if os.path.exists(self.system.name):
             shutil.rmtree(self.system.name)
 
     def test_energy_density(self):
         for term in self.system.energy:
-            assert isinstance(oc.compute(term, 'energy_density', self.system),
+            assert isinstance(oc.compute(term.density, self.system),
                               df.Field)
 
         if os.path.exists(self.system.name):
@@ -46,7 +45,7 @@ class TestCompute:
 
     def test_effective_field(self):
         for term in self.system.energy:
-            assert isinstance(oc.compute(term, 'effective_field', self.system),
+            assert isinstance(oc.compute(term.effective_field, self.system),
                               df.Field)
 
         if os.path.exists(self.system.name):
@@ -58,14 +57,12 @@ class TestCompute:
             term = self.system.energy.dmi
             for crystalclass in ['T', 'Cnv', 'D2d']:
                 term.crystalclass = crystalclass
-                assert isinstance(oc.compute(term, 'energy', self.system),
+                assert isinstance(oc.compute(term.energy, self.system),
                                   float)
-                assert isinstance(oc.compute(term, 'energy_density',
-                                             self.system),
+                assert isinstance(oc.compute(term.density, self.system),
                                   df.Field)
-                assert isinstance(oc.compute(term, 'effective_field',
-                                             self.system),
-                                  df.Field)
+                assert isinstance(oc.compute(term.effective_field,
+                                             self.system), df.Field)
 
             if os.path.exists(self.system.name):
                 shutil.rmtree(self.system.name)

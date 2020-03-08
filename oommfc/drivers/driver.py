@@ -62,22 +62,24 @@ class Driver(mm.Driver):
         >>> td.delete(system)
 
         """
-        # This method is implemented in the derived class.
+        # This method is implemented in the derived driver class.
         self._checkargs(**kwargs)
 
         # Generate the necessary filenames.
-        dirname = os.path.join(system.name, f'drive-{system.drive_number}')
+        if 'compute' in kwargs.keys():
+            subdir = f'compute-{system.drive_number}'
+        else:
+            subdir = f'drive-{system.drive_number}'
+        dirname = os.path.join(system.name, subdir)
         miffilename = f'{system.name}.mif'
         jsonfilename = 'info.json'
 
-        # Check whether a directory with the same name as system.name already
-        # exists. If it does, warn the user and tell him that he should pass
-        # overwrite=True to the drive method.
+        # Check whether a directory already exists.
         if os.path.exists(dirname):
             if overwrite:
-                shutil.rmtree(system.name)
+                self.delete(system)
             else:
-                msg = (f'Directory {system.name} already exists. To overwrite '
+                msg = (f'Directory {dirname} already exists. To overwrite '
                        'it, pass overwrite=True to the drive method.')
                 raise FileExistsError(msg)
 
@@ -89,23 +91,9 @@ class Driver(mm.Driver):
         cwd = os.getcwd()
         os.chdir(dirname)
 
-        # Generate mif file.
-        mif = '# MIF 2.2\n\n'
-        # Output options
-        mif += 'SetOptions {\n'
-        mif += f'  basename {system.name}\n'
-        mif += '  scalar_output_format %.12g\n'
-        mif += '  scalar_field_output_format {text %#.15g}\n'
-        mif += '  vector_field_output_format {text %#.15g}\n'
-        mif += '}\n\n'
-        # Mesh and energy scripts.
-        mif += oc.script.mesh_script(system.m.mesh)
-        mif += oc.script.energy_script(system.energy)
-
-        # Driver script. kwargs are passed for TimeDriver.
-        mif += self._script(system, **kwargs)
-
-        # Save mif file.
+        # Generate and save mif file.
+        mif = oc.scripts.system_script(system)
+        mif += oc.scripts.driver_script(self, system, **kwargs)
         with open(miffilename, 'w') as miffile:
             miffile.write(mif)
 
@@ -125,7 +113,7 @@ class Driver(mm.Driver):
 
         # Update system's m and datatable attributes if the derivation of E,
         # Heff, or energy density was not asked.
-        if 'derive' not in kwargs:
+        if 'compute' not in kwargs:
             # Update system's magnetisation. An example .omf filename:
             # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
             omffiles = glob.iglob(f'{system.name}*.omf')

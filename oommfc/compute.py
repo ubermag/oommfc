@@ -3,63 +3,56 @@ import os
 import glob
 import oommfc as oc
 import ubermagtable as ut
-import micromagneticmodel as mm
 import discretisedfield as df
+import micromagneticmodel as mm
 
 
-def get_script(term, property):
-    if property == 'energy':
-        if isinstance(term, mm.Energy):
-            return 'RungeKuttaEvolve:evolver:Total energy'
+def oxs_class(term):
+    if isinstance(term, mm.EnergyTerm):
+        mif = getattr(oc.scripts.energies, f'{term.name}_script')(term)
+        return re.search(r'Oxs_([\w_]+)', mif).group(1)
+
+
+def schedule_script(func):
+    if func.__name__ == 'energy':
+        return ''  # Datatable with energies is saved by default.
+    elif func.__name__ == 'effective_field':
+        if isinstance(func.__self__, mm.Energy):
+            output = 'Oxs_RungeKuttaEvolve:evolver:Total field'
         else:
-            mif = getattr(oc.script.energies, f'{term.name}_script')(term)
-            cls = re.search(r'Oxs_([\w_]+)', mif).group(1)
-            return f'{cls}::{property.capitalize()}'
-    elif property == 'effective_field':
-        if isinstance(term, mm.Energy):
-            return 'Oxs_RungeKuttaEvolve:evolver:Total field'
+            output = f'Oxs_{oxs_class(func.__self__)}::Field'
+    elif func.__name__ == 'density':
+        if isinstance(func.__self__, mm.Energy):
+            output = 'Oxs_RungeKuttaEvolve:evolver:Total energy density'
         else:
-            mif = getattr(oc.script.energies, f'{term.name}_script')(term)
-            cls = re.search(r'Oxs_([\w_]+)', mif).group(1)
-            return f'Oxs_{cls}::Field'
-    elif property == 'energy_density':
-        if isinstance(term, mm.Energy):
-            return 'Oxs_RungeKuttaEvolve:evolver:Total energy density'
+            output = f'Oxs_{oxs_class(func.__self__)}::Energy density'
+
+    return 'Schedule \"{}\" archive Step 1\n'.format(output)
+
+
+def compute(func, system):
+    td = oc.TimeDriver(total_iteration_limit=1)
+    td.drive(system, t=1e-25, n=1, compute=schedule_script(func))
+
+    if func.__name__ == 'energy':
+        extension = '*.odt'
+    elif func.__name__ == 'effective_field':
+        extension = '*.ohf'
+    elif func.__name__ == 'density':
+        extension = '*.oef'
+    else:
+        msg = f'Computing the value of {func} is not supported.'
+        raise ValueError(msg)
+
+    dirname = os.path.join(system.name, f'compute-{system.drive_number-1}')
+    output_file = max(glob.iglob(os.path.join(dirname, extension)),
+                      key=os.path.getctime)
+
+    if func.__name__ == 'energy':
+        table = ut.read(output_file, rename=False)
+        if isinstance(func.__self__, mm.Energy):
+            return table['RungeKuttaEvolve:evolver:Total energy'][0]
         else:
-            mif = getattr(oc.script.energies, f'{term.name}_script')(term)
-            cls = re.search(r'Oxs_([\w_]+)', mif).group(1)
-            return f'Oxs_{cls}::Energy density'
-
-
-def compute(term, property, system):
-    if property == 'energy':
-        td = oc.TimeDriver()
-        td.drive(system, derive=property)
-
-        dirname = os.path.join(system.name, f'drive-{system.drive_number-1}')
-        odt_file = max(glob.iglob(os.path.join(dirname, '*.odt')),
-                       key=os.path.getctime)
-
-        table = ut.read(odt_file, rename=False)
-
-        return table[get_script(term, property)][0]
-
-    elif property == 'effective_field':
-        td = oc.TimeDriver()
-        td.drive(system, derive=get_script(term, property))
-
-        dirname = os.path.join(system.name, f'drive-{system.drive_number-1}')
-        ohf_file = max(glob.iglob(os.path.join(dirname, '*.ohf')),
-                       key=os.path.getctime)
-
-        return df.Field.fromfile(ohf_file)
-
-    elif property == 'energy_density':
-        td = oc.TimeDriver()
-        td.drive(system, derive=get_script(term, property))
-
-        dirname = os.path.join(system.name, f'drive-{system.drive_number-1}')
-        oef_file = max(glob.iglob(os.path.join(dirname, '*.oef')),
-                       key=os.path.getctime)
-
-        return df.Field.fromfile(oef_file)
+            return table[f'{oxs_class(func.__self__)}::Energy'][0]
+    else:
+        return df.Field.fromfile(output_file)

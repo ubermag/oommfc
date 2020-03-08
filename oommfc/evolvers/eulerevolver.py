@@ -38,14 +38,3 @@ class EulerEvolver(mm.Evolver):
                            'absolute_step_error',
                            'relative_step_error',
                            'step_headroom']
-
-    @property
-    def _script(self):
-        mif = '# EulerEvolver\n'
-        mif += 'Specify Oxs_EulerEvolve:evolver {\n'
-        for attr in self._allowed_attributes:
-            if hasattr(self, attr):
-                mif += f'  {attr} {getattr(self, attr)}\n'
-        mif += '}\n\n'
-
-        return mif

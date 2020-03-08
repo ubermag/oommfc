@@ -44,46 +44,5 @@ class MinDriver(Driver):
                            'report_max_spin_angle',
                            'report_wall_time']
 
-    def _script(self, system):
-        # Save initial magnetisation.
-        m0mif, m0name, Msname = oc.script.setup_m0(system.m, 'm0')
-        mif = m0mif
-
-        # Evolver
-        if not hasattr(self, 'evolver'):
-            self.evolver = oc.CGEvolver()
-        if isinstance(self.evolver, oc.CGEvolver):
-            mif += self.evolver._script
-        else:
-            msg = f'Cannot use {type(self.evolver)} for evolver.'
-            raise TypeError(msg)
-
-        # Minimisation driver
-        mif += '# MinDriver\n'
-        mif += 'Specify Oxs_MinDriver {\n'
-        mif += '  evolver :evolver\n'
-        mif += '  mesh :mesh\n'
-        mif += f'  Ms :{Msname}\n'
-        mif += f'  m0 :{m0name}\n'
-
-        # Setting stopping mxHxm default value.
-        if not hasattr(self, 'stopping_mxHxm'):
-            self.stopping_mxHxm = 0.01
-
-        # Other parameters for MinDriver
-        for attr in self._allowed_attributes:
-            if hasattr(self, attr) and attr != 'evolver':
-                mif += f'  {attr} {getattr(self, attr)}\n'
-
-        mif += '}\n\n'
-
-        # Saving results
-        mif += 'Destination table mmArchive\n'
-        mif += 'Destination mags mmArchive\n\n'
-        mif += 'Schedule DataTable table Stage 1\n'
-        mif += 'Schedule Oxs_MinDriver::Magnetization mags Stage 1'
-
-        return mif
-
     def _checkargs(self, **kwargs):
         pass
