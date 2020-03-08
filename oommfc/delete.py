@@ -31,8 +31,9 @@ def delete(system):
     >>> import micromagneticmodel as mm
     ...
     >>> system = mm.examples.macrospin()
-    >>> md = oc.TimeDriver()
-    >>> md.drive(system, save=True)
+    >>> td = oc.TimeDriver()
+    >>> td.drive(system, t=1e-12, n=5, save=True)
+    20...Running OOMMF...
     >>> os.path.exists(system.name)
     True
     >>> oc.delete(system)  # deletes directory

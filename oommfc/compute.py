@@ -59,10 +59,13 @@ def compute(func, system):
     ...
     >>> system = mm.examples.macrospin()
     >>> oc.compute(system.energy.zeeman.energy, system)
-    2
+    20...Running OOMMF...
+    -8.8...e-22
     >>> oc.compute(system.energy.effective_field, system)
+    20...Running OOMMF...
     Field(...)
     >>> oc.compute(system.energy.density, system)
+    20...Running OOMMF...
     Field(...)
 
     """
