@@ -1,3 +1,4 @@
+import numpy as np
 import oommfc as oc
 import discretisedfield as df
 import micromagneticmodel as mm

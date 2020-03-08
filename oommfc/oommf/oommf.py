@@ -230,7 +230,7 @@ def status():
         td = oc.TimeDriver()
         td.drive(system, t=1e-12, n=1, overwrite=True)
         print('OOMMF found and running.')
-        td.delete(system)
+        oc.delete(system)
         return 0
     except (EnvironmentError, RuntimeError):
         print('Cannot find OOMMF.')
@@ -263,6 +263,6 @@ def overhead():
     oommf_runner.call(mifpath)
     oommf_stop = time.time()
     oommf_time = oommf_stop - oommf_start
-    td.delete(system)
+    oc.delete(system)
 
     return oommfc_time - oommf_time

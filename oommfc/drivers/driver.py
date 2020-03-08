@@ -12,6 +12,10 @@ import micromagneticmodel as mm
 
 
 class Driver(mm.Driver):
+    @abc.abstractmethod
+    def _checkargs(self, **kwargs):
+        pass  # pragma: no cover
+
     def _drive(self, system, basedirname, overwrite=False,
                compute=None, runner=None, **kwargs):
         # This method is implemented in the derived driver class. It raises
@@ -88,8 +92,8 @@ class Driver(mm.Driver):
         if compute is None:
             system.drive_number += 1
 
-    def drive(self, system, save=False, overwrite=False,
-              compute=None, runner=None, **kwargs):
+    def drive(self, system, save=False, overwrite=False, compute=None,
+              runner=None, **kwargs):
         """Drives the system in phase space.
 
         Takes ``micromagneticmodel.System`` and drives it in the phase space.
@@ -148,7 +152,3 @@ class Driver(mm.Driver):
                 self._drive(system=system, basedirname=tmpdir,
                             overwrite=overwrite, compute=compute,
                             runner=runner, **kwargs)
-
-    @abc.abstractmethod
-    def _checkargs(self, **kwargs):
-        pass  # pragma: no cover
