@@ -1,5 +1,3 @@
-import os
-import shutil
 import numpy as np
 import oommfc as oc
 import discretisedfield as df
@@ -22,8 +20,6 @@ class TestMesh:
 
     def test_single_nopbc(self):
         name = 'mesh_single_nopbc'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         Ms = 1e6
         H = (0, 0, 5e6)
@@ -40,12 +36,8 @@ class TestMesh:
         value = system.m(mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        md.delete(system)
-
     def test_multi_nopbc(self):
         name = 'mesh_multi_nopbc'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         Ms = 1e6
         H = (0, 0, 5e6)
@@ -63,12 +55,8 @@ class TestMesh:
         value = system.m(mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        md.delete(system)
-
     def test_single_pbc(self):
         name = 'mesh_single_pbc'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         Ms = 1e6
         H = (0, 0, 5e6)
@@ -85,12 +73,8 @@ class TestMesh:
         value = system.m(mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        md.delete(system)
-
     def test_multi_pbc(self):
         name = 'mesh_multi_pbc'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         Ms = 1e6
         H = (0, 0, 5e6)
@@ -107,5 +91,3 @@ class TestMesh:
 
         value = system.m(mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
-
-        md.delete(system)

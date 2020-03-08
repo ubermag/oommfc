@@ -1,5 +1,3 @@
-import os
-import shutil
 import numpy as np
 import oommfc as oc
 import discretisedfield as df
@@ -19,8 +17,6 @@ class TestDynamics:
 
     def test_scalar_scalar(self):
         name = 'dynamics_scalar_scalar'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         H = (0, 0, 1e6)
         alpha = 1
@@ -42,12 +38,8 @@ class TestDynamics:
         value = system.m(mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        td.delete(system)
-
     def test_scalar_dict(self):
         name = 'dynamics_scalar_dict'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         H = (0, 0, 1e6)
         gamma0 = 2.211e5
@@ -74,12 +66,8 @@ class TestDynamics:
         value = system.m((1e-9, 4e-9, 3e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        td.delete(system)
-
     def test_field_field(self):
         name = 'dynamics_field_field'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         mesh = df.Mesh(region=self.region, n=self.n)
 
@@ -118,5 +106,3 @@ class TestDynamics:
         # alpha!=0 and gamma!=0 region
         value = system.m((1e-9, 4e-9, 3e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
-
-        td.delete(system)

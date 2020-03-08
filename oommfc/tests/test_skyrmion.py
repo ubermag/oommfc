@@ -1,6 +1,3 @@
-import os
-import shutil
-import pytest
 import oommfc as oc
 import discretisedfield as df
 import micromagneticmodel as mm
@@ -8,10 +5,6 @@ import micromagneticmodel as mm
 
 def test_skyrmion():
     name = 'skyrmion'
-
-    # Remove any previous simulation directories.
-    if os.path.exists(name):
-        shutil.rmtree(name)
 
     Ms = 1.1e6
     A = 1.6e-11
@@ -52,11 +45,8 @@ def test_skyrmion():
 
     # Check the magnetisation at the sample centre.
     value = system.m((0, 0, 0))
-    print(value)
     assert value[2]/Ms < -0.97
 
     # Check the magnetisation at the sample edge.
     value = system.m((50e-9, 0, 0))
     assert value[2]/Ms > 0.5
-
-    md.delete(system)

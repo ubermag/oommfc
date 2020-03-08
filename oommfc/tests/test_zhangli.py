@@ -1,5 +1,3 @@
-import os
-import shutil
 import numpy as np
 import oommfc as oc
 import discretisedfield as df
@@ -19,8 +17,6 @@ class TestZhangLi:
 
     def test_scalar_scalar(self):
         name = 'zhangli_scalar_scalar'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         u = 0
         beta = 0.5
@@ -41,12 +37,8 @@ class TestZhangLi:
         value = system.m(mesh.region.random_point())
         assert np.linalg.norm(np.cross(value, (0, 0.1*Ms, Ms))) < 1e-3
 
-        td.delete(system)
-
     def test_dict_scalar(self):
         name = 'zhangli_dict_scalar'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         H = (0, 0, 1e6)
         u = {'r1': 0, 'r2': 1}
@@ -72,12 +64,8 @@ class TestZhangLi:
         value = system.m((1e-9, 4e-9, 3e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) > 1
 
-        td.delete(system)
-
     def test_field_scalar(self):
         name = 'zhangli_field_scalar'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         mesh = df.Mesh(region=self.region, n=self.n)
 
@@ -108,5 +96,3 @@ class TestZhangLi:
         # u!=0 region
         value = system.m((1e-9, 4e-9, 3e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) > 1
-
-        td.delete(system)

@@ -1,5 +1,3 @@
-import os
-import shutil
 import oommfc as oc
 import discretisedfield as df
 import micromagneticmodel as mm
@@ -15,8 +13,6 @@ class TestDemag:
 
     def test_demag(self):
         name = 'demag'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         Ms = 1e6
 
@@ -30,12 +26,8 @@ class TestDemag:
 
         # Check if it runs. Tests to be added here.
 
-        md.delete(system)
-
     def test_demag_asymptotic_radius(self):
         name = 'demag_asymptotic_radius'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         Ms = 1e6
 
@@ -48,5 +40,3 @@ class TestDemag:
         md.drive(system)
 
         # Check if it runs. Tests to be added here.
-
-        md.delete(system)

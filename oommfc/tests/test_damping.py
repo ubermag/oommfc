@@ -1,5 +1,3 @@
-import os
-import shutil
 import numpy as np
 import oommfc as oc
 import discretisedfield as df
@@ -19,8 +17,6 @@ class TestDamping:
 
     def test_scalar(self):
         name = 'damping_scalar'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         H = (0, 0, 1e6)
         alpha = 0
@@ -40,12 +36,8 @@ class TestDamping:
         value = system.m(mesh.region.random_point())
         assert np.linalg.norm(np.cross(value, (0, 0.1*Ms, Ms))) < 1e-3
 
-        td.delete(system)
-
     def test_dict(self):
         name = 'damping_dict'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         H = (0, 0, 1e6)
         alpha = {'r1': 0, 'r2': 1}
@@ -70,12 +62,8 @@ class TestDamping:
         value = system.m((1e-9, 4e-9, 3e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        td.delete(system)
-
     def test_field(self):
         name = 'damping_field'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         mesh = df.Mesh(region=self.region, n=self.n)
 
@@ -105,5 +93,3 @@ class TestDamping:
         # alpha!=0 region
         value = system.m((1e-9, 4e-9, 3e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
-
-        td.delete(system)

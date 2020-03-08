@@ -1,6 +1,3 @@
-import os
-import shutil
-import numpy as np
 import oommfc as oc
 import discretisedfield as df
 import micromagneticmodel as mm
@@ -9,10 +6,6 @@ from scipy.optimize import bisect  # This is why scipy is a dependency.
 
 def test_stdprob3():
     name = 'stdprob3'
-
-    # Remove any previous simulation directories.
-    if os.path.exists(name):
-        shutil.rmtree(name)
 
     # Function for initiaising the flower state.
     def m_init_flower(pos):
@@ -60,8 +53,6 @@ def test_stdprob3():
 
         md = oc.MinDriver()
         md.drive(system)
-
-        md.delete(system)
 
         return system
 

@@ -1,5 +1,3 @@
-import os
-import shutil
 import random
 import numpy as np
 import oommfc as oc
@@ -23,8 +21,6 @@ class TestExchange:
 
     def test_scalar(self):
         name = 'exchange_scalar'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         A = 1e-12
         Ms = 1e6
@@ -40,12 +36,8 @@ class TestExchange:
 
         assert abs(np.linalg.norm(system.m.average) - Ms) < 1e-3
 
-        md.delete(system)
-
     def test_dict(self):
         name = 'exchange_dict'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         A = {'r1': 0, 'r2': 1e-12, 'r1:r2': 1e-12}
         Ms = 1e6
@@ -70,12 +62,8 @@ class TestExchange:
         value2 = system.m((1e-9, 2e-9, 2e-9))
         assert np.linalg.norm(np.subtract(value1, value2)) < 1
 
-        md.delete(system)
-
     def test_field(self):
         name = 'exchange_field'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         def A_fun(pos):
             x, y, z = pos
@@ -97,5 +85,3 @@ class TestExchange:
         md.drive(system)
 
         assert abs(np.linalg.norm(system.m.average) - Ms) < 1e-3
-
-        md.delete(system)

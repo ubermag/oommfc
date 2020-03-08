@@ -1,5 +1,3 @@
-import os
-import shutil
 import numpy as np
 import oommfc as oc
 import discretisedfield as df
@@ -19,8 +17,6 @@ class TestPrecession:
 
     def test_scalar(self):
         name = 'precession_scalar'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         H = (0, 0, 1e6)
         gamma0 = 0
@@ -40,12 +36,8 @@ class TestPrecession:
         value = system.m(mesh.region.random_point())
         assert np.linalg.norm(np.cross(value, (0, 0.1*Ms, Ms))) < 1e-3
 
-        td.delete(system)
-
     def test_dict(self):
         name = 'precession_dict'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         H = (0, 0, 1e6)
         gamma0 = {'r1': 0, 'r2': 2.211e5}
@@ -70,12 +62,8 @@ class TestPrecession:
         value = system.m((1e-9, 4e-9, 3e-9))
         assert np.linalg.norm(np.cross(value, (0, 0.1*Ms, Ms))) > 1
 
-        td.delete(system)
-
     def test_field(self):
         name = 'precession_field'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         mesh = df.Mesh(region=self.region, n=self.n)
 
@@ -105,5 +93,3 @@ class TestPrecession:
         # gamma!=0 region
         value = system.m((1e-9, 4e-9, 3e-9))
         assert np.linalg.norm(np.cross(value, (0, 0.1*Ms, Ms))) > 1
-
-        td.delete(system)

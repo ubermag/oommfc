@@ -1,5 +1,4 @@
 import os
-import shutil
 import oommfc as oc
 import discretisedfield as df
 import micromagneticmodel as mm
@@ -7,8 +6,6 @@ import micromagneticmodel as mm
 
 def test_multiple_runs():
     name = 'multiple_runs'
-    if os.path.exists(name):
-        shutil.rmtree(name)
 
     p1 = (0, 0, 0)
     p2 = (5e-9, 5e-9, 5e-9)
@@ -39,4 +36,4 @@ def test_multiple_runs():
     dirname = os.path.join(name, 'drive-1')
     assert os.path.exists(dirname)
 
-    td.delete(system)
+    oc.delete(system)

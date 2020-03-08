@@ -1,5 +1,3 @@
-import os
-import shutil
 import numpy as np
 import oommfc as oc
 import discretisedfield as df
@@ -19,8 +17,6 @@ class TestCubicAnisotropy:
 
     def test_scalar_vector_vector(self):
         name = 'cubicanisotropy_scalar_vector_vector'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         mesh = df.Mesh(region=self.region, cell=self.cell)
 
@@ -50,12 +46,8 @@ class TestCubicAnisotropy:
         value = system.m((1e-9, 2e-9, 2e-9))
         assert np.linalg.norm(np.subtract(value, (0, Ms, 0))) < 1e-3
 
-        md.delete(system)
-
     def test_field_vector_vector(self):
         name = 'cubicanisotropy_field_vector_vector'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         mesh = df.Mesh(region=self.region, cell=self.cell)
 
@@ -84,12 +76,8 @@ class TestCubicAnisotropy:
         value = system.m((2e-9, 2e-9, 2e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        md.delete(system)
-
     def test_field_field_field(self):
         name = 'cubicanisotropy_field_field_field'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         mesh = df.Mesh(region=self.region, cell=self.cell)
 
@@ -135,12 +123,8 @@ class TestCubicAnisotropy:
         value = system.m((-3e-9, 2e-9, 2e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        md.delete(system)
-
     def test_dict_vector_vector(self):
         name = 'cubicanisotropy_dict_vector_vector'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         mesh = df.Mesh(region=self.region, cell=self.cell,
                        subregions=self.subregions)
@@ -162,5 +146,3 @@ class TestCubicAnisotropy:
 
         value = system.m((2e-9, 2e-9, 2e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
-
-        md.delete(system)

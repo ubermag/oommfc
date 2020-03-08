@@ -1,6 +1,4 @@
-import os
 import sys
-import shutil
 import oommfc as oc
 import discretisedfield as df
 import micromagneticmodel as mm
@@ -9,9 +7,6 @@ import micromagneticmodel as mm
 class TestCompute:
     def setup(self):
         name = 'compute_tests'
-        if os.path.exists(name):
-            shutil.rmtree(name)
-
         p1 = (0, 0, 0)
         p2 = (10e-9, 2e-9, 2e-9)
         cell = (2e-9, 2e-9, 2e-9)
@@ -32,24 +27,15 @@ class TestCompute:
         for term in self.system.energy:
             assert isinstance(oc.compute(term.energy, self.system), float)
 
-        if os.path.exists(self.system.name):
-            shutil.rmtree(self.system.name)
-
     def test_energy_density(self):
         for term in self.system.energy:
             assert isinstance(oc.compute(term.density, self.system),
                               df.Field)
 
-        if os.path.exists(self.system.name):
-            shutil.rmtree(self.system.name)
-
     def test_effective_field(self):
         for term in self.system.energy:
             assert isinstance(oc.compute(term.effective_field, self.system),
                               df.Field)
-
-        if os.path.exists(self.system.name):
-            shutil.rmtree(self.system.name)
 
     def test_dmi(self):
         if sys.platform != 'win32':
@@ -63,6 +49,3 @@ class TestCompute:
                                   df.Field)
                 assert isinstance(oc.compute(term.effective_field,
                                              self.system), df.Field)
-
-            if os.path.exists(self.system.name):
-                shutil.rmtree(self.system.name)

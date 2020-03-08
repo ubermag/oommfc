@@ -1,6 +1,3 @@
-import os
-import shutil
-import numpy as np
 import oommfc as oc
 import discretisedfield as df
 import micromagneticmodel as mm
@@ -8,10 +5,6 @@ import micromagneticmodel as mm
 
 def test_stdprob5():
     name = 'stdprob5'
-
-    # Remove any previous simulation directories.
-    if os.path.exists(name):
-        shutil.rmtree(name)
 
     # Geometry
     lx = 100e-9  # x dimension of the sample(m)
@@ -55,5 +48,3 @@ def test_stdprob5():
 
     assert -0.35 < mx.min() < -0.30
     assert -0.03 < mx.max() < 0
-
-    td.delete(system)

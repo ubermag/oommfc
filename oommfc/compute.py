@@ -32,6 +32,41 @@ def schedule_script(func):
 
 
 def compute(func, system):
+    """Computes an energy value (``energy``, ``density``, or
+    ``effective_field``).
+
+    Parameters
+    ----------
+    func : callable
+
+        A property of an energy term or an energy container.
+
+    system : micromagneticmodel.System
+
+        Micromagnetic system for which the property is calculated.
+
+    Returns
+    -------
+    numbers.Real, discretisedfield.Field
+
+        Result.
+
+    Examples
+    --------
+    1. Computing energy values.
+
+    >>> import micromagneticmodel as mm
+    >>> import oommfc as oc
+    ...
+    >>> system = mm.examples.macrospin()
+    >>> oc.compute(system.energy.zeeman.energy, system)
+    2
+    >>> oc.compute(system.energy.effective_field, system)
+    Field(...)
+    >>> oc.compute(system.energy.density, system)
+    Field(...)
+
+    """
     td = oc.TimeDriver(total_iteration_limit=1)
     td.drive(system, t=1e-25, n=1, save=True,
              compute=schedule_script(func))

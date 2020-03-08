@@ -1,5 +1,3 @@
-import os
-import shutil
 import numpy as np
 import oommfc as oc
 import discretisedfield as df
@@ -19,8 +17,6 @@ class TestZeeman:
 
     def test_vector(self):
         name = 'zeeman_vector'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         H = (0, 0, 1e6)
         Ms = 1e6
@@ -37,12 +33,8 @@ class TestZeeman:
         value = system.m(mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        md.delete(system)
-
     def test_dict(self):
         name = 'zeeman_dict'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         H = {'r1': (1e5, 0, 0), 'r2': (0, 0, 1e5)}
         Ms = 1e6
@@ -63,12 +55,8 @@ class TestZeeman:
         value = system.m((2e-9, 2e-9, 2e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        md.delete(system)
-
     def test_field(self):
         name = 'zeeman_field'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         def value_fun(pos):
             x, y, z = pos
@@ -94,5 +82,3 @@ class TestZeeman:
 
         value = system.m((2e-9, 2e-9, 2e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
-
-        md.delete(system)

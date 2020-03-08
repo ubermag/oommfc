@@ -10,7 +10,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://ubermag.github.io',
-    author=('Marijan Beg, Ryan A. Pepper, Thomas Kluyver, and Hans Fangohr'),
+    author='Marijan Beg, Ryan A. Pepper, Thomas Kluyver, and Hans Fangohr',
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=['scipy',

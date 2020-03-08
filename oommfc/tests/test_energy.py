@@ -1,5 +1,3 @@
-import os
-import shutil
 import numpy as np
 import oommfc as oc
 import discretisedfield as df
@@ -19,8 +17,6 @@ class TestEnergy:
 
     def test_exchange_zeeman(self):
         name = 'energy_exchange_zeeman'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         A = 1e-12
         H = (1e6, 0, 0)
@@ -38,12 +34,8 @@ class TestEnergy:
         value = system.m(mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (Ms, 0, 0))) < 1e-3
 
-        md.delete(system)
-
     def test_exchange_uniaxialanisotropy(self):
         name = 'exchange_uniaxialanisotropy'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         A = {'r1': 1e-12, 'r2': 0}
         K = 1e5
@@ -64,12 +56,8 @@ class TestEnergy:
         value = system.m(mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (Ms, 0, 0))) < 1e-3
 
-        md.delete(system)
-
     def test_exchange_cubicanisotropy(self):
         name = 'exchange_cubicanisotropy'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         A = {'r1': 1e-12, 'r2': 0}
         K = 1e5
@@ -91,12 +79,8 @@ class TestEnergy:
         value = system.m(mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (Ms, 0, 0))) < 1e-3
 
-        md.delete(system)
-
     def test_exchange_dmi_zeeman(self):
         name = 'exchange_dmi_zeeman'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         mesh = df.Mesh(region=self.region, cell=self.cell,
                        subregions=self.subregions)
@@ -120,12 +104,8 @@ class TestEnergy:
         value = system.m(mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (Ms, 0, 0))) < 1
 
-        md.delete(system)
-
     def test_exchange_dmi_zeeman_uniaxialanisotropy_demag(self):
         name = 'exchange_dmi_zeeman_uniaxialanisotropy'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         mesh = df.Mesh(region=self.region, cell=self.cell,
                        subregions=self.subregions)
@@ -152,5 +132,3 @@ class TestEnergy:
 
         value = system.m(mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (Ms, 0, 0))) < 1
-
-        md.delete(system)

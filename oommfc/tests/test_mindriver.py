@@ -1,6 +1,5 @@
 import os
 import glob
-import shutil
 import oommfc as oc
 import numpy as np
 import discretisedfield as df
@@ -22,8 +21,6 @@ class TestMinDriver:
 
     def test_noevolver_nodriver(self):
         name = 'mindriver_noevolver_nodriver'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         system = mm.System(name=name)
         system.energy = self.energy
@@ -35,12 +32,8 @@ class TestMinDriver:
         value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1e-3
 
-        md.delete(system)
-
     def test_evolver_nodriver(self):
         name = 'mindriver_evolver_nodriver'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         system = mm.System(name=name)
         system.energy = self.energy
@@ -53,12 +46,8 @@ class TestMinDriver:
         value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1e-3
 
-        md.delete(system)
-
     def test_noevolver_driver(self):
         name = 'mindriver_noevolver_driver'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         system = mm.System(name=name)
         system.energy = self.energy
@@ -70,12 +59,8 @@ class TestMinDriver:
         value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1e-3
 
-        md.delete(system)
-
     def test_evolver_driver(self):
         name = 'mindriver_evolver_driver'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         system = mm.System(name=name)
         system.energy = self.energy
@@ -88,12 +73,8 @@ class TestMinDriver:
         value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1e-3
 
-        md.delete(system)
-
     def test_output_files(self):
         name = 'mindriver_output_files'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         system = mm.System(name=name)
         system.energy = self.energy
@@ -113,4 +94,4 @@ class TestMinDriver:
         omffilename = os.path.join(dirname, 'm0.omf')
         assert omffilename in omf_files
 
-        md.delete(system)
+        oc.delete(system)

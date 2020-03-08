@@ -1,5 +1,3 @@
-import os
-import shutil
 import oommfc as oc
 import discretisedfield as df
 import micromagneticmodel as mm
@@ -7,10 +5,6 @@ import micromagneticmodel as mm
 
 def test_stdprob4():
     name = 'stdprob4'
-
-    # Remove any previous simulation directories.
-    if os.path.exists(name):
-        shutil.rmtree(name)
 
     L, d, th = 500e-9, 125e-9, 3e-9   # (m)
     cell = (5e-9, 5e-9, 3e-9)  # (m)
@@ -49,5 +43,3 @@ def test_stdprob4():
     # Eye-norm test.
     assert 0.7 < max(my) < 0.8
     assert -0.5 < min(my) < -0.4
-
-    td.delete(system)

@@ -6,10 +6,10 @@ Marijan Beg<sup>1,2</sup>, Ryan A. Pepper<sup>1</sup>, Thomas Kluyver<sup>2</sup
 
 | Description | Badge |
 | --- | --- |
-| Latest release | [![PyPI version](https://badge.fury.io/py/oommfc.svg)](https://badge.fury.io/py/oommfc) |
-|                | [![Anaconda-Server Badge](https://anaconda.org/conda-forge/oommfc/badges/version.svg)](https://anaconda.org/conda-forge/oommfc) |
-| Build | [![Build Status](https://travis-ci.org/ubermag/oommfc.svg?branch=master)](https://travis-ci.org/ubermag/oommfc) |
-|       | [![Build status](https://ci.appveyor.com/api/projects/status/dsbae0ntj4coa9hl?svg=true)](https://ci.appveyor.com/project/marijanbeg/oommfc) |
+| Releases | [![PyPI version](https://badge.fury.io/py/oommfc.svg)](https://badge.fury.io/py/oommfc) |
+|          | [![Anaconda-Server Badge](https://anaconda.org/conda-forge/oommfc/badges/version.svg)](https://anaconda.org/conda-forge/oommfc) |
+| Builds | [![Build Status](https://travis-ci.org/ubermag/oommfc.svg?branch=master)](https://travis-ci.org/ubermag/oommfc) |
+|        | [![Build status](https://ci.appveyor.com/api/projects/status/dsbae0ntj4coa9hl?svg=true)](https://ci.appveyor.com/project/marijanbeg/oommfc) |
 | Coverage | [![codecov](https://codecov.io/gh/ubermag/oommfc/branch/master/graph/badge.svg)](https://codecov.io/gh/ubermag/oommfc) |
 | Documentation | [![Documentation Status](https://readthedocs.org/projects/oommfc/badge/?version=latest)](https://oommfc.readthedocs.io/en/latest/?badge=latest) |
 | Binder | [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ubermag/oommfc/master?urlpath=lab/tree/docs/ipynb/index.ipynb) |

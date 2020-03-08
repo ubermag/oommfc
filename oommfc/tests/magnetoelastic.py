@@ -39,5 +39,3 @@ class TestMagnetoElastic:
         md.drive(system)
 
         # Assertions have to be invented. Checks only if it runs.
-
-        md.delete(system)

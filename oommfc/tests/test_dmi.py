@@ -1,6 +1,4 @@
-import os
 import sys
-import shutil
 import random
 import numpy as np
 import oommfc as oc
@@ -24,8 +22,6 @@ class TestDMI:
 
     def test_scalar(self):
         name = 'dmi_scalar'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         D = 1e-3
         Ms = 1e6
@@ -43,12 +39,8 @@ class TestDMI:
         # 0.
         assert np.linalg.norm(system.m.average) < 1
 
-        md.delete(system)
-
     def test_dict(self):
         name = 'dmi_dict'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         D = {'r1': 0, 'r2': 1e-3}
         Ms = 1e6
@@ -68,8 +60,6 @@ class TestDMI:
         # the average should be 0.
         assert np.linalg.norm(system.m['r2'].average) < 1
 
-        md.delete(system)
-
     def test_crystalclass(self):
         name = 'dmi_crystalclass'
 
@@ -82,9 +72,6 @@ class TestDMI:
             if crystalclass != 'Cnv' and sys.platform == 'win32':
                 pass
             else:
-                if os.path.exists(name):
-                    shutil.rmtree(name)
-
                 system = mm.System(name=name)
                 system.energy = mm.DMI(D=D, crystalclass=crystalclass)
 
@@ -96,5 +83,3 @@ class TestDMI:
                 # There are 4N cells in the mesh. Because of that the
                 # average should be 0.
                 assert np.linalg.norm(system.m.average) < 1
-
-                md.delete(system)

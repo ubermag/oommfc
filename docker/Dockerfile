@@ -1,4 +1,4 @@
-FROM joommf/oommf
+FROM ubermag/oommf
 
 USER root
 

@@ -11,10 +11,6 @@ import micromagneticmodel as mm
 def test_info_file():
     name = 'info_file'
 
-    # Remove any previous simulation directories.
-    if os.path.exists(name):
-        shutil.rmtree(name)
-
     L = 30e-9   # (m)
     cell = (10e-9, 15e-9, 5e-9)  # (m)
     A = 1.3e-11  # (J/m)
@@ -79,4 +75,4 @@ def test_info_file():
     assert isinstance(info['args'], dict)
     assert info['args'] == {}
 
-    md.delete(system)
+    oc.delete(system)

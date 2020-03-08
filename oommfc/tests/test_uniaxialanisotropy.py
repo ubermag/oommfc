@@ -1,5 +1,3 @@
-import os
-import shutil
 import numpy as np
 import oommfc as oc
 import discretisedfield as df
@@ -19,8 +17,6 @@ class TestUniaxialAnisotropy:
 
     def test_scalar_vector(self):
         name = 'uniaxialanisotropy_scalar_vector'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         K = 1e5
         u = (0, 0, 1)
@@ -38,12 +34,8 @@ class TestUniaxialAnisotropy:
         value = system.m(mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        md.delete(system)
-
     def test_field_vector(self):
         name = 'uniaxialanisotropy_field_vector'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         def value_fun(pos):
             x, y, z = pos
@@ -71,12 +63,8 @@ class TestUniaxialAnisotropy:
         value = system.m((2e-9, 2e-9, 2e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        md.delete(system)
-
     def test_scalar_field(self):
         name = 'uniaxialanisotropy_scalar_field'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         def value_fun(pos):
             x, y, z = pos
@@ -104,12 +92,8 @@ class TestUniaxialAnisotropy:
         value = system.m((2e-9, 2e-9, 2e-9))
         assert np.linalg.norm(np.subtract(value, (0, Ms, 0))) < 1e-3
 
-        md.delete(system)
-
     def test_field_field(self):
         name = 'uniaxialanisotropy_field_field'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         def K_fun(pos):
             x, y, z = pos
@@ -147,12 +131,8 @@ class TestUniaxialAnisotropy:
         value = system.m((0, 0, 0))
         assert np.linalg.norm(np.cross(value, (Ms, Ms, 0))) < 1e-3
 
-        md.delete(system)
-
     def test_dict_vector(self):
         name = 'uniaxialanisotropy_dict_vector'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         mesh = df.Mesh(region=self.region, cell=self.cell,
                        subregions=self.subregions)
@@ -173,12 +153,8 @@ class TestUniaxialAnisotropy:
         value = system.m((2e-9, 2e-9, 2e-9))
         assert np.linalg.norm(np.subtract(value, (0, 0, Ms))) < 1e-3
 
-        md.delete(system)
-
     def test_field_dict(self):
         name = 'uniaxialanisotropy_field_dict'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         def K_fun(pos):
             x, y, z = pos
@@ -215,5 +191,3 @@ class TestUniaxialAnisotropy:
 
         value = system.m((0, 0, 0))
         assert np.linalg.norm(np.cross(value, (Ms, Ms, 0))) < 1e-3
-
-        md.delete(system)

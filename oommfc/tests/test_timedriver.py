@@ -1,9 +1,8 @@
 import os
 import glob
-import shutil
 import pytest
-import oommfc as oc
 import numpy as np
+import oommfc as oc
 import discretisedfield as df
 import micromagneticmodel as mm
 
@@ -25,8 +24,6 @@ class TestTimeDriver:
 
     def test_noevolver_nodriver(self):
         name = 'timedriver_noevolver_nodriver'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         system = mm.System(name=name)
         system.energy = self.energy
@@ -39,12 +36,8 @@ class TestTimeDriver:
         value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1
 
-        td.delete(system)
-
     def test_rungekutta_evolver_nodriver(self):
         name = 'timedriver_rungekutta_evolver_nodriver'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         system = mm.System(name=name)
         system.energy = self.energy
@@ -58,12 +51,8 @@ class TestTimeDriver:
         value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1
 
-        td.delete(system)
-
     def test_euler_evolver_nodriver(self):
         name = 'timedriver_euler_evolver_nodriver'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         system = mm.System(name=name)
         system.energy = self.energy
@@ -77,12 +66,8 @@ class TestTimeDriver:
         value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1
 
-        td.delete(system)
-
     def test_noevolver_driver(self):
         name = 'timedriver_noevolver_driver'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         system = mm.System(name=name)
         system.energy = self.energy
@@ -95,12 +80,8 @@ class TestTimeDriver:
         value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1
 
-        td.delete(system)
-
     def test_noprecession(self):
         name = 'timedriver_noprecession'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         system = mm.System(name=name)
         system.energy = self.energy
@@ -113,12 +94,8 @@ class TestTimeDriver:
         value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) < 1
 
-        td.delete(system)
-
     def test_nodamping(self):
         name = 'timedriver_nodamping'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         system = mm.System(name=name)
         system.energy = self.energy
@@ -131,12 +108,8 @@ class TestTimeDriver:
         value = system.m(self.mesh.region.random_point())
         assert np.linalg.norm(np.subtract(value, (0, 0, self.Ms))) > 1e3
 
-        td.delete(system)
-
     def test_output_files(self):
         name = 'timedriver_output_files'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         system = mm.System(name=name)
         system.energy = self.energy
@@ -157,12 +130,8 @@ class TestTimeDriver:
         omffilename = os.path.join(dirname, 'm0.omf')
         assert omffilename in omf_files
 
-        td.delete(system)
-
     def test_drive_exception(self):
         name = 'timedriver_exception'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         system = mm.System(name=name)
         system.energy = self.energy
@@ -174,5 +143,3 @@ class TestTimeDriver:
             td.drive(system, t=-0.1e-9, n=10)
         with pytest.raises(ValueError):
             td.drive(system, t=0.1e-9, n=-10)
-
-        td.delete(system)
