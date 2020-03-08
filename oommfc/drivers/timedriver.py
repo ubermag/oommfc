@@ -4,26 +4,34 @@ from .driver import Driver
 class TimeDriver(Driver):
     """Time driver.
 
-    This class is used for collecting additional parameters, which
-    could be passed to `Oxs_TimeDriver`. Only parameters which are
-    defined in `_allowed_kwargs` can be passed.
+    Only attributes in ``_allowed_attributes`` can be defined. For details on
+    possible values for individual attributes and their default values, please
+    refer to ``Oxs_TimeDriver`` documentation (https://math.nist.gov/oommf/).
 
     Examples
     --------
-    1. Defining driver
+    1. Defining driver with a keyword argument.
+
+    >>> import oommfc as oc
+    ...
+    >>> td = oc.TimeDriver(total_iteration_limit=5)
+
+    2. Passing an argument which is not allowed.
+
+    >>> import oommfc as oc
+    ...
+    >>> td = oc.TimeDriver(myarg=1)
+    Traceback (most recent call last):
+       ...
+    AttributeError: ...
+
+    3. Getting the list of allowed attributes.
 
     >>> import oommfc as oc
     ...
     >>> td = oc.TimeDriver()
-
-    2. Passing an argument which is not allowed
-
-    >>> import oommfc as oc
-    ...
-    >>> td = oc.TimeDriver(myarg=3)
-    Traceback (most recent call last):
-       ...
-    AttributeError: ...
+    >>> td._allowed_attributes
+    [...]
 
     """
     _allowed_attributes = ['evolver',
@@ -45,11 +53,10 @@ class TimeDriver(Driver):
                            'report_wall_time']
 
     def _checkargs(self, **kwargs):
-        if kwargs['t'] <= 0:
-            msg = f'Cannot drive with t={kwargs["t"]}.'
+        t, n = kwargs['t'], kwargs['n']
+        if t <= 0:
+            msg = f'Cannot drive with t={t}.'
             raise ValueError(msg)
-        elif kwargs['n'] <= 0 or not isinstance(kwargs['n'], int):
-            msg = f'Cannot drive with n={kwargs["n"]}.'
+        elif n <= 0 or not isinstance(n, int):
+            msg = f'Cannot drive with n={n}.'
             raise ValueError(msg)
-        else:
-            return True

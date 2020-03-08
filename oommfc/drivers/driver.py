@@ -14,10 +14,17 @@ import micromagneticmodel as mm
 class Driver(mm.Driver):
     @abc.abstractmethod
     def _checkargs(self, **kwargs):
+        """Abstract method defined in a derived driver class.
+
+        """
         pass  # pragma: no cover
 
     def _drive(self, system, basedirname, overwrite=False,
                compute=None, runner=None, **kwargs):
+        """Convenience function, which allows to drive in different Python
+        contexts.
+
+        """
         # This method is implemented in the derived driver class. It raises
         # exception if any of the arguments are not valid.
         self._checkargs(**kwargs)
@@ -97,11 +104,16 @@ class Driver(mm.Driver):
         """Drives the system in phase space.
 
         Takes ``micromagneticmodel.System`` and drives it in the phase space.
-        If ``overwrite=True`` is passed, the directory with all previously
-        created files will be deleted before the system is run. This method
-        accepts any other arguments that could be required by the specific
-        driver. After the drive is executed, system's magnetisation and
-        datatable will be updated.
+        If ``save=True``, the resulting files obtained from the OOMMF run are
+        saved in the current directory (in ``system.name`` directory). If
+        ``overwrite=True`` is passed, the directory with all previously created
+        files (if exists) will be deleted before the system is run. To save a
+        specific value during an OOMMF run ``Specify...`` line can be passed
+        using ``compute``. To specify the way OOMMF is run, an
+        ``oommfc.oommf.OOMMFRunner`` can be passed using ``runner``.
+
+        This method accepts any other arguments that could be required by the
+        specific driver.
 
         Parameters
         ----------
@@ -109,10 +121,26 @@ class Driver(mm.Driver):
 
           System to be driven.
 
+        save : bool
+
+            If ``True`` files created during an OOMMF run will be saved in the
+            current directory. Defaults to ``False``.
+
         overwrite : bool
 
-          If ``True``, previously created files will be deleted. Defaults to
-          ``False``.
+            If the directory from the previous drive already exists, it will be
+            overwritten. Defaults to ``False``.
+
+        compute : str
+
+            ``Schedule...`` MIF line which can be added to the OOMMF file to
+            save additional data. Defaults to ``None``.
+
+        runner : oommfc.oommf.OOMMFRunner
+
+            OOMMF Runner which is going to be used for running OOMMF. If
+            ``None``, OOMMF runner will be found automatically. Defaults to
+            ``None``.
 
         Examples
         --------
@@ -138,10 +166,6 @@ class Driver(mm.Driver):
         >>> td = oc.TimeDriver()
         >>> td.drive(system, t=0.1e-9, n=10)
         202...
-
-        3. Delete files.
-
-        >>> td.delete(system)
 
         """
         if save:
