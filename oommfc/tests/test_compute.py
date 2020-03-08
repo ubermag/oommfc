@@ -27,16 +27,22 @@ class TestCompute:
     def test_energy(self):
         for term in self.system.energy:
             assert isinstance(oc.compute(term.energy, self.system), float)
+        assert isinstance(oc.compute(self.system.energy.energy, self.system),
+                          float)
 
     def test_energy_density(self):
         for term in self.system.energy:
-            assert isinstance(oc.compute(term.density, self.system),
-                              df.Field)
+            assert isinstance(oc.compute(term.density, self.system), df.Field)
+        assert isinstance(oc.compute(self.system.energy.density, self.system),
+                          df.Field)
+
 
     def test_effective_field(self):
         for term in self.system.energy:
             assert isinstance(oc.compute(term.effective_field, self.system),
                               df.Field)
+        assert isinstance(oc.compute(self.system.energy.effective_field,
+                                     self.system), df.Field)
 
     def test_invalid_func(self):
         with pytest.raises(ValueError):
