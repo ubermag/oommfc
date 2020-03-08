@@ -4,20 +4,20 @@ import micromagneticmodel as mm
 class RungeKuttaEvolver(mm.Evolver):
     """Runge-Kutta evolver.
 
-    This class is used for collecting additional parameters, which
-    cannot be extracted from the dynamics equation, but could be
-    passed to `Oxs_RungeKuttaEvolve`. Only parameters which are
-    defined in `_allowed_kwargs` can be passed.
+    Only attributes in ``_allowed_attributes`` can be defined. For details on
+    possible values for individual attributes and their default values, please
+    refer to ``Oxs_RungeKuttaEvolver`` documentation
+    (https://math.nist.gov/oommf/).
 
     Examples
     --------
-    1. Defining evolver
+    1. Defining evolver with a keyword argument.
 
     >>> import oommfc as oc
     ...
-    >>> evolver = oc.RungeKuttaEvolver(method='rkf54s')
+    >>> evolver = oc.RungeKuttaEvolver(method='rk4')
 
-    2. Passing an argument which is not allowed
+    2. Passing an argument which is not allowed.
 
     >>> import oommfc as oc
     ...
@@ -25,6 +25,14 @@ class RungeKuttaEvolver(mm.Evolver):
     Traceback (most recent call last):
        ...
     AttributeError: ...
+
+    3. Getting the list of allowed attributes.
+
+    >>> import oommfc as oc
+    ...
+    >>> evolver = oc.RungeKuttaEvolver()
+    >>> evolver._allowed_attributes
+    [...]
 
     """
     _allowed_attributes = ['alpha',

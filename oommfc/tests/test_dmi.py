@@ -1,5 +1,6 @@
 import sys
 import random
+import pytest
 import numpy as np
 import oommfc as oc
 import discretisedfield as df
@@ -60,6 +61,9 @@ class TestDMI:
         # the average should be 0.
         assert np.linalg.norm(system.m['r2'].average) < 1
 
+    @pytest.mark.skipif(sys.platform=='win32',
+                        reason=('Different crystalclasses are not '
+                                'available on Windows.'))
     def test_crystalclass(self):
         name = 'dmi_crystalclass'
 
@@ -69,17 +73,14 @@ class TestDMI:
         mesh = df.Mesh(region=self.region, cell=self.cell)
 
         for crystalclass in ['Cnv', 'T', 'O', 'D2d']:
-            if crystalclass != 'Cnv' and sys.platform == 'win32':
-                pass
-            else:
-                system = mm.System(name=name)
-                system.energy = mm.DMI(D=D, crystalclass=crystalclass)
+            system = mm.System(name=name)
+            system.energy = mm.DMI(D=D, crystalclass=crystalclass)
 
-                system.m = df.Field(mesh, dim=3, value=self.random_m, norm=Ms)
+            system.m = df.Field(mesh, dim=3, value=self.random_m, norm=Ms)
 
-                md = oc.MinDriver()
-                md.drive(system)
+            md = oc.MinDriver()
+            md.drive(system)
 
-                # There are 4N cells in the mesh. Because of that the
-                # average should be 0.
-                assert np.linalg.norm(system.m.average) < 1
+            # There are 4N cells in the mesh. Because of that the
+            # average should be 0.
+            assert np.linalg.norm(system.m.average) < 1

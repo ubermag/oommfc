@@ -35,7 +35,7 @@ class OOMMFRunner:
         seconds = '({:0.1f} s)'.format(toc - tic)
         print(seconds)
 
-        if res.returncode is not 0:
+        if res.returncode != 0:
             if sys.platform != 'win32':
                 # Only on Linux and MacOS - on Windows we do not get
                 # stderr and stdout.
@@ -228,9 +228,8 @@ def status():
     system = mm.examples.macrospin()
     try:
         td = oc.TimeDriver()
-        td.drive(system, t=1e-12, n=1, overwrite=True)
+        td.drive(system, t=1e-12, n=1)
         print('OOMMF found and running.')
-        oc.delete(system)
         return 0
     except (EnvironmentError, RuntimeError):
         print('Cannot find OOMMF.')
@@ -256,7 +255,7 @@ def overhead():
 
     # Running OOMMF directly.
     oommf_runner = get_oommf_runner()
-    mifpath = os.path.realpath(os.path.join('macrospin',
+    mifpath = os.path.realpath(os.path.join(system.name,
                                             'drive-0',
                                             'macrospin.mif'))
     oommf_start = time.time()

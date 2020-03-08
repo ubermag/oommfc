@@ -4,7 +4,9 @@ import micromagneticmodel as mm
 class CGEvolver(mm.Evolver):
     """Conjugate-Gradient evolver.
 
-    Only parameters which are defined in ``_allowed_attributes`` can be passed.
+    Only attributes in ``_allowed_attributes`` can be defined. For details on
+    possible values for individual attributes and their default values, please
+    refer to ``Oxs_CGEvolver`` documentation (https://math.nist.gov/oommf/).
 
     Examples
     --------
@@ -22,6 +24,14 @@ class CGEvolver(mm.Evolver):
     Traceback (most recent call last):
        ...
     AttributeError: ...
+
+    3. Getting the list of allowed attributes.
+
+    >>> import oommfc as oc
+    ...
+    >>> evolver = oc.CGEvolver()
+    >>> evolver._allowed_attributes
+    [...]
 
     """
     _allowed_attributes = ['gradient_reset_angle',

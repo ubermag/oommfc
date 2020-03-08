@@ -1,4 +1,5 @@
 import sys
+import pytest
 import oommfc as oc
 import discretisedfield as df
 import micromagneticmodel as mm
@@ -36,6 +37,10 @@ class TestCompute:
         for term in self.system.energy:
             assert isinstance(oc.compute(term.effective_field, self.system),
                               df.Field)
+
+    def test_invalid_func(self):
+        with pytest.rasies(ValueError):
+            val = oc.compute(system.energy.__len__, system)
 
     def test_dmi(self):
         if sys.platform != 'win32':

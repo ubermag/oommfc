@@ -9,9 +9,8 @@ import micromagneticmodel as mm
 
 
 def oxs_class(term):
-    if isinstance(term, mm.EnergyTerm):
-        mif = getattr(oc.scripts.energies, f'{term.name}_script')(term)
-        return re.search(r'Oxs_([\w_]+)', mif).group(1)
+    mif = getattr(oc.scripts.energies, f'{term.name}_script')(term)
+    return re.search(r'Oxs_([\w_]+)', mif).group(1)
 
 
 def schedule_script(func):
@@ -32,8 +31,8 @@ def schedule_script(func):
 
 
 def compute(func, system):
-    """Computes an energy value (``energy``, ``density``, or
-    ``effective_field``).
+    """Computes a particular value of an energy term or energy container
+    (``energy``, ``density``, or ``effective_field``).
 
     Parameters
     ----------
@@ -49,11 +48,11 @@ def compute(func, system):
     -------
     numbers.Real, discretisedfield.Field
 
-        Result.
+        Resulting value.
 
     Examples
     --------
-    1. Computing energy values.
+    1. Computing values of energy terms.
 
     >>> import micromagneticmodel as mm
     >>> import oommfc as oc
@@ -94,6 +93,7 @@ def compute(func, system):
     else:
         output = df.Field.fromfile(output_file)
 
+    # Delete "compute" directory after the data is extracted.
     shutil.rmtree(dirname)
 
     return output

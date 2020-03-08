@@ -130,6 +130,8 @@ class TestTimeDriver:
         omffilename = os.path.join(dirname, 'm0.omf')
         assert omffilename in omf_files
 
+        oc.delete(system)
+
     def test_drive_exception(self):
         name = 'timedriver_exception'
 

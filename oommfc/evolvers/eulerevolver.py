@@ -4,20 +4,19 @@ import micromagneticmodel as mm
 class EulerEvolver(mm.Evolver):
     """Euler evolver.
 
-    This class is used for collecting additional parameters, which
-    cannot be extracted from the dynamics equation, but could be
-    passed to `Oxs_EulerEvolve`. Only parameters which are defined in
-    `_allowed_kwargs` can be passed.
+    Only attributes in ``_allowed_attributes`` can be defined. For details on
+    possible values for individual attributes and their default values, please
+    refer to ``Oxs_EulerEvolver`` documentation (https://math.nist.gov/oommf/).
 
     Examples
     --------
-    1. Defining evolver
+    1. Defining evolver with a keyword argument.
 
     >>> import oommfc as oc
     ...
-    >>> evolver = oc.EulerEvolver(start_dm=0.02)
+    >>> evolver = oc.EulerEvolver(min_timestep=0)
 
-    2. Passing an argument which is not allowed
+    2. Passing an argument which is not allowed.
 
     >>> import oommfc as oc
     ...
@@ -25,6 +24,14 @@ class EulerEvolver(mm.Evolver):
     Traceback (most recent call last):
        ...
     AttributeError: ...
+
+    3. Getting the list of allowed attributes.
+
+    >>> import oommfc as oc
+    ...
+    >>> evolver = oc.EulerEvolver()
+    >>> evolver._allowed_attributes
+    [...]
 
     """
     _allowed_attributes = ['alpha',
