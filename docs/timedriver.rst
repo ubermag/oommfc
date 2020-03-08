@@ -2,6 +2,6 @@
 =====================
 
 .. autoclass:: oommfc.TimeDriver
-   :members:
-   :inherited-members:
-   :no-undoc-members:
+    :members:
+    :inherited-members:
+    :special-members:

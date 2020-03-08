@@ -4,4 +4,4 @@
 .. autoclass:: oommfc.MinDriver
    :members:
    :inherited-members:
-   :no-undoc-members:
+   :special-members:

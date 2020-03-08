@@ -39,7 +39,7 @@ class TestCompute:
                               df.Field)
 
     def test_invalid_func(self):
-        with pytest.rasies(ValueError):
+        with pytest.raises(ValueError):
             val = oc.compute(system.energy.__len__, system)
 
     def test_dmi(self):

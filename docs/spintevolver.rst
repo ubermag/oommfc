@@ -2,6 +2,6 @@
 =======================
 
 .. autoclass:: oommfc.SpinTEvolver
-   :members:
-   :inherited-members:
-   :no-undoc-members:
+    :members:
+    :special-members:
+    :inherited-members:

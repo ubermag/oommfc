@@ -11,3 +11,5 @@ API Reference
    spintevolver
    mindriver
    timedriver
+   compute
+   delete

@@ -3,5 +3,5 @@
 
 .. autoclass:: oommfc.CGEvolver
    :members:
+   :special-members:
    :inherited-members:
-   :no-undoc-members:
