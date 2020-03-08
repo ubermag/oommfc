@@ -1,4 +1,3 @@
-import oommfc as oc
 import micromagneticmodel as mm
 
 

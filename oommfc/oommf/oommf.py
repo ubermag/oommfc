@@ -6,7 +6,6 @@ import logging
 import shutil
 import oommfc as oc
 import subprocess as sp
-import discretisedfield as df
 import micromagneticmodel as mm
 
 log = logging.getLogger(__name__)
