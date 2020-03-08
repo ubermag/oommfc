@@ -108,7 +108,7 @@ class Driver(mm.Driver):
         saved in the current directory (in ``system.name`` directory). If
         ``overwrite=True`` is passed, the directory with all previously created
         files (if exists) will be deleted before the system is run. To save a
-        specific value during an OOMMF run ``Specify...`` line can be passed
+        specific value during an OOMMF run ``Schedule...`` line can be passed
         using ``compute``. To specify the way OOMMF is run, an
         ``oommfc.oommf.OOMMFRunner`` can be passed using ``runner``.
 

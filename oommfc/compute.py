@@ -9,11 +9,17 @@ import micromagneticmodel as mm
 
 
 def oxs_class(term):
+    """Extract the OOMMF ``Oxs_`` class name of an individual term.
+
+    """
     mif = getattr(oc.scripts.energies, f'{term.name}_script')(term)
     return re.search(r'Oxs_([\w_]+)', mif).group(1)
 
 
 def schedule_script(func):
+    """Generate OOMMF ``Schedule...`` line for saving an individual value.
+
+    """
     if func.__name__ == 'energy':
         return ''  # Datatable with energies is saved by default.
     elif func.__name__ == 'effective_field':
@@ -26,6 +32,9 @@ def schedule_script(func):
             output = 'Oxs_RungeKuttaEvolve:evolver:Total energy density'
         else:
             output = f'Oxs_{oxs_class(func.__self__)}::Energy density'
+    else:
+        msg = f'Computing the value of {func} is not supported.'
+        raise ValueError(msg)
 
     return 'Schedule \"{}\" archive Step 1\n'.format(output)
 
@@ -79,9 +88,6 @@ def compute(func, system):
         extension = '*.ohf'
     elif func.__name__ == 'density':
         extension = '*.oef'
-    else:
-        msg = f'Computing the value of {func} is not supported.'
-        raise ValueError(msg)
 
     dirname = os.path.join(system.name, f'compute-{system.drive_number}')
     output_file = max(glob.iglob(os.path.join(dirname, extension)),

@@ -46,7 +46,7 @@ class TestCompute:
 
     def test_invalid_func(self):
         with pytest.raises(ValueError):
-            val = oc.compute(system.energy.__len__, system)
+            val = oc.compute(self.system.energy.__len__, self.system)
 
     def test_dmi(self):
         if sys.platform != 'win32':
