@@ -1,6 +1,7 @@
 import re
 import os
 import glob
+import shutil
 import oommfc as oc
 import ubermagtable as ut
 import discretisedfield as df
@@ -32,7 +33,8 @@ def schedule_script(func):
 
 def compute(func, system):
     td = oc.TimeDriver(total_iteration_limit=1)
-    td.drive(system, t=1e-25, n=1, compute=schedule_script(func))
+    td.drive(system, t=1e-25, n=1, save=True,
+             compute=schedule_script(func))
 
     if func.__name__ == 'energy':
         extension = '*.odt'
@@ -44,15 +46,19 @@ def compute(func, system):
         msg = f'Computing the value of {func} is not supported.'
         raise ValueError(msg)
 
-    dirname = os.path.join(system.name, f'compute-{system.drive_number-1}')
+    dirname = os.path.join(system.name, f'compute-{system.drive_number}')
     output_file = max(glob.iglob(os.path.join(dirname, extension)),
                       key=os.path.getctime)
 
     if func.__name__ == 'energy':
         table = ut.read(output_file, rename=False)
         if isinstance(func.__self__, mm.Energy):
-            return table['RungeKuttaEvolve:evolver:Total energy'][0]
+            output = table['RungeKuttaEvolve:evolver:Total energy'][0]
         else:
-            return table[f'{oxs_class(func.__self__)}::Energy'][0]
+            output = table[f'{oxs_class(func.__self__)}::Energy'][0]
     else:
-        return df.Field.fromfile(output_file)
+        output = df.Field.fromfile(output_file)
+
+    shutil.rmtree(dirname)
+
+    return output

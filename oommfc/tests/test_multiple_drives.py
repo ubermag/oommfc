@@ -26,7 +26,7 @@ def test_multiple_runs():
     system.m = df.Field(mesh, dim=3, value=(0, 0.1, 1), norm=Ms)
 
     md = oc.MinDriver()
-    md.drive(system)
+    md.drive(system, save=True)
 
     dirname = os.path.join(name, 'drive-0')
     assert os.path.exists(dirname)
@@ -34,7 +34,7 @@ def test_multiple_runs():
     system.energy.zeeman.H = (1e6, 0, 0)
 
     td = oc.TimeDriver()
-    td.drive(system, t=100e-12, n=10)
+    td.drive(system, t=100e-12, n=10, save=True)
 
     dirname = os.path.join(name, 'drive-1')
     assert os.path.exists(dirname)

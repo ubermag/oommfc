@@ -3,6 +3,7 @@ import os
 import glob
 import json
 import shutil
+import tempfile
 import datetime
 import oommfc as oc
 import ubermagtable as ut
@@ -11,7 +12,8 @@ import micromagneticmodel as mm
 
 
 class Driver(mm.Driver):
-    def drive(self, system, overwrite=False, **kwargs):
+    def drive(self, system, save=False, overwrite=False,
+              compute=None, runner=None, **kwargs):
         """Drives the system in phase space.
 
         Takes ``micromagneticmodel.System`` and drives it in the phase space.
@@ -65,27 +67,33 @@ class Driver(mm.Driver):
         # This method is implemented in the derived driver class.
         self._checkargs(**kwargs)
 
-        # Generate the necessary filenames.
-        if 'compute' in kwargs.keys():
-            subdir = f'compute-{system.drive_number}'
-        else:
+        # Generate directory.
+        if compute is None:
             subdir = f'drive-{system.drive_number}'
-        dirname = os.path.join(system.name, subdir)
-        miffilename = f'{system.name}.mif'
-        jsonfilename = 'info.json'
-
-        # Check whether a directory already exists.
-        if os.path.exists(dirname):
-            if overwrite:
-                self.delete(system)
-            else:
-                msg = (f'Directory {dirname} already exists. To overwrite '
-                       'it, pass overwrite=True to the drive method.')
-                raise FileExistsError(msg)
+        else:
+            subdir = f'compute-{system.drive_number}'
+        if save:
+            dirname = os.path.join(system.name, subdir)
+            # Check whether a directory already exists.
+            if os.path.exists(dirname):
+                if overwrite:
+                    self.delete(system)
+                else:
+                    msg = (f'Directory {dirname} already exists. To overwrite '
+                           'it, pass overwrite=True to the drive method.')
+                    raise FileExistsError(msg)
+        else:
+            # Results are saved in a temporary directory.
+            tmpdir = tempfile.TemporaryDirectory()
+            dirname = os.path.join(tmpdir.name, system.name, subdir)
 
         # Make a directory inside which OOMMF will be run.
         if not os.path.exists(dirname):
             os.makedirs(dirname)
+
+        # Generate the necessary filenames.
+        miffilename = f'{system.name}.mif'
+        jsonfilename = 'info.json'
 
         # Change directory to dirname
         cwd = os.getcwd()
@@ -93,7 +101,8 @@ class Driver(mm.Driver):
 
         # Generate and save mif file.
         mif = oc.scripts.system_script(system)
-        mif += oc.scripts.driver_script(self, system, **kwargs)
+        mif += oc.scripts.driver_script(self, system, compute=compute,
+                                        **kwargs)
         with open(miffilename, 'w') as miffile:
             miffile.write(mif)
 
@@ -108,12 +117,13 @@ class Driver(mm.Driver):
             jsonfile.write(json.dumps(info))
 
         # Run OOMMF.
-        oommf = oc.oommf.get_oommf_runner()
-        oommf.call(argstr=miffilename)
+        if runner is None:
+            runner = oc.oommf.get_oommf_runner()
+        runner.call(argstr=miffilename)
 
         # Update system's m and datatable attributes if the derivation of E,
         # Heff, or energy density was not asked.
-        if 'compute' not in kwargs:
+        if compute is None:
             # Update system's magnetisation. An example .omf filename:
             # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
             omffiles = glob.iglob(f'{system.name}*.omf')
@@ -126,8 +136,14 @@ class Driver(mm.Driver):
         # Change directory back to cwd.
         os.chdir(cwd)
 
-        # Increase the system's drive_number counter.
-        system.drive_number += 1
+        # Delete temporary directory if necessary.
+        if not save:
+            tmpdir.cleanup()
+
+        # Increment drive_number independent of whether the files are saved
+        # or not.
+        if compute is None:
+            system.drive_number += 1
 
     def delete(self, system):
         if os.path.exists(system.name):

@@ -27,7 +27,7 @@ class OOMMFRunner:
                                                             now.day,
                                                             now.hour,
                                                             now.minute)
-        print('{}: Running OOMMF ({}) ... '.format(timestamp, argstr), end='')
+        print(f'{timestamp}: Running OOMMF ({argstr}) ... ', end='')
 
         tic = time.time()
         res = self._call(argstr=argstr, need_stderr=need_stderr)
@@ -89,7 +89,7 @@ class TclOOMMFRunner(OOMMFRunner):
         return sp.run(cmd, stdout=stdout, stderr=stderr)
 
     def _kill(self, targets=['all']):
-        sp.run(["tclsh", self.oommf_tcl, "killoommf"] + targets)
+        sp.run(['tclsh', self.oommf_tcl, 'killoommf'] + targets)
 
 
 class ExeOOMMFRunner(OOMMFRunner):
@@ -108,7 +108,7 @@ class ExeOOMMFRunner(OOMMFRunner):
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
 
     def _kill(self, targets=['all']):
-        sp.run([self.oommf_exe, "killoommf"] + targets)
+        sp.run([self.oommf_exe, 'killoommf'] + targets)
 
 
 class DockerOOMMFRunner(OOMMFRunner):
@@ -116,8 +116,8 @@ class DockerOOMMFRunner(OOMMFRunner):
 
     """
     def __init__(self, docker_exe='docker', image='ubermag/oommf'):
+        self.docker_exe = 'docker'
         self.image = image
-        self.docker_exe = docker_exe
 
     def _call(self, argstr, need_stderr=False):
         cmd = [self.docker_exe, 'run', '-v', os.getcwd()+':/io',
@@ -135,22 +135,29 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
                      oommf_exe='oommf', docker_exe='docker'):
     """Find the best available way to run OOMMF.
 
-    Returns an OOMMFRunner object, or raises EnvironmentError if no suitable
-    method is found.
+    Returns an ``oommfc.oommf.OOMMFRunner`` object, or raises
+    ``EnvironmentError`` if no suitable method is found.
 
     Parameters
     ----------
     use_cache : bool
+
       The first call to this function will determine the best way to run OOMMF
-      and cache it. Normally, subsequent calls will return the OOMMFRunner
-      object from the cache. Setting this parameter to False will cause it to
-      check for available methods again.
+      and cache it. Normally, subsequent calls will return the ``OOMMFRunner``
+      object from the cache. Setting this parameter to ``False`` will cause it
+      to check for available methods again.
+
     envvar : str
-      Name of the environment variable containing the path to oommf.tcl
+
+      Name of the environment variable containing the path to ``oommf.tcl``.
+
     oommf_exe : str
-      The name or path of the executable oommf command
+
+      The name or path of the executable ``oommf`` command.
+
     docker_exe : str
-      The name or path of the docker command
+
+      The name or path of the docker command.
 
     """
     global _cached_oommf_runner
@@ -169,8 +176,8 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
         else:
             if res.returncode:
                 log.warning('OOMMFTCL is set, but OOMMF could not be run.\n'
-                            'stdout:\n{}\n'
-                            'stderr:\n{}'.format(res.stdout, res.stderr))
+                            f'stdout:\n{res.stdout}\n'
+                            f'stderr:\n{res.stderr}')
             else:
                 _cached_oommf_runner = TclOOMMFRunner(oommf_tcl)
                 return _cached_oommf_runner
@@ -202,8 +209,8 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
     else:
         if res.returncode:
             log.warning('Error running docker\n'
-                        'stdout:\n{}\n'
-                        'stderr:\n{}'.format(res.stdout, res.stderr))
+                        f'stdout:\n{res.stdout}\n'
+                        f'stderr:\n{res.stderr}')
         else:
             _cached_oommf_runner = DockerOOMMFRunner(docker_exe=docker_exe,
                                                      image='ubermag/oommf')
@@ -244,7 +251,7 @@ def overhead():
     system = mm.examples.macrospin()
     td = oc.TimeDriver()
     oommfc_start = time.time()
-    td.drive(system, t=1e-12, n=1, overwrite=True)
+    td.drive(system, t=1e-12, n=1, save=True, overwrite=True)
     oommfc_stop = time.time()
     oommfc_time = oommfc_stop - oommfc_start
 

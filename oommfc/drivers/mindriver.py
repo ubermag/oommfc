@@ -1,4 +1,3 @@
-import oommfc as oc
 from .driver import Driver
 
 
@@ -45,4 +44,4 @@ class MinDriver(Driver):
                            'report_wall_time']
 
     def _checkargs(self, **kwargs):
-        pass
+        return True  # no kwargs should be checked

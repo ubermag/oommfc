@@ -1,6 +1,4 @@
-import oommfc as oc
 from .driver import Driver
-import micromagneticmodel as mm
 
 
 class TimeDriver(Driver):
@@ -47,10 +45,11 @@ class TimeDriver(Driver):
                            'report_wall_time']
 
     def _checkargs(self, **kwargs):
-        if 'compute' not in kwargs:
-            if kwargs['t'] <= 0:
-                msg = 'Positive simulation time expected (t>0).'
-                raise ValueError(msg)
-            if kwargs['n'] <= 0 or not isinstance(kwargs['n'], int):
-                msg = 'Positive integer number of steps expected (n>0)'
-                raise ValueError(msg)
+        if kwargs['t'] <= 0:
+            msg = f'Cannot drive with t={kwargs["t"]}.'
+            raise ValueError(msg)
+        elif kwargs['n'] <= 0 or not isinstance(kwargs['n'], int):
+            msg = f'Cannot drive with n={kwargs["n"]}.'
+            raise ValueError(msg)
+        else:
+            return True

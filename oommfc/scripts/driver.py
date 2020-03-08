@@ -2,7 +2,7 @@ import oommfc as oc
 import micromagneticmodel as mm
 
 
-def driver_script(driver, system, **kwargs):
+def driver_script(driver, system, compute=None, **kwargs):
     mif = ''
     if isinstance(driver, oc.MinDriver):
         # Check evolver and set default if not passed.
@@ -91,7 +91,7 @@ def driver_script(driver, system, **kwargs):
         mif += 'Schedule DataTable table Stage 1\n'
         mif += 'Schedule Oxs_TimeDriver::Magnetization mags Stage 1\n'
 
-        if 'compute' in kwargs:
-            mif += kwargs['compute']
+        if compute is not None:
+            mif += compute
 
     return mif
