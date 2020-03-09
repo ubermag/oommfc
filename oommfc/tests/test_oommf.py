@@ -146,7 +146,8 @@ def test_choose_runner():
     system = mm.examples.macrospin()
 
     md = oc.MinDriver()
-    runner = oc.oommf.TclOOMMFRunner(oommf_tcl=os.environ.get(envvar, None))
+    runner = oc.oommf.TclOOMMFRunner(oommf_tcl=os.environ.get('OOMMFTCL',
+                                                              None))
     md.drive(system, runner=runner)
 
     runner = oc.oommf.ExeOOMMFRunner(oommf_exe='oommf')
