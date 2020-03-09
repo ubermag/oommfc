@@ -46,7 +46,9 @@ def test_exe_oommf_runner():
     oommf_exe = 'oommf'
     runner = oo.ExeOOMMFRunner(oommf_exe)
     check_runner(runner)
-    assert isinstance(runner.errors(), str)
+    with pytest.raises(EnvironmentError):
+        # On travis oommf compiled from source is used.
+        errors = runner.errors()
 
 
 @pytest.mark.docker

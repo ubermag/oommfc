@@ -112,17 +112,6 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
 
             ``boxsii.errors`` OOMMF file.
 
-        Examples
-        --------
-        1. Getting OOMMF errors.
-
-        >>> import oommfc as oc
-        ...
-        >>> runner = oc.oommf.get_oommf_runner()
-        >>> errors = runner.errors()
-        >>> isinstance(errors, str)
-        True
-
         """
         pass  # pragma: no cover
 
@@ -238,13 +227,18 @@ class ExeOOMMFRunner(OOMMFRunner):
         sp.run([self.oommf_exe, 'killoommf'] + targets)
 
     def errors(self):
-        errors_file = os.path.join(
-            os.path.dirname(shutil.which(self.oommf_exe)),
-            '..', 'opt', 'oommf', 'boxsi.errors')
-        with open(errors_file, 'r') as f:
-            errors = f.read()
+        try:
+            errors_file = os.path.join(
+                os.path.dirname(shutil.which(self.oommf_exe)),
+                '..', 'opt', 'oommf', 'boxsi.errors')
+            with open(errors_file, 'r') as f:
+                errors = f.read()
+            return errors
 
-        return errors
+        except FileNotFoundError:
+            msg = 'boxsi.errors cannot be retrieved.'
+            raise EnvironmentError(msg)
+
 
 
 @uu.inherit_docs
