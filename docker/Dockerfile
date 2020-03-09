@@ -11,7 +11,7 @@ RUN python3 -m pip install --upgrade pip pytest-cov scipy nbval pycodestyle \
       git+git://github.com/ubermag/ubermagtable.git
 
 COPY . /usr/local/oommfc/
-USER oommfuser
 RUN chown -R oommfuser /usr/local/oommfc/  # Make sure it is owned by the user.
+USER oommfuser
 WORKDIR /usr/local/oommfc
 RUN python3 -m pip install .
