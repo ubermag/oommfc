@@ -135,3 +135,15 @@ def test_runtimeerror():
     oommf_runner = oo.get_oommf_runner(use_cache=False)
     with pytest.raises(RuntimeError):
         oommf_runner.call('+wrong_argstr')
+
+
+@pytest.mark.travis
+def test_choose_runner():
+    system = mm.examples.macrospin()
+
+    md = oc.MinDriver()
+    runner = oc.oommf.TclOOMMFRunner(oommf_tcl=os.environ.get(envvar, None))
+    md.drive(system, runner=runner)
+
+    runner = oc.oommf.ExeOOMMFRunner(oommf_exe='oommf')
+    md.drive(system, runner=runner)
