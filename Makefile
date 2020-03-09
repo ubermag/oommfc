@@ -12,6 +12,9 @@ test-test:
 test-travis:
 	$(PYTHON) -m pytest -v -m "travis"
 
+test-oommf-docker:
+	$(PYTHON) -m pytest -v -m "docker"
+
 test-coverage:
 	$(PYTHON) -m pytest -v -m "not docker" --cov=$(PROJECT) --cov-config .coveragerc
 

@@ -5,22 +5,23 @@ import shutil
 import oommfc.oommf as oo
 
 
-def check_runner(oommf_runner):
+def check_runner(runner):
+    # Testing OOMMF on a mif file to make it independent of oommfc.
     dirname = os.path.join(os.path.dirname(__file__), 'test_files')
     os.chdir(dirname)
     argstr = 'test_oommf.mif'
-    res = oommf_runner.call(argstr)
-    version = oommf_runner.version()
-    platform = oommf_runner.platform()
+    res = runner.call(argstr)
+    version = runner.version()
+    platform = runner.platform()
 
     assert isinstance(version, str)
-    assert len(version) is not ''
+    assert len(version) > 0
     assert isinstance(platform, str)
-    assert len(platform) is not ''
+    assert len(platform) > 0
     assert res.returncode == 0
 
-    files = os.listdir(dirname)
-    for f in files:
+    # Cleanup created files.
+    for f in os.listdir(dirname):
         if f.endswith('.odt'):
             os.remove(os.path.join(dirname, f))
         elif f.endswith('.omf') and f.startswith('test_oommf-Oxs'):
@@ -29,7 +30,9 @@ def check_runner(oommf_runner):
 
 @pytest.mark.travis
 def test_tcl_oommf_runner():
-    # TclOOMMFRunner runs when OOMMFTCL environment variable is set.
+    # TclOOMMFRunner runs when OOMMFTCL environment variable is set. On
+    # TravisCI OOMMFTCL environment variable is set inside ubermag/oommf docker
+    # image.
     oommf_tcl = os.environ.get('OOMMFTCL', None)
     oommf_runner = oo.TclOOMMFRunner(oommf_tcl)
     check_runner(oommf_runner)
@@ -37,7 +40,8 @@ def test_tcl_oommf_runner():
 
 @pytest.mark.travis
 def test_exe_oommf_runner():
-    # ExeOOMMFRunner runs when callable OOMMF exists ('oommf').
+    # ExeOOMMFRunner runs when callable OOMMF exists ('oommf'). On TravisCI
+    # oommf is an executable inside ubermag/oommf docker image.
     oommf_exe = 'oommf'
     oommf_runner = oo.ExeOOMMFRunner(oommf_exe)
     check_runner(oommf_runner)
@@ -45,27 +49,32 @@ def test_exe_oommf_runner():
 
 @pytest.mark.docker
 def test_docker_oommf_runner():
-    # DockerOOMMFRunner runs when docker is installed.
+    # DockerOOMMFRunner runs when docker is installed. This test does not run
+    # on host or TravisCI. It can be run using make test-docker on host if
+    # docker is installed.
     docker_exe = 'docker'
-    image = 'joommf/oommf'
+    image = 'ubermag/oommf'
     oommf_runner = oo.DockerOOMMFRunner(docker_exe, image)
     check_runner(oommf_runner)
 
+    # An additional check of getting OOMMF runner when docker is installed.
     oommf_runner = oo.get_oommf_runner(use_cache=False,
                                        envvar='wrong_name',
                                        oommf_exe='wrong_name',
                                        docker_exe='docker')
     assert isinstance(oommf_runner, oo.DockerOOMMFRunner)
+    check_runner(oommf_runner)
 
 
 @pytest.mark.travis
-def test_get_right_oommf_runner():
+def test_get_oommf_runner():
     # TclOOMMFRunner
     oommf_runner = oo.get_oommf_runner(use_cache=False,
                                        envvar='OOMMFTCL',
                                        oommf_exe='wrong_name',
                                        docker_exe='wrong_name')
     assert isinstance(oommf_runner, oo.TclOOMMFRunner)
+    check_runner(oommf_runner)
 
     # ExeOOMMFRunner
     oommf_runner = oo.get_oommf_runner(use_cache=False,
@@ -73,6 +82,7 @@ def test_get_right_oommf_runner():
                                        oommf_exe='oommf',
                                        docker_exe='wrong_name')
     assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
+    check_runner(oommf_runner)
 
     # OOMMF cannot be found on the system.
     with pytest.raises(EnvironmentError):
@@ -81,26 +91,28 @@ def test_get_right_oommf_runner():
                                            oommf_exe='wrong_name',
                                            docker_exe='wrong_name')
 
-
-@pytest.mark.travis
-def test_cached_oommf_runner():
+    # Test cached OOMMFRunner.
     oommf_runner = oo.get_oommf_runner(use_cache=False,
                                        envvar='wrong_name',
                                        oommf_exe='oommf',
                                        docker_exe='wrong_name')
     assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
+    check_runner(oommf_runner)
 
     oommf_runner = oo.get_oommf_runner(use_cache=True)
     assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
+    check_runner(oommf_runner)
 
     oommf_runner = oo.get_oommf_runner(use_cache=True,
                                        envvar='OOMMFTCL',
                                        oommf_exe='wrong_name',
                                        docker_exe='wrong_name')
     assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
+    check_runner(oommf_runner)
 
 
 def test_get_oommf_runner():
+    # This is a shorter version of the previous test for testing on host.
     oommf_runner = oo.get_oommf_runner(use_cache=False)
     assert isinstance(oommf_runner, oo.OOMMFRunner)
     check_runner(oommf_runner)
