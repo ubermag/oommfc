@@ -3,6 +3,7 @@ import sys
 import pytest
 import shutil
 import oommfc.oommf as oo
+import micromagneticmodel as mm
 
 
 def check_runner(runner):
