@@ -22,7 +22,7 @@ Marijan Beg<sup>1,2</sup>, Ryan A. Pepper<sup>1</sup>, Thomas Kluyver<sup>2</sup
 
 `oommfc` is a Python package that provides:
 
-- An Object Oriented MicroMagnetic Framework [OOMMF](https://math.nist.gov/oommf/) calculator for driving micromagnetic systems defined using `micromagneticmodel`.
+- An Object Oriented MicroMagnetic Framework [OOMMF](https://math.nist.gov/oommf/) calculator for micromagnetic systems defined using `micromagneticmodel`.
 
 It is available on all major operating systems (Windows, MacOS, and Linux) and requires Python 3.6 or higher.
 
