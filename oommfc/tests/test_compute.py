@@ -36,7 +36,6 @@ class TestCompute:
         assert isinstance(oc.compute(self.system.energy.density, self.system),
                           df.Field)
 
-
     def test_effective_field(self):
         for term in self.system.energy:
             assert isinstance(oc.compute(term.effective_field, self.system),

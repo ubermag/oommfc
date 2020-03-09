@@ -8,7 +8,7 @@ def mesh_script(mesh):
         # generated and the main MultiAtlas.
         for name, subregion in mesh.subregions.items():
             mif += oc.scripts.box_atlas(subregion.pmin, subregion.pmax,
-                                       name=name)
+                                        name=name)
         mif += '# MultiAtlas\n'
         mif += 'Specify Oxs_MultiAtlas:main_atlas {\n'
         for name in mesh.subregions.keys():
@@ -20,7 +20,7 @@ def mesh_script(mesh):
     else:
         # There are no subregions in the mesh.
         mif += oc.scripts.box_atlas(mesh.region.pmin, mesh.region.pmax,
-                                   name='main')
+                                    name='main')
 
     if mesh.pbc:
         mif += '# PeriodicRectangularMesh\n'

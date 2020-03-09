@@ -61,7 +61,7 @@ class TestDMI:
         # the average should be 0.
         assert np.linalg.norm(system.m['r2'].average) < 1
 
-    @pytest.mark.skipif(sys.platform=='win32',
+    @pytest.mark.skipif(sys.platform == 'win32',
                         reason=('Different crystalclasses are not '
                                 'available on Windows.'))
     def test_crystalclass(self):
