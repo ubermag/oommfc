@@ -240,7 +240,6 @@ class ExeOOMMFRunner(OOMMFRunner):
             raise EnvironmentError(msg)
 
 
-
 @uu.inherit_docs
 class DockerOOMMFRunner(OOMMFRunner):
     """OOMMF runner using Docker.

@@ -70,9 +70,7 @@ def driver_script(driver, system, compute=None, **kwargs):
             driver.evolver.mp = system.dynamics.slonczewski.mp
             driver.evolver.P = system.dynamics.slonczewski.P
             driver.evolver.Lambda = system.dynamics.slonczewski.Lambda
-            if hasattr(system.dynamics.slonczewski, 'eps_prime'):
-                driver.evolver.eps_prime = \
-                  system.dynamics.slonczewski.eps_prime
+            driver.evolver.eps_prime = system.dynamics.slonczewski.eps_prime
 
         mif += oc.scripts.evolver_script(driver.evolver)
 

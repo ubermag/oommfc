@@ -16,9 +16,12 @@ def evolver_script(evolver):
         evolver.alpha = alphaname
         mif += alphamif
     if hasattr(evolver, 'u'):
-        umif, uname = oc.scripts.setup_scalar_parameter(evolver.u, 'zl_alpha')
+        umif, uname = oc.scripts.setup_scalar_parameter(evolver.u, 'zl_u')
         evolver.u = uname
         mif += umif
+
+    # zhangli.beta cannot spatially vary - it has to be a constant.
+
     if hasattr(evolver, 'J'):
         Jmif, Jname = oc.scripts.setup_scalar_parameter(evolver.J, 'sl_J')
         evolver.J = Jname
@@ -44,7 +47,7 @@ def evolver_script(evolver):
 
     # Scripts for a specific evolver.
     if isinstance(evolver, oc.EulerEvolver):
-        mif = '# EulerEvolver\n'
+        mif += '# EulerEvolver\n'
         mif += 'Specify Oxs_EulerEvolve:evolver {\n'
     elif isinstance(evolver, oc.RungeKuttaEvolver):
         mif += '# RungeKuttaEvolver\n'
