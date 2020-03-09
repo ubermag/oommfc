@@ -12,7 +12,7 @@ def oxs_class(term):
     """Extract the OOMMF ``Oxs_`` class name of an individual term.
 
     """
-    mif = getattr(oc.scripts.energies, f'{term.name}_script')(term)
+    mif = getattr(oc.scripts.energy, f'{term.name}_script')(term)
     return re.search(r'Oxs_([\w_]+)', mif).group(1)
 
 
