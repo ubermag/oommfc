@@ -7,6 +7,7 @@ import logging
 import shutil
 import oommfc as oc
 import subprocess as sp
+import ubermagutil as uu
 import micromagneticmodel as mm
 
 log = logging.getLogger(__name__)
@@ -101,6 +102,30 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         """
         pass  # pragma: no cover
 
+    @abc.abstractmethod
+    def errors(self):
+        """Returns the content of ``boxsii.errors`` OOMMF file.
+
+        Returns
+        -------
+        str
+
+            ``boxsii.errors`` OOMMF file.
+
+        Examples
+        --------
+        1. Getting OOMMF errors.
+
+        >>> import oommfc as oc
+        ...
+        >>> runner = oc.oommf.get_oommf_runner()
+        >>> errors = runner.errors()
+        >>> isinstance(errors, str)
+        True
+
+        """
+        pass  # pragma: no cover
+
     def version(self):
         """Returns the OOMMF version.
 
@@ -150,6 +175,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         return res.stderr.decode('utf-8')
 
 
+@uu.inherit_docs
 class TclOOMMFRunner(OOMMFRunner):
     """OOMMF runner using path to ``oommf.tcl``.
 
@@ -178,7 +204,16 @@ class TclOOMMFRunner(OOMMFRunner):
     def _kill(self, targets=['all']):
         sp.run(['tclsh', self.oommf_tcl, 'killoommf'] + targets)
 
+    def errors(self):
+        errors_file = os.path.join(os.path.dirname(self.oommf_tcl),
+                                   'boxsi.errors')
+        with open(errors_file, 'r') as f:
+            errors = f.read()
 
+        return errors
+
+
+@uu.inherit_docs
 class ExeOOMMFRunner(OOMMFRunner):
     """OOMMF runner using OOMMF executable, which can be found on $PATH.
 
@@ -202,7 +237,17 @@ class ExeOOMMFRunner(OOMMFRunner):
     def _kill(self, targets=['all']):
         sp.run([self.oommf_exe, 'killoommf'] + targets)
 
+    def errors(self):
+        errors_file = os.path.join(
+            os.path.dirname(shutil.which(self.oommf_exe)),
+            '..', 'opt', 'oommf', 'boxsi.errors')
+        with open(errors_file, 'r') as f:
+            errors = f.read()
 
+        return errors
+
+
+@uu.inherit_docs
 class DockerOOMMFRunner(OOMMFRunner):
     """OOMMF runner using Docker.
 
@@ -231,6 +276,10 @@ class DockerOOMMFRunner(OOMMFRunner):
     def _kill(self, targets=('all',)):
         # There is no need to kill OOMMF when run inside docker.
         pass
+
+    def errors(self):
+        msg = 'boxsi.errors cannot be retrieved from Docker container.'
+        raise EnvironmentError(msg)
 
 
 def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
