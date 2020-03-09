@@ -68,9 +68,6 @@ class Driver(mm.Driver):
         jsonfilename = 'info.json'
 
         # Change directory to dirname
-        #cwd = os.getcwd()
-        #os.chdir(dirname)
-
         with _changedir(dirname):
             # Generate and save mif file.
             mif = oc.scripts.system_script(system)
@@ -105,9 +102,6 @@ class Driver(mm.Driver):
 
                 # Update system's datatable.
                 system.table = ut.read(f'{system.name}.odt')
-
-        # Change directory back to cwd.
-        #os.chdir(cwd)
 
         # Increment drive_number independent of whether the files are saved
         # or not.
