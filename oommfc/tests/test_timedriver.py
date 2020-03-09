@@ -145,3 +145,11 @@ class TestTimeDriver:
             td.drive(system, t=-0.1e-9, n=10)
         with pytest.raises(ValueError):
             td.drive(system, t=0.1e-9, n=-10)
+
+    def test_wrong_evolver(self):
+        system = mm.examples.macrospin()
+        evolver = oc.CGEvolver()
+        td = oc.TimeDriver(evolver=evolver)
+
+        with pytest.raises(TypeError):
+            td.drive(system, t=1e-12, n=1)

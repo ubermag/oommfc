@@ -43,7 +43,7 @@ class TestDMI:
     def test_dict(self):
         name = 'dmi_dict'
 
-        D = {'r1': 0, 'r2': 1e-3}
+        D = {'r1': 0, 'r2': 1e-3, 'default': 2e-3}
         Ms = 1e6
 
         system = mm.System(name=name)

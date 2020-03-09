@@ -1,5 +1,6 @@
 import os
 import glob
+import pytest
 import oommfc as oc
 import numpy as np
 import discretisedfield as df
@@ -95,3 +96,11 @@ class TestMinDriver:
         assert omffilename in omf_files
 
         oc.delete(system)
+
+    def test_wrong_evolver(self):
+        system = mm.examples.macrospin()
+        evolver = oc.RungeKuttaEvolver()
+        md = oc.MinDriver(evolver=evolver)
+
+        with pytest.raises(TypeError):
+            md.drive(system)

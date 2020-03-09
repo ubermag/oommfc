@@ -186,7 +186,7 @@ class TclOOMMFRunner(OOMMFRunner):
         # OOMMF get stuck.
         stdout = stderr = sp.PIPE
         if sys.platform == 'win32' and not need_stderr:
-            stdout = stderr = None
+            stdout = stderr = None  # pragma: no cover
 
         return sp.run(cmd, stdout=stdout, stderr=stderr)
 

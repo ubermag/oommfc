@@ -80,11 +80,15 @@ def dmi_script(term):
         oxs = 'Oxs_DMI_D2d'
     elif term.crystalclass == 'Cnv' and sys.platform != 'win32':
         oxs = 'Oxs_DMI_Cnv'
-    elif term.crystalclass == 'Cnv' and sys.platform == 'win32':
-        oxs = 'Oxs_DMExchange6Ngbr'
+    # The following lines cannot be accessed on TravisCI, where coverage is
+    # evaluated. Therefore, those lines are excluded from coverage.
+    elif (term.crystalclass == 'Cnv' and
+          sys.platform == 'win32'):  # pragma: no cover
+        oxs = 'Oxs_DMExchange6Ngbr'  # pragma: no cover
     else:
-        raise ValueError(f'The {term.crystalclass} crystal class is not '
-                         f'supported on {sys.platform} platform.')
+        raise ValueError(f'The {term.crystalclass} crystal '
+                         f'class is not supported on {sys.platform} '
+                         'platform.')  # pragma: no cover
 
     mif = f'# DMI of crystallographic class {term.crystalclass}\n'
     mif += f'Specify {oxs} {{\n'
