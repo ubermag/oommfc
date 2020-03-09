@@ -17,10 +17,9 @@ class TestMagnetoElastic:
                            'r2': df.Region(p1=(0, -5e-9, -4e-9),
                                            p2=(7e-9, 5e-9, 4e-9))}
 
+    @pytest.mark.travis
     def test_scalar_scalar_vector_vector(self):
         name = 'magnetoelastic_scalar_scalar_vector_vector'
-        if os.path.exists(name):
-            shutil.rmtree(name)
 
         B1 = 1e5
         B2 = 1e6
