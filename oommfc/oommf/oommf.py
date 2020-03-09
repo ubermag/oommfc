@@ -247,26 +247,50 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
       The first call to this function will determine the best way to run OOMMF
       and cache it. Normally, subsequent calls will return the ``OOMMFRunner``
       object from the cache. Setting this parameter to ``False`` will cause it
-      to check for available methods again.
+      to check for available methods again. Defaults to ``True``.
 
     envvar : str
 
       Name of the environment variable containing the path to ``oommf.tcl``.
+      Defaults to ``'OOMMFTCL'``.
 
     oommf_exe : str
 
-      The name or path of the executable ``oommf`` command.
+      The name or path of the executable ``oommf`` command. Defaults to
+      ``'oommf'``.
 
     docker_exe : str
 
-      The name or path of the docker command.
+      The name or path of the docker command. Defaults to ``'docker'``.
+
+    Returns
+    -------
+    oommfc.oommf.OOMMFRunner
+
+        An OOMMF runner.
+
+    Raises
+    ------
+    EnvironmentError
+
+        If no OOMMF can be found on host.
+
+    Examples
+    --------
+    1. Getting OOMMF Runner.
+
+    >>> import oommfc as oc
+    ...
+    >>> runner = oc.oommf.get_oommf_runner()
+    >>> isinstance(runner, oc.oommf.OOMMFRunner)
+    True
 
     """
     global _cached_oommf_runner
     if use_cache and (_cached_oommf_runner is not None):
         return _cached_oommf_runner
 
-    # Check for OOMMFTCL environment variable pointing to oommf.tcl.
+    # Check for the OOMMFTCL environment variable pointing to oommf.tcl.
     oommf_tcl = os.environ.get(envvar, None)
     if oommf_tcl is not None:
         cmd = ['tclsh', oommf_tcl, 'boxsi',
@@ -326,6 +350,23 @@ def status():
     """Run a macrospin example for 1 ps through oommfc and print the OOMMF
     status.
 
+    Returns
+    -------
+    int
+
+        If ``0``, the OOMMF is found and running. Otherwise, ``1`` is returned.
+
+    Examples
+    --------
+    1. Checking the OOMMF status.
+
+    >>> import oommfc as oc
+    ...
+    >>> oc.oommf.status()
+    Running OOMMF...
+    OOMMF found and running.
+    0
+
     """
     system = mm.examples.macrospin()
     try:
@@ -339,13 +380,26 @@ def status():
 
 
 def overhead():
-    """Run a macrospin example for 1 ps through oommfc and directly and
+    """Run a macrospin example for 1 ps through ``oommfc`` and directly and
     return the difference in run times.
+
     Returns
     -------
-    overhead : float
-      The time difference (overhead) between running OOMMF though
-      oommfc and directly
+    float
+
+      The time difference (overhead) between running OOMMF though ``oommfc``
+      and directly.
+
+    Examples
+    --------
+    1. Getting the overhead time.
+
+    >>> import oommfc as oc
+    ...
+    >>> isinstance(oc.oommf.overhead(), float)
+    Running OOMMF...
+    True
+
     """
     # Running OOMMF through oommfc.
     system = mm.examples.macrospin()
