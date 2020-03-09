@@ -15,7 +15,7 @@ def box_atlas(pmin, pmax, name):
     return mif
 
 
-def mif_atlas_vector_field(value, name, atlas='main_atlas'):
+def atlas_vector_field(value, name, atlas='main_atlas'):
     mif = f'# {name}\n'
     mif += f'Specify Oxs_AtlasVectorField:{name} {{\n'
     mif += f'  atlas :{atlas}\n'
@@ -30,7 +30,7 @@ def mif_atlas_vector_field(value, name, atlas='main_atlas'):
     return mif
 
 
-def mif_atlas_scalar_field(value, name, atlas='main_atlas'):
+def atlas_scalar_field(value, name, atlas='main_atlas'):
     mif = f'# {name}\n'
     mif += f'Specify Oxs_AtlasScalarField:{name} {{\n'
     mif += f'  atlas :{atlas}\n'
@@ -46,14 +46,10 @@ def mif_atlas_scalar_field(value, name, atlas='main_atlas'):
 
 
 def setup_m0(field, name):
-    if not isinstance(field, df.Field):
-        msg = f'Cannot use {type(field)} for magnetisation.'
-        raise TypeError(msg)
-    if field.dim != 3:
-        msg = f'Cannot use dim={field.dim} field for magnetisation'
-        raise ValueError(msg)
     field.write(f'{name}.omf')
+    # Magnetisation
     mif = file_vector_field(f'{name}.omf', f'{name}', 'main_atlas')
+    # Ms
     mif += vector_norm_scalar_field(f'{name}', f'{name}_norm')
 
     return mif, f'{name}', f'{name}_norm'
@@ -80,9 +76,6 @@ def vector_norm_scalar_field(field, name):
 
 def setup_scalar_parameter(parameter, name):
     if isinstance(parameter, df.Field):
-        if parameter.dim != 1:
-            msg = f'Cannot use dim={parameter.dim} for {name}.'
-            raise ValueError(msg)
         parameter.write(f'{name}.ovf', extend_scalar=True)
         mif = file_vector_field(f'{name}.ovf', f'{name}', 'main_atlas')
         mif += vector_norm_scalar_field(f'{name}', f'{name}_norm')
@@ -91,7 +84,7 @@ def setup_scalar_parameter(parameter, name):
     elif isinstance(parameter, dict):
         if 'default' not in parameter.keys():
             parameter['default'] = 0
-        mif = mif_atlas_scalar_field(parameter, f'{name}')
+        mif = atlas_scalar_field(parameter, f'{name}')
         return mif, f'{name}'
 
     elif isinstance(parameter, numbers.Real):
@@ -100,9 +93,6 @@ def setup_scalar_parameter(parameter, name):
 
 def setup_vector_parameter(parameter, name):
     if isinstance(parameter, df.Field):
-        if parameter.dim != 3:
-            msg = f'Cannot use dim={parameter.dim} for {name}.'
-            raise ValueError(msg)
         parameter.write(f'{name}.ovf')
         mif = file_vector_field(f'{name}.ovf', f'{name}', 'main_atlas')
         return mif, f'{name}'
@@ -110,7 +100,7 @@ def setup_vector_parameter(parameter, name):
     elif isinstance(parameter, dict):
         if 'default' not in parameter.keys():
             parameter['default'] = (0, 0, 0)
-        mif = mif_atlas_vector_field(parameter, f'{name}')
+        mif = atlas_vector_field(parameter, f'{name}')
         return mif, f'{name}'
 
     elif isinstance(parameter, (tuple, list, np.ndarray)):

@@ -39,7 +39,7 @@ class TestExchange:
     def test_dict(self):
         name = 'exchange_dict'
 
-        A = {'r1': 0, 'r2': 1e-12, 'r1:r2': 1e-12}
+        A = {'r1': 0, 'r2': 1e-12, 'r1:r2': 1e-12, 'default': 2e-12}
         Ms = 1e6
 
         system = mm.System(name=name)

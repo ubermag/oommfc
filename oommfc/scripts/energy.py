@@ -88,6 +88,7 @@ def dmi_script(term):
 
     mif = f'# DMI of crystallographic class {term.crystalclass}\n'
     mif += f'Specify {oxs} {{\n'
+
     if isinstance(term.D, numbers.Real):
         mif += f'  default_D {term.D}\n'
         mif += '  atlas :main_atlas\n'
@@ -113,9 +114,6 @@ def dmi_script(term):
                 mif += f'    {region1} {region2} {value}\n'
         mif += '  }\n'
         mif += '}\n\n'
-    else:
-        msg = f'Type {type(term.D)} not supported.'
-        raise TypeError(msg)
 
     return mif
 
