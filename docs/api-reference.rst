@@ -9,6 +9,7 @@ API Reference
    eulerevolver
    rungekuttaevolver
    spintevolver
+   spinxferevolver
    mindriver
    timedriver
    compute

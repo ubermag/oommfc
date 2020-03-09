@@ -48,7 +48,8 @@ def driver_script(driver, system, compute=None, **kwargs):
                 driver.evolver = oc.RungeKuttaEvolver()
         elif not isinstance(driver.evolver, (oc.EulerEvolver,
                                              oc.RungeKuttaEvolver,
-                                             oc.SpinTEvolver)):
+                                             oc.SpinTEvolver,
+                                             oc.SpinXferEvolver)):
             msg = f'Cannot use {type(driver.evolver)} for evolver.'
             raise TypeError(msg)
 
@@ -64,6 +65,14 @@ def driver_script(driver, system, compute=None, **kwargs):
         if mm.ZhangLi() in system.dynamics:
             driver.evolver.u = system.dynamics.zhangli.u
             driver.evolver.beta = system.dynamics.zhangli.beta
+        if mm.Slonczewski() in system.dynamics:
+            driver.evolver.J = system.dynamics.slonczewski.J
+            driver.evolver.mp = system.dynamics.slonczewski.mp
+            driver.evolver.P = system.dynamics.slonczewski.P
+            driver.evolver.Lambda = system.dynamics.slonczewski.Lambda
+            if hasattr(system.dynamics.slonczewski, 'eps_prime'):
+                 driver.evolver.eps_prime = \
+                 system.dynamics.slonczewski.eps_prime
 
         mif += oc.scripts.evolver_script(driver.evolver)
 

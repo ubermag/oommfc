@@ -9,7 +9,7 @@ class TestZhangLi:
         p1 = (-5e-9, -5e-9, -3e-9)
         p2 = (5e-9, 5e-9, 3e-9)
         self.region = df.Region(p1=p1, p2=p2)
-        self.n = (10, 10, 10)
+        self.n = (5, 5, 5)
         self.subregions = {'r1': df.Region(p1=(-5e-9, -5e-9, -3e-9),
                                            p2=(5e-9, 0, 3e-9)),
                            'r2': df.Region(p1=(-5e-9, 0, -3e-9),
