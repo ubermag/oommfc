@@ -151,7 +151,13 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
 
 
 class TclOOMMFRunner(OOMMFRunner):
-    """Using path to oommf.tcl.
+    """OOMMF runner using path to ``oommf.tcl``.
+
+    Parameters
+    ----------
+    oommf_tcl: str
+
+        Path to ``oommf.tcl``file.
 
     """
     def __init__(self, oommf_tcl):
@@ -161,8 +167,8 @@ class TclOOMMFRunner(OOMMFRunner):
         cmd = ['tclsh', self.oommf_tcl, 'boxsi', '+fg',
                argstr, '-exitondone', '1']
 
-        # Not clear why we cannot get stderr and stdout on
-        # win32. Calls to OOMMF get stuck.
+        # Not clear why we cannot get stderr and stdout on win32. Calls to
+        # OOMMF get stuck.
         stdout = stderr = sp.PIPE
         if sys.platform == 'win32' and not need_stderr:
             stdout = stderr = None
@@ -174,7 +180,13 @@ class TclOOMMFRunner(OOMMFRunner):
 
 
 class ExeOOMMFRunner(OOMMFRunner):
-    """Using oommf executable on $PATH.
+    """OOMMF runner using OOMMF executable, which can be found on $PATH.
+
+    Parameters
+    ----------
+    oommf_exe: str
+
+        Name of the OOMMF executable. Defaults to ``oommf``.
 
     """
     def __init__(self, oommf_exe='oommf'):
@@ -184,7 +196,6 @@ class ExeOOMMFRunner(OOMMFRunner):
         # Here we might need stderr = stdot = None like in
         # TclOOMMFRunner for Windows.  This is not clear because we
         # never use ExeOOMMFRunner on Windows.
-
         cmd = [self.oommf_exe, 'boxsi', '+fg', argstr, '-exitondone', '1']
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
 
@@ -193,11 +204,21 @@ class ExeOOMMFRunner(OOMMFRunner):
 
 
 class DockerOOMMFRunner(OOMMFRunner):
-    """Run OOMMF in a docker container.
+    """OOMMF runner using Docker.
+
+    Parameters
+    ----------
+    docker_exe: str
+
+        Docker executable. Defaults to ``docker``.
+
+    image: str
+
+        Docker image on DockerHub. Defaults to ``ubermag/oommf``.
 
     """
     def __init__(self, docker_exe='docker', image='ubermag/oommf'):
-        self.docker_exe = 'docker'
+        self.docker_exe = docker_exe
         self.image = image
 
     def _call(self, argstr, need_stderr=False):
