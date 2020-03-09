@@ -34,8 +34,9 @@ def test_tcl_oommf_runner():
     # TravisCI OOMMFTCL environment variable is set inside ubermag/oommf docker
     # image.
     oommf_tcl = os.environ.get('OOMMFTCL', None)
-    oommf_runner = oo.TclOOMMFRunner(oommf_tcl)
-    check_runner(oommf_runner)
+    runner = oo.TclOOMMFRunner(oommf_tcl)
+    check_runner(runner)
+    assert isinstance(runner.errors(), str)
 
 
 @pytest.mark.travis
@@ -43,8 +44,9 @@ def test_exe_oommf_runner():
     # ExeOOMMFRunner runs when callable OOMMF exists ('oommf'). On TravisCI
     # oommf is an executable inside ubermag/oommf docker image.
     oommf_exe = 'oommf'
-    oommf_runner = oo.ExeOOMMFRunner(oommf_exe)
-    check_runner(oommf_runner)
+    runner = oo.ExeOOMMFRunner(oommf_exe)
+    check_runner(runner)
+    assert isinstance(runner.errors(), str)
 
 
 @pytest.mark.docker
@@ -54,16 +56,19 @@ def test_docker_oommf_runner():
     # docker is installed.
     docker_exe = 'docker'
     image = 'ubermag/oommf'
-    oommf_runner = oo.DockerOOMMFRunner(docker_exe, image)
-    check_runner(oommf_runner)
+    runner = oo.DockerOOMMFRunner(docker_exe, image)
+    check_runner(runner)
 
     # An additional check of getting OOMMF runner when docker is installed.
-    oommf_runner = oo.get_oommf_runner(use_cache=False,
-                                       envvar='wrong_name',
-                                       oommf_exe='wrong_name',
-                                       docker_exe='docker')
-    assert isinstance(oommf_runner, oo.DockerOOMMFRunner)
-    check_runner(oommf_runner)
+    runner = oo.get_oommf_runner(use_cache=False,
+                                 envvar='wrong_name',
+                                 oommf_exe='wrong_name',
+                                 docker_exe='docker')
+    assert isinstance(runner, oo.DockerOOMMFRunner)
+    check_runner(runner)
+
+    with pytest.raises(EnvironmentError):
+        errors = runner.errors()
 
 
 @pytest.mark.travis
