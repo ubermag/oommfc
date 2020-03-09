@@ -117,7 +117,7 @@ class TestTimeDriver:
         system.m = self.m
 
         td = oc.TimeDriver()
-        td.drive(system, t=0.2e-9, n=50, save=True)
+        td.drive(system, t=0.2e-9, n=50, save=True, overwrite=True)
 
         dirname = os.path.join(f'{name}', f'drive-{system.drive_number-1}')
         assert os.path.exists(dirname)

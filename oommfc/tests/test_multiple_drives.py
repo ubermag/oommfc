@@ -1,4 +1,5 @@
 import os
+import shutil
 import oommfc as oc
 import discretisedfield as df
 import micromagneticmodel as mm
@@ -23,7 +24,7 @@ def test_multiple_runs():
     system.m = df.Field(mesh, dim=3, value=(0, 0.1, 1), norm=Ms)
 
     md = oc.MinDriver()
-    md.drive(system, save=True)
+    md.drive(system, save=True, overwrite=True)
 
     dirname = os.path.join(name, 'drive-0')
     assert os.path.exists(dirname)

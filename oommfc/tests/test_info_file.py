@@ -28,7 +28,7 @@ def test_info_file():
 
     # First (0) drive
     td = oc.TimeDriver()
-    td.drive(system, t=25e-12, n=10, save=True)
+    td.drive(system, t=25e-12, n=10, save=True, overwrite=True)
 
     dirname = os.path.join(name, 'drive-0')
     infofile = os.path.join(dirname, 'info.json')

@@ -82,7 +82,7 @@ class TestMinDriver:
         system.m = self.m
 
         md = oc.MinDriver()
-        md.drive(system, save=True)
+        md.drive(system, save=True, overwrite=True)
 
         dirname = os.path.join(f'{name}', f'drive-{system.drive_number-1}')
         assert os.path.exists(dirname)
