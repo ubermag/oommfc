@@ -10,7 +10,7 @@ test-test:
 	$(PYTHON) -c "import sys; import $(PROJECT); sys.exit($(PROJECT).test())"
 
 test-travis:
-	$(PYTHON) -m pytest -m "travis"
+	$(PYTHON) -m pytest -v -m "travis"
 
 test-coverage:
 	$(PYTHON) -m pytest -v -m "not docker" --cov=$(PROJECT) --cov-config .coveragerc
