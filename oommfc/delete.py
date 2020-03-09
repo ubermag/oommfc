@@ -33,7 +33,7 @@ def delete(system):
     >>> system = mm.examples.macrospin()
     >>> td = oc.TimeDriver()
     >>> td.drive(system, t=1e-12, n=5, save=True)
-    20...Running OOMMF...
+    Running OOMMF...
     >>> os.path.exists(system.name)
     True
     >>> oc.delete(system)  # deletes directory

@@ -1,4 +1,5 @@
 import os
+import abc
 import sys
 import time
 import datetime
@@ -12,58 +13,139 @@ log = logging.getLogger(__name__)
 _cached_oommf_runner = None
 
 
-class OOMMFRunner:
-    """Base class for running OOMMF.
-
-    Don't use this directly. Use get_oommf_runner() to pick a subclass
-    of this class.
+class OOMMFRunner(metaclass=abc.ABCMeta):
+    """Abstract class for running OOMMF.
 
     """
     def call(self, argstr, need_stderr=False):
+        """Calls OOMMF by passing ``argstr`` to OOMMF.
+
+        Parameters
+        ----------
+        argstr : str
+
+            Argument string passed to OOMMF.
+
+        need_stderr : bool
+
+            If ``need_stderr=True``, standard error is captured. Defaults to
+            ``False``.
+
+        Raises
+        ------
+        RuntimeError
+
+            If an error occured.
+
+        Returns
+        -------
+        int
+
+            When the OOMMF run was successful, ``0`` is returned.
+
+        Examples
+        --------
+        1. Getting OOMMF runner automatically and calling it.
+
+        >>> import oommfc as oc
+        ...
+        >>> runner = oc.oommf.get_oommf_runner()
+        >>> runner.call(argstr='+version')
+        Running OOMMF...
+        CompletedProcess(...)
+
+        """
         now = datetime.datetime.now()
         timestamp = '{}/{:02d}/{:02d} {:02d}:{:02d}'.format(now.year,
                                                             now.month,
                                                             now.day,
                                                             now.hour,
                                                             now.minute)
-        print(f'{timestamp}: Running OOMMF ({argstr}) ... ', end='')
+        print(f'Running OOMMF ({self.__class__.__name__}) [{timestamp}]... ',
+              end='')
 
         tic = time.time()
         res = self._call(argstr=argstr, need_stderr=need_stderr)
         self._kill()
         toc = time.time()
         seconds = '({:0.1f} s)'.format(toc - tic)
-        print(seconds)
+        print(seconds)  # append seconds to the previous print.
 
         if res.returncode != 0:
             if sys.platform != 'win32':
-                # Only on Linux and MacOS - on Windows we do not get
-                # stderr and stdout.
+                # Only on Linux and MacOS - on Windows we do not get stderr and
+                # stdout.
                 stderr = res.stderr.decode('utf-8', 'replace')
                 stdout = res.stdout.decode('utf-8', 'replace')
                 cmdstr = ' '.join(res.args)
                 print('OOMMF error:')
-                print('\tcommand: {}'.format(cmdstr))
-                print('\tstdout: {}'.format(stdout))
-                print('\tstderr: {}'.format(stderr))
+                print(f'\tcommand: {cmdstr}')
+                print(f'\tstdout: {cmdstr}')
+                print(f'\tstderr: {stderr}')
                 print('\n')
             raise RuntimeError('Error in OOMMF run.')
 
         return res
 
+    @abc.abstractmethod
     def _call(self, argstr, need_stderr=False):
-        # This method should be implemented in subclass.
-        raise NotImplementedError
+        """This method should be implemented in subclass.
 
+        """
+        pass  # pragma: no cover
+
+    @abc.abstractmethod
     def _kill(self, targets=('all',)):
-        # This method should be implemented in subclass.
-        raise NotImplementedError
+        """This method should be implemented in subclass.
+
+        """
+        pass  # pragma: no cover
 
     def version(self):
+        """Returns the OOMMF version.
+
+        Returns
+        -------
+        str
+
+            OOMMF version.
+
+        Examples
+        --------
+        1. Getting OOMMF version.
+
+        >>> import oommfc as oc
+        ...
+        >>> runner = oc.oommf.get_oommf_runner()
+        >>> runner.version()
+        Running OOMMF...
+        '...'
+
+        """
         res = self.call(argstr='+version', need_stderr=True)
         return res.stderr.decode('utf-8').split('oommf.tcl')[-1].strip()
 
     def platform(self):
+        """Returns platform seen by OOMMF.
+
+        Returns
+        -------
+        str
+
+            Platform.
+
+        Examples
+        --------
+        1. Getting platform.
+
+        >>> import oommfc as oc
+        ...
+        >>> runner = oc.oommf.get_oommf_runner()
+        >>> runner.platform()
+        Running OOMMF...
+        '...'
+
+        """
         res = self.call(argstr='+platform', need_stderr=True)
         return res.stderr.decode('utf-8')
 
@@ -181,10 +263,9 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
                 _cached_oommf_runner = TclOOMMFRunner(oommf_tcl)
                 return _cached_oommf_runner
 
-    # OOMMF is installed via conda and oommf.tcl is in opt/oommf
-    # (Windows). This would probably also work on MacOS/Linux, but on
-    # these operating systems, when installed via conda, we use
-    # 'oommf' executable.
+    # OOMMF is installed via conda and oommf.tcl is in opt/oommf (Windows).
+    # This would probably also work on MacOS/Linux, but on these operating
+    # systems, when installed via conda, we use 'oommf' executable.
     if sys.platform == 'win32' and \
        os.path.isdir(os.path.join(sys.prefix, 'conda-meta')):
         oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
@@ -192,8 +273,8 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
             _cached_oommf_runner = TclOOMMFRunner(oommf_tcl)
             return _cached_oommf_runner
 
-    # OOMMF available as an executable - in a conda env on Mac/Linux,
-    # or oommf installed separately.
+    # OOMMF available as an executable - in a conda env on Mac/Linux, or oommf
+    # installed separately.
     oommf_exe = shutil.which(oommf_exe)
     if oommf_exe:
         _cached_oommf_runner = ExeOOMMFRunner(oommf_exe)
