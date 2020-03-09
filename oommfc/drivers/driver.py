@@ -5,10 +5,24 @@ import json
 import shutil
 import tempfile
 import datetime
+import contextlib
 import oommfc as oc
 import ubermagtable as ut
 import discretisedfield as df
 import micromagneticmodel as mm
+
+
+@contextlib.contextmanager
+def _changedir(dirname):
+    """Context manager for changing directory.
+
+    """
+    cwd = os.getcwd()
+    os.chdir(dirname)
+    try:
+        yield
+    finally:
+        os.chdir(cwd)
 
 
 class Driver(mm.Driver):
@@ -54,45 +68,46 @@ class Driver(mm.Driver):
         jsonfilename = 'info.json'
 
         # Change directory to dirname
-        cwd = os.getcwd()
-        os.chdir(dirname)
+        #cwd = os.getcwd()
+        #os.chdir(dirname)
 
-        # Generate and save mif file.
-        mif = oc.scripts.system_script(system)
-        mif += oc.scripts.driver_script(self, system, compute=compute,
-                                        **kwargs)
-        with open(miffilename, 'w') as miffile:
-            miffile.write(mif)
+        with _changedir(dirname):
+            # Generate and save mif file.
+            mif = oc.scripts.system_script(system)
+            mif += oc.scripts.driver_script(self, system, compute=compute,
+                                            **kwargs)
+            with open(miffilename, 'w') as miffile:
+                miffile.write(mif)
 
-        # Generate and save json info file.
-        info = {}
-        info['drive_number'] = system.drive_number
-        info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
-        info['time'] = datetime.datetime.now().strftime('%H:%M:%S')
-        info['driver'] = self.__class__.__name__
-        info['args'] = kwargs
-        with open(jsonfilename, 'w') as jsonfile:
-            jsonfile.write(json.dumps(info))
+            # Generate and save json info file.
+            info = {}
+            info['drive_number'] = system.drive_number
+            info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
+            info['time'] = datetime.datetime.now().strftime('%H:%M:%S')
+            info['driver'] = self.__class__.__name__
+            info['args'] = kwargs
+            with open(jsonfilename, 'w') as jsonfile:
+                jsonfile.write(json.dumps(info))
 
-        # Run OOMMF.
-        if runner is None:
-            runner = oc.oommf.get_oommf_runner()
-        runner.call(argstr=miffilename)
+            # Run OOMMF.
+            if runner is None:
+                runner = oc.oommf.get_oommf_runner()
+            runner.call(argstr=miffilename)
 
-        # Update system's m and datatable attributes if the derivation of E,
-        # Heff, or energy density was not asked.
-        if compute is None:
-            # Update system's magnetisation. An example .omf filename:
-            # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
-            omffiles = glob.iglob(f'{system.name}*.omf')
-            lastomffile = sorted(omffiles)[-1]
-            system.m.value = df.Field.fromfile(lastomffile)
+            # Update system's m and datatable attributes if the derivation of
+            # E, Heff, or energy density was not asked.
+            if compute is None:
+                # Update system's magnetisation. An example .omf filename:
+                # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
+                omffiles = glob.iglob(f'{system.name}*.omf')
+                lastomffile = sorted(omffiles)[-1]
+                system.m.value = df.Field.fromfile(lastomffile)
 
-            # Update system's datatable.
-            system.table = ut.read(f'{system.name}.odt')
+                # Update system's datatable.
+                system.table = ut.read(f'{system.name}.odt')
 
         # Change directory back to cwd.
-        os.chdir(cwd)
+        #os.chdir(cwd)
 
         # Increment drive_number independent of whether the files are saved
         # or not.
