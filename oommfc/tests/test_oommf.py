@@ -2,6 +2,7 @@ import os
 import sys
 import pytest
 import shutil
+import oommfc as oc
 import oommfc.oommf as oo
 import micromagneticmodel as mm
 
