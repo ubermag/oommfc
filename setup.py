@@ -6,7 +6,7 @@ with open('README.md', encoding='utf-8') as f:
 setuptools.setup(
     name='oommfc',
     version='0.8.15',
-    description=('Ubermag OOMMF calculator.'),
+    description=('OOMMF calculator.'),
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://ubermag.github.io',
