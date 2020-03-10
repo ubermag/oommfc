@@ -9,7 +9,7 @@ import micromagneticmodel as mm
 
 def check_runner(runner):
     # Testing OOMMF on a mif file to make it independent of oommfc.
-    dirname = os.path.join(os.path.dirname(__file__), 'test_files')
+    dirname = os.path.join(os.path.dirname(__file__), 'test_sample')
     os.chdir(dirname)
     argstr = 'test_oommf.mif'
     res = runner.call(argstr)
