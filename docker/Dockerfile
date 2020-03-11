@@ -8,6 +8,7 @@ RUN python3 -m pip install --upgrade pip pytest-cov scipy nbval pycodestyle \
       git+git://github.com/ubermag/ubermagutil.git \
       git+git://github.com/ubermag/discretisedfield.git \
       git+git://github.com/ubermag/micromagneticmodel.git \
+      git+git://github.com/ubermag/micromagnetictests.git \
       git+git://github.com/ubermag/ubermagtable.git
 
 COPY . /usr/local/oommfc/

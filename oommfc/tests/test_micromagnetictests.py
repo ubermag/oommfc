@@ -1,0 +1,1 @@
+from micromagnetictests.calculatortests import *
