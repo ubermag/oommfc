@@ -4,6 +4,4 @@ channels:
 dependencies:
   - python==3.8
   - pip
-  - oommf
-  - pip:
-    - oommfc==0.8.16
+  - oommfc==0.8.17

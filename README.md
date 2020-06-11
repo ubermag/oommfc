@@ -1,5 +1,5 @@
 # oommfc
-Marijan Beg<sup>1,2</sup>, Ryan A. Pepper<sup>1</sup>, Thomas Kluyver<sup>2</sup>, and Hans Fangohr<sup>2,1</sup>
+Marijan Beg<sup>1,2</sup>, Ryan A. Pepper<sup>1</sup>, Thomas Kluyver<sup>2</sup>, and Hans Fangohr<sup>1,2</sup>
 
 <sup>1</sup> *Faculty of Engineering and Physical Sciences, University of Southampton, Southampton SO17 1BJ, United Kingdom*  
 <sup>2</sup> *European XFEL GmbH, Holzkoppel 4, 22869 Schenefeld, Germany*  
@@ -24,19 +24,19 @@ Marijan Beg<sup>1,2</sup>, Ryan A. Pepper<sup>1</sup>, Thomas Kluyver<sup>2</sup
 
 - An Object Oriented MicroMagnetic Framework [OOMMF](https://math.nist.gov/oommf/) calculator for micromagnetic systems defined using `micromagneticmodel`.
 
-It is available on all major operating systems (Windows, MacOS, and Linux) and requires Python 3.6 or higher.
+It is available on Windows, MacOS, and Linux. It requires Python 3.6+.
 
 ## Documentation
 
-APIs and tutorials as Jupyter notebooks are available as a part of documentation.
+APIs and tutorials are available in documentation. To access them, use the documentation badge in the table above.
 
 ## Installation, testing, and upgrade
 
-We support installation using `conda` and `pip` package managers. Instructions can be found in the documentation.
+We recommend installation using `conda` package manager. Instructions can be found in the documentation.
 
 ## Binder
 
-This package can be used in the cloud via Binder. This does not require to have anything installed and no files will be created on your machine. To access Binder, use the Binder badge in the table above.
+This package can be used in the cloud via Binder. To access Binder, use the Binder badge in the table above.
 
 ## Support
 
@@ -55,8 +55,6 @@ If you use this package, please cite it as:
 2. M. Beg, R. A. Pepper, T. Kluyver, and H. Fangohr. ubermag/oommfc: Python interface to OOMMF integrated into Jupyter notebook. Zenodo. DOI: [10.5281/zenodo.3539494](http://doi.org/10.5281/zenodo.3539494) (2020).
 
 ## Acknowledgements
-
-Developed as a part of:
 
 - [OpenDreamKit](http://opendreamkit.org/) – Horizon 2020 European Research Infrastructure project (676541)
 

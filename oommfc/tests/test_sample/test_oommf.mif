@@ -54,7 +54,7 @@ Specify Oxs_MinDriver {
   m0 :m0file
   basename test_oommf
   scalar_field_output_format {text %\#.15g}
-  vector_field_output_format {text %\#.15g}
+  vector_field_output_format {binary 8}
 }
 
 Destination table mmArchive

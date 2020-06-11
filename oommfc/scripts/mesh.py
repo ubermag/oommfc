@@ -25,12 +25,12 @@ def mesh_script(mesh):
                                     name='main')
 
     # Define mesh.
-    if mesh.pbc:
+    if any(i in mesh.bc for i in 'xyz'):
         mif += '# PeriodicRectangularMesh\n'
         mif += 'Specify Oxs_PeriodicRectangularMesh:mesh {\n'
         mif += '  cellsize {{ {} {} {} }}\n'.format(*mesh.cell)
         mif += '  atlas :main_atlas\n'
-        mif += '  periodic {}\n'.format(''.join(sorted(mesh.pbc)))
+        mif += '  periodic {}\n'.format(''.join(sorted(mesh.bc)))
         mif += '}\n\n'
     else:
         mif += '# RectangularMesh\n'
