@@ -33,8 +33,7 @@ class Driver(mm.Driver):
         pass  # pragma: no cover
 
 
-    def drive(self, system, save=False, overwrite=False, compute=None,
-              runner=None, **kwargs):
+    def _drive(self, system, dirname, compute=None, runner=None, **kwargs):
         """Drives the system in phase space.
 
         Takes ``micromagneticmodel.System`` and drives it in the phase space.
@@ -102,37 +101,12 @@ class Driver(mm.Driver):
         Running OOMMF...
 
         """
-        # This method is implemented in the derived driver class. It raises
-        # exception if any of the arguments are not valid.
-        self._checkargs(**kwargs)
-
-        # Generate directory.
-        if compute is None:
-            subdir = f'drive-{system.drive_number}'
-        else:
-            subdir = f'compute-{system.drive_number}'
-
-        dirname = os.path.join(system.name, subdir)
-        # Check whether a directory already exists.
-        if os.path.exists(dirname):
-            if overwrite:
-                pass
-                # oc.delete(system)
-            else:
-                msg = (f'Directory {dirname} already exists. To overwrite '
-                       'it, pass overwrite=True to the drive method.')
-                raise FileExistsError(msg)
-
-        # Make a directory inside which OOMMF will be run.
-        if not os.path.exists(dirname):
-            os.makedirs(dirname)
-
-        # Generate the necessary filenames.
-        miffilename = f'{system.name}.mif'
-        jsonfilename = 'info.json'
-
         # Change directory to dirname
         with _changedir(dirname):
+            # Generate the necessary filenames.
+            miffilename = f'{system.name}.mif'
+            jsonfilename = 'info.json'
+
             # Generate and save mif file.
             mif = oc.scripts.system_script(system)
             mif += oc.scripts.driver_script(self, system, compute=compute,
@@ -167,7 +141,43 @@ class Driver(mm.Driver):
                 # Update system's datatable.
                 system.table = ut.Table.fromfile(f'{system.name}.odt')
 
+    def drive(self, system, save=False, overwrite=False,
+              compute=None, runner=None, **kwargs):
+        # This method is implemented in the derived driver class. It raises
+        # exception if any of the arguments are not valid.
+        self._checkargs(**kwargs)
+
+        # Generate directory.
+        if compute is None:
+            subdir = f'drive-{system.drive_number}'
+        else:
+            subdir = f'compute-{system.drive_number}'
+
+        dirname = os.path.join(system.name, subdir)
+
+        # Check whether a directory already exists.
+        if os.path.exists(dirname):
+            if overwrite:
+                oc.delete(system)
+            else:
+                msg = (f'Directory {dirname} already exists. To overwrite '
+                       'it, pass overwrite=True to the drive method.')
+                raise FileExistsError(msg)
+
+        # Make a directory inside which OOMMF will be run.
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+
+        self._drive(system, dirname=dirname, compute=None,
+                    runner=None, **kwargs)
+
         # Increment drive_number independent of whether the files are saved
         # or not.
         if compute is None:
             system.drive_number += 1
+
+        if not save:
+            shutil.rmtree(dirname)
+
+        if not os.listdir(dirname):
+            oc.delete(system)
