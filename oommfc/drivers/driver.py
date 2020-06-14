@@ -33,7 +33,7 @@ class Driver(mm.Driver):
         pass  # pragma: no cover
 
 
-    def _drive(self, system, dirname, compute=None, runner=None, **kwargs):
+    def drive(self, system, append=True, compute=None, runner=None, **kwargs):
         """Drives the system in phase space.
 
         Takes ``micromagneticmodel.System`` and drives it in the phase space.
@@ -52,17 +52,12 @@ class Driver(mm.Driver):
         ----------
         system : micromagneticmodel.System
 
-          System to be driven.
+            System object to be driven.
 
-        save : bool
+        append : bool
 
-            If ``True`` files created during an OOMMF run will be saved in the
-            current directory. Defaults to ``False``.
-
-        overwrite : bool
-
-            If the directory from the previous drive already exists, it will be
-            overwritten. Defaults to ``False``.
+            If ``True`` and the system directory already exists, drive or
+            compute directories will be appended.
 
         compute : str
 
@@ -101,24 +96,22 @@ class Driver(mm.Driver):
         Running OOMMF...
 
         """
-        pass
-
-    def drive(self, system, cont=True, compute=None, runner=None, **kwargs):
         # This method is implemented in the derived driver class. It raises
         # exception if any of the arguments are not valid.
         self._checkargs(**kwargs)
 
-        if os.path.exists(system.name):
-            # System directory already exists.
-            dirs = os.listdir(system.name)
-            if dirs:
-                if cont:
-                    last_drive = max(list(map(int, list(zip(*[i.split('-') for i in dirs]))[1])))
-                    system.drive_number = last_drive + 1
+        if os.path.exists(system.name): # system directory already exists
+            drive_dirs = os.listdir(system.name)
+            if drive_dirs:
+                if append:
+                    numbers = list(zip(*[i.split('-') for i in drive_dirs]))[1]
+                    numbers = list(map(int, numbers))
+                    system.drive_number = max(numbers) + 1
                 else:
-                    raise ValueError
-            else:
-                raise ValueError
+                    msg = (f'Directory {system.name} already exists. To '
+                           f'append drives to it, pass append=True to the '
+                           f'drive method.')
+                    raise FileExistsError(msg)
 
         # Generate directory.
         if compute is None:
@@ -127,15 +120,6 @@ class Driver(mm.Driver):
             subdir = f'compute-{system.drive_number}'
 
         dirname = os.path.join(system.name, subdir)
-
-        # Check whether a directory already exists.
-        if os.path.exists(dirname):
-            if overwrite:
-                pass#oc.delete(system)
-            else:
-                msg = (f'Directory {dirname} already exists. To overwrite '
-                       'it, pass overwrite=True to the drive method.')
-                raise FileExistsError(msg)
 
         # Make a directory inside which OOMMF will be run.
         if not os.path.exists(dirname):
@@ -181,12 +165,4 @@ class Driver(mm.Driver):
                 # Update system's datatable.
                 system.table = ut.Table.fromfile(f'{system.name}.odt')
 
-        # Increment drive_number independent of whether the files are saved
-        # or not.
         system.drive_number += 1
-
-        # if not save:
-        #     shutil.rmtree(dirname)
-        #
-        # if not os.listdir(system.name):
-        #     oc.delete(system)
