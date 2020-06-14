@@ -103,7 +103,7 @@ def compute(func, system):
         output = df.Field.fromfile(output_file)
 
     # Delete "compute" directory after the data is extracted.
-    shutil.rmtree(dirname)
+    # shutil.rmtree(dirname)
 
     # Delete the parent directory if it remains empty after deleting "compute"
     # directory.
