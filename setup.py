@@ -14,7 +14,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     include_package_data=True,
     python_requires='>=3.6',
-    install_requires=['micromagnetictests==0.1.2',
+    install_requires=['micromagnetictests==0.1.3',
                       'ubermagtable==0.1.11'],
     classifiers=['Development Status :: 5 - Production/Stable',
                  'Intended Audience :: Education',
