@@ -42,8 +42,11 @@ def delete(system):
 
     """
     if os.path.exists(system.name):
-        shutil.rmtree(system.name)
-        system.drive_number = 0
+        try:
+            shutil.rmtree(system.name)
+            system.drive_number = 0
+        except:
+            pass
     else:
         msg = f'Directory {system.name} does not exist.'
         raise FileNotFoundError(msg)
