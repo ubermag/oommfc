@@ -127,6 +127,7 @@ def test_get_oommf_runner():
     check_runner(oommf_runner)
 
 
+@pytest.mark.travis
 def test_status():
     assert oo.status() == 0
 

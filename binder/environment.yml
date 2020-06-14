@@ -3,4 +3,4 @@ channels:
   - conda-forge
 dependencies:
   - python==3.8
-  - oommfc==0.8.17
+  - oommfc==0.8.18
