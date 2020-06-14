@@ -166,14 +166,6 @@ class Driver(mm.Driver):
                 # Update system's datatable.
                 system.table = ut.Table.fromfile(f'{system.name}.odt')
 
-        if not save:
-            shutil.rmtree(dirname)
-
-            # Delete the parent directory if it remains empty after deleting
-            # "compute" directory.
-            if not os.listdir(system.name):
-                shutil.rmtree(system.name)
-
         # Increment drive_number independent of whether the files are saved
         # or not.
         if compute is None:
