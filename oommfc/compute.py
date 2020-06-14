@@ -79,7 +79,7 @@ def compute(func, system):
 
     """
     td = oc.TimeDriver(total_iteration_limit=1)
-    td.drive(system, t=1e-25, n=1, save=True, continue=True,
+    td.drive(system, t=1e-25, n=1, save=True, overwrite=True,
              compute=schedule_script(func))
 
     if func.__name__ == 'energy':
