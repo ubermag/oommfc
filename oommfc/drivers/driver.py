@@ -179,5 +179,5 @@ class Driver(mm.Driver):
         if not save:
             shutil.rmtree(dirname)
 
-        if not os.listdir(dirname):
+        if not os.listdir(system.name):
             oc.delete(system)
