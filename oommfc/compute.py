@@ -102,6 +102,9 @@ def compute(func, system):
     else:
         output = df.Field.fromfile(output_file)
 
+    with open(output_file) as f:
+        f.close()
+        
     # Delete "compute" directory after the data is extracted.
     shutil.rmtree(dirname)
 
