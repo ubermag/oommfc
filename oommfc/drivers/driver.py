@@ -37,12 +37,10 @@ class Driver(mm.Driver):
         """Drives the system in phase space.
 
         Takes ``micromagneticmodel.System`` and drives it in the phase space.
-        If ``save=True``, the resulting files obtained from the OOMMF run are
-        saved in the current directory (in ``system.name`` directory). If
-        ``overwrite=True`` is passed, the directory with all previously created
-        files (if exists) will be deleted before the system is run. To save a
-        specific value during an OOMMF run ``Schedule...`` line can be passed
-        using ``compute``. To specify the way OOMMF is run, an
+        If ``append=True`` and the system director already exists, drive will
+        be appended to that directory. Otherwise, an exception will be raised.
+        To save a specific value during an OOMMF run ``Schedule...`` line can
+        be passed using ``compute``. To specify the way OOMMF is run, an
         ``oommfc.oommf.OOMMFRunner`` can be passed using ``runner``.
 
         This method accepts any other arguments that could be required by the
@@ -69,6 +67,12 @@ class Driver(mm.Driver):
             OOMMF Runner which is going to be used for running OOMMF. If
             ``None``, OOMMF runner will be found automatically. Defaults to
             ``None``.
+
+        Raises
+        ------
+        FileExistsError
+
+            If system directory already exists and append=False.
 
         Examples
         --------
@@ -101,23 +105,43 @@ class Driver(mm.Driver):
         self._checkargs(**kwargs)
 
         if os.path.exists(system.name): # system directory already exists
-            drive_dirs = os.listdir(system.name)
-            if drive_dirs:
-                if append:
-                    numbers = list(zip(*[i.split('-') for i in drive_dirs]))[1]
-                    numbers = list(map(int, numbers))
-                    system.drive_number = max(numbers) + 1
+            dirs = os.listdir(system.name)
+            drive_dirs = [i for i in dirs if i.startswith('drive')]
+            compute_dirs = [i for i in dirs if i.startswith('compute')]
+            if compute is None:
+                if drive_dirs:
+                    if append:
+                        numbers = list(zip(*[i.split('-')
+                                             for i in drive_dirs]))[1]
+                        numbers = list(map(int, numbers))
+                        system.drive_number = max(numbers) + 1
+                    else:
+                        msg = (f'Directory {system.name} already exists. To '
+                               f'append drives to it, pass append=True to the '
+                               f'drive method.')
+                        raise FileExistsError(msg)
                 else:
-                    msg = (f'Directory {system.name} already exists. To '
-                           f'append drives to it, pass append=True to the '
-                           f'drive method.')
-                    raise FileExistsError(msg)
+                    system.drive_number = 0
+            else:
+                if compute_dirs:
+                    if append:
+                        numbers = list(zip(*[i.split('-')
+                                             for i in compute_dirs]))[1]
+                        numbers = list(map(int, numbers))
+                        system.drive_number = max(numbers) + 1
+                    else:
+                        msg = (f'Directory {system.name} already exists. To '
+                               f'append drives to it, pass append=True to the '
+                               f'drive method.')
+                        raise FileExistsError(msg)
+                else:
+                    system.compute_number = 0
 
         # Generate directory.
         if compute is None:
             subdir = f'drive-{system.drive_number}'
         else:
-            subdir = f'compute-{system.drive_number}'
+            subdir = f'compute-{system.compute_number}'
 
         dirname = os.path.join(system.name, subdir)
 
@@ -138,15 +162,16 @@ class Driver(mm.Driver):
             with open(miffilename, 'w') as miffile:
                 miffile.write(mif)
 
-            # Generate and save json info file.
-            info = {}
-            info['drive_number'] = system.drive_number
-            info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
-            info['time'] = datetime.datetime.now().strftime('%H:%M:%S')
-            info['driver'] = self.__class__.__name__
-            info['args'] = kwargs
-            with open(jsonfilename, 'w') as jsonfile:
-                jsonfile.write(json.dumps(info))
+            # Generate and save json info file for a drive (not compute).
+            if compute is None:
+                info = {}
+                info['drive_number'] = system.drive_number
+                info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
+                info['time'] = datetime.datetime.now().strftime('%H:%M:%S')
+                info['driver'] = self.__class__.__name__
+                info['args'] = kwargs
+                with open(jsonfilename, 'w') as jsonfile:
+                    jsonfile.write(json.dumps(info))
 
             # Run OOMMF.
             if runner is None:
@@ -165,4 +190,7 @@ class Driver(mm.Driver):
                 # Update system's datatable.
                 system.table = ut.Table.fromfile(f'{system.name}.odt')
 
-        system.drive_number += 1
+        if compute is None:
+            system.drive_number += 1
+        else:
+            system.compute_number += 1

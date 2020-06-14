@@ -88,7 +88,7 @@ def compute(func, system):
     elif func.__name__ == 'density':
         extension = '*.oef'
 
-    dirname = os.path.join(system.name, f'compute-{system.drive_number-1}')
+    dirname = os.path.join(system.name, f'compute-{system.compute_number-1}')
     output_file = max(glob.iglob(os.path.join(dirname, extension)),
                       key=os.path.getctime)
 
