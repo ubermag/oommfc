@@ -52,9 +52,8 @@ class Driver(mm.Driver):
         dirname = os.path.join(basedirname, system.name, subdir)
         # Check whether a directory already exists.
         if os.path.exists(dirname):
-            if overwrite:
-                pass
-                # oc.delete(system)
+            if overwrite and compute is None:  # Windows fix
+                oc.delete(system)
             else:
                 msg = (f'Directory {dirname} already exists. To overwrite '
                        'it, pass overwrite=True to the drive method.')
