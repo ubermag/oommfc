@@ -101,6 +101,46 @@ class Driver(mm.Driver):
         Running OOMMF...
 
         """
+        pass
+
+    def drive(self, system, cont=True, compute=None, runner=None, **kwargs):
+        # This method is implemented in the derived driver class. It raises
+        # exception if any of the arguments are not valid.
+        self._checkargs(**kwargs)
+
+        if os.path.exists(system.name):
+            # System directory already exists.
+            dirs = os.listdir(system.name)
+            if dirs:
+                if cont:
+                    last_drive = max(list(map(int, list(zip(*[i.split('-') for i in dirs]))[1])))
+                    system.drive_number = last_drive + 1
+                else:
+                    raise ValueError
+            else:
+                raise ValueError
+
+        # Generate directory.
+        if compute is None:
+            subdir = f'drive-{system.drive_number}'
+        else:
+            subdir = f'compute-{system.drive_number}'
+
+        dirname = os.path.join(system.name, subdir)
+
+        # Check whether a directory already exists.
+        if os.path.exists(dirname):
+            if overwrite:
+                pass#oc.delete(system)
+            else:
+                msg = (f'Directory {dirname} already exists. To overwrite '
+                       'it, pass overwrite=True to the drive method.')
+                raise FileExistsError(msg)
+
+        # Make a directory inside which OOMMF will be run.
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+
         # Change directory to dirname
         with _changedir(dirname):
             # Generate the necessary filenames.
@@ -141,40 +181,9 @@ class Driver(mm.Driver):
                 # Update system's datatable.
                 system.table = ut.Table.fromfile(f'{system.name}.odt')
 
-    def drive(self, system, save=False, overwrite=False,
-              compute=None, runner=None, **kwargs):
-        # This method is implemented in the derived driver class. It raises
-        # exception if any of the arguments are not valid.
-        self._checkargs(**kwargs)
-
-        # Generate directory.
-        if compute is None:
-            subdir = f'drive-{system.drive_number}'
-        else:
-            subdir = f'compute-{system.drive_number}'
-
-        dirname = os.path.join(system.name, subdir)
-
-        # Check whether a directory already exists.
-        if os.path.exists(dirname):
-            if overwrite:
-                pass#oc.delete(system)
-            else:
-                msg = (f'Directory {dirname} already exists. To overwrite '
-                       'it, pass overwrite=True to the drive method.')
-                raise FileExistsError(msg)
-
-        # Make a directory inside which OOMMF will be run.
-        if not os.path.exists(dirname):
-            os.makedirs(dirname)
-
-        self._drive(system, dirname=dirname, compute=None,
-                    runner=None, **kwargs)
-
         # Increment drive_number independent of whether the files are saved
         # or not.
-        if compute is None:
-            system.drive_number += 1
+        system.drive_number += 1
 
         # if not save:
         #     shutil.rmtree(dirname)
