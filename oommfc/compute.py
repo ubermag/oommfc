@@ -94,11 +94,11 @@ def compute(func, system):
                       key=os.path.getctime)
 
     if func.__name__ == 'energy':
-        table = ut.read(output_file, rename=False)
+        table = ut.Table.fromfile(output_file, rename=False)
         if isinstance(func.__self__, mm.Energy):
-            output = table['RungeKuttaEvolve:evolver:Total energy'][0]
+            output = table.data['RungeKuttaEvolve:evolver:Total energy'][0]
         else:
-            output = table[f'{oxs_class(func.__self__)}::Energy'][0]
+            output = table.data[f'{oxs_class(func.__self__)}::Energy'][0]
     else:
         output = df.Field.fromfile(output_file)
 

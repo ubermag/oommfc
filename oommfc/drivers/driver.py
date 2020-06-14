@@ -101,7 +101,7 @@ class Driver(mm.Driver):
                 system.m.value = df.Field.fromfile(lastomffile)
 
                 # Update system's datatable.
-                system.table = ut.read(f'{system.name}.odt')
+                system.table = ut.Table.fromfile(f'{system.name}.odt')
 
         # Increment drive_number independent of whether the files are saved
         # or not.
