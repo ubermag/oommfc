@@ -176,8 +176,8 @@ class Driver(mm.Driver):
         if compute is None:
             system.drive_number += 1
 
-        if not save:
-            shutil.rmtree(dirname)
-
-        if not os.listdir(system.name):
-            oc.delete(system)
+        # if not save:
+        #     shutil.rmtree(dirname)
+        #
+        # if not os.listdir(system.name):
+        #     oc.delete(system)
