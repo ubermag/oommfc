@@ -3,7 +3,6 @@ import os
 import glob
 import json
 import shutil
-import tempfile
 import datetime
 import contextlib
 import oommfc as oc
@@ -33,80 +32,6 @@ class Driver(mm.Driver):
         """
         pass  # pragma: no cover
 
-    def _drive(self, system, basedirname, overwrite=False,
-               compute=None, runner=None, **kwargs):
-        """Convenience function, which allows to drive in different Python
-        contexts.
-
-        """
-        # This method is implemented in the derived driver class. It raises
-        # exception if any of the arguments are not valid.
-        self._checkargs(**kwargs)
-
-        # Generate directory.
-        if compute is None:
-            subdir = f'drive-{system.drive_number}'
-        else:
-            subdir = f'compute-{system.drive_number}'
-
-        dirname = os.path.join(basedirname, system.name, subdir)
-        # Check whether a directory already exists.
-        if os.path.exists(dirname):
-            if overwrite:
-                oc.delete(system)
-            else:
-                msg = (f'Directory {dirname} already exists. To overwrite '
-                       'it, pass overwrite=True to the drive method.')
-                raise FileExistsError(msg)
-
-        # Make a directory inside which OOMMF will be run.
-        if not os.path.exists(dirname):
-            os.makedirs(dirname)
-
-        # Generate the necessary filenames.
-        miffilename = f'{system.name}.mif'
-        jsonfilename = 'info.json'
-
-        # Change directory to dirname
-        with _changedir(dirname):
-            # Generate and save mif file.
-            mif = oc.scripts.system_script(system)
-            mif += oc.scripts.driver_script(self, system, compute=compute,
-                                            **kwargs)
-            with open(miffilename, 'w') as miffile:
-                miffile.write(mif)
-
-            # Generate and save json info file.
-            info = {}
-            info['drive_number'] = system.drive_number
-            info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
-            info['time'] = datetime.datetime.now().strftime('%H:%M:%S')
-            info['driver'] = self.__class__.__name__
-            info['args'] = kwargs
-            with open(jsonfilename, 'w') as jsonfile:
-                jsonfile.write(json.dumps(info))
-
-            # Run OOMMF.
-            if runner is None:
-                runner = oc.oommf.get_oommf_runner()
-            runner.call(argstr=miffilename)
-
-            # Update system's m and datatable attributes if the derivation of
-            # E, Heff, or energy density was not asked.
-            if compute is None:
-                # Update system's magnetisation. An example .omf filename:
-                # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
-                omffiles = glob.iglob(f'{system.name}*.omf')
-                lastomffile = sorted(omffiles)[-1]
-                system.m.value = df.Field.fromfile(lastomffile)
-
-                # Update system's datatable.
-                system.table = ut.Table.fromfile(f'{system.name}.odt')
-
-        # Increment drive_number independent of whether the files are saved
-        # or not.
-        if compute is None:
-            system.drive_number += 1
 
     def drive(self, system, save=False, overwrite=False, compute=None,
               runner=None, **kwargs):
@@ -177,11 +102,74 @@ class Driver(mm.Driver):
         Running OOMMF...
 
         """
-        if save:
-            self._drive(system=system, basedirname='', overwrite=overwrite,
-                        compute=compute, runner=runner, **kwargs)
+        # This method is implemented in the derived driver class. It raises
+        # exception if any of the arguments are not valid.
+        self._checkargs(**kwargs)
+
+        # Generate directory.
+        if compute is None:
+            subdir = f'drive-{system.drive_number}'
         else:
-            with tempfile.TemporaryDirectory() as tmpdir:
-                self._drive(system=system, basedirname=tmpdir,
-                            overwrite=overwrite, compute=compute,
-                            runner=runner, **kwargs)
+            subdir = f'compute-{system.drive_number}'
+
+        dirname = os.path.join(system.name, subdir)
+        # Check whether a directory already exists.
+        if os.path.exists(dirname):
+            if overwrite:
+                oc.delete(system)
+            else:
+                msg = (f'Directory {dirname} already exists. To overwrite '
+                       'it, pass overwrite=True to the drive method.')
+                raise FileExistsError(msg)
+
+        # Make a directory inside which OOMMF will be run.
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+
+        # Generate the necessary filenames.
+        miffilename = f'{system.name}.mif'
+        jsonfilename = 'info.json'
+
+        # Change directory to dirname
+        with _changedir(dirname):
+            # Generate and save mif file.
+            mif = oc.scripts.system_script(system)
+            mif += oc.scripts.driver_script(self, system, compute=compute,
+                                            **kwargs)
+            with open(miffilename, 'w') as miffile:
+                miffile.write(mif)
+
+            # Generate and save json info file.
+            info = {}
+            info['drive_number'] = system.drive_number
+            info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
+            info['time'] = datetime.datetime.now().strftime('%H:%M:%S')
+            info['driver'] = self.__class__.__name__
+            info['args'] = kwargs
+            with open(jsonfilename, 'w') as jsonfile:
+                jsonfile.write(json.dumps(info))
+
+            # Run OOMMF.
+            if runner is None:
+                runner = oc.oommf.get_oommf_runner()
+            runner.call(argstr=miffilename)
+
+            # Update system's m and datatable attributes if the derivation of
+            # E, Heff, or energy density was not asked.
+            if compute is None:
+                # Update system's magnetisation. An example .omf filename:
+                # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
+                omffiles = glob.iglob(f'{system.name}*.omf')
+                lastomffile = sorted(omffiles)[-1]
+                system.m.value = df.Field.fromfile(lastomffile)
+
+                # Update system's datatable.
+                system.table = ut.Table.fromfile(f'{system.name}.odt')
+
+        if not save:
+            shutil.rmtree(dirname)
+
+        # Increment drive_number independent of whether the files are saved
+        # or not.
+        if compute is None:
+            system.drive_number += 1
