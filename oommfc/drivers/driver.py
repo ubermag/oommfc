@@ -32,7 +32,6 @@ class Driver(mm.Driver):
         """
         pass  # pragma: no cover
 
-
     def drive(self, system, append=True, compute=None, runner=None, **kwargs):
         """Drives the system in phase space.
 
@@ -104,7 +103,7 @@ class Driver(mm.Driver):
         # exception if any of the arguments are not valid.
         self._checkargs(**kwargs)
 
-        if os.path.exists(system.name): # system directory already exists
+        if os.path.exists(system.name):  # system directory already exists
             dirs = os.listdir(system.name)
             drive_dirs = [i for i in dirs if i.startswith('drive')]
             compute_dirs = [i for i in dirs if i.startswith('compute')]
