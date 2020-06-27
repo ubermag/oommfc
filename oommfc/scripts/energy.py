@@ -97,30 +97,6 @@ def zeeman_script(term):
 
     return mif
 
-"""
-proc Rotate { freq stage stagetime totaltime } {
-   global PI
-   set w [expr {$freq*2*$PI}]
-   set ct [expr {cos($w*$totaltime)}]
-   set mct [expr {-1*$ct}]      ;# "mct" is "minus cosine (w)t"
-   set st [expr {sin($w*$totaltime)}]
-   set mst [expr {-1*$st}]      ;# "mst" is "minus sine (w)t"
-   return [list  $ct $mst  0 \
-                 $st $ct   0 \
-                   0   0   1 \
-                 [expr {$w*$mst}] [expr {$w*$mct}] 0 \
-                 [expr {$w*$ct}]  [expr {$w*$mst}] 0 \
-                        0                0         0]
-}
-
-Specify Oxs_TransformZeeman {
-  type general
-  script {Rotate 1e9}
-  field {0 1000. 0}
-}
-"""
-
-
 
 def demag_script(term):
     mif = '# Demag\n'
