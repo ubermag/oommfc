@@ -200,7 +200,7 @@ def rkky_script(term, system):
 
     mif += '# Scalar field for RKKY surfaces\n'
     mif += 'Specify Oxs_LinearScalarField:rkkyfield {\n'
-    vectorval =df.util.assemble_index(0, 3, {df.util.axesdict[direction]: 1})
+    vectorval = df.util.assemble_index(0, 3, {df.util.axesdict[direction]: 1})
     mif += '  vector {{{} {} {}}}\n'.format(*vectorval)
     mif += '  norm 1.0\n'
     mif += '}\n\n'
