@@ -13,7 +13,7 @@ def system_script(system, **kwargs):
 
     # Mesh and energy scripts.
     mif += oc.scripts.mesh_script(system.m.mesh)
-    mif += oc.scripts.energy_script(system.energy)
+    mif += oc.scripts.energy_script(system)
 
     # Magnetisation script.
     m0mif, _, _ = oc.scripts.setup_m0(system.m, 'm0')
