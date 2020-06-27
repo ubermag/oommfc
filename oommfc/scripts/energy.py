@@ -58,12 +58,54 @@ def zeeman_script(term):
 
     mif = ''
     mif += Hmif
-    mif += '# FixedZeeman\n'
-    mif += 'Specify Oxs_FixedZeeman {\n'
-    mif += f'  field {Hname}\n'
-    mif += '}\n\n'
+
+    if isinstance(term.wave, str):
+        if term.wave == 'sin':
+            mif += 'proc TimeFunction { f t0 stage stagetime totaltime } {\n'
+            mif += '  set PI [expr {4*atan(1.)}]\n'
+            mif += '  set w [expr {$f*2*$PI}]\n'
+            mif += '  set st [expr {sin($w*($totaltime-$t0))}]\n'
+            mif += '  set dv [expr {$w*cos($w*($totaltime-$t0))}]\n'
+            mif += '  return [list $st $st $st $dv $dv $dv ] \n'
+            mif += '}\n\n'
+
+        mif += '# TransformZeeman\n'
+        mif += 'Specify Oxs_TransformZeeman {\n'
+        mif += f'  type diagonal\n'
+        mif += f'  script {{ TimeFunction {term.f} {term.t0} }}\n'
+        mif += f'  field {Hname}\n'
+        mif += '}\n\n'
+    else:
+        mif += '# FixedZeeman\n'
+        mif += 'Specify Oxs_FixedZeeman {\n'
+        mif += f'  field {Hname}\n'
+        mif += '}\n\n'
 
     return mif
+
+"""
+proc Rotate { freq stage stagetime totaltime } {
+   global PI
+   set w [expr {$freq*2*$PI}]
+   set ct [expr {cos($w*$totaltime)}]
+   set mct [expr {-1*$ct}]      ;# "mct" is "minus cosine (w)t"
+   set st [expr {sin($w*$totaltime)}]
+   set mst [expr {-1*$st}]      ;# "mst" is "minus sine (w)t"
+   return [list  $ct $mst  0 \
+                 $st $ct   0 \
+                   0   0   1 \
+                 [expr {$w*$mst}] [expr {$w*$mct}] 0 \
+                 [expr {$w*$ct}]  [expr {$w*$mst}] 0 \
+                        0                0         0]
+}
+
+Specify Oxs_TransformZeeman {
+  type general
+  script {Rotate 1e9}
+  field {0 1000. 0}
+}
+"""
+
 
 
 def demag_script(term):
