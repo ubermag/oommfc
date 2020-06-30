@@ -8,15 +8,15 @@ import discretisedfield as df
 import micromagneticmodel as mm
 
 
-def oxs_class(term):
+def oxs_class(term, system):
     """Extract the OOMMF ``Oxs_`` class name of an individual term.
 
     """
-    mif = getattr(oc.scripts.energy, f'{term.name}_script')(term)
+    mif = getattr(oc.scripts.energy, f'{term.name}_script')(term, system)
     return re.search(r'Oxs_([\w_]+)', mif).group(1)
 
 
-def schedule_script(func):
+def schedule_script(func, system):
     """Generate OOMMF ``Schedule...`` line for saving an individual value.
 
     """
@@ -26,13 +26,13 @@ def schedule_script(func):
         if isinstance(func.__self__, mm.Energy):
             output = 'Oxs_RungeKuttaEvolve:evolver:Total field'
         else:
-            output = (f'Oxs_{oxs_class(func.__self__)}:'
+            output = (f'Oxs_{oxs_class(func.__self__, system)}:'
                       f'{func.__self__.name}:Field')
     elif func.__name__ == 'density':
         if isinstance(func.__self__, mm.Energy):
             output = 'Oxs_RungeKuttaEvolve:evolver:Total energy density'
         else:
-            output = (f'Oxs_{oxs_class(func.__self__)}:'
+            output = (f'Oxs_{oxs_class(func.__self__, system)}:'
                       f'{func.__self__.name}:Energy density')
     else:
         msg = f'Computing the value of {func} is not supported.'
@@ -81,7 +81,8 @@ def compute(func, system):
 
     """
     td = oc.TimeDriver(total_iteration_limit=1)
-    td.drive(system, t=1e-25, n=1, append=True, compute=schedule_script(func))
+    td.drive(system, t=1e-25, n=1, append=True,
+             compute=schedule_script(func, system))
 
     if func.__name__ == 'energy':
         extension = '*.odt'
@@ -99,7 +100,7 @@ def compute(func, system):
         if isinstance(func.__self__, mm.Energy):
             output = table.data['RungeKuttaEvolve:evolver:Total energy'][0]
         else:
-            output = table.data[(f'{oxs_class(func.__self__)}:'
+            output = table.data[(f'{oxs_class(func.__self__, system)}:'
                                  f'{func.__self__.name}:Energy')][0]
     else:
         output = df.Field.fromfile(output_file)

@@ -1,5 +1,6 @@
-import abc
 import os
+import sys
+import abc
 import glob
 import json
 import shutil
@@ -172,9 +173,20 @@ class Driver(mm.Driver):
                 with open(jsonfilename, 'w') as jsonfile:
                     jsonfile.write(json.dumps(info))
 
-            # Run OOMMF.
+            # Get right OOMMF runner depending on whether there is DMI.
             if runner is None:
-                runner = oc.oommf.get_oommf_runner()
+                if sys.platform != 'win32':
+                    runner = oc.oommf.get_oommf_runner()
+                else:
+                    if hasattr(system.energy, 'dmi'):
+                        if (system.energy.dmi.crystalclass == 'Cnv' and
+                                system.m.mesh.bc == ''):
+                            runner = oc.oommf.get_oommf_runner()
+                        else:
+                            runner = oc.oommf.DockerOOMMFRunner()
+                    else:
+                        runner = oc.oommf.get_oommf_runner()
+
             runner.call(argstr=miffilename)
 
             # Update system's m and datatable attributes if the derivation of

@@ -7,16 +7,13 @@ import discretisedfield as df
 def energy_script(system):
     mif = ''
     for term in system.energy:
-        if term.__class__.__name__.lower() == 'rkky':
-            mif += globals()[(f'{term.__class__.__name__.lower()}'
-                              '_script')](term, system)
-        else:
-            mif += globals()[f'{term.__class__.__name__.lower()}_script'](term)
+        mif += globals()[(f'{term.__class__.__name__.lower()}'
+                          '_script')](term, system)
 
     return mif
 
 
-def exchange_script(term):
+def exchange_script(term, system):
     if isinstance(term.A, numbers.Real):
         mif = '# UniformExchange\n'
         mif += f'Specify Oxs_UniformExchange:{term.name} {{\n'
@@ -54,7 +51,7 @@ def exchange_script(term):
     return mif
 
 
-def zeeman_script(term):
+def zeeman_script(term, system):
     Hmif, Hname = oc.scripts.setup_vector_parameter(term.H, 'zeeman_H')
 
     mif = ''
@@ -66,14 +63,15 @@ def zeeman_script(term):
             mif += '  set PI [expr {4*atan(1.)}]\n'
             mif += f'  set w [expr {{ {term.f}*2*$PI }}]\n'
             mif += f'  set tt [expr {{ $total_time - {term.t0} }}]\n'
-            mif += '  set sine [expr {sin($w*($tt))}]\n'
-            mif += '  set dv [expr {$w*cos($w*($tt))}]\n'
-            mif += f'  set Hx [expr {{ {term.H[0]}*$sine }}]\n'
-            mif += f'  set Hy [expr {{ {term.H[1]}*$sine }}]\n'
-            mif += f'  set Hz [expr {{ {term.H[2]}*$sine }}]\n'
-            mif += f'  set dHx [expr {{ {term.H[0]}*$dv }}]\n'
-            mif += f'  set dHy [expr {{ {term.H[1]}*$dv }}]\n'
-            mif += f'  set dHz [expr {{ {term.H[2]}*$dv }}]\n'
+            mif += f'  set wt [expr {{ $w*$tt }}]\n'
+            mif += '  set f [expr {sin($wt)}]\n'
+            mif += '  set df [expr {$w*cos($wt)}]\n'
+            mif += f'  set Hx [expr {{ {term.H[0]}*$f }}]\n'
+            mif += f'  set Hy [expr {{ {term.H[1]}*$f }}]\n'
+            mif += f'  set Hz [expr {{ {term.H[2]}*$f }}]\n'
+            mif += f'  set dHx [expr {{ {term.H[0]}*$df }}]\n'
+            mif += f'  set dHy [expr {{ {term.H[1]}*$df }}]\n'
+            mif += f'  set dHz [expr {{ {term.H[2]}*$df }}]\n'
             mif += '  return [list $Hx $Hy $Hz $dHx $dHy $dHz ] \n'
             mif += '}\n\n'
         elif term.wave == 'sinc':
@@ -82,19 +80,19 @@ def zeeman_script(term):
             mif += f'  set w [expr {{ {term.f}*2*$PI }}]\n'
             mif += f'  set tt [expr {{ $total_time - {term.t0} }}]\n'
             mif += '  set wt [expr {$w*$tt}]\n'
-            mif += '  set sine [expr {sin($wt)}]\n'
-            mif += '  set cosine [expr {cos($wt)}]\n'
-            mif += '  if {$wt != 0} { set sinc [expr {$sine/$wt}] }\n'
-            mif += '  if {$wt == 0} { set sinc [expr {1}] }\n'
-            mif += ('  if {$wt != 0} '
-                    '{set dv [expr {($wt*$cosine - $sine)/($wt*$wt)}]}\n')
-            mif += '  if {$wt == 0} { set dv [expr {0}] }\n'
-            mif += f'  set Hx [expr {{ {term.H[0]}*$sinc }}]\n'
-            mif += f'  set Hy [expr {{ {term.H[1]}*$sinc }}]\n'
-            mif += f'  set Hz [expr {{ {term.H[2]}*$sinc }}]\n'
-            mif += f'  set dHx [expr {{ {term.H[0]}*$dv }}]\n'
-            mif += f'  set dHy [expr {{ {term.H[1]}*$dv }}]\n'
-            mif += f'  set dHz [expr {{ {term.H[2]}*$dv }}]\n'
+            mif += '  set sinwt [expr {sin($wt)}]\n'
+            mif += '  set coswt [expr {cos($wt)}]\n'
+            mif += '  if {$wt != 0} { set f [expr {$sinwt/$wt}] }\n'
+            mif += '  if {$wt == 0} { set f [expr {1}] }\n'
+            mif += ('  if {$wt != 0} { set df '
+                    '[expr {($wt*$w*$coswt - $w*$sinwt)/($wt*$wt)}] }\n')
+            mif += '  if {$wt == 0} { set df [expr {0}] }\n'
+            mif += f'  set Hx [expr {{ {term.H[0]}*$f }}]\n'
+            mif += f'  set Hy [expr {{ {term.H[1]}*$f }}]\n'
+            mif += f'  set Hz [expr {{ {term.H[2]}*$f }}]\n'
+            mif += f'  set dHx [expr {{ {term.H[0]}*$df }}]\n'
+            mif += f'  set dHy [expr {{ {term.H[1]}*$df }}]\n'
+            mif += f'  set dHz [expr {{ {term.H[2]}*$df }}]\n'
             mif += '  return [list $Hx $Hy $Hz $dHx $dHy $dHz ] \n'
             mif += '}\n\n'
 
@@ -112,7 +110,7 @@ def zeeman_script(term):
     return mif
 
 
-def demag_script(term):
+def demag_script(term, system):
     mif = '# Demag\n'
     mif += f'Specify Oxs_Demag:{term.name} {{\n'
     if hasattr(term, 'asymptotic_radius'):
@@ -122,22 +120,16 @@ def demag_script(term):
     return mif
 
 
-def dmi_script(term):
-    if term.crystalclass in ['T', 'O'] and sys.platform != 'win32':
+def dmi_script(term, system):
+    if term.crystalclass in ['T', 'O']:
         oxs = 'Oxs_DMI_T'
-    elif term.crystalclass == 'D2d' and sys.platform != 'win32':
+    elif term.crystalclass == 'D2d':
         oxs = 'Oxs_DMI_D2d'
-    elif term.crystalclass == 'Cnv' and sys.platform != 'win32':
-        oxs = 'Oxs_DMI_Cnv'
-    # The following lines cannot be accessed on TravisCI, where coverage is
-    # evaluated. Therefore, those lines are excluded from coverage.
-    elif (term.crystalclass == 'Cnv' and
-          sys.platform == 'win32'):  # pragma: no cover
-        oxs = 'Oxs_DMExchange6Ngbr'  # pragma: no cover
-    else:
-        raise ValueError(f'The {term.crystalclass} crystal '
-                         f'class is not supported on {sys.platform} '
-                         'platform.')  # pragma: no cover
+    elif term.crystalclass == 'Cnv':
+        if sys.platform == 'win32' and system.m.mesh.bc == '':
+            oxs = 'Oxs_DMExchange6Ngbr'
+        else:
+            oxs = 'Oxs_DMI_Cnv'
 
     mif = f'# DMI of crystallographic class {term.crystalclass}\n'
     mif += f'Specify {oxs}:{term.name} {{\n'
@@ -171,7 +163,7 @@ def dmi_script(term):
     return mif
 
 
-def uniaxialanisotropy_script(term):
+def uniaxialanisotropy_script(term, system):
     kmif, kname = oc.scripts.setup_scalar_parameter(term.K, 'ua_K')
     umif, uname = oc.scripts.setup_vector_parameter(term.u, 'ua_u')
 
@@ -187,7 +179,7 @@ def uniaxialanisotropy_script(term):
     return mif
 
 
-def cubicanisotropy_script(term):
+def cubicanisotropy_script(term, system):
     kmif, kname = oc.scripts.setup_scalar_parameter(term.K, 'ca_K')
     u1mif, u1name = oc.scripts.setup_vector_parameter(term.u1, 'ca_u1')
     u2mif, u2name = oc.scripts.setup_vector_parameter(term.u2, 'ca_u2')
@@ -206,7 +198,7 @@ def cubicanisotropy_script(term):
     return mif
 
 
-def magnetoelastic_script(term):
+def magnetoelastic_script(term, system):
     B1mif, B1name = oc.scripts.setup_scalar_parameter(term.B1, 'mel_B1')
     B2mif, B2name = oc.scripts.setup_scalar_parameter(term.B2, 'mel_B2')
     ediagmif, ediagname = oc.scripts.setup_vector_parameter(
