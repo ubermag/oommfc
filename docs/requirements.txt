@@ -1,1 +1,2 @@
 nbsphinx
+matplotlib>=3.2
