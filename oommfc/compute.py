@@ -26,12 +26,14 @@ def schedule_script(func):
         if isinstance(func.__self__, mm.Energy):
             output = 'Oxs_RungeKuttaEvolve:evolver:Total field'
         else:
-            output = f'Oxs_{oxs_class(func.__self__)}::Field'
+            output = (f'Oxs_{oxs_class(func.__self__)}:'
+                      f'{func.__self__.name}:Field')
     elif func.__name__ == 'density':
         if isinstance(func.__self__, mm.Energy):
             output = 'Oxs_RungeKuttaEvolve:evolver:Total energy density'
         else:
-            output = f'Oxs_{oxs_class(func.__self__)}::Energy density'
+            output = (f'Oxs_{oxs_class(func.__self__)}:'
+                      f'{func.__self__.name}:Energy density')
     else:
         msg = f'Computing the value of {func} is not supported.'
         raise ValueError(msg)
@@ -97,7 +99,8 @@ def compute(func, system):
         if isinstance(func.__self__, mm.Energy):
             output = table.data['RungeKuttaEvolve:evolver:Total energy'][0]
         else:
-            output = table.data[f'{oxs_class(func.__self__)}::Energy'][0]
+            output = table.data[(f'{oxs_class(func.__self__)}:'
+                                 f'{func.__self__.name}:Energy')][0]
     else:
         output = df.Field.fromfile(output_file)
 

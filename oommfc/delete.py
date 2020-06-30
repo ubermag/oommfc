@@ -2,13 +2,13 @@ import os
 import shutil
 
 
-def delete(system):
+def delete(system, silent=False):
     """Deletes micromagnetic system files.
 
-    After the system is driven, if ``save=True`` is passed, the files obtained
-    from an OOMMF run are saved in the current directory. ``oommfc.delete`` is
-    a convenience function for deleting all of them. More precisely, the
-    directory with name the same as ``system.name`` is deleted.
+    This is a convenience function for deleting all of the data associated with
+    a system object. More precisely, the directory with name the same as
+    ``system.name`` is deleted. If ``silent=True`` is passed, no error is
+    raised if the directory does not exist.
 
     Parameters
     ----------
@@ -16,27 +16,33 @@ def delete(system):
 
         System whose files are deleted.
 
+    silent : bool, optional
+
+        If ``True``, no error is raised if the directory does not exist.
+
     Raises
     ------
     FileNotFoundError
 
-        If the directory with ``system.name`` does not exist.
+        If the directory with ``system.name`` does not exist and
+        ``silent=False``.
 
     Examples
     --------
     1. Delete system files.
 
     >>> import os
-    >>> import oommfc as oc
+    >>> import oommfc as mc
     >>> import micromagneticmodel as mm
     ...
     >>> system = mm.examples.macrospin()
-    >>> td = oc.TimeDriver()
+    >>> mc.delete(system)
+    >>> td = mc.TimeDriver()
     >>> td.drive(system, t=1e-12, n=5, save=True)
     Running OOMMF...
     >>> os.path.exists(system.name)
     True
-    >>> oc.delete(system)  # deletes directory
+    >>> mc.delete(system)  # deletes directory
     >>> os.path.exists(system.name)
     False
 
@@ -46,7 +52,8 @@ def delete(system):
             shutil.rmtree(system.name)
             system.drive_number = 0
         except Exception:
-            print('Cannot delete file.')
+            print('Cannot delete system directory.')
     else:
-        msg = f'Directory {system.name} does not exist.'
-        raise FileNotFoundError(msg)
+        if not silent:
+            msg = f'Directory {system.name} does not exist.'
+            raise FileNotFoundError(msg)

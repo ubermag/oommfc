@@ -7,10 +7,11 @@ import discretisedfield as df
 def energy_script(system):
     mif = ''
     for term in system.energy:
-        if term.name == 'rkky':
-            mif += globals()[f'{term.name}_script'](term, system)
+        if term.__class__.__name__.lower() == 'rkky':
+            mif += globals()[(f'{term.__class__.__name__.lower()}'
+                              '_script')](term, system)
         else:
-            mif += globals()[f'{term.name}_script'](term)
+            mif += globals()[f'{term.__class__.__name__.lower()}_script'](term)
 
     return mif
 
@@ -18,7 +19,7 @@ def energy_script(system):
 def exchange_script(term):
     if isinstance(term.A, numbers.Real):
         mif = '# UniformExchange\n'
-        mif += 'Specify Oxs_UniformExchange {\n'
+        mif += f'Specify Oxs_UniformExchange:{term.name} {{\n'
         mif += f'  A {term.A}\n'
         mif += '}\n\n'
 
@@ -28,7 +29,7 @@ def exchange_script(term):
         else:
             default_value = 0
         mif = '# Exchange6Ngbr\n'
-        mif += 'Specify Oxs_Exchange6Ngbr {\n'
+        mif += f'Specify Oxs_Exchange6Ngbr:{term.name} {{\n'
         mif += f'  default_A {default_value}\n'
         mif += '  atlas :main_atlas\n'
         mif += '  A {\n'
@@ -46,7 +47,7 @@ def exchange_script(term):
         Amif, Aname = oc.scripts.setup_scalar_parameter(term.A, 'exchange_A')
         mif = Amif
         mif += '# ExchangePtwise\n'
-        mif += 'Specify Oxs_ExchangePtwise {\n'
+        mif += f'Specify Oxs_ExchangePtwise:{term.name} {{\n'
         mif += f'  A {Aname}\n'
         mif += '}\n\n'
 
@@ -84,14 +85,14 @@ def zeeman_script(term):
             mif += '}\n\n'
 
         mif += '# TransformZeeman\n'
-        mif += 'Specify Oxs_TransformZeeman {\n'
+        mif += f'Specify Oxs_TransformZeeman:{term.name} {{\n'
         mif += f'  type diagonal\n'
         mif += f'  script {{ TimeFunction {term.f} {term.t0} }}\n'
         mif += f'  field {Hname}\n'
         mif += '}\n\n'
     else:
         mif += '# FixedZeeman\n'
-        mif += 'Specify Oxs_FixedZeeman {\n'
+        mif += f'Specify Oxs_FixedZeeman:{term.name} {{\n'
         mif += f'  field {Hname}\n'
         mif += '}\n\n'
 
@@ -100,7 +101,7 @@ def zeeman_script(term):
 
 def demag_script(term):
     mif = '# Demag\n'
-    mif += 'Specify Oxs_Demag {\n'
+    mif += f'Specify Oxs_Demag:{term.name} {{\n'
     if hasattr(term, 'asymptotic_radius'):
         mif += f'  asymptotic_radius {term.asymptotic_radius}\n'
     mif += '}\n\n'
@@ -126,7 +127,7 @@ def dmi_script(term):
                          'platform.')  # pragma: no cover
 
     mif = f'# DMI of crystallographic class {term.crystalclass}\n'
-    mif += f'Specify {oxs} {{\n'
+    mif += f'Specify {oxs}:{term.name} {{\n'
 
     if isinstance(term.D, numbers.Real):
         mif += f'  default_D {term.D}\n'
@@ -165,7 +166,7 @@ def uniaxialanisotropy_script(term):
     mif += kmif
     mif += umif
     mif += '# UniaxialAnisotropy\n'
-    mif += 'Specify Oxs_UniaxialAnisotropy {\n'
+    mif += f'Specify Oxs_UniaxialAnisotropy:{term.name} {{\n'
     mif += f'  K1 {kname}\n'
     mif += f'  axis {uname}\n'
     mif += '}\n\n'
@@ -183,7 +184,7 @@ def cubicanisotropy_script(term):
     mif += u1mif
     mif += u2mif
     mif += '# CubicAnisotropy\n'
-    mif += 'Specify Oxs_CubicAnisotropy {\n'
+    mif += f'Specify Oxs_CubicAnisotropy:{term.name} {{\n'
     mif += f'  K1 {kname}\n'
     mif += f'  axis1 {u1name}\n'
     mif += f'  axis2 {u2name}\n'
@@ -206,7 +207,7 @@ def magnetoelastic_script(term):
     mif += ediagmif
     mif += eoffdiagmif
     mif += '# MagnetoElastic\n'
-    mif += 'Specify YY_FixedMEL {\n'
+    mif += f'Specify YY_FixedMEL:{term.name} {{\n'
     mif += f'  B1 {B1name}\n'
     mif += f'  B2 {B2name}\n'
     mif += f'  e_diag_field {ediagname}\n'
@@ -238,7 +239,7 @@ def rkky_script(term, system):
     mif += '}\n\n'
 
     mif += '# TwoSurfaceExchange\n'
-    mif += 'Specify Oxs_TwoSurfaceExchange {\n'
+    mif += f'Specify Oxs_TwoSurfaceExchange:{term.name} {{\n'
     if hasattr(term, 'sigma'):
         mif += f'  sigma {term.sigma}\n'
     if hasattr(term, 'sigma2'):
