@@ -245,9 +245,9 @@ def rkky_script(term, system):
 
     mif += '# TwoSurfaceExchange\n'
     mif += f'Specify Oxs_TwoSurfaceExchange:{term.name} {{\n'
-    if hasattr(term, 'sigma'):
+    if isinstance(term.sigma, numbers.Real):
         mif += f'  sigma {term.sigma}\n'
-    if hasattr(term, 'sigma2'):
+    if isinstance(term.sigma, numbers.Real):
         mif += f'  sigma2 {term.sigma2}\n'
 
     mif += '  surface1 {\n'
