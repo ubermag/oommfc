@@ -12,6 +12,9 @@ Tutorials
    ipynb/03-tutorial-uniaxialanisotropy
    ipynb/04-tutorial-dmi
    ipynb/05-tutorial-cubicanisotropy
+   ipynb/rkky
+   ipynb/multiple-terms
+   ipynb/negative-A
    ipynb/07-tutorial-standard-problem3
    ipynb/08-tutorial-standard-problem4
    ipynb/09-tutorial-standard-problem5
@@ -19,5 +22,6 @@ Tutorials
    ipynb/11-tutorial-deriving-fields
    ipynb/12-tutorial-stray-field
    ipynb/13-tutorial-skyrmion
+   ipynb/docker-simulations
    ipynb/14-tutorial-periodic-boundary-conditions
    ipynb/15-tutorial-other
