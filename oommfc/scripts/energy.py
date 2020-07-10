@@ -112,7 +112,17 @@ def zeeman_script(term, system):
 
 def demag_script(term, system):
     mif = '# Demag\n'
-    mif += f'Specify Oxs_Demag:{term.name} {{\n'
+    if system.m.mesh.bc in ('neumann', 'dirichlet', ''):  # no PBC
+        oxs_cls = 'Oxs_Demag'
+    else:  # PBC
+        if len(system.m.mesh.bc) == 1:
+            oxs_cls = 'Oxs_Demag'
+        elif len(system.m.mesh.bc) >= 2:
+            msg = ('Demagnetisation energy term with periodic boundary '
+                   'conditions in three directions is not supported.')
+            raise ValueError(msg)
+
+    mif += f'Specify {oxs_cls}:{term.name} {{\n'
     if hasattr(term, 'asymptotic_radius'):
         mif += f'  asymptotic_radius {term.asymptotic_radius}\n'
     mif += '}\n\n'
@@ -164,17 +174,35 @@ def dmi_script(term, system):
 
 
 def uniaxialanisotropy_script(term, system):
-    kmif, kname = oc.scripts.setup_scalar_parameter(term.K, 'ua_K')
     umif, uname = oc.scripts.setup_vector_parameter(term.u, 'ua_u')
 
-    mif = ''
-    mif += kmif
-    mif += umif
-    mif += '# UniaxialAnisotropy\n'
-    mif += f'Specify Oxs_UniaxialAnisotropy:{term.name} {{\n'
-    mif += f'  K1 {kname}\n'
-    mif += f'  axis {uname}\n'
-    mif += '}\n\n'
+    # Determine if higher-order anisotropy is defined
+    if isinstance(term.K2, (numbers.Real, dict, df.Field)):
+        k1mif, k1name = oc.scripts.setup_scalar_parameter(term.K1, 'ua_K1')
+        k2mif, k2name = oc.scripts.setup_scalar_parameter(term.K2, 'ua_K2')
+
+        mif = ''
+        mif += k1mif
+        mif += k2mif
+        mif += umif
+        mif += '# UniaxialAnisotropy\n'
+        mif += f'Specify Southampton_UniaxialAnisotropy4:{term.name} {{\n'
+        mif += f'  K1 {k1name}\n'
+        mif += f'  K2 {k2name}\n'
+        mif += f'  axis {uname}\n'
+        mif += '}\n\n'
+
+    else:
+        kmif, kname = oc.scripts.setup_scalar_parameter(term.K, 'ua_K')
+
+        mif = ''
+        mif += kmif
+        mif += umif
+        mif += '# UniaxialAnisotropy\n'
+        mif += f'Specify Oxs_UniaxialAnisotropy:{term.name} {{\n'
+        mif += f'  K1 {kname}\n'
+        mif += f'  axis {uname}\n'
+        mif += '}\n\n'
 
     return mif
 
