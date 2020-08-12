@@ -215,16 +215,20 @@ class ExeOOMMFRunner(OOMMFRunner):
     """
     def __init__(self, oommf_exe='oommf'):
         self.oommf_exe = oommf_exe
+        launchhost = sp.run([self.oommf_exe, 'launchhost', '0'],
+                            capture_output=True)
+        port = launchhost.stdout.decode('utf-8', 'replace').strip('\n')
+        self.env = dict(OOMMF_HOSTPORT=port, **os.environ)
 
     def _call(self, argstr, need_stderr=False):
         # Here we might need stderr = stdot = None like in
         # TclOOMMFRunner for Windows.  This is not clear because we
         # never use ExeOOMMFRunner on Windows.
         cmd = [self.oommf_exe, 'boxsi', '+fg', argstr, '-exitondone', '1']
-        return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
+        return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE, env=self.env)
 
     def _kill(self, targets=['all']):
-        sp.run([self.oommf_exe, 'killoommf'] + targets)
+        sp.run([self.oommf_exe, 'killoommf'] + targets, env=self.env)
 
     def errors(self):
         try:
