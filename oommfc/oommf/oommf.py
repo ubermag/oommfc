@@ -216,7 +216,7 @@ class ExeOOMMFRunner(OOMMFRunner):
     def __init__(self, oommf_exe='oommf'):
         self.oommf_exe = oommf_exe
         launchhost = sp.run([self.oommf_exe, 'launchhost', '0'],
-                            capture_output=True)
+                            stdout=sp.PIPE)
         port = launchhost.stdout.decode('utf-8', 'replace').strip('\n')
         self.env = dict(OOMMF_HOSTPORT=port, **os.environ)
 
