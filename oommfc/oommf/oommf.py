@@ -177,6 +177,10 @@ class TclOOMMFRunner(OOMMFRunner):
     """
     def __init__(self, oommf_tcl):
         self.oommf_tcl = oommf_tcl  # a path to oommf.tcl
+        launchhost = sp.run(['tclsh', self.oommf_tcl, 'launchhost', '0'],
+                            stdout=sp.PIPE)
+        port = launchhost.stdout.decode('utf-8', 'replace').strip('\n')
+        self.env = dict(OOMMF_HOSTPORT=port, **os.environ)
 
     def _call(self, argstr, need_stderr=False):
         cmd = ['tclsh', self.oommf_tcl, 'boxsi', '+fg',
@@ -188,10 +192,10 @@ class TclOOMMFRunner(OOMMFRunner):
         if sys.platform == 'win32' and not need_stderr:
             stdout = stderr = None  # pragma: no cover
 
-        return sp.run(cmd, stdout=stdout, stderr=stderr)
+        return sp.run(cmd, stdout=stdout, stderr=stderr, env=self.env)
 
     def _kill(self, targets=['all']):
-        sp.run(['tclsh', self.oommf_tcl, 'killoommf'] + targets)
+        sp.run(['tclsh', self.oommf_tcl, 'killoommf'] + targets, env=self.env)
 
     def errors(self):
         errors_file = os.path.join(os.path.dirname(self.oommf_tcl),
