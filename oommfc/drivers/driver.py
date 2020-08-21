@@ -33,7 +33,8 @@ class Driver(mm.Driver):
         """
         pass  # pragma: no cover
 
-    def drive(self, system, append=True, compute=None, runner=None, **kwargs):
+    def drive(self, system, append=True, compute=None, runner=None,
+              n_threads=None, **kwargs):
         """Drives the system in phase space.
 
         Takes ``micromagneticmodel.System`` and drives it in the phase space.
@@ -186,8 +187,7 @@ class Driver(mm.Driver):
                             runner = oc.oommf.DockerOOMMFRunner()
                     else:
                         runner = oc.oommf.get_oommf_runner()
-
-            runner.call(argstr=miffilename)
+            runner.call(argstr=miffilename, n_threads=n_threads)
 
             # Update system's m and datatable attributes if the derivation of
             # E, Heff, or energy density was not asked.

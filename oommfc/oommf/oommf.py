@@ -18,7 +18,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
     """Abstract class for running OOMMF.
 
     """
-    def call(self, argstr, need_stderr=False):
+    def call(self, argstr, need_stderr=False, n_threads=None):
         """Calls OOMMF by passing ``argstr`` to OOMMF.
 
         Parameters
@@ -66,7 +66,8 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
               end='')
 
         tic = time.time()
-        res = self._call(argstr=argstr, need_stderr=need_stderr)
+        res = self._call(argstr=argstr, need_stderr=need_stderr,
+                         n_threads=n_threads)
         self._kill()  # kill OOMMF (mostly needed on Windows)
         toc = time.time()
         seconds = '({:0.1f} s)'.format(toc - tic)
@@ -89,7 +90,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         return res
 
     @abc.abstractmethod
-    def _call(self, argstr, need_stderr=False):
+    def _call(self, argstr, need_stderr=False, n_threads=None):
         """This method should be implemented in subclass.
 
         """
@@ -182,7 +183,7 @@ class TclOOMMFRunner(OOMMFRunner):
         port = launchhost.stdout.decode('utf-8', 'replace').strip('\n')
         self.env = dict(OOMMF_HOSTPORT=port, **os.environ)
 
-    def _call(self, argstr, need_stderr=False):
+    def _call(self, argstr, need_stderr=False, n_threads=None):
         cmd = ['tclsh', self.oommf_tcl, 'boxsi', '+fg',
                argstr, '-exitondone', '1']
 
@@ -192,6 +193,8 @@ class TclOOMMFRunner(OOMMFRunner):
         if sys.platform == 'win32' and not need_stderr:
             stdout = stderr = None  # pragma: no cover
 
+        if n_threads is not None:
+            cmd += ['-threads', str(n_threads)]
         return sp.run(cmd, stdout=stdout, stderr=stderr, env=self.env)
 
     def _kill(self, targets=['all']):
@@ -224,11 +227,13 @@ class ExeOOMMFRunner(OOMMFRunner):
         port = launchhost.stdout.decode('utf-8', 'replace').strip('\n')
         self.env = dict(OOMMF_HOSTPORT=port, **os.environ)
 
-    def _call(self, argstr, need_stderr=False):
+    def _call(self, argstr, need_stderr=False, n_threads=None):
         # Here we might need stderr = stdot = None like in
         # TclOOMMFRunner for Windows.  This is not clear because we
         # never use ExeOOMMFRunner on Windows.
         cmd = [self.oommf_exe, 'boxsi', '+fg', argstr, '-exitondone', '1']
+        if n_threads is not None:
+            cmd += ['-threads', str(n_threads)]
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE, env=self.env)
 
     def _kill(self, targets=['all']):
@@ -267,11 +272,13 @@ class DockerOOMMFRunner(OOMMFRunner):
         self.docker_exe = docker_exe
         self.image = image
 
-    def _call(self, argstr, need_stderr=False):
+    def _call(self, argstr, need_stderr=False, n_threads=None):
         cmd = [self.docker_exe, 'run', '-v', os.getcwd()+':/io',
                self.image, '/bin/bash', '-c',
                ('tclsh /usr/local/oommf/oommf/oommf.tcl boxsi '
                 '+fg {} -exitondone 1').format(argstr)]
+        if n_threads is not None:
+            cmd += ['-threads', str(n_threads)]
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
 
     def _kill(self, targets=('all',)):
