@@ -33,8 +33,8 @@ class Driver(mm.Driver):
         """
         pass  # pragma: no cover
 
-    def drive(self, system, append=True, compute=None, runner=None,
-              n_threads=None, **kwargs):
+    def drive(self, system, dirname='.', append=True, compute=None,
+              runner=None, n_threads=None, **kwargs):
         """Drives the system in phase space.
 
         Takes ``micromagneticmodel.System`` and drives it in the phase space.
@@ -105,8 +105,9 @@ class Driver(mm.Driver):
         # exception if any of the arguments are not valid.
         self._checkargs(**kwargs)
 
-        if os.path.exists(system.name):  # system directory already exists
-            dirs = os.listdir(system.name)
+        # system directory already exists
+        if os.path.exists(os.path.join(dirname, system.name)):
+            dirs = os.listdir(os.path.join(dirname, system.name))
             drive_dirs = [i for i in dirs if i.startswith('drive')]
             compute_dirs = [i for i in dirs if i.startswith('compute')]
             if compute is None:
@@ -144,14 +145,14 @@ class Driver(mm.Driver):
         else:
             subdir = f'compute-{system.compute_number}'
 
-        dirname = os.path.join(system.name, subdir)
+        workingdir = os.path.join(dirname, system.name, subdir)
 
         # Make a directory inside which OOMMF will be run.
-        if not os.path.exists(dirname):
-            os.makedirs(dirname)
+        if not os.path.exists(workingdir):
+            os.makedirs(workingdir)
 
-        # Change directory to dirname
-        with _changedir(dirname):
+        # Change directory to workingdir
+        with _changedir(workingdir):
             # Generate the necessary filenames.
             miffilename = f'{system.name}.mif'
             jsonfilename = 'info.json'
