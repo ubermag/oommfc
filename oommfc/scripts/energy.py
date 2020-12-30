@@ -58,7 +58,7 @@ def zeeman_script(term, system):
     mif += Hmif
 
     if isinstance(term.wave, str):
-        if isinstance(term.H, df.Field):
+        if isinstance(term.H, (df.Field, dict)):
             if term.wave == 'sin':
                 mif += 'proc TimeFunction { total_time } {\n'
                 mif += '  set PI [expr {4*atan(1.)}]\n'

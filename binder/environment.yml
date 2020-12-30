@@ -1,8 +1,8 @@
-name: binder-environment
+name: conda-environment
 
 channels:
   - conda-forge
 
 dependencies:
   - python==3.8
-  - oommfc==0.8.22
+  - oommfc==0.8.25
