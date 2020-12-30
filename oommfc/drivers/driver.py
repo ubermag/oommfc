@@ -116,7 +116,7 @@ class Driver(mm.Driver):
                         numbers = list(map(int, numbers))
                         system.drive_number = max(numbers) + 1
                     else:
-                        msg = (f'Directory {system.name} already exists. To '
+                        msg = (f'Directory {system.name=} already exists. To '
                                f'append drives to it, pass append=True to the '
                                f'drive method.')
                         raise FileExistsError(msg)
@@ -130,7 +130,7 @@ class Driver(mm.Driver):
                         numbers = list(map(int, numbers))
                         system.drive_number = max(numbers) + 1
                     else:
-                        msg = (f'Directory {system.name} already exists. To '
+                        msg = (f'Directory {system.name=} already exists. To '
                                f'append drives to it, pass append=True to the '
                                f'drive method.')
                         raise FileExistsError(msg)

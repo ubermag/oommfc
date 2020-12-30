@@ -41,4 +41,5 @@ class CGEvolver(mm.Evolver):
                            'line_minimum_angle_precision',
                            'line_minimum_relwidth',
                            'energy_precision',
-                           'method']
+                           'method',
+                           'fixed_spins']

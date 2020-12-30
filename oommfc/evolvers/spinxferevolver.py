@@ -42,6 +42,7 @@ class SpinXferEvolver(mm.Evolver):
                            'allow_signed_gamma',
                            'min_timestep',
                            'max_timestep',
+                           'fixed_spins',
                            'start_dm',
                            'stage_start',
                            'error_rate',

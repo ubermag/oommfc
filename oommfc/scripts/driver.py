@@ -17,6 +17,11 @@ def driver_script(driver, system, compute=None, **kwargs):
         if not hasattr(driver, 'stopping_mxHxm'):
             driver.stopping_mxHxm = 0.1
 
+        # Fixed spins
+        if 'fixed_spins' in kwargs.keys():
+            fs_value = f'{{main_atlas {" ".join(kwargs["fixed_spins"])}}}'
+            driver.evolver.fixed_spins = fs_value
+
         mif += oc.scripts.evolver_script(driver.evolver)
 
         # Minimisation driver script.
@@ -71,6 +76,11 @@ def driver_script(driver, system, compute=None, **kwargs):
             driver.evolver.P = system.dynamics.slonczewski.P
             driver.evolver.Lambda = system.dynamics.slonczewski.Lambda
             driver.evolver.eps_prime = system.dynamics.slonczewski.eps_prime
+
+        # Fixed spins
+        if 'fixed_spins' in kwargs.keys():
+            fs_value = f'{{main_atlas {" ".join(kwargs["fixed_spins"])}}}'
+            driver.evolver.fixed_spins = fs_value
 
         mif += oc.scripts.evolver_script(driver.evolver)
 

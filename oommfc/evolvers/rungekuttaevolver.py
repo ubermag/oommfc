@@ -42,6 +42,7 @@ class RungeKuttaEvolver(mm.Evolver):
                            'allow_signed_gamma',
                            'min_timestep',
                            'max_timestep',
+                           'fixed_spins',
                            'start_dm',
                            'start_dt',
                            'stage_start',
