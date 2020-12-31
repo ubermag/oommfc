@@ -40,6 +40,7 @@ class EulerEvolver(mm.Evolver):
                            'do_precess',
                            'min_timestep',
                            'max_timestep',
+                           'fixed_spins',
                            'start_dm',
                            'error_rate',
                            'absolute_step_error',
