@@ -15,13 +15,13 @@ class HysteresisDriver(Driver):
 
     >>> import oommfc as mc
     ...
-    >>> hd = oc.HysteresisDriver(stopping_mxHxm=0.01)
+    >>> hd = mc.HysteresisDriver(stopping_mxHxm=0.01)
 
     2. Passing an argument which is not allowed.
 
     >>> import oommfc as mc
     ...
-    >>> md = oc.HysteresisDriver(myarg=1)
+    >>> md = mc.HysteresisDriver(myarg=1)
     Traceback (most recent call last):
        ...
     AttributeError: ...
@@ -30,7 +30,7 @@ class HysteresisDriver(Driver):
 
     >>> import oommfc as mc
     ...
-    >>> hd = oc.HysteresisDriver()
+    >>> hd = mc.HysteresisDriver()
     >>> hd._allowed_attributes
     [...]
 
