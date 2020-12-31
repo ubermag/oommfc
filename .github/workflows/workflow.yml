@@ -41,8 +41,8 @@ jobs:
     # - name: Documentation tests
     #   run: make test-docs
 
-    - name: Jupyter notebook tests
-      run: make test-ipynb
+    # - name: Jupyter notebook tests
+    #   run: make test-ipynb
 
     - name: Python code style
       run: make test-pycodestyle
