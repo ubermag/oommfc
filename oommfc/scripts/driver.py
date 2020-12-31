@@ -50,8 +50,8 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
         # Saving results.
         mif += 'Destination table mmArchive\n'
         mif += 'Destination mags mmArchive\n\n'
-        mif += 'Schedule DataTable table 1\n'
-        mif += 'Schedule Oxs_MinDriver::Magnetization mags 1'
+        mif += 'Schedule DataTable table Stage 1\n'
+        mif += 'Schedule Oxs_MinDriver::Magnetization mags Stage 1'
 
     if isinstance(driver, oc.MinDriver):
         # Check evolver and set default if not passed.
