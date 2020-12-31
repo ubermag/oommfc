@@ -178,10 +178,11 @@ class TclOOMMFRunner(OOMMFRunner):
     """
     def __init__(self, oommf_tcl):
         self.oommf_tcl = oommf_tcl  # a path to oommf.tcl
-        launchhost = sp.run(['tclsh', self.oommf_tcl, 'launchhost', '0'],
-                            stdout=sp.PIPE)
-        port = launchhost.stdout.decode('utf-8', 'replace').strip('\n')
-        self.env = dict(OOMMF_HOSTPORT=port, **os.environ)
+        if sys.platform != 'win32':
+            launchhost = sp.run(['tclsh', self.oommf_tcl, 'launchhost', '0'],
+                                stdout=sp.PIPE)
+            port = launchhost.stdout.decode('utf-8', 'replace').strip('\n')
+            self.env = dict(OOMMF_HOSTPORT=port, **os.environ)
 
     def _call(self, argstr, need_stderr=False, n_threads=None):
         cmd = ['tclsh', self.oommf_tcl, 'boxsi', '+fg',
@@ -195,10 +196,18 @@ class TclOOMMFRunner(OOMMFRunner):
 
         if n_threads is not None:
             cmd += ['-threads', str(n_threads)]
-        return sp.run(cmd, stdout=stdout, stderr=stderr, env=self.env)
+
+        if sys.platform != 'win32':
+            return sp.run(cmd, stdout=stdout, stderr=stderr, env=self.env)
+        else:
+            return sp.run(cmd, stdout=stdout, stderr=stderr)
 
     def _kill(self, targets=['all']):
-        sp.run(['tclsh', self.oommf_tcl, 'killoommf'] + targets, env=self.env)
+        if sys.platform != 'win32':
+            sp.run(['tclsh', self.oommf_tcl, 'killoommf'] + targets,
+                   env=self.env)
+        else:
+            sp.run(['tclsh', self.oommf_tcl, 'killoommf'] + targets)
 
     def errors(self):
         errors_file = os.path.join(os.path.dirname(self.oommf_tcl),
@@ -222,30 +231,22 @@ class ExeOOMMFRunner(OOMMFRunner):
     """
     def __init__(self, oommf_exe='oommf'):
         self.oommf_exe = oommf_exe
-        if sys.platform != 'win32':
-            launchhost = sp.run([self.oommf_exe, 'launchhost', '0'],
-                                stdout=sp.PIPE)
-            port = launchhost.stdout.decode('utf-8', 'replace').strip('\n')
-            self.env = dict(OOMMF_HOSTPORT=port, **os.environ)
+        launchhost = sp.run([self.oommf_exe, 'launchhost', '0'],
+                            stdout=sp.PIPE)
+        port = launchhost.stdout.decode('utf-8', 'replace').strip('\n')
+        self.env = dict(OOMMF_HOSTPORT=port, **os.environ)
 
     def _call(self, argstr, need_stderr=False, n_threads=None):
         # Here we might need stderr = stdot = None like in
         # TclOOMMFRunner for Windows.  This is not clear because we
         # never use ExeOOMMFRunner on Windows.
-        if sys.platform != 'win32':
-            cmd = [self.oommf_exe, 'boxsi', '+fg', argstr, '-exitondone', '1']
-            if n_threads is not None:
-                cmd += ['-threads', str(n_threads)]
-            return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE, env=self.env)
-        else:
-            cmd = [self.oommf_exe, 'boxsi', '+fg', argstr, '-exitondone', '1']
-            return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
+        cmd = [self.oommf_exe, 'boxsi', '+fg', argstr, '-exitondone', '1']
+        if n_threads is not None:
+            cmd += ['-threads', str(n_threads)]
+        return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE, env=self.env)
 
     def _kill(self, targets=['all']):
-        if sys.platform != 'win32':
-            sp.run([self.oommf_exe, 'killoommf'] + targets, env=self.env)
-        else:
-            sp.run([self.oommf_exe, 'killoommf'] + targets)
+        sp.run([self.oommf_exe, 'killoommf'] + targets, env=self.env)
 
     def errors(self):
         try:
