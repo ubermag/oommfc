@@ -1,1 +1,1 @@
-from micromagnetictests.calculatortests import *
+from micromagnetictests.calculatortests import TestThreads, test_dirname

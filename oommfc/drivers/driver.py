@@ -34,7 +34,7 @@ class Driver(mm.Driver):
         pass  # pragma: no cover
 
     def drive(self, system, /, dirname='.', append=True, fixed_subregions=None,
-              compute=None, runner=None, **kwargs):
+              compute=None, n_threads=None, runner=None, **kwargs):
         """Drives the system in phase space.
 
         Takes ``micromagneticmodel.System`` and drives it in the phase space.
