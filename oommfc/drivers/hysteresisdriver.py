@@ -1,43 +1,45 @@
+import numpy as np
 from .driver import Driver
 
 
-class TimeDriver(Driver):
-    """Time driver.
+class HysteresisDriver(Driver):
+    """Hysteresis driver.
 
     Only attributes in ``_allowed_attributes`` can be defined. For details on
     possible values for individual attributes and their default values, please
-    refer to ``Oxs_TimeDriver`` documentation (https://math.nist.gov/oommf/).
+    refer to ``Oxs_MinDriver`` documentation (https://math.nist.gov/oommf/).
 
     Examples
     --------
     1. Defining driver with a keyword argument.
 
-    >>> import oommfc as oc
+    >>> import oommfc as mc
     ...
-    >>> td = oc.TimeDriver(total_iteration_limit=5)
+    >>> hd = oc.HysteresisDriver(stopping_mxHxm=0.01)
 
     2. Passing an argument which is not allowed.
 
-    >>> import oommfc as oc
+    >>> import oommfc as mc
     ...
-    >>> td = oc.TimeDriver(myarg=1)
+    >>> md = oc.HysteresisDriver(myarg=1)
     Traceback (most recent call last):
        ...
     AttributeError: ...
 
     3. Getting the list of allowed attributes.
 
-    >>> import oommfc as oc
+    >>> import oommfc as mc
     ...
-    >>> td = oc.TimeDriver()
-    >>> td._allowed_attributes
+    >>> hd = oc.HysteresisDriver()
+    >>> hd._allowed_attributes
     [...]
 
     """
     _allowed_attributes = ['evolver',
-                           'stopping_dm_dt',
+                           'stopping_mxHxm',
                            'stage_iteration_limit',
                            'total_iteration_limit',
+                           'stage_count',
                            'stage_count_check',
                            'checkpoint_file',
                            'checkpoint_interval',
@@ -53,10 +55,14 @@ class TimeDriver(Driver):
                            'report_wall_time']
 
     def _checkargs(self, **kwargs):
-        t, n = kwargs['t'], kwargs['n']
-        if t <= 0:
-            msg = f'Cannot drive with {t=}.'
-            raise ValueError(msg)
+        Hmin, Hmax, n = kwargs['Hmin'], kwargs['Hmax'], kwargs['n']
+        for i in [Hmin, Hmax]:
+            if not isinstance(i, (list, tuple, np.ndarray)):
+                msg = f'Hmin and Hmax must have array_like values.'
+                raise ValueError(msg)
+            if len(i) != 3:
+                msg = f'Hmin and Hmax must have length 3.'
+                raise ValueError(msg)
         if n <= 0 or not isinstance(n, int):
             msg = f'Cannot drive with {n=}.'
             raise ValueError(msg)

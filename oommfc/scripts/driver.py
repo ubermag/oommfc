@@ -5,6 +5,54 @@ import micromagneticmodel as mm
 def driver_script(driver, system, fixed_subregions=None, compute=None,
                   **kwargs):
     mif = ''
+    if isinstance(driver, oc.HysteresisDriver):
+        # Check evolver and set default if not passed.
+        if not hasattr(driver, 'evolver'):
+            driver.evolver = oc.CGEvolver()
+        elif not isinstance(driver.evolver, oc.CGEvolver):
+            msg = f'Cannot use {type(driver.evolver)} for evolver.'
+            raise TypeError(msg)
+
+        # Define default stopping_mxHxm if not passed. OOMMF cannot run without
+        # this value.
+        if not hasattr(driver, 'stopping_mxHxm'):
+            driver.stopping_mxHxm = 0.1
+
+        # Fixed spins
+        if fixed_subregions is not None:
+            resstr = f'{{main_atlas {" ".join(fixed_subregions)}}}'
+            driver.evolver.fixed_spins = resstr
+
+        mif += oc.scripts.evolver_script(driver.evolver)
+
+        # Oxs_UZeeman
+        Hmin, Hmax, n = kwargs['Hmin'], kwargs['Hmax'], kwargs['n']
+        mif += '# OxS_UZeeman\n'
+        mif += 'Specify Oxs_UZeeman {\n'
+        mif += '  Hrange {\n'
+        mif += '    {{ {} {} {} {} {} {} {} }}\n'.format(*Hmin, *Hmax, n)
+        mif += '    {{ {} {} {} {} {} {} {} }}\n'.format(*Hmax, *Hmin, n)
+        mif += '  }\n'
+        mif += '}\n\n'
+
+        # Minimisation driver script.
+        mif += '# MinDriver\n'
+        mif += 'Specify Oxs_MinDriver {\n'
+        mif += '  evolver :evolver\n'
+        mif += '  mesh :mesh\n'
+        mif += '  Ms :m0_norm\n'
+        mif += '  m0 :m0\n'
+        for attr, value in driver:
+            if attr != 'evolver':
+                mif += f'  {attr} {value}\n'
+        mif += '}\n\n'
+
+        # Saving results.
+        mif += 'Destination table mmArchive\n'
+        mif += 'Destination mags mmArchive\n\n'
+        mif += 'Schedule DataTable table Stage 1\n'
+        mif += 'Schedule Oxs_MinDriver::Magnetization mags Stage 1'
+
     if isinstance(driver, oc.MinDriver):
         # Check evolver and set default if not passed.
         if not hasattr(driver, 'evolver'):

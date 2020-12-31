@@ -5,7 +5,7 @@ import oommfc.oommf
 import oommfc.scripts
 from .delete import delete
 from .compute import compute
-from .drivers import Driver, MinDriver, TimeDriver
+from .drivers import Driver, MinDriver, TimeDriver, HysteresisDriver
 from .evolvers import CGEvolver, EulerEvolver, RungeKuttaEvolver, \
     SpinTEvolver, SpinXferEvolver
 
