@@ -33,7 +33,8 @@ class Driver(mm.Driver):
         """
         pass  # pragma: no cover
 
-    def drive(self, system, append=True, compute=None, runner=None, **kwargs):
+    def drive(self, system, /, append=True, fixed_subregions=None,
+              compute=None, runner=None, **kwargs):
         """Drives the system in phase space.
 
         Takes ``micromagneticmodel.System`` and drives it in the phase space.
@@ -56,6 +57,12 @@ class Driver(mm.Driver):
 
             If ``True`` and the system directory already exists, drive or
             compute directories will be appended.
+
+        fixed_subregions : list
+
+            List of strings, where each string is the name of the subregion in
+            the mesh whose spins should remain fixed while the system is being
+            driven.
 
         compute : str
 
@@ -117,8 +124,7 @@ class Driver(mm.Driver):
                         system.drive_number = max(numbers) + 1
                     else:
                         msg = (f'Directory {system.name=} already exists. To '
-                               f'append drives to it, pass append=True to the '
-                               f'drive method.')
+                               f'append drives to it, pass append=True.')
                         raise FileExistsError(msg)
                 else:
                     system.drive_number = 0
@@ -131,8 +137,7 @@ class Driver(mm.Driver):
                         system.drive_number = max(numbers) + 1
                     else:
                         msg = (f'Directory {system.name=} already exists. To '
-                               f'append drives to it, pass append=True to the '
-                               f'drive method.')
+                               f'append drives to it, pass append=True.')
                         raise FileExistsError(msg)
                 else:
                     system.compute_number = 0
@@ -157,8 +162,9 @@ class Driver(mm.Driver):
 
             # Generate and save mif file.
             mif = oc.scripts.system_script(system)
-            mif += oc.scripts.driver_script(self, system, compute=compute,
-                                            **kwargs)
+            mif += oc.scripts.driver_script(self, system,
+                                            fixed_subregions=fixed_subregions,
+                                            compute=compute, **kwargs)
             with open(miffilename, 'w') as miffile:
                 miffile.write(mif)
 

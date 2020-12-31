@@ -2,7 +2,8 @@ import oommfc as oc
 import micromagneticmodel as mm
 
 
-def driver_script(driver, system, compute=None, **kwargs):
+def driver_script(driver, system, fixed_subregions=None, compute=None,
+                  **kwargs):
     mif = ''
     if isinstance(driver, oc.MinDriver):
         # Check evolver and set default if not passed.
@@ -18,9 +19,9 @@ def driver_script(driver, system, compute=None, **kwargs):
             driver.stopping_mxHxm = 0.1
 
         # Fixed spins
-        if 'fixed_spins' in kwargs.keys():
-            fs_value = f'{{main_atlas {" ".join(kwargs["fixed_spins"])}}}'
-            driver.evolver.fixed_spins = fs_value
+        if fixed_subregions is not None:
+            resstr = f'{{main_atlas {" ".join(fixed_subregions)}}}'
+            driver.evolver.fixed_spins = resstr
 
         mif += oc.scripts.evolver_script(driver.evolver)
 
@@ -78,9 +79,9 @@ def driver_script(driver, system, compute=None, **kwargs):
             driver.evolver.eps_prime = system.dynamics.slonczewski.eps_prime
 
         # Fixed spins
-        if 'fixed_spins' in kwargs.keys():
-            fs_value = f'{{main_atlas {" ".join(kwargs["fixed_spins"])}}}'
-            driver.evolver.fixed_spins = fs_value
+        if fixed_subregions is not None:
+            resstr = f'{{main_atlas {" ".join(fixed_subregions)}}}'
+            driver.evolver.fixed_spins = resstr
 
         mif += oc.scripts.evolver_script(driver.evolver)
 
