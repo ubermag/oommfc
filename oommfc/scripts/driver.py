@@ -3,7 +3,7 @@ import micromagneticmodel as mm
 
 
 def driver_script(driver, system, fixed_subregions=None, compute=None,
-                  **kwargs):
+                  output_step=False, **kwargs):
     mif = ''
     if isinstance(driver, oc.HysteresisDriver):
         # Check evolver and set default if not passed.
@@ -50,8 +50,8 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
         # Saving results.
         mif += 'Destination table mmArchive\n'
         mif += 'Destination mags mmArchive\n\n'
-        mif += 'Schedule DataTable table Stage 1\n'
-        mif += 'Schedule Oxs_MinDriver::Magnetization mags Stage 1'
+        mif += 'Schedule DataTable table 1\n'
+        mif += 'Schedule Oxs_MinDriver::Magnetization mags 1'
 
     if isinstance(driver, oc.MinDriver):
         # Check evolver and set default if not passed.
@@ -71,6 +71,12 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
             resstr = f'{{main_atlas {" ".join(fixed_subregions)}}}'
             driver.evolver.fixed_spins = resstr
 
+        # What is saved in output?
+        if output_step:
+            output_str = 'Step'
+        else:
+            output_str = 'Stage'
+
         mif += oc.scripts.evolver_script(driver.evolver)
 
         # Minimisation driver script.
@@ -88,8 +94,8 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
         # Saving results.
         mif += 'Destination table mmArchive\n'
         mif += 'Destination mags mmArchive\n\n'
-        mif += 'Schedule DataTable table Stage 1\n'
-        mif += 'Schedule Oxs_MinDriver::Magnetization mags Stage 1'
+        mif += f'Schedule DataTable table {output_str} 1\n'
+        mif += f'Schedule Oxs_MinDriver::Magnetization mags {output_str} 1'
 
     if isinstance(driver, oc.TimeDriver):
         # Check evolver and set default if not passed.

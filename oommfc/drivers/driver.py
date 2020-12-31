@@ -37,7 +37,8 @@ class Driver(mm.Driver):
         pass  # pragma: no cover
 
     def drive(self, system, /, dirname='.', append=True, fixed_subregions=None,
-              compute=None, n_threads=None, runner=None, **kwargs):
+              compute=None, output_step=False, n_threads=None, runner=None,
+              **kwargs):
         """Drives the system in phase space.
 
         Takes ``micromagneticmodel.System`` and drives it in the phase space.
@@ -61,11 +62,15 @@ class Driver(mm.Driver):
             If ``True`` and the system directory already exists, drive or
             compute directories will be appended.
 
-        fixed_subregions : list
+        fixed_subregions : list, optional
 
             List of strings, where each string is the name of the subregion in
             the mesh whose spins should remain fixed while the system is being
-            driven.
+            driven. Defaults to ``None``.
+
+        output_step: bool, optional
+
+            If ``True``, output is saved at each step. Default to ``False``.
 
         compute : str
 
@@ -168,6 +173,7 @@ class Driver(mm.Driver):
             mif = oc.scripts.system_script(system)
             mif += oc.scripts.driver_script(self, system,
                                             fixed_subregions=fixed_subregions,
+                                            output_step=output_step,
                                             compute=compute, **kwargs)
             with open(miffilename, 'w') as miffile:
                 miffile.write(mif)
