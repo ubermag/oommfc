@@ -7,9 +7,11 @@ docs/ipynb/*
 docs/_build
 .cache
 .coverage
+*.xml
 .pytest_cache/
 .ipynb_checkpoints/
 __pycache__/
 build/
 dist/
 *.egg-info/
+_autosummary/

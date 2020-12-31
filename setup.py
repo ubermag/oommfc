@@ -1,20 +1,21 @@
 import setuptools
 
-with open('README.md', encoding='utf-8') as f:
+with open('README.md', 'r', encoding='utf-8') as f:
     long_description = f.read()
 
 setuptools.setup(
     name='oommfc',
     version='0.8.25',
-    description=('OOMMF calculator.'),
+    description='OOMMF calculator.',
+    author=('Marijan Beg, Martin Lang, Ryan A. Pepper, '
+            'Thomas Kluyver, and Hans Fangohr'),
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://ubermag.github.io',
-    author='Marijan Beg, Ryan A. Pepper, Thomas Kluyver, and Hans Fangohr',
     packages=setuptools.find_packages(),
     include_package_data=True,
-    python_requires='>=3.6',
-    install_requires=['micromagnetictests==0.1.6',
+    python_requires='>=3.8',
+    install_requires=['micromagnetictests==0.1.7',
                       'ubermagtable==0.2'],
     classifiers=['Development Status :: 5 - Production/Stable',
                  'Intended Audience :: Education',

@@ -30,7 +30,7 @@ def check_runner(runner):
             os.remove(os.path.join(dirname, f))
 
 
-@pytest.mark.travis
+@pytest.mark.skip(reason='Temporary')
 def test_tcl_oommf_runner():
     # TclOOMMFRunner runs when OOMMFTCL environment variable is set. On
     # TravisCI OOMMFTCL environment variable is set inside ubermag/oommf docker
@@ -41,7 +41,7 @@ def test_tcl_oommf_runner():
     assert isinstance(runner.errors(), str)
 
 
-@pytest.mark.travis
+@pytest.mark.skip(reason='Temporary')
 def test_exe_oommf_runner():
     # ExeOOMMFRunner runs when callable OOMMF exists ('oommf'). On TravisCI
     # oommf is an executable inside ubermag/oommf docker image.
@@ -53,7 +53,7 @@ def test_exe_oommf_runner():
         errors = runner.errors()
 
 
-@pytest.mark.docker
+@pytest.mark.skip(reason='Temporary')
 def test_docker_oommf_runner():
     # DockerOOMMFRunner runs when docker is installed. This test does not run
     # on host or TravisCI. It can be run using make test-docker on host if
@@ -75,7 +75,7 @@ def test_docker_oommf_runner():
         errors = runner.errors()
 
 
-@pytest.mark.travis
+@pytest.mark.skip(reason='Temporary')
 def test_get_oommf_runner():
     # TclOOMMFRunner
     oommf_runner = oo.get_oommf_runner(use_cache=False,
@@ -127,7 +127,7 @@ def test_get_oommf_runner():
     check_runner(oommf_runner)
 
 
-@pytest.mark.travis
+@pytest.mark.skip(reason='Temporary')
 def test_status():
     assert oo.status() == 0
 
@@ -142,7 +142,7 @@ def test_runtimeerror():
         oommf_runner.call('+wrong_argstr')
 
 
-@pytest.mark.travis
+@pytest.mark.skip(reason='Temporary')
 def test_choose_runner():
     system = mm.examples.macrospin()
 
