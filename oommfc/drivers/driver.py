@@ -27,7 +27,7 @@ def _changedir(dirname):
 
 class Driver(mm.Driver):
     """Driver base class.
-    
+
     """
     @abc.abstractmethod
     def _checkargs(self, **kwargs):
