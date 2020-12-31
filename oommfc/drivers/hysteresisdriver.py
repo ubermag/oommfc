@@ -63,6 +63,9 @@ class HysteresisDriver(Driver):
             if len(i) != 3:
                 msg = f'Hmin and Hmax must have length 3.'
                 raise ValueError(msg)
-        if n <= 0 or not isinstance(n, int):
+        if not isinstance(n, int):
+            msg = f'Cannot drive with {type(n)=}.'
+            raise ValueError(msg)
+        if n - 1 <= 0:  # OOMMF counts steps, not points (n -> n-1)
             msg = f'Cannot drive with {n=}.'
             raise ValueError(msg)

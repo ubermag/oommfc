@@ -30,8 +30,8 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
         mif += '# OxS_UZeeman\n'
         mif += 'Specify Oxs_UZeeman {\n'
         mif += '  Hrange {\n'
-        mif += '    {{ {} {} {} {} {} {} {} }}\n'.format(*Hmin, *Hmax, n)
-        mif += '    {{ {} {} {} {} {} {} {} }}\n'.format(*Hmax, *Hmin, n)
+        mif += '    {{ {} {} {} {} {} {} {} }}\n'.format(*Hmin, *Hmax, n-1)
+        mif += '    {{ {} {} {} {} {} {} {} }}\n'.format(*Hmax, *Hmin, n-1)
         mif += '  }\n'
         mif += '}\n\n'
 

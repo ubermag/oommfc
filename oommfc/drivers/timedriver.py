@@ -57,6 +57,9 @@ class TimeDriver(Driver):
         if t <= 0:
             msg = f'Cannot drive with {t=}.'
             raise ValueError(msg)
-        if n <= 0 or not isinstance(n, int):
+        if not isinstance(n, int):
+            msg = f'Cannot drive with {type(n)=}.'
+            raise ValueError(msg)
+        if n <= 0:
             msg = f'Cannot drive with {n=}.'
             raise ValueError(msg)
