@@ -57,10 +57,10 @@ class Driver(mm.Driver):
 
             System object to be driven.
 
-        append : bool
+        append : bool, optional
 
             If ``True`` and the system directory already exists, drive or
-            compute directories will be appended.
+            compute directories will be appended. Defaults to ``True``.
 
         fixed_subregions : list, optional
 
@@ -72,12 +72,12 @@ class Driver(mm.Driver):
 
             If ``True``, output is saved at each step. Default to ``False``.
 
-        compute : str
+        compute : str, optional
 
             ``Schedule...`` MIF line which can be added to the OOMMF file to
             save additional data. Defaults to ``None``.
 
-        runner : oommfc.oommf.OOMMFRunner
+        runner : oommfc.oommf.OOMMFRunner, optional
 
             OOMMF Runner which is going to be used for running OOMMF. If
             ``None``, OOMMF runner will be found automatically. Defaults to
