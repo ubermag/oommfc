@@ -214,7 +214,13 @@ class Driver(mm.Driver):
                 system.m.value = df.Field.fromfile(lastomffile)
 
                 # Update system's datatable.
-                system.table = ut.Table.fromfile(f'{system.name}.odt')
+                if isinstance(self, oc.TimeDriver):
+                    x = 't'
+                elif isinstance(self, oc.MinDriver):
+                    x = 'iteration'
+                elif isinstance(self, oc.HysteresisDriver):
+                    x = 'B'
+                system.table = ut.Table.fromfile(f'{system.name}.odt', x=x)
 
         if compute is None:
             system.drive_number += 1
