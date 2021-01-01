@@ -23,7 +23,6 @@
     ipynb/11-tutorial-deriving-fields
     ipynb/12-tutorial-stray-field
     ipynb/13-tutorial-skyrmion
-    ipynb/docker-simulations
     ipynb/14-tutorial-periodic-boundary-conditions
     ipynb/other
 
