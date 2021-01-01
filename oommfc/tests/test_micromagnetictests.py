@@ -1,1 +1,1 @@
-from micromagnetictests.calculatortests import test_info_file#*
+from micromagnetictests.calculatortests import *
