@@ -185,7 +185,8 @@ class Driver(mm.Driver):
                 info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
                 info['time'] = datetime.datetime.now().strftime('%H:%M:%S')
                 info['driver'] = self.__class__.__name__
-                info['args'] = kwargs
+                for k, v in kwargs.items():
+                    info[k] = v
                 with open(jsonfilename, 'w') as jsonfile:
                     jsonfile.write(json.dumps(info))
 

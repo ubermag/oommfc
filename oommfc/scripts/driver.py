@@ -1,3 +1,4 @@
+import numpy as np
 import oommfc as oc
 import micromagneticmodel as mm
 
