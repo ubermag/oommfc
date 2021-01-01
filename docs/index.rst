@@ -10,15 +10,12 @@
     :maxdepth: 1
     :caption: Tutorials
 
-    ipynb/00-tutorial-installation-testing-upgrade
+    ipynb/installation-testing-update
     ipynb/01-tutorial-zeeman
     ipynb/02-tutorial-exchange
     ipynb/03-tutorial-uniaxialanisotropy
     ipynb/04-tutorial-dmi
     ipynb/05-tutorial-cubicanisotropy
-    ipynb/rkky
-    ipynb/multiple-terms
-    ipynb/negative-A
     ipynb/07-tutorial-standard-problem3
     ipynb/08-tutorial-standard-problem4
     ipynb/09-tutorial-standard-problem5
@@ -28,7 +25,7 @@
     ipynb/13-tutorial-skyrmion
     ipynb/docker-simulations
     ipynb/14-tutorial-periodic-boundary-conditions
-    ipynb/15-tutorial-other
+    ipynb/other
 
 API Reference
 -------------
