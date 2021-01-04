@@ -14,7 +14,7 @@ Marijan Beg<sup>1,2</sup>, Martin Lang<sup>1</sup>, Ryan A. Pepper<sup>1</sup>, 
 | Coverage | [![codecov](https://codecov.io/gh/ubermag/oommfc/branch/master/graph/badge.svg?token=oEecfcBueV)](https://codecov.io/gh/ubermag/oommfc) |
 | Documentation | [![Documentation Status](https://readthedocs.org/projects/oommfc/badge/?version=latest)](https://oommfc.readthedocs.io/en/latest/?badge=latest) |
 | YouTube | [![YouTube](https://img.shields.io/badge/YouTube-ubermag-blue)](https://www.youtube.com/channel/UC7MSqVQSMFV42R1jAYmKGLg) |
-| Binder | [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ubermag/oommfc/HEAD?urlpath=lab/tree/docs/ipynb/index.ipynb) |
+| Binder | [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ubermag/oommfc/HEAD?filepath=docs%2Fipynb%2Findex.ipynb) |
 | Platforms | [![Platforms](https://anaconda.org/conda-forge/oommfc/badges/platforms.svg)](https://anaconda.org/conda-forge/oommfc) |
 | Downloads | [![Downloads](https://anaconda.org/conda-forge/oommfc/badges/downloads.svg)](https://anaconda.org/conda-forge/oommfc) |
 | License | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
