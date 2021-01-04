@@ -31,7 +31,7 @@ class Driver(mm.Driver):
     """
     @abc.abstractmethod
     def _checkargs(self, **kwargs):
-        """Abstract method defined in a derived driver class.
+        """Abstract method for checking arguments.
 
         """
         pass  # pragma: no cover
