@@ -10,10 +10,13 @@ def mesh_script(mesh):
         for name, subregion in mesh.subregions.items():
             mif += oc.scripts.box_atlas(subregion.pmin, subregion.pmax,
                                         name=name)
+        mif += oc.scripts.box_atlas(mesh.region.pmin, mesh.region.pmax,
+                                    name='entire')
         mif += '# MultiAtlas\n'
         mif += 'Specify Oxs_MultiAtlas:main_atlas {\n'
         for name in mesh.subregions.keys():
             mif += f'  atlas :{name}_atlas\n'
+        mif += '  atlas :entire_atlas\n'
         mif += f'  xrange {{ {mesh.region.pmin[0]} {mesh.region.pmax[0]} }}\n'
         mif += f'  yrange {{ {mesh.region.pmin[1]} {mesh.region.pmax[1]} }}\n'
         mif += f'  zrange {{ {mesh.region.pmin[2]} {mesh.region.pmax[2]} }}\n'

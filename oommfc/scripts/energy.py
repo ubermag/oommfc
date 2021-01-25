@@ -190,7 +190,10 @@ def dmi_script(term, system):
         mif += f'  default_D {term.D}\n'
         mif += '  atlas :main_atlas\n'
         mif += '  D {\n'
-        mif += f'    main main {term.D}\n'
+        if len(system.m.mesh.subregions) == 0:
+            mif += f'    main main {term.D}\n'
+        else:
+            mif += f'    entire entire {term.D}\n'
         mif += '  }\n'
         mif += '}\n\n'
 
