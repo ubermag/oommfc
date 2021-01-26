@@ -227,3 +227,7 @@ class Driver(mm.Driver):
             system.drive_number += 1
         else:
             system.compute_number += 1
+
+        # remove information about fixed cells for subsequent runs
+        if hasattr(self.evolver, 'fixed_spins'):
+            del self.evolver.fixed_spins
