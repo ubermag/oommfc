@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as f:
 
 setuptools.setup(
     name='oommfc',
-    version='0.10',
+    version='0.10.1',
     description='OOMMF calculator.',
     author=('Marijan Beg, Martin Lang, Ryan A. Pepper, '
             'Thomas Kluyver, and Hans Fangohr'),
@@ -15,8 +15,8 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     include_package_data=True,
     python_requires='>=3.8',
-    install_requires=['micromagnetictests==0.3',
-                      'ubermagtable==0.6'],
+    install_requires=['micromagnetictests==0.3.1',
+                      'ubermagtable==0.6.1'],
     classifiers=['Development Status :: 5 - Production/Stable',
                  'Intended Audience :: Education',
                  'Intended Audience :: Developers',
