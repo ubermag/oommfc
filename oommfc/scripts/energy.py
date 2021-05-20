@@ -1,5 +1,4 @@
 import sys
-import warnings
 import numbers
 import oommfc as oc
 import discretisedfield as df
@@ -178,15 +177,11 @@ def dmi_script(term, system):
         oxs = 'Oxs_DMI_T'
     elif term.crystalclass in ['D2d_x', 'D2d_y', 'D2d_z']:
         oxs = f'Oxs_DMI_{term.crystalclass}'
-    elif term.crystalclass == 'D2d':
-        warnings.warn('`D2d` is deprecated; use `D2d_z` instead.',
-                      DeprecationWarning)
-        oxs = 'Oxs_DMI_D2d_z'
-    elif term.crystalclass == 'Cnv':
+    elif term.crystalclass in ['Cnv_x', 'Cnv_y', 'Cnv_z']:
         if sys.platform == 'win32' and system.m.mesh.bc == '':
             oxs = 'Oxs_DMExchange6Ngbr'
         else:
-            oxs = 'Oxs_DMI_Cnv'
+            oxs = f'Oxs_DMI_{term.crystalclass}'
 
     mif = f'# DMI of crystallographic class {term.crystalclass}\n'
     mif += f'Specify {oxs}:{term.name} {{\n'
