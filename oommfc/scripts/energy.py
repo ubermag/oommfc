@@ -1,6 +1,7 @@
 import sys
 import numbers
 import oommfc as oc
+import warnings
 import discretisedfield as df
 
 
@@ -175,13 +176,21 @@ def demag_script(term, system):
 def dmi_script(term, system):
     if term.crystalclass in ['T', 'O']:
         oxs = 'Oxs_DMI_T'
-    elif term.crystalclass in ['D2d_x', 'D2d_y', 'D2d_z']:
-        oxs = f'Oxs_DMI_{term.crystalclass}'
-    elif term.crystalclass in ['Cnv_x', 'Cnv_y', 'Cnv_z']:
+    elif (cls := term.crystalclass) in ['D2d_x', 'D2d_y', 'D2d_z', 'D2d']:
+        if term.crystalclass == 'D2d':
+            warnings.warn('Use of `D2d` is deprecated; use `D2d_z` instead.',
+                          FutureWarning)
+            cls = 'D2d_z'
+        oxs = f'Oxs_DMI_{cls}'
+    elif (cls := term.crystalclass) in ['Cnv_x', 'Cnv_y', 'Cnv_z', 'Cnv']:
         if sys.platform == 'win32' and system.m.mesh.bc == '':
             oxs = 'Oxs_DMExchange6Ngbr'
         else:
-            oxs = f'Oxs_DMI_{term.crystalclass}'
+            if term.crystalclass == 'Cnv':
+                msg = 'Use of `Cnv` is deprecated; use `Cnv_z` instead.'
+                warnings.warn(msg, FutureWarning)
+                cls = 'Cnv_z'
+            oxs = f'Oxs_DMI_{cls}'
 
     mif = f'# DMI of crystallographic class {term.crystalclass}\n'
     mif += f'Specify {oxs}:{term.name} {{\n'
