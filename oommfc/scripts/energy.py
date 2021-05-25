@@ -184,6 +184,9 @@ def dmi_script(term, system):
         oxs = f'Oxs_DMI_{cls}'
     elif (cls := term.crystalclass) in ['Cnv_x', 'Cnv_y', 'Cnv_z', 'Cnv']:
         if sys.platform == 'win32' and system.m.mesh.bc == '':
+            if cls in ['Cnv_x', 'Cnv_y']:
+                msg = f'Crystalclass {cls} is not supported on Windows.'
+                raise RuntimeError(msg)
             oxs = 'Oxs_DMExchange6Ngbr'
         else:
             if term.crystalclass == 'Cnv':
