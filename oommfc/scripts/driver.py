@@ -110,7 +110,8 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
         elif not isinstance(driver.evolver, (oc.EulerEvolver,
                                              oc.RungeKuttaEvolver,
                                              oc.SpinTEvolver,
-                                             oc.SpinXferEvolver)):
+                                             oc.SpinXferEvolver,
+                                             oc.UHH_ThetaEvolver)):
             msg = f'Cannot use {type(driver.evolver)} for evolver.'
             raise TypeError(msg)
 
