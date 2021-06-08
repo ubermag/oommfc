@@ -117,7 +117,15 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
 
         # Extract dynamics equation parameters.
         if mm.Precession() in system.dynamics:
-            driver.evolver.gamma_G = system.dynamics.precession.gamma0
+            if isinstance(driver.evolver, oc.UHH_ThetaEvolver):
+                pref = 1
+                if mm.Damping() in system.dynamics:
+                    pref += system.dynamics.damping.alpha**2
+                driver.evolver.gamma_LL = (
+                    system.dynamics.precession.gamma0 / pref)
+                driver.evolver.do_precess = 1
+            else:
+                driver.evolver.gamma_G = system.dynamics.precession.gamma0
         else:
             driver.evolver.do_precess = 0
         if mm.Damping() in system.dynamics:
@@ -133,6 +141,13 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
             driver.evolver.P = system.dynamics.slonczewski.P
             driver.evolver.Lambda = system.dynamics.slonczewski.Lambda
             driver.evolver.eps_prime = system.dynamics.slonczewski.eps_prime
+        if isinstance(driver.evolver, oc.UHH_ThetaEvolver):
+            driver.evolver.temperature = system.T
+        else:
+            if system.T > 0:
+                msg = (f'Evolver {driver.evolver} does not support finite'
+                       'temperature. Use `UHH_ThetaEvolver` instead.')
+                raise TypeError(msg)
 
         # Fixed spins
         if fixed_subregions is not None:

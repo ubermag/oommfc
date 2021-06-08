@@ -63,7 +63,7 @@ def evolver_script(evolver):
         mif += 'Specify Oxs_CGEvolve:evolver {\n'
     elif isinstance(evolver, oc.UHH_ThetaEvolver):
         mif += '# UHH_ThetaEvolver\n'
-        mif += 'Specify UHH_ThetaEvolve {\n'
+        mif += 'Specify UHH_ThetaEvolve:evolver {\n'
 
     # Define all other parameters.
     for attr, value in evolver:
