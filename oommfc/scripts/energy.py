@@ -149,11 +149,11 @@ def zeeman_script(term, system):
             mif += f'  set tstep {term.tstep}\n'
             mif += '  set index [expr round($total_time/$tstep)]\n'
             tstr = ' '.join(map(str, term.tlist))
-            for char, replacement in [[',', ''], ['[', '{ ',] [']', ' }']]:
+            for char, replacement in [[',', ''], ['[', '{ '], [']', ' }']]:
                 dtstr = dtstr.replace(char, replacement)
             mif += f'  set H_t_fac {{ {tstr} }}\n'
             dtstr = ' '.join(map(str, term.dtlist))
-            for char, replacement in [[',', ''], ['[', '{ ',] [']', ' }']]:
+            for char, replacement in [[',', ''], ['[', '{ '], [']', ' }']]:
                 dtstr = dtstr.replace(char, replacement)
             mif += f'  set dH_t_fac {{ {dtstr} }}\n'
             mif += '  set H [lindex $H_t_fac $index]\n'
