@@ -143,14 +143,14 @@ def zeeman_script(term, system):
             mif += f'  script_args total_time\n'
             mif += f'  script TimeFunction\n'
             mif += '}\n\n'
-    elif isinstance(term.tstep, float):
+    elif hasattr(term, 'tlist'):
         if isinstance(term.H, (df.Field, dict)):
             mif += 'proc TimeFunction { total_time } {\n'
             mif += f'  set tstep {term.tstep}\n'
             mif += '  set index [expr round($total_time/$tstep)]\n'
             tstr = ' '.join(map(str, term.tlist))
             for char, replacement in [[',', ''], ['[', '{ '], [']', ' }']]:
-                dtstr = dtstr.replace(char, replacement)
+                tstr = tstr.replace(char, replacement)
             mif += f'  set H_t_fac {{ {tstr} }}\n'
             dtstr = ' '.join(map(str, term.dtlist))
             for char, replacement in [[',', ''], ['[', '{ '], [']', ' }']]:

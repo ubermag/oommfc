@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import sys
 import abc
 import glob
@@ -163,6 +164,12 @@ class Driver(mm.Driver):
         if not os.path.exists(workingdir):
             os.makedirs(workingdir)
 
+        # compute tlist for time-dependent field (current)
+        for term in system.energy:
+            if (hasattr(term, 'time_dependence')
+                and callable(term.time_dependence)):
+                self._time_dependence(term=term, **kwargs)
+
         # Change directory to workingdir
         with _changedir(workingdir):
             # Generate the necessary filenames.
@@ -177,6 +184,13 @@ class Driver(mm.Driver):
                                             compute=compute, **kwargs)
             with open(miffilename, 'w') as miffile:
                 miffile.write(mif)
+
+            # free memory
+            for term in system.energy:
+                if (hasattr(term, 'time_dependence')
+                    and callable(term.time_dependence)):
+                    del term.tlist
+                    del term.dtlist
 
             # Generate and save json info file for a drive (not compute).
             if compute is None:
@@ -231,3 +245,20 @@ class Driver(mm.Driver):
         # remove information about fixed cells for subsequent runs
         if hasattr(self.evolver, 'fixed_spins'):
             del self.evolver.fixed_spins
+
+    def _time_dependence(self, term, **kwargs):
+        try:
+            tmax = kwargs['t']
+        except KeyError:
+            msg = (f'Time-dependent term {term.__class__.__name__=} must be '
+                   'used with time driver.')
+            raise RuntimeError(msg)
+        ts = np.arange(0, tmax + term.tstep, term.tstep)
+        try:  # vector output from term.time_dependence
+            tlist = [list(term.time_dependence(t)) for t in ts]
+            dtlist = (np.gradient(tlist)[0] / term.tstep).tolist()
+        except TypeError:
+            tlist = [term.time_dependence(t) for t in ts]
+            dtlist = list(np.gradient(tlist) / term.tstep)
+        term.tlist = tlist
+        term.dtlist = dtlist
