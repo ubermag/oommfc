@@ -29,6 +29,13 @@ class Driver(mm.Driver):
     """Driver base class.
 
     """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if hasattr(self, 'evolver'):
+            self.autoselect_evolver = False
+        else:
+            self.autoselect_evolver = True
+
     @abc.abstractmethod
     def _checkargs(self, **kwargs):
         """Abstract method for checking arguments.
