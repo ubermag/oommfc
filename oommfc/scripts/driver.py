@@ -101,17 +101,30 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
     if isinstance(driver, oc.TimeDriver):
         # Check evolver and set default if not passed.
         if not hasattr(driver, 'evolver'):
-            if mm.ZhangLi() in system.dynamics:
-                driver.evolver = oc.SpinTEvolver()
-            elif mm.Slonczewski() in system.dynamics:
-                driver.evolver = oc.SpinXferEvolver()
+            if system.T > 0:
+                if mm.Slonczewski() in system.dynamics:
+                    driver.evolver = oc.Xf_ThermSpinXferEvolver()
+                elif mm.ZhangLi() in system.dynamics:
+                    msg = ('ZhangLi current is not supported at finite'
+                           'temperature.')
+                    raise RuntimeError(msg)
+                else:
+                    driver.evolver = oc.Xf_ThermHeunEvolver()
             else:
-                driver.evolver = oc.RungeKuttaEvolver()
+                if mm.ZhangLi() in system.dynamics:
+                    driver.evolver = oc.SpinTEvolver()
+                elif mm.Slonczewski() in system.dynamics:
+                    driver.evolver = oc.SpinXferEvolver()
+                else:
+                    driver.evolver = oc.RungeKuttaEvolver()
         elif not isinstance(driver.evolver, (oc.EulerEvolver,
                                              oc.RungeKuttaEvolver,
                                              oc.SpinTEvolver,
                                              oc.SpinXferEvolver,
-                                             oc.UHH_ThetaEvolver)):
+                                             oc.UHH_ThetaEvolver,
+                                             oc.Xf_ThermHeunEvolver,
+                                             oc.Xf_ThermSpinXferEvolver,
+                                             )):
             msg = f'Cannot use {type(driver.evolver)} for evolver.'
             raise TypeError(msg)
 
@@ -141,12 +154,14 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
             driver.evolver.P = system.dynamics.slonczewski.P
             driver.evolver.Lambda = system.dynamics.slonczewski.Lambda
             driver.evolver.eps_prime = system.dynamics.slonczewski.eps_prime
-        if isinstance(driver.evolver, oc.UHH_ThetaEvolver):
+        if isinstance(driver.evolver, (oc.UHH_ThetaEvolver,
+                                       oc.Xf_ThermHeunEvolver,
+                                       oc.Xf_ThermSpinXferEvolver)):
             driver.evolver.temperature = system.T
         else:
             if system.T > 0:
                 msg = (f'Evolver {driver.evolver} does not support finite'
-                       'temperature. Use `UHH_ThetaEvolver` instead.')
+                       ' temperature.')
                 raise TypeError(msg)
 
         # Fixed spins

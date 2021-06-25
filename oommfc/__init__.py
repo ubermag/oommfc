@@ -6,8 +6,9 @@ import oommfc.scripts
 from .delete import delete
 from .compute import compute
 from .drivers import Driver, MinDriver, TimeDriver, HysteresisDriver
-from .evolvers import CGEvolver, EulerEvolver, RungeKuttaEvolver, \
-    SpinTEvolver, SpinXferEvolver, UHH_ThetaEvolver
+from .evolvers import (CGEvolver, EulerEvolver, RungeKuttaEvolver,
+                       SpinTEvolver, SpinXferEvolver, UHH_ThetaEvolver,
+                       Xf_ThermHeunEvolver, Xf_ThermSpinXferEvolver)
 
 __version__ = pkg_resources.get_distribution(__name__).version
 
