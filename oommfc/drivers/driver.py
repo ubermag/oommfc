@@ -167,7 +167,7 @@ class Driver(mm.Driver):
         # compute tlist for time-dependent field (current)
         for term in system.energy:
             if (hasattr(term, 'time_dependence')
-                and callable(term.time_dependence)):
+                    and callable(term.time_dependence)):
                 self._time_dependence(term=term, **kwargs)
 
         # Change directory to workingdir
@@ -188,7 +188,7 @@ class Driver(mm.Driver):
             # free memory
             for term in system.energy:
                 if (hasattr(term, 'time_dependence')
-                    and callable(term.time_dependence)):
+                        and callable(term.time_dependence)):
                     del term.tlist
                     del term.dtlist
 
