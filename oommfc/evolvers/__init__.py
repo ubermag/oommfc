@@ -5,4 +5,4 @@ from .spintevolver import SpinTEvolver
 from .spinxferevolver import SpinXferEvolver
 from .uhh_thetaevolver import UHH_ThetaEvolver
 from .xf_thermheunevolver import Xf_ThermHeunEvolver
-from .xf_thermspinxferevolver import Xf_ThermSpinXferEvolvor
+from .xf_thermspinxferevolver import Xf_ThermSpinXferEvolver
