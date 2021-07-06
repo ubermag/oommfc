@@ -102,21 +102,15 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
         # Check evolver and set default if not passed.
         if not hasattr(driver, 'evolver'):
             if system.T > 0:
-                if mm.Slonczewski() in system.dynamics:
-                    driver.evolver = oc.Xf_ThermSpinXferEvolver()
-                elif mm.ZhangLi() in system.dynamics:
-                    msg = ('ZhangLi current is not supported at finite'
-                           'temperature.')
-                    raise RuntimeError(msg)
-                else:
-                    driver.evolver = oc.Xf_ThermHeunEvolver()
+                msg = ('For simulations at finite temperature the evolver must'
+                       'be specified explicitely.')
+                raise RuntimeError(msg)
+            elif mm.ZhangLi() in system.dynamics:
+                driver.evolver = oc.SpinTEvolver()
+            elif mm.Slonczewski() in system.dynamics:
+                driver.evolver = oc.SpinXferEvolver()
             else:
-                if mm.ZhangLi() in system.dynamics:
-                    driver.evolver = oc.SpinTEvolver()
-                elif mm.Slonczewski() in system.dynamics:
-                    driver.evolver = oc.SpinXferEvolver()
-                else:
-                    driver.evolver = oc.RungeKuttaEvolver()
+                driver.evolver = oc.RungeKuttaEvolver()
         elif not isinstance(driver.evolver, (oc.EulerEvolver,
                                              oc.RungeKuttaEvolver,
                                              oc.SpinTEvolver,
