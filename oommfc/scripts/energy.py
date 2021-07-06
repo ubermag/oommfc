@@ -199,6 +199,18 @@ def zeeman_script(term, system):
             mif += f'  script_args total_time\n'
             mif += f'  script TimeFunction\n'
             mif += '}\n\n'
+    elif hasattr(term, 'tcl_strings'):
+        mif += term.tcl_strings['proc']
+        mif += f'\n# {term.tcl_strings["energy"][4:]}\n'  # 3.9 removeprefix
+        mif += f'Specify {term.tcl_strings["energy"]}:{term.name} {{\n'
+        for key in ['type', 'script_args', 'script']:
+            try:
+                mif += f'  {key} {term.tcl_strings[key]}\n'
+            except KeyError:
+                pass
+        if term.tcl_strings['energy'] == 'Oxs_TransformZeeman':
+            mif += f'  field {Hname}\n'
+        mif += '}\n\n'
     else:
         mif += '# FixedZeeman\n'
         mif += f'Specify Oxs_FixedZeeman:{term.name} {{\n'

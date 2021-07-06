@@ -191,6 +191,7 @@ class Driver(mm.Driver):
                         and callable(term.time_dependence)):
                     del term.tlist
                     del term.dtlist
+                    del mif
 
             # Generate and save json info file for a drive (not compute).
             if compute is None:
