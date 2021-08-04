@@ -387,16 +387,23 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
     # OOMMF available as an executable - in a conda env on Mac/Linux, or oommf
     # installed separately.
     oommf_exe = shutil.which(oommf_exe)
+    log.debug(f"Ouput from 'which oommf_exe' = {oommf_exe}") 
     if oommf_exe:
         cmd = [oommf_exe, 'boxsi',
                '+fg', '+version', '-exitondone', '1']
-        try:
-            res = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
-        except RuntimeError:
-            log.warning('oommf_exe found but not executable.')
-        else:
+
+        log.debug("Attempt command call")  # DEBUG
+        res = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
+        log.debug(res)
+
+        if res.returncode == 0:
             _cached_oommf_runner = ExeOOMMFRunner(oommf_exe)
             return _cached_oommf_runner
+        else:
+            log.warning(f'{oommf_exe} found but not executable.')
+            log.debug(f"exitcode = {res.returncode}")
+            if res.returncode == 127:  # maybe oommf is a pyenv shim?
+                pass
 
     # Check for docker to run OOMMF in a docker image.
     cmd = [docker_exe, 'images']
