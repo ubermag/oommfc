@@ -356,11 +356,13 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
     if use_cache and (_cached_oommf_runner is not None):
         return _cached_oommf_runner
 
-    log.debug(f"Starting get_oommf_runner(use_cache={use_cache}, envvar={envvar}, "
-              f"oommf_exe={oommf_exe}, docker_exe={docker_exe})")
+    log.debug(f"Starting get_oommf_runner(use_cache={use_cache}, ",
+              f"envvar={envvar}, oommf_exe={oommf_exe}, ",
+              f"docker_exe={docker_exe})")
 
     # Check for the OOMMFTCL environment variable pointing to oommf.tcl.
-    log.debug("Step 1: Checking for the OOMMFTCL environment variable pointing to oommf.tcl.")
+    log.debug("Step 1: Checking for the OOMMFTCL environment ",
+              "variable pointing to oommf.tcl.")
     oommf_tcl = os.environ.get(envvar, None)
     if oommf_tcl is not None:
         cmd = ['tclsh', oommf_tcl, 'boxsi',
@@ -391,9 +393,10 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
 
     # OOMMF available as an executable - in a conda env on Mac/Linux, or oommf
     # installed separately.
-    log.debug("Step 3: is oommf {oommf_exe} in PATH? Could be from conda env or manual install")
+    log.debug("Step 3: is oommf {oommf_exe} in PATH? ",
+              "Could be from conda env or manual install")
     oommf_exe = shutil.which(oommf_exe)
-    log.debug(f"Ouput from 'which oommf_exe' = {oommf_exe}") 
+    log.debug(f"Ouput from 'which oommf_exe' = {oommf_exe}")
     if oommf_exe:
         cmd = [oommf_exe, 'boxsi',
                '+fg', '+version', '-exitondone', '1']
