@@ -388,7 +388,7 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
     # installed separately.
     oommf_exe = shutil.which(oommf_exe)
     if oommf_exe:
-        cmd = ['tclsh', oommf_tcl, 'boxsi',
+        cmd = [oommf_exe, 'boxsi',
                '+fg', '+version', '-exitondone', '1']
         try:
             res = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
