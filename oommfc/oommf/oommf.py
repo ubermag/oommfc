@@ -361,7 +361,7 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
               f"docker_exe={docker_exe})")
 
     # Check for the OOMMFTCL environment variable pointing to oommf.tcl.
-    log.debug("Step 1: Checking for the OOMMFTCL environment " 
+    log.debug("Step 1: Checking for the '{envvar}' environment " 
               "variable pointing to oommf.tcl.")
     oommf_tcl = os.environ.get(envvar, None)
     if oommf_tcl is not None:
@@ -393,7 +393,7 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
 
     # OOMMF available as an executable - in a conda env on Mac/Linux, or oommf
     # installed separately.
-    log.debug(f"Step 3: is oommf {oommf_exe} in PATH? "
+    log.debug(f"Step 3: is '{oommf_exe}' in PATH? "
               "Could be from conda env or manual install")
     oommf_exe = shutil.which(oommf_exe)
     log.debug(f"Ouput from 'which oommf_exe' = {oommf_exe}")
@@ -415,7 +415,7 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
                 pass
 
     # Check for docker to run OOMMF in a docker image.
-    log.debug("Step 4: Can we use docker to host OOMMF?")
+    log.debug(f"Step 4: Can we use docker to host OOMMF? ({'docker_exe'})")
     cmd = [docker_exe, 'images']
     try:
         res = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
