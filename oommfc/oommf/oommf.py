@@ -388,8 +388,15 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
     # installed separately.
     oommf_exe = shutil.which(oommf_exe)
     if oommf_exe:
-        _cached_oommf_runner = ExeOOMMFRunner(oommf_exe)
-        return _cached_oommf_runner
+        cmd = ['tclsh', oommf_tcl, 'boxsi',
+               '+fg', '+version', '-exitondone', '1']
+        try:
+            res = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
+        except RuntimeError:
+            log.warning('oommf_exe found but not executable.')
+        else:
+            _cached_oommf_runner = ExeOOMMFRunner(oommf_exe)
+            return _cached_oommf_runner
 
     # Check for docker to run OOMMF in a docker image.
     cmd = [docker_exe, 'images']
