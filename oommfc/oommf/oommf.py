@@ -393,7 +393,7 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
 
     # OOMMF available as an executable - in a conda env on Mac/Linux, or oommf
     # installed separately.
-    log.debug("Step 3: is oommf {oommf_exe} in PATH? ",
+    log.debug(f"Step 3: is oommf {oommf_exe} in PATH? ",
               "Could be from conda env or manual install")
     oommf_exe = shutil.which(oommf_exe)
     log.debug(f"Ouput from 'which oommf_exe' = {oommf_exe}")
