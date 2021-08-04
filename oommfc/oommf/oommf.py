@@ -357,13 +357,13 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
         return _cached_oommf_runner
 
     # Check for the OOMMFTCL environment variable pointing to oommf.tcl.
-    
+
     log.debug(f"Starting get_oommf_runner(use_cache={use_cache}, "
               f"envvar={envvar}, oommf_exe={oommf_exe}, "
               f"docker_exe={docker_exe})")
 
     # Check for the OOMMFTCL environment variable pointing to oommf.tcl.
-    log.debug(f"Step 1: Checking for the '{envvar}' environment " 
+    log.debug(f"Step 1: Checking for the '{envvar}' environment "
               "variable pointing to oommf.tcl.")
     oommf_tcl = os.environ.get(envvar, None)
     if oommf_tcl is not None:
