@@ -356,7 +356,11 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
     if use_cache and (_cached_oommf_runner is not None):
         return _cached_oommf_runner
 
+    log.debug(f"Starting get_oommf_runner(use_cache={use_cache}, envvar={envvar}, "
+              f"oommf_exe={oommf_exe}, docker_exe={docker_exe})")
+
     # Check for the OOMMFTCL environment variable pointing to oommf.tcl.
+    log.debug("Step 1: Checking for the OOMMFTCL environment variable pointing to oommf.tcl.")
     oommf_tcl = os.environ.get(envvar, None)
     if oommf_tcl is not None:
         cmd = ['tclsh', oommf_tcl, 'boxsi',
@@ -377,6 +381,7 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
     # OOMMF is installed via conda and oommf.tcl is in opt/oommf (Windows).
     # This would probably also work on MacOS/Linux, but on these operating
     # systems, when installed via conda, we use 'oommf' executable.
+    log.debug("Step 2: are we on Windows and oommf is installed via conda?")
     if sys.platform == 'win32' and \
        os.path.isdir(os.path.join(sys.prefix, 'conda-meta')):
         oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
@@ -386,6 +391,7 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
 
     # OOMMF available as an executable - in a conda env on Mac/Linux, or oommf
     # installed separately.
+    log.debug("Step 3: is oommf {oommf_exe} in PATH? Could be from conda env or manual install")
     oommf_exe = shutil.which(oommf_exe)
     log.debug(f"Ouput from 'which oommf_exe' = {oommf_exe}") 
     if oommf_exe:
@@ -406,6 +412,7 @@ def get_oommf_runner(use_cache=True, envvar='OOMMFTCL',
                 pass
 
     # Check for docker to run OOMMF in a docker image.
+    log.debug("Step 4: Can we use docker to host OOMMF?")
     cmd = [docker_exe, 'images']
     try:
         res = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
