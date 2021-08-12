@@ -378,6 +378,10 @@ class Runner:
     def runner(self):
         """Return default OOMMF runner.
 
+        The default runner is determined using ``autoselect_runner()``. If
+        ``cache_runner`` is ``True`` the runner is cached during the first call
+        and the same runner is returned in subsequent calls to this property.
+
         This property also allows to set a specific ``OOMMFRunner``. Before
         setting, a new runner is first checked to be functional by calling
         ``runner.status``.
