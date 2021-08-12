@@ -129,8 +129,15 @@ def test_get_oommf_runner():
 
 
 def test_set_oommf_runner():
-    oc.runner.runner = oo.ExeOOMMFRunner()
-    assert isinstance(oc.runner.runner, oo.ExeOOMMFRunner)
+    oc.runner.runner = oo.TclOOMMFRunner()
+    assert isinstance(oc.runner.runner, oo.TclOOMMFRunner)
+
+    if sys.platform != 'win32':
+        oc.runner.runner = oo.ExeOOMMFRunner()
+        assert isinstance(oc.runner.runner, oo.ExeOOMMFRunner)
+
+    oc.runner.runner = oo.DockerOOMMFRunner()
+    assert isinstance(oc.runner.runner, oo.DockerOOMMFRunner)
 
 
 @pytest.mark.skip(reason='Temporary')
