@@ -100,7 +100,7 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
 
     if isinstance(driver, oc.TimeDriver):
         # Check evolver and set default if not passed.
-        if not hasattr(driver, 'evolver'):
+        if driver.autoselect_evolver:
             if mm.ZhangLi() in system.dynamics:
                 driver.evolver = oc.SpinTEvolver()
             elif mm.Slonczewski() in system.dynamics:
