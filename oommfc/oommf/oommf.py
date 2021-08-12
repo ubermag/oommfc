@@ -169,7 +169,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         Returns
         -------
         int
-            If ``0``, the OOMMF is found and running. Otherwise, ``1`` is
+            If ``0``, then OOMMF is found and running. Otherwise, ``1`` is
             returned.
 
         Examples
