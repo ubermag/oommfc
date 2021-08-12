@@ -301,7 +301,6 @@ class ExeOOMMFRunner(OOMMFRunner):
             raise EnvironmentError(msg)
 
     def __repr__(self):
-        which_oommf = shutil.which(self.oommf_exe)
         return f'ExeOOMMFRunner({self.oommf_exe})'
 
 
@@ -344,7 +343,28 @@ class DockerOOMMFRunner(OOMMFRunner):
 
 
 class Runner:
-    """Control the default runner."""
+    """Control the default runner.
+
+    Parameters
+    ----------
+    cache_runner : bool
+        If ``True`` the best way to run OOMMF is only determined once and the
+        result is cached. Subsequent calls to the property ``runner`` will
+        return the ``OOMMFRunner`` object from the cache. Setting this
+        parameter to ``False`` will cause it to check for available methods
+        again. Defaults to ``True``.
+
+    envvar : str
+        Name of the environment variable containing the path to ``oommf.tcl``.
+        Defaults to ``'OOMMFTCL'``.
+
+    oommf_exe : str
+        The name or path of the executable ``oommf`` command. Defaults to
+        ``'oommf'``.
+
+    docker_exe : str
+        The name or path of the docker command. Defaults to ``'docker'``.
+    """
 
     def __init__(self):
         self.cache_runner = True
@@ -355,7 +375,22 @@ class Runner:
 
     @property
     def runner(self):
-        """Return default OOMMF runner."""
+        """Return default OOMMF runner.
+
+        This property also allows to set a specific ``OOMMFRunner``. Before
+        setting, a new runner is first checked to be functional by calling
+        ``runner.status``.
+
+        Examples
+        --------
+        1. Getting OOMMF Runner.
+
+        >>> import oommfc as oc
+        ...
+        >>> runner = oc.runner.runner
+        >>> isinstance(runner, oc.oommf.OOMMFRunner)
+        True
+        """
         if self.cache_runner and self._runner is not None:
             log.debug('Returning ceched runner.')
             return self._runner
@@ -371,55 +406,29 @@ class Runner:
     def autoselect_runner(self):
         """Find the best available way to run OOMMF.
 
-        Returns an ``oommfc.oommf.OOMMFRunner`` object, or raises
-        ``EnvironmentError`` if no suitable method is found.
+        The function tries to find a suitable runner by checking ``envvar``,
+        ``ooommf_exe``, and ``docker_runner`` in the given order. If no runner
+        can be found an ``EnvironmentError`` is raised.
 
-        Parameters
-        ----------
-        use_cache : bool
-
-        The first call to this function will determine the best way to run
-        OOMMF and cache it. Normally, subsequent calls will return the
-        ``OOMMFRunner`` object from the cache. Setting this parameter to
-        ``False`` will cause it to check for available methods again. Defaults
-        to ``True``.
-
-        envvar : str
-
-        Name of the environment variable containing the path to ``oommf.tcl``.
-        Defaults to ``'OOMMFTCL'``.
-
-        oommf_exe : str
-
-        The name or path of the executable ``oommf`` command. Defaults to
-        ``'oommf'``.
-
-        docker_exe : str
-
-        The name or path of the docker command. Defaults to ``'docker'``.
-
-        Returns
-        -------
-        oommfc.oommf.OOMMFRunner
-
-            An OOMMF runner.
+        This method is also used to determine the default runner for the
+        ``runner`` property as long as no runner has been cached. The method
+        can be used to reset the default runner when a different runner has
+        been set explicitly.
 
         Raises
         ------
         EnvironmentError
-
             If no OOMMF can be found on host.
 
         Examples
         --------
-        1. Getting OOMMF Runner.
+        1. Setting best runner
 
         >>> import oommfc as oc
         ...
-        >>> runner = oc.oommf.get_oommf_runner()
-        >>> isinstance(runner, oc.oommf.OOMMFRunner)
+        >>> oc.runner.autoselect_runner()
+        >>> isinstance(oc.runner.runner, oc.oommf.OOMMFRunner)
         True
-
         """
         log.debug(f"Starting get_oommf_runner(use_cache={self.cache_runner}, "
                   f"envvar={self.envvar}, oommf_exe={self.oommf_exe}, "
