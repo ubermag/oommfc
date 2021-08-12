@@ -408,7 +408,7 @@ class Runner:
 
         """
         if self.cache_runner and self._runner is not None:
-            log.debug('Returning ceched runner.')
+            log.debug('Returning cached runner.')
             return self._runner
         self.autoselect_runner()
         return self._runner
