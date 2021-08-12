@@ -49,7 +49,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
 
         >>> import oommfc as oc
         ...
-        >>> runner = oc.oommf.get_oommf_runner()
+        >>> runner = oc.runner.runner
         >>> runner.call(argstr='+version')
         Running OOMMF...
         CompletedProcess(...)
@@ -127,7 +127,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
 
         >>> import oommfc as oc
         ...
-        >>> runner = oc.oommf.get_oommf_runner()
+        >>> runner = oc.runner.runner
         >>> runner.version()
         Running OOMMF...
         '...'
@@ -152,7 +152,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
 
         >>> import oommfc as oc
         ...
-        >>> runner = oc.oommf.get_oommf_runner()
+        >>> runner = oc.runner.runner
         >>> runner.platform()
         Running OOMMF...
         '...'
@@ -178,7 +178,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
 
         >>> import oommfc as oc
         ...
-        >>> oc.oommf.status()
+        >>> oc.runner.runner.status
         Running OOMMF...
         OOMMF found and running.
         0
@@ -401,7 +401,8 @@ class Runner:
         >>> import oommfc as oc
         ...
         >>> oc.runner.runner = oc.oommf.ExeOOMMFRunner()
-        ...
+        Running OOMMF ...
+        OOMMF found and running.
         >>> isinstance(oc.runner.runner, oc.oommf.ExeOOMMFRunner)
         True
 
