@@ -128,6 +128,11 @@ def test_get_oommf_runner():
     check_runner(oommf_runner)
 
 
+def test_set_oommf_runner():
+    oc.runner.runner = oo.ExeOOMMFRunner()
+    assert isinstance(oc.runner.runner, oo.ExeOOMMFRunner)
+
+
 @pytest.mark.skip(reason='Temporary')
 def test_status():
     assert oo.status() == 0
