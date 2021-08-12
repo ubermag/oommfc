@@ -169,8 +169,8 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         Returns
         -------
         int
-
-            If ``0``, the OOMMF is found and running. Otherwise, ``1`` is returned.
+            If ``0``, the OOMMF is found and running. Otherwise, ``1`` is
+            returned.
 
         Examples
         --------
@@ -378,10 +378,11 @@ class Runner:
         ----------
         use_cache : bool
 
-        The first call to this function will determine the best way to run OOMMF
-        and cache it. Normally, subsequent calls will return the ``OOMMFRunner``
-        object from the cache. Setting this parameter to ``False`` will cause it
-        to check for available methods again. Defaults to ``True``.
+        The first call to this function will determine the best way to run
+        OOMMF and cache it. Normally, subsequent calls will return the
+        ``OOMMFRunner`` object from the cache. Setting this parameter to
+        ``False`` will cause it to check for available methods again. Defaults
+        to ``True``.
 
         envvar : str
 
@@ -458,8 +459,8 @@ class Runner:
                 self._runner = TclOOMMFRunner(oommf_tcl)
                 return
 
-        # OOMMF available as an executable - in a conda env on Mac/Linux, or oommf
-        # installed separately.
+        # OOMMF available as an executable - in a conda env on Mac/Linux, or
+        # oommf installed separately.
         log.debug(f"Step 3: is '{self.oommf_exe=}' in PATH? "
                   "Could be from conda env or manual install")
         oommf_exe = shutil.which(self.oommf_exe)
@@ -503,13 +504,13 @@ class Runner:
         # exception.
         raise EnvironmentError('Cannot find OOMMF.')
 
-
     def __repr__(self):
         # avoid selecting a runner when calling __repr__
         _runner = self._runner if self._runner is not None else "UNSET"
 
         return (f'OOMMF runner: {_runner}\n'
                 f'runner is cached: {self.cache_runner}')
+
 
 def overhead():
     """Run a macrospin example for 1 ps through ``oommfc`` and directly and
