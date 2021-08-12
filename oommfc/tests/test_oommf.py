@@ -13,8 +13,8 @@ def check_runner(runner):
     os.chdir(dirname)
     argstr = 'test_oommf.mif'
     res = runner.call(argstr)
-    version = runner.version()
-    platform = runner.platform()
+    version = runner.version
+    platform = runner.platform
 
     assert isinstance(version, str)
     assert len(version) > 0
