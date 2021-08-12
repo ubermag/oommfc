@@ -127,7 +127,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         >>> import oommfc as oc
         ...
         >>> runner = oc.runner.runner
-        >>> runner.version()
+        >>> runner.version
         Running OOMMF...
         '...'
 
@@ -152,7 +152,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         >>> import oommfc as oc
         ...
         >>> runner = oc.runner.runner
-        >>> runner.platform()
+        >>> runner.platform
         Running OOMMF...
         '...'
 
