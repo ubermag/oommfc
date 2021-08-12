@@ -364,6 +364,7 @@ class Runner:
 
     docker_exe : str
         The name or path of the docker command. Defaults to ``'docker'``.
+
     """
 
     def __init__(self):
@@ -390,6 +391,15 @@ class Runner:
         >>> runner = oc.runner.runner
         >>> isinstance(runner, oc.oommf.OOMMFRunner)
         True
+
+        2. Setting OOMMF Runner.
+
+        >>> import oommfc as oc
+        ...
+        >>> oc.runner.runner = oc.oommf.ExeOOMMFRunner()
+        >>> isinstance(oc.runner.runner, oc.oommf.ExeOOMMFRunner)
+        True
+
         """
         if self.cache_runner and self._runner is not None:
             log.debug('Returning ceched runner.')
@@ -407,7 +417,7 @@ class Runner:
         """Find the best available way to run OOMMF.
 
         The function tries to find a suitable runner by checking ``envvar``,
-        ``ooommf_exe``, and ``docker_runner`` in the given order. If no runner
+        ``ooommf_exe``, and ``docker_runner``, in this order. If no runner
         can be found an ``EnvironmentError`` is raised.
 
         This method is also used to determine the default runner for the
@@ -429,6 +439,7 @@ class Runner:
         >>> oc.runner.autoselect_runner()
         >>> isinstance(oc.runner.runner, oc.oommf.OOMMFRunner)
         True
+
         """
         log.debug(f"Starting get_oommf_runner(use_cache={self.cache_runner}, "
                   f"envvar={self.envvar}, oommf_exe={self.oommf_exe}, "
