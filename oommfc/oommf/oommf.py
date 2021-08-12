@@ -187,7 +187,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         system = mm.examples.macrospin()
         try:
             td = oc.TimeDriver()
-            td.drive(system, t=1e-12, n=1)
+            td.drive(system, t=1e-12, n=1, runner=self)
             print('OOMMF found and running.')
             return 0
         except (EnvironmentError, RuntimeError):
