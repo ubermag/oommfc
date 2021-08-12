@@ -401,6 +401,7 @@ class Runner:
         >>> import oommfc as oc
         ...
         >>> oc.runner.runner = oc.oommf.ExeOOMMFRunner()
+        ...
         >>> isinstance(oc.runner.runner, oc.oommf.ExeOOMMFRunner)
         True
 
