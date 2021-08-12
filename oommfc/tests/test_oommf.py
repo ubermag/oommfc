@@ -122,7 +122,8 @@ def test_get_oommf_runner():
 
 def test_get_oommf_runner():
     # This is a shorter version of the previous test for testing on host.
-    oommf_runner = oo.get_oommf_runner(use_cache=False)
+    oc.runner.autoselect_runner()
+    oommf_runner = oc.runner.runner
     assert isinstance(oommf_runner, oo.OOMMFRunner)
     check_runner(oommf_runner)
 
@@ -137,7 +138,8 @@ def test_overhead():
 
 
 def test_runtimeerror():
-    oommf_runner = oo.get_oommf_runner(use_cache=False)
+    oc.runner.autoselect_runner()
+    oommf_runner = oc.runner.runner
     with pytest.raises(RuntimeError):
         oommf_runner.call('+wrong_argstr')
 
