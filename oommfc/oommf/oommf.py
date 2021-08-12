@@ -415,7 +415,7 @@ class Runner:
 
     @runner.setter
     def runner(self, runner):
-        if runner.status == 1:
+        if runner.status != 0:
             raise ValueError(f'{runner=} cannot be used.')
         self._runner = runner
 
@@ -447,9 +447,8 @@ class Runner:
         True
 
         """
-        log.debug(f"Starting get_oommf_runner(use_cache={self.cache_runner}, "
-                  f"envvar={self.envvar}, oommf_exe={self.oommf_exe}, "
-                  f"docker_exe={self.docker_exe})")
+        log.debug(f"Starting autoselect_runner using {self.cache_runner=}, "
+                  f"{self.envvar=}, {self.oommf_exe=}, {self.docker_exe=})")
 
         # Check for the OOMMFTCL environment variable pointing to oommf.tcl.
         log.debug(f"Step 1: Checking for the '{self.envvar=}' environment "
@@ -517,7 +516,7 @@ class Runner:
         except FileNotFoundError:
             log.warning('Docker was not found.')
         else:
-            if res.returncode:
+            if res.returncode != 0:
                 log.warning('Error running docker\n'
                             f'stdout:\n{res.stdout}\n'
                             f'stderr:\n{res.stderr}')
