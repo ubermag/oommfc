@@ -1,5 +1,4 @@
 import os
-import functools
 import abc
 import sys
 import time
@@ -111,7 +110,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         """
         pass  # pragma: no cover
 
-    @functools.cached_property
+    @property
     def version(self):
         """Return the OOMMF version.
 
@@ -136,7 +135,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         res = self.call(argstr='+version', need_stderr=True)
         return res.stderr.decode('utf-8').split('oommf.tcl')[-1].strip()
 
-    @functools.cached_property
+    @property
     def platform(self):
         """Return platform seen by OOMMF.
 
