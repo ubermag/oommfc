@@ -10,7 +10,7 @@ import subprocess as sp
 import ubermagutil as uu
 import micromagneticmodel as mm
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('oommfc')
 
 
 class OOMMFRunner(metaclass=abc.ABCMeta):
@@ -446,12 +446,15 @@ class Runner:
         True
 
         """
-        log.debug(f"Starting autoselect_runner using {self.cache_runner=}, "
-                  f"{self.envvar=}, {self.oommf_exe=}, {self.docker_exe=})")
+        log.debug('Starting autoselect_runner: cache_runner=%(cache_runner)s, '
+                  'envvar=%(envvar)s, oommf_exe=%(oommf_exe)s, '
+                  'docker_exe=%(docker_exe)s)',
+                  {'cache_runner': self.cache_runner, 'envvar': self.envvar,
+                   'oommf_exe': self.oommf_exe, 'docker_exe': self.docker_exe})
 
         # Check for the OOMMFTCL environment variable pointing to oommf.tcl.
-        log.debug(f"Step 1: Checking for the '{self.envvar=}' environment "
-                  "variable pointing to oommf.tcl.")
+        log.debug('Step 1: Checking for the self.envvar=%(envvar)s environment'
+                  ' variable pointing to oommf.tcl.', {'envvar': self.envvar})
         oommf_tcl = os.environ.get(self.envvar, None)
         if oommf_tcl is not None:
             cmd = [
@@ -466,7 +469,8 @@ class Runner:
                 if res.returncode:
                     log.warning(
                         'OOMMFTCL is set, but OOMMF could not be run.\n'
-                        f'stdout:\n{res.stdout}\nstderr:\n{res.stderr}')
+                        'stdout:\n%(stdout)s\nstderr:\n%(sdterr)s',
+                        {'stdout': res.stdout, 'stderr': res.stderr})
                 else:
                     self._runner = TclOOMMFRunner(oommf_tcl)
                     return
@@ -485,10 +489,12 @@ class Runner:
 
         # OOMMF available as an executable - in a conda env on Mac/Linux, or
         # oommf installed separately.
-        log.debug(f"Step 3: is '{self.oommf_exe=}' in PATH? "
-                  "Could be from conda env or manual install")
+        log.debug('Step 3: is oommf_exe=%(oommf_exe)s in PATH? '
+                  'Could be from conda env or manual install.',
+                  {'oommf_exe': self.oommf_exe})
         oommf_exe = shutil.which(self.oommf_exe)
-        log.debug(f"Ouput from 'which oommf_exe' = {oommf_exe}")
+        log.debug('Ouput from "which oommf_exe"=%(oommf_exe)s',
+                  {'oommf_exe': oommf_exe})
         if oommf_exe:
             cmd = [oommf_exe, 'boxsi',
                    '+fg', '+version', '-exitondone', '1']
@@ -501,14 +507,17 @@ class Runner:
                 self._runner = ExeOOMMFRunner(oommf_exe)
                 return
             else:
-                log.warning(f'{oommf_exe=} found but not executable.')
-                log.debug(f"exitcode = {res.returncode}")
+                log.warning('oommf_exe=%(exe)s found but not executable.',
+                            {'exe': oommf_exe})
+                log.debug('exitcode = %(returncode)s',
+                          {'returncode': res.returncode})
                 if res.returncode == 127:  # maybe oommf is a pyenv shim?
                     pass
 
         # Check for docker to run OOMMF in a docker image.
         log.debug("Step 4: Can we use docker to host OOMMF?"
-                  f" ('{self.docker_exe}')")
+                  ' ("docker_exe=%(docker_exe)s")',
+                  {'docker_exe': self.docker_exe})
         cmd = [self.docker_exe, 'images']
         try:
             res = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
@@ -516,9 +525,9 @@ class Runner:
             log.warning('Docker was not found.')
         else:
             if res.returncode != 0:
-                log.warning('Error running docker\n'
-                            f'stdout:\n{res.stdout}\n'
-                            f'stderr:\n{res.stderr}')
+                log.warning('Error running docker\nstdout:\n%(stdout)s\n'
+                            'stderr:\n%(res.stderr)s',
+                            {'stdout': res.stdout, 'stderr': res.stderr})
             else:
                 self._runner = DockerOOMMFRunner(docker_exe=self.docker_exe,
                                                  image='ubermag/oommf')
