@@ -526,7 +526,7 @@ class Runner:
         else:
             if res.returncode != 0:
                 log.warning('Error running docker\nstdout:\n%(stdout)s\n'
-                            'stderr:\n%(res.stderr)s',
+                            'stderr:\n%(stderr)s',
                             {'stdout': res.stdout, 'stderr': res.stderr})
             else:
                 self._runner = DockerOOMMFRunner(docker_exe=self.docker_exe,
