@@ -342,7 +342,7 @@ class DockerOOMMFRunner(OOMMFRunner):
 
     def __repr__(self):
         return (f'DockerOOMMFRunner(docker_exe={self.docker_exe}, '
-                f'image={self.image}')
+                f'image={self.image})')
 
 class Runner:
     """Control the default runner.
@@ -400,12 +400,13 @@ class Runner:
 
         2. Setting OOMMF Runner.
 
-        >>> import oommfc as oc
+        >>> import oommfc as oc  # doctest: +SKIP
         ...
-        >>> oc.runner.runner = oc.oommf.DockerOOMMFRunner()
+        >>> oc.runner.runner = oc.oommf.DockerOOMMFRunner()  # doctest: +SKIP
         Running OOMMF ...
         OOMMF found and running.
-        >>> isinstance(oc.runner.runner, oc.oommf.DockerOOMMFRunner)
+        >>> isinstance(oc.runner.runner,
+        ...            oc.oommf.DockerOOMMFRunner)  # doctest: +SKIP
         True
 
         """
