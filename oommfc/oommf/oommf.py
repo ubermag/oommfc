@@ -344,6 +344,7 @@ class DockerOOMMFRunner(OOMMFRunner):
         return (f'DockerOOMMFRunner(docker_exe={self.docker_exe}, '
                 f'image={self.image})')
 
+
 class Runner:
     """Control the default runner.
 

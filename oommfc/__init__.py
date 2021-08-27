@@ -12,6 +12,7 @@ from .evolvers import CGEvolver, EulerEvolver, RungeKuttaEvolver, \
 __version__ = pkg_resources.get_distribution(__name__).version
 runner = oommfc.oommf.oommf.Runner()
 
+
 def test():
     """Run all package tests.
 
