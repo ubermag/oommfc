@@ -399,10 +399,10 @@ class Runner:
 
         >>> import oommfc as oc
         ...
-        >>> oc.runner.runner = oc.oommf.ExeOOMMFRunner()
+        >>> oc.runner.runner = oc.oommf.DockerOOMMFRunner()
         Running OOMMF ...
         OOMMF found and running.
-        >>> isinstance(oc.runner.runner, oc.oommf.ExeOOMMFRunner)
+        >>> isinstance(oc.runner.runner, oc.oommf.DockerOOMMFRunner)
         True
 
         """
