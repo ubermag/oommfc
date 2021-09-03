@@ -150,7 +150,7 @@ class Driver(mm.Driver):
                         numbers = list(zip(*[i.split('-')
                                              for i in compute_dirs]))[1]
                         numbers = list(map(int, numbers))
-                        system.drive_number = max(numbers) + 1
+                        system.compute_number = max(numbers) + 1
                     else:
                         msg = (f'Directory {system.name=} already exists. To '
                                f'append drives to it, pass append=True.')
