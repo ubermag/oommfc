@@ -200,16 +200,16 @@ class Driver(mm.Driver):
             # Get right OOMMF runner depending on whether there is DMI.
             if runner is None:
                 if sys.platform != 'win32':
-                    runner = oc.oommf.get_oommf_runner()
+                    runner = oc.runner.runner
                 else:
                     if hasattr(system.energy, 'dmi'):
                         if (system.energy.dmi.crystalclass == 'Cnv' and
                                 system.m.mesh.bc == ''):
-                            runner = oc.oommf.get_oommf_runner()
+                            runner = oc.runner.runner
                         else:
                             runner = oc.oommf.DockerOOMMFRunner()
                     else:
-                        runner = oc.oommf.get_oommf_runner()
+                        runner = oc.runner.runner
             runner.call(argstr=miffilename, n_threads=n_threads)
 
             # Update system's m and datatable attributes if the derivation of

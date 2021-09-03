@@ -10,6 +10,7 @@ from .evolvers import CGEvolver, EulerEvolver, RungeKuttaEvolver, \
     SpinTEvolver, SpinXferEvolver
 
 __version__ = pkg_resources.get_distribution(__name__).version
+runner = oommfc.oommf.oommf.Runner()
 
 
 def test():
