@@ -13,8 +13,8 @@ def check_runner(runner):
     os.chdir(dirname)
     argstr = 'test_oommf.mif'
     res = runner.call(argstr)
-    version = runner.version()
-    platform = runner.platform()
+    version = runner.version
+    platform = runner.platform
 
     assert isinstance(version, str)
     assert len(version) > 0
@@ -122,9 +122,23 @@ def test_get_oommf_runner():
 
 def test_get_oommf_runner():
     # This is a shorter version of the previous test for testing on host.
-    oommf_runner = oo.get_oommf_runner(use_cache=False)
+    oc.runner.autoselect_runner()
+    oommf_runner = oc.runner.runner
     assert isinstance(oommf_runner, oo.OOMMFRunner)
     check_runner(oommf_runner)
+
+
+@pytest.mark.skip(reason='We need to think about how to test this properly.')
+def test_set_oommf_runner():
+    oc.runner.runner = oo.TclOOMMFRunner()
+    assert isinstance(oc.runner.runner, oo.TclOOMMFRunner)
+
+    if sys.platform != 'win32':
+        oc.runner.runner = oo.ExeOOMMFRunner()
+        assert isinstance(oc.runner.runner, oo.ExeOOMMFRunner)
+
+    oc.runner.runner = oo.DockerOOMMFRunner()
+    assert isinstance(oc.runner.runner, oo.DockerOOMMFRunner)
 
 
 @pytest.mark.skip(reason='Temporary')
@@ -137,7 +151,8 @@ def test_overhead():
 
 
 def test_runtimeerror():
-    oommf_runner = oo.get_oommf_runner(use_cache=False)
+    oc.runner.autoselect_runner()
+    oommf_runner = oc.runner.runner
     with pytest.raises(RuntimeError):
         oommf_runner.call('+wrong_argstr')
 

@@ -100,7 +100,7 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
 
     if isinstance(driver, oc.TimeDriver):
         # Check evolver and set default if not passed.
-        if not hasattr(driver, 'evolver'):
+        if driver.autoselect_evolver:
             if system.T > 0:
                 msg = ('For simulations at finite temperature the evolver must'
                        'be specified explicitely.')

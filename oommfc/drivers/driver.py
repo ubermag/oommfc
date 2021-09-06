@@ -29,6 +29,13 @@ class Driver(mm.Driver):
     """Driver base class.
 
     """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if hasattr(self, 'evolver'):
+            self.autoselect_evolver = False
+        else:
+            self.autoselect_evolver = True
+
     @abc.abstractmethod
     def _checkargs(self, **kwargs):
         """Abstract method for checking arguments.
@@ -143,7 +150,7 @@ class Driver(mm.Driver):
                         numbers = list(zip(*[i.split('-')
                                              for i in compute_dirs]))[1]
                         numbers = list(map(int, numbers))
-                        system.drive_number = max(numbers) + 1
+                        system.compute_number = max(numbers) + 1
                     else:
                         msg = (f'Directory {system.name=} already exists. To '
                                f'append drives to it, pass append=True.')
@@ -193,16 +200,16 @@ class Driver(mm.Driver):
             # Get right OOMMF runner depending on whether there is DMI.
             if runner is None:
                 if sys.platform != 'win32':
-                    runner = oc.oommf.get_oommf_runner()
+                    runner = oc.runner.runner
                 else:
                     if hasattr(system.energy, 'dmi'):
                         if (system.energy.dmi.crystalclass == 'Cnv' and
                                 system.m.mesh.bc == ''):
-                            runner = oc.oommf.get_oommf_runner()
+                            runner = oc.runner.runner
                         else:
                             runner = oc.oommf.DockerOOMMFRunner()
                     else:
-                        runner = oc.oommf.get_oommf_runner()
+                        runner = oc.runner.runner
             runner.call(argstr=miffilename, n_threads=n_threads)
 
             # Update system's m and datatable attributes if the derivation of
