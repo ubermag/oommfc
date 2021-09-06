@@ -2,7 +2,7 @@ import micromagneticmodel as mm
 
 
 class Xf_ThermHeunEvolver(mm.Evolver):
-    """Xf_ThermHeun evolver (combines Runge-Kutta evolver with UHH_ThetaEvolve).
+    """Xf_ThermHeun evolver (combines Runge-Kutta and UHH_ThetaEvolve).
 
     Only attributes in ``_allowed_attributes`` can be defined. For details on
     possible values for individual attributes and their default values, please
