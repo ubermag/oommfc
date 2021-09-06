@@ -185,7 +185,8 @@ def dmi_script(term, system):
     elif (tcc := term.crystalclass) in ['Cnv_x', 'Cnv_y', 'Cnv_z', 'Cnv']:
         if sys.platform == 'win32' and system.m.mesh.bc == '':
             if tcc in ['Cnv_x', 'Cnv_y']:
-                msg = f'Crystalclass {tcc} is not supported on Windows.'
+                msg = (f'Crystalclass {tcc} is not supported on Windows.'
+                       'Use Docker to run OOMMF.')
                 raise RuntimeError(msg)
             oxs = 'Oxs_DMExchange6Ngbr'
         else:
