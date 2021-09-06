@@ -1,6 +1,7 @@
 import numpy as np
 import oommfc as oc
 import micromagneticmodel as mm
+import ubermagutil.typesystem as ts
 
 
 def driver_script(driver, system, fixed_subregions=None, compute=None,
@@ -147,7 +148,12 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
             driver.evolver.mp = system.dynamics.slonczewski.mp
             driver.evolver.P = system.dynamics.slonczewski.P
             driver.evolver.Lambda = system.dynamics.slonczewski.Lambda
-            driver.evolver.eps_prime = system.dynamics.slonczewski.eps_prime
+            if isinstance(system.dynamics.slonczewski.eps_prime,
+                          ts.Descriptor):
+                driver.evolver.eps_prime = 0
+            else:
+                driver.evolver.eps_prime = \
+                    system.dynamics.slonczewski.eps_prime
         if isinstance(driver.evolver, (oc.UHH_ThetaEvolver,
                                        oc.Xf_ThermHeunEvolver,
                                        oc.Xf_ThermSpinXferEvolver)):

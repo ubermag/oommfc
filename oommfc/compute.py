@@ -84,7 +84,7 @@ def compute(func, system):
     try:
         td.drive(system, t=1e-25, n=1, append=True,
                  compute=schedule_script(func, system))
-    except TypeError:
+    except RuntimeError:
         msg = ('`oc.compute` does not support finite temperature.'
                f' (Temperature is specified as {system.T=})')
         raise RuntimeError(msg)
