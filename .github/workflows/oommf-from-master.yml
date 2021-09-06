@@ -1,4 +1,4 @@
-name: workflow
+name: oommf-from-master
 
 on:
   push:
