@@ -25,6 +25,9 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Install Tk/Tcl
+      run: sudo apt-get install tk-dev tcl-dev
+
     - name: Clone OOMMF
       uses: actions/checkout@v2
       with:
