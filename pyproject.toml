@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=40.8.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "oommfc"
+version = "0.10.1"
+description = "OOMMF calculator."
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+
+authors = [
+  {name = "Marijan Beg"},
+  {name = "Martin Lang"},
+  {name = "Samuel Holt"},
+  {name = "Hans Fangohr"}
+]
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Education",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: Unix",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Visualization"
+]
+
+dependencies = [
+  "micromagnetictests==0.3.1",
+  "ubermagtable==0.6.1"
+]
+
+# [project.optional-dependencies]
+# test = [...]
+
+[project.urls]
+homepage = "https://ubermag.github.io"
+documentation = "https://ubermag.github.io/documentation/$package"
+repository = "https://github.com/ubermag/$package"
+
+# console entry points
+[project.scripts]
+#name = "module:entrypoint"
+
+# to define additional information we use a custom table
+# we need to own the entry for tool.NAME on PyPI
+# see: https://www.python.org/dev/peps/pep-0518/#tool-table
+[tool.ubermag]
+doi = "10.5281/zenodo.3539461"
+copyright_holder = "Marijan Beg and Hans Fangohr"
+contributors = [
+  "Mark Vousden",
+  "Sergii Mamedov",
+  "Rebecca Carey",
+  "Marc-Antonio Bisotti",
+  "Vanessa Nehruji"
+]
+about = """
+- An Object Oriented MicroMagnetic Framework [OOMMF](https://math.nist.gov/oommf/) calculator for computational magnetism models defined with `micromagneticmodel`.
+"""
