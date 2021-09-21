@@ -6,6 +6,7 @@ channels:
 dependencies:
   - python==3.8
   - pip
+  - oommf
   - pip:
     - git+https://github.com/ubermag/ubermagutil.git
     - git+https://github.com/ubermag/ubermagtable.git
