@@ -1,0 +1,14 @@
+name: conda-environment
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python==3.8
+  - pip
+  - pip:
+    - git+https://github.com/ubermag/ubermagutil.git
+    - git+https://github.com/ubermag/ubermagtable.git
+    - git+https://github.com/ubermag/discretisedfield.git
+    - git+https://github.com/ubermag/micromagneticmodel.git
+    - git+https://github.com/ubermag/micromagnetictests.git
