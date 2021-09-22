@@ -126,19 +126,27 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
         if mm.ZhangLi() in system.dynamics:
             driver.evolver.u = system.dynamics.zhangli.u
             driver.evolver.beta = system.dynamics.zhangli.beta
+            for arg in ['time_dependence', 'tstep', 'tcl_strings']:
+                if hasattr(system.dynamics.zhangli, arg):
+                    setattr(driver.evolver, arg,
+                            getattr(system.dynamics.zhangli, arg))
         if mm.Slonczewski() in system.dynamics:
             driver.evolver.J = system.dynamics.slonczewski.J
             driver.evolver.mp = system.dynamics.slonczewski.mp
             driver.evolver.P = system.dynamics.slonczewski.P
             driver.evolver.Lambda = system.dynamics.slonczewski.Lambda
             driver.evolver.eps_prime = system.dynamics.slonczewski.eps_prime
+            for arg in ['time_dependence', 'tstep', 'tcl_strings']:
+                if hasattr(system.dynamics.slonczewski, arg):
+                    setattr(driver.evolver, arg,
+                            getattr(system.dynamics.slonczewski, arg))
 
         # Fixed spins
         if fixed_subregions is not None:
             resstr = f'{{main_atlas {" ".join(fixed_subregions)}}}'
             driver.evolver.fixed_spins = resstr
 
-        mif += oc.scripts.evolver_script(driver.evolver, kwargs)
+        mif += oc.scripts.evolver_script(driver.evolver, **kwargs)
 
         # Extract time and number of steps.
         t, n = kwargs['t'], kwargs['n']
