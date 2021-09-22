@@ -81,8 +81,13 @@ def compute(func, system):
 
     """
     td = oc.TimeDriver(total_iteration_limit=1)
-    td.drive(system, t=1e-25, n=1, append=True,
-             compute=schedule_script(func, system))
+    try:
+        td.drive(system, t=1e-25, n=1, append=True,
+                 compute=schedule_script(func, system))
+    except RuntimeError:
+        msg = ('`oc.compute` does not support finite temperature.'
+               f' (Temperature is specified as {system.T=})')
+        raise RuntimeError(msg)
 
     if func.__name__ == 'energy':
         extension = '*.odt'
@@ -98,7 +103,9 @@ def compute(func, system):
     if func.__name__ == 'energy':
         table = ut.Table.fromfile(output_file, rename=False)
         if isinstance(func.__self__, mm.Energy):
-            output = table.data['RungeKuttaEvolve:evolver:Total energy'][0]
+            col = [c for c in table.data.columns
+                   if c.endswith(':evolver:Total energy')][0]
+            output = table.data[col][0]
         else:
             output = table.data[(f'{oxs_class(func.__self__, system)}:'
                                  f'{func.__self__.name}:Energy')][0]

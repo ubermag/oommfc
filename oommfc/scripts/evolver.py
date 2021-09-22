@@ -45,6 +45,8 @@ def evolver_script(evolver):
         evolver.eps_prime = eps_primename
         mif += eps_primemif
 
+    # temperature cannot spacially vary
+
     # Scripts for a specific evolver.
     if isinstance(evolver, oc.EulerEvolver):
         mif += '# EulerEvolver\n'
@@ -61,6 +63,15 @@ def evolver_script(evolver):
     elif isinstance(evolver, oc.CGEvolver):
         mif += '# CGEvolver\n'
         mif += 'Specify Oxs_CGEvolve:evolver {\n'
+    elif isinstance(evolver, oc.UHH_ThetaEvolver):
+        mif += '# UHH_ThetaEvolver\n'
+        mif += 'Specify UHH_ThetaEvolve:evolver {\n'
+    elif isinstance(evolver, oc.Xf_ThermHeunEvolver):
+        mif += '# Xf_ThermHeunEvolver\n'
+        mif += 'Specify Xf_ThermHeunEvolve:evolver {\n'
+    elif isinstance(evolver, oc.Xf_ThermSpinXferEvolver):
+        mif += '# Xf_ThermSpinXferEvolver\n'
+        mif += 'Specify Xf_ThermSpinXferEvolve:evolver {\n'
 
     # Define all other parameters.
     for attr, value in evolver:

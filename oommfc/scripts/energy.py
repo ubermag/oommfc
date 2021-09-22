@@ -1,6 +1,7 @@
 import sys
 import numbers
 import oommfc as oc
+import warnings
 import discretisedfield as df
 
 
@@ -175,13 +176,25 @@ def demag_script(term, system):
 def dmi_script(term, system):
     if term.crystalclass in ['T', 'O']:
         oxs = 'Oxs_DMI_T'
-    elif term.crystalclass == 'D2d':
-        oxs = 'Oxs_DMI_D2d'
-    elif term.crystalclass == 'Cnv':
+    elif (tcc := term.crystalclass) in ['D2d_x', 'D2d_y', 'D2d_z', 'D2d']:
+        if tcc == 'D2d':
+            warnings.warn('Use of `D2d` is deprecated; use `D2d_z` instead.',
+                          FutureWarning)
+            tcc = 'D2d_z'
+        oxs = f'Oxs_DMI_{tcc}'
+    elif (tcc := term.crystalclass) in ['Cnv_x', 'Cnv_y', 'Cnv_z', 'Cnv']:
         if sys.platform == 'win32' and system.m.mesh.bc == '':
+            if tcc in ['Cnv_x', 'Cnv_y']:
+                msg = (f'Crystalclass {tcc} is not supported on Windows.'
+                       'Use Docker to run OOMMF.')
+                raise RuntimeError(msg)
             oxs = 'Oxs_DMExchange6Ngbr'
         else:
-            oxs = 'Oxs_DMI_Cnv'
+            if tcc == 'Cnv':
+                msg = 'Use of `Cnv` is deprecated; use `Cnv_z` instead.'
+                warnings.warn(msg, FutureWarning)
+                tcc = 'Cnv_z'
+            oxs = f'Oxs_DMI_{tcc}'
 
     mif = f'# DMI of crystallographic class {term.crystalclass}\n'
     mif += f'Specify {oxs}:{term.name} {{\n'
