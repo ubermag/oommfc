@@ -200,7 +200,7 @@ def zeeman_script(term, system):
             mif += f'  script_args total_time\n'
             mif += f'  script TimeFunction\n'
             mif += '}\n\n'
-    elif hasattr(term, 'tcl_strings'):
+    elif isinstance(term.tcl_strings, dict):
         mif += term.tcl_strings['proc']
         mif += f'\n# {term.tcl_strings["energy"][4:]}\n'  # 3.9 removeprefix
         mif += f'Specify {term.tcl_strings["energy"]}:{term.name} {{\n'
