@@ -40,5 +40,7 @@ class SpinTEvolver(mm.Evolver):
                            'gamma_G',
                            'do_precess',
                            'u',
+                           'u_profile',
+                           'u_profile_args',
                            'beta',
                            'method']
