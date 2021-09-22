@@ -37,7 +37,7 @@ jobs:
     - name: Compile OOMMF
       run: |
         cd oommf
-        make build-with-all
+        make build
         cd ..
 
     - name: Set environment variables
