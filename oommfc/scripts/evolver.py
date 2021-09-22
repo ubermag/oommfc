@@ -46,7 +46,6 @@ def evolver_script(evolver, **kwargs):
         evolver.eps_prime = eps_primename
         mif += eps_primemif
 
-    # time dependence
     if hasattr(evolver, 'time_dependence'):
         ts = np.arange(0, kwargs['t'] + evolver.tstep, evolver.tstep)
         tlist = [evolver.time_dependence(t) for t in ts]
@@ -56,19 +55,21 @@ def evolver_script(evolver, **kwargs):
         mif += '  set index [expr round($total_time/$tstep)]\n'
         mif += f'  set profile {{ {" ".join(map(str, tlist))} }}\n'
         mif += '  set factor [lindex $profile $index]\n'
-        mif += '  return factor\n'
+        mif += '  return $factor\n'
         mif += '}\n\n'
-        if isinstance(evolver, (oc.SpinXferEvolver,
-                                oc.Xf_TherrmSpinXferEvolver)):
+
+        if isinstance(evolver, (oc.SpinXferEvolver)):
+            # oc.Xf_TherrmSpinXferEvolver)):
             setattr(evolver, 'J_profile', 'TimeFunction')
             setattr(evolver, 'J_profile_args', 'total_time')
         elif isinstance(evolver, oc.SpinTEvolver):
             setattr(evolver, 'u_profile', 'TimeFunction')
             setattr(evolver, 'u_profile_args', 'total_time')
-    if hasattr(evolver, 'tcl_strings'):
+    if isinstance(evolver, dict):
+        print(evolver.tcl_strings)
         mif += evolver.tcl_strings['proc']
-        if isinstance(evolver, (oc.SpinXferEvolver,
-                                oc.Xf_ThermSpinXferEvolver)):
+        if isinstance(evolver, (oc.SpinXferEvolver)):
+            # oc.Xf_ThermSpinXferEvolver)):
             setattr(evolver, 'J_profile', evolver.tcl_strings['proc_name'])
             setattr(evolver, 'J_profile_args',
                     evolver.tcl_strings['proc_args'])
