@@ -1,7 +1,8 @@
 import oommfc as oc
+import numpy as np
 
 
-def evolver_script(evolver):
+def evolver_script(evolver, **kwargs):
     mif = ''
 
     # Prepare parameters depending on what attributes are defined in evolver.
@@ -45,6 +46,37 @@ def evolver_script(evolver):
         evolver.eps_prime = eps_primename
         mif += eps_primemif
 
+    # time dependence
+    if hasattr(evolver, 'time_dependence'):
+        ts = np.arange(0, kwargs['t'] + evolver.tstep, evolver.tstep)
+        tlist = [evolver.time_dependence(t) for t in ts]
+
+        mif += 'proc TimeFunction { total_time } {\n'
+        mif += f'  set tstep {evolver.tstep}\n'
+        mif += '  set index [expr round($total_time/$tstep)]\n'
+        mif += f'  set profile {{ {" ".join(map(str, tlist))} }}\n'
+        mif += '  set factor [lindex $profile $index]\n'
+        mif += '  return factor\n'
+        mif += '}\n\n'
+        if isinstance(evolver, (oc.SpinXferEvolver,
+                                oc.Xf_TherrmSpinXferEvolver)):
+            setattr(evolver, 'J_profile', 'TimeFunction')
+            setattr(evolver, 'J_profile_args', 'total_time')
+        elif isinstance(evolver, oc.SpinTEvolver):
+            setattr(evolver, 'u_profile', 'TimeFunction')
+            setattr(evolver, 'u_profile_args', 'total_time')
+    if hasattr(evolver, 'tcl_strings'):
+        mif += evolver.tcl_strings['proc']
+        if isinstance(evolver, (oc.SpinXferEvolver,
+                                oc.Xf_ThermSpinXferEvolver)):
+            setattr(evolver, 'J_profile', evolver.tcl_strings['proc_name'])
+            setattr(evolver, 'J_profile_args',
+                    evolver.tcl_strings['proc_args'])
+        elif isinstance(evolver, oc.SpinTEvolver):
+            setattr(evolver, 'u_profile', evolver.tcl_strings['proc_name'])
+            setattr(evolver, 'u_profile_args',
+                    evolver.tcl_strings['proc_args'])
+
     # Scripts for a specific evolver.
     if isinstance(evolver, oc.EulerEvolver):
         mif += '# EulerEvolver\n'
@@ -53,9 +85,11 @@ def evolver_script(evolver):
         mif += '# RungeKuttaEvolver\n'
         mif += 'Specify Oxs_RungeKuttaEvolve:evolver {\n'
     elif isinstance(evolver, oc.SpinTEvolver):
+        # time dependence
         mif += '# Zhang-Li evolver\n'
         mif += 'Specify Anv_SpinTEvolve:evolver {\n'
     elif isinstance(evolver, oc.SpinXferEvolver):
+        # time dependence
         mif += '# Slonczewski evolver\n'
         mif += 'Specify Oxs_SpinXferEvolve:evolver {\n'
     elif isinstance(evolver, oc.CGEvolver):
@@ -64,7 +98,8 @@ def evolver_script(evolver):
 
     # Define all other parameters.
     for attr, value in evolver:
-        mif += f'  {attr} {value}\n'
+        if attr not in ['time_dependence', 'tstep', 'tcl_strings']:
+            mif += f'  {attr} {value}\n'
     mif += '}\n\n'
 
     return mif

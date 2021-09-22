@@ -138,7 +138,7 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
             resstr = f'{{main_atlas {" ".join(fixed_subregions)}}}'
             driver.evolver.fixed_spins = resstr
 
-        mif += oc.scripts.evolver_script(driver.evolver)
+        mif += oc.scripts.evolver_script(driver.evolver, kwargs)
 
         # Extract time and number of steps.
         t, n = kwargs['t'], kwargs['n']
