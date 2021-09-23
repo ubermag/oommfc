@@ -1,4 +1,5 @@
 import oommfc as oc
+import numbers
 import numpy as np
 
 
@@ -46,7 +47,7 @@ def evolver_script(evolver, **kwargs):
         evolver.eps_prime = eps_primename
         mif += eps_primemif
 
-    if hasattr(evolver, 'time_dependence'):
+    if hasattr(evolver, 'tstep') and isinstance(evolver.tstep, numbers.Real):
         ts = np.arange(0, kwargs['t'] + evolver.tstep, evolver.tstep)
         tlist = [evolver.time_dependence(t) for t in ts]
 
@@ -65,7 +66,8 @@ def evolver_script(evolver, **kwargs):
         elif isinstance(evolver, oc.SpinTEvolver):
             setattr(evolver, 'u_profile', 'TimeFunction')
             setattr(evolver, 'u_profile_args', 'total_time')
-    if isinstance(evolver, dict):
+    if hasattr(evolver, 'tcl_strings') and isinstance(evolver.tcl_strings,
+                                                      dict):
         print(evolver.tcl_strings)
         mif += evolver.tcl_strings['proc']
         if isinstance(evolver, (oc.SpinXferEvolver)):
