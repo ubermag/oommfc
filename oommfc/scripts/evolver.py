@@ -37,12 +37,14 @@ def evolver_script(evolver, **kwargs):
         evolver.P = Pname
         mif += Pmif
     if hasattr(evolver, 'Lambda'):
-        Lambdamif, Lambdaname = oc.scripts.setup_scalar_parameter(
-            evolver.Lambda, 'sl_Lambda')
+        Lambda = evolver.Lambda
         if isinstance(evolver.Lambda, dict):
             # the automatically added default value 0 is not allowed
-            if evolver.Lambda['default'] == 0:
-                evolver.Lambda['default'] = 1
+            Lambda = evolver.Lambda.copy()
+            if 'default' not in Lambda:
+                Lambda['default'] = 1
+        Lambdamif, Lambdaname = oc.scripts.setup_scalar_parameter(
+            Lambda, 'sl_Lambda')
         evolver.Lambda = Lambdaname
         mif += Lambdamif
     if hasattr(evolver, 'eps_prime'):
