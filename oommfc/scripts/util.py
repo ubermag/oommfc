@@ -82,9 +82,12 @@ def setup_scalar_parameter(parameter, name):
         return mif, f'{name}_norm'
 
     elif isinstance(parameter, dict):
-        if 'default' not in parameter.keys():
-            parameter['default'] = 0
-        mif = atlas_scalar_field(parameter, f'{name}')
+        # to avoid changing the dictionary used in the respective term
+        # in the system (from micromagneticmodel)
+        param = parameter.copy()
+        if 'default' not in param.keys():
+            param['default'] = 0
+        mif = atlas_scalar_field(param, f'{name}')
         return mif, f'{name}'
 
     elif isinstance(parameter, numbers.Real):
