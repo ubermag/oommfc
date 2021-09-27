@@ -203,8 +203,8 @@ class Driver(mm.Driver):
                     runner = oc.runner.runner
                 else:
                     if hasattr(system.energy, 'dmi'):
-                        if (system.energy.dmi.crystalclass == 'Cnv' and
-                                system.m.mesh.bc == ''):
+                        if (system.energy.dmi.crystalclass in ['Cnv', 'Cnv_z']
+                                and system.m.mesh.bc == ''):
                             runner = oc.runner.runner
                         else:
                             runner = oc.oommf.DockerOOMMFRunner()
