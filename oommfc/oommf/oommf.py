@@ -319,7 +319,7 @@ class DockerOOMMFRunner(OOMMFRunner):
 
     """
 
-    def __init__(self, docker_exe='docker', image='ubermag/oommf'):
+    def __init__(self, docker_exe='docker', image='oommf/oommf:20a2'):
         self.docker_exe = docker_exe
         self.image = image
 
