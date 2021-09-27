@@ -159,7 +159,10 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
                 driver.evolver.eps_prime = \
                     system.dynamics.slonczewski.eps_prime
             for arg in ['time_dependence', 'tstep', 'tcl_strings']:
-                if hasattr(system.dynamics.slonczewski, arg):
+                if (hasattr(system.dynamics.slonczewski, arg)
+                        and not isinstance(
+                            getattr(system.dynamics.slonczewski, arg),
+                            ts.Descriptor)):
                     setattr(driver.evolver, arg,
                             getattr(system.dynamics.slonczewski, arg))
         if isinstance(driver.evolver, (oc.UHH_ThetaEvolver,
