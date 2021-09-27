@@ -39,6 +39,10 @@ def evolver_script(evolver, **kwargs):
     if hasattr(evolver, 'Lambda'):
         Lambdamif, Lambdaname = oc.scripts.setup_scalar_parameter(
             evolver.Lambda, 'sl_Lambda')
+        if isinstance(evolver.Lambda, dict):
+            # the automatically added default value 0 is not allowed
+            if evolver.Lambda['default'] == 0:
+                evolver.Lambda['default'] = 1
         evolver.Lambda = Lambdaname
         mif += Lambdamif
     if hasattr(evolver, 'eps_prime'):
