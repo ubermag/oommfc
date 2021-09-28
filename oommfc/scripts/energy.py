@@ -144,6 +144,74 @@ def zeeman_script(term, system):
             mif += f'  script_args total_time\n'
             mif += f'  script TimeFunction\n'
             mif += '}\n\n'
+    elif hasattr(term, 'tlist'):
+        if isinstance(term.H, (df.Field, dict)):
+            mif += 'proc TimeFunction { total_time } {\n'
+            mif += f'  set tstep {term.tstep}\n'
+            mif += '  set index [expr round($total_time/$tstep)]\n'
+            tstr = ' '.join(map(str, term.tlist))
+            for char, replacement in [[',', ''], ['[', '{ '], [']', ' }']]:
+                tstr = tstr.replace(char, replacement)
+            mif += f'  set H_t_fac {{ {tstr} }}\n'
+            dtstr = ' '.join(map(str, term.dtlist))
+            for char, replacement in [[',', ''], ['[', '{ '], [']', ' }']]:
+                dtstr = dtstr.replace(char, replacement)
+            mif += f'  set dH_t_fac {{ {dtstr} }}\n'
+            mif += '  set H [lindex $H_t_fac $index]\n'
+            mif += '  set dH [lindex $dH_t_fac $index]\n'
+            if isinstance(term.tlist[0], list):
+                mif += (f'  return [list'
+                        f' {" ".join([f"[lindex $H {i}]" for i in range(9)])}'
+                        f' {" ".join([f"[lindex $dH {i}]" for i in range(9)])}'
+                        ']\n')
+            else:
+                mif += '  return [list $H $H $H $dH $dH $dH]\n'
+            mif += '}\n\n'
+
+            mif += '# TransformZeeman\n'
+            mif += f'Specify Oxs_TransformZeeman:{term.name} {{\n'
+            if isinstance(term.tlist[0], list):
+                mif += '  type general\n'
+            else:
+                mif += '  type diagonal\n'
+            mif += '  script_args total_time\n'
+            mif += '  script TimeFunction\n'
+            mif += f'  field {Hname}\n'
+            mif += '}\n\n'
+        else:
+            mif += 'proc TimeFunction { total_time } {\n'
+            mif += f'  set tstep {term.tstep}\n'
+            mif += '  set index [expr round($total_time/$tstep)]\n'
+            mif += f'  set H_t_fac {{ {" ".join(map(str, term.tlist))} }}\n'
+            mif += f'  set dH_t_fac {{ {" ".join(map(str, term.dtlist))} }}\n'
+            mif += '  set H_fac [lindex $H_t_fac $index]\n'
+            mif += '  set dH_fac [lindex $dH_t_fac $index]\n'
+            mif += f'  set Hx [expr {{ {term.H[0]}*$H_fac }}]\n'
+            mif += f'  set Hy [expr {{ {term.H[1]}*$H_fac }}]\n'
+            mif += f'  set Hz [expr {{ {term.H[2]}*$H_fac }}]\n'
+            mif += f'  set dHx [expr {{ {term.H[0]}*$dH_fac }}]\n'
+            mif += f'  set dHy [expr {{ {term.H[1]}*$dH_fac }}]\n'
+            mif += f'  set dHz [expr {{ {term.H[2]}*$dH_fac }}]\n'
+            mif += '  return [list $Hx $Hy $Hz $dHx $dHy $dHz]\n'
+            mif += '}\n\n'
+
+            mif += '# ScriptUZeeman\n'
+            mif += f'Specify Oxs_ScriptUZeeman:{term.name} {{\n'
+            mif += f'  script_args total_time\n'
+            mif += f'  script TimeFunction\n'
+            mif += '}\n\n'
+    elif isinstance(term.tcl_strings, dict):
+        mif += term.tcl_strings['proc']
+        mif += f'\n# {term.tcl_strings["energy"][4:]}\n'  # 3.9 removeprefix
+        mif += f'Specify {term.tcl_strings["energy"]}:{term.name} {{\n'
+        for key in ['type', 'script_args', 'script']:
+            try:
+                mif += f'  {key} {term.tcl_strings[key]}\n'
+            except KeyError:
+                pass
+        if term.tcl_strings['energy'] == 'Oxs_TransformZeeman':
+            mif += f'  field {Hname}\n'
+        mif += '}\n\n'
     else:
         mif += '# FixedZeeman\n'
         mif += f'Specify Oxs_FixedZeeman:{term.name} {{\n'

@@ -2,8 +2,8 @@
 .#*
 *#
 .DS_Store
-docs/ipynb/*
-!docs/ipynb/*.ipynb
+docs/*
+!docs/*.ipynb
 docs/_build
 .cache
 .coverage
