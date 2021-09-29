@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [macos-latest]
         python-version: [3.8]
     defaults:
       run:
@@ -30,23 +30,23 @@ jobs:
 
     - name: Install ubermag dependencies
       run: |
-        python -m pip install git+https://github.com/ubermag/ubermagutil.git
-        python -m pip install git+https://github.com/ubermag/discretisedfield.git
-        python -m pip install git+https://github.com/ubermag/ubermagtable.git
-        python -m pip install git+https://github.com/ubermag/micromagneticmodel.git
-        python -m pip install git+https://github.com/ubermag/micromagnetictests.git
+        python3 -m pip install git+https://github.com/ubermag/ubermagutil.git
+        python3 -m pip install git+https://github.com/ubermag/discretisedfield.git
+        python3 -m pip install git+https://github.com/ubermag/ubermagtable.git
+        python3 -m pip install git+https://github.com/ubermag/micromagneticmodel.git
+        python3 -m pip install git+https://github.com/ubermag/micromagnetictests.git
 
     - name: Install package
-      run: python -m pip install .
+      run: python3 -m pip install .
 
     - name: Unit tests
-      run: sudo make test-unittests
+      run: make test-unittests
 
     - name: Documentation tests
-      run: sudo make test-docs
+      run: make test-docs
 
     - name: Jupyter notebook tests
-      run: sudo make test-ipynb
+      run: make test-ipynb
 
     - name: Python code style
-      run: python -m pycodestyle --filename=*.py .
+      run: python3 -m pycodestyle --filename=*.py .
