@@ -20,24 +20,26 @@ jobs:
     - name: Initialisation
       uses: actions/checkout@v2
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    - name: Set up conda
+      uses: conda-incubator/setup-miniconda@v2
       with:
+        auto-update-conda: true
         python-version: ${{ matrix.python-version }}
+        channels: conda-forge
 
     - name: Install testing packages
-      run: python3 -m pip install --upgrade pip pytest-cov nbval pycodestyle
+      run: python -m pip install --upgrade pip pytest-cov nbval pycodestyle
 
     - name: Install ubermag dependencies
       run: |
-        python3 -m pip install git+https://github.com/ubermag/ubermagutil.git
-        python3 -m pip install git+https://github.com/ubermag/discretisedfield.git
-        python3 -m pip install git+https://github.com/ubermag/ubermagtable.git
-        python3 -m pip install git+https://github.com/ubermag/micromagneticmodel.git
-        python3 -m pip install git+https://github.com/ubermag/micromagnetictests.git
+        python -m pip install git+https://github.com/ubermag/ubermagutil.git
+        python -m pip install git+https://github.com/ubermag/discretisedfield.git
+        python -m pip install git+https://github.com/ubermag/ubermagtable.git
+        python -m pip install git+https://github.com/ubermag/micromagneticmodel.git
+        python -m pip install git+https://github.com/ubermag/micromagnetictests.git
 
     - name: Install package
-      run: python3 -m pip install .
+      run: python -m pip install .
 
     - name: Unit tests
       run: make test-unittests
@@ -49,4 +51,4 @@ jobs:
       run: make test-ipynb
 
     - name: Python code style
-      run: python3 -m pycodestyle --filename=*.py .
+      run: python -m pycodestyle --filename=*.py .
