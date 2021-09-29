@@ -315,11 +315,11 @@ class DockerOOMMFRunner(OOMMFRunner):
 
     image: str
 
-        Docker image on DockerHub. Defaults to ``ubermag/oommf``.
+        Docker image on DockerHub. Defaults to ``oommf/oommf:20a2``.
 
     """
 
-    def __init__(self, docker_exe='docker', image='ubermag/oommf'):
+    def __init__(self, docker_exe='docker', image='oommf/oommf:20a2'):
         self.docker_exe = docker_exe
         self.image = image
 
@@ -534,8 +534,7 @@ class Runner:
                             'stderr:\n%(stderr)s',
                             {'stdout': res.stdout, 'stderr': res.stderr})
             else:
-                self._runner = DockerOOMMFRunner(docker_exe=self.docker_exe,
-                                                 image='ubermag/oommf')
+                self._runner = DockerOOMMFRunner(docker_exe=self.docker_exe)
                 return
 
         # If OOMMFRunner was not returned up to this point, we raise an

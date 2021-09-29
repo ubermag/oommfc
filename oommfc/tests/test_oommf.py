@@ -33,7 +33,7 @@ def check_runner(runner):
 @pytest.mark.skip(reason='Temporary')
 def test_tcl_oommf_runner():
     # TclOOMMFRunner runs when OOMMFTCL environment variable is set. On
-    # TravisCI OOMMFTCL environment variable is set inside ubermag/oommf docker
+    # TravisCI OOMMFTCL environment variable is set inside oommf/oommf docker
     # image.
     oommf_tcl = os.environ.get('OOMMFTCL', None)
     runner = oo.TclOOMMFRunner(oommf_tcl)
@@ -44,7 +44,7 @@ def test_tcl_oommf_runner():
 @pytest.mark.skip(reason='Temporary')
 def test_exe_oommf_runner():
     # ExeOOMMFRunner runs when callable OOMMF exists ('oommf'). On TravisCI
-    # oommf is an executable inside ubermag/oommf docker image.
+    # oommf is an executable inside oommf/oommf docker image.
     oommf_exe = 'oommf'
     runner = oo.ExeOOMMFRunner(oommf_exe)
     check_runner(runner)
@@ -59,7 +59,7 @@ def test_docker_oommf_runner():
     # on host or TravisCI. It can be run using make test-docker on host if
     # docker is installed.
     docker_exe = 'docker'
-    image = 'ubermag/oommf'
+    image = 'oommf/oommf'
     runner = oo.DockerOOMMFRunner(docker_exe, image)
     check_runner(runner)
 
