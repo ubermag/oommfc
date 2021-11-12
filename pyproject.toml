@@ -53,7 +53,7 @@ repository = "https://github.com/ubermag/oommfc"
 # we need to own the entry for tool.NAME on PyPI
 # see: https://www.python.org/dev/peps/pep-0518/#tool-table
 [tool.ubermag]
-doi = "10.5281/zenodo.3539461"
+doi = "10.5281/zenodo.3539493"
 copyright_holder = "Marijan Beg and Hans Fangohr"
 contributors = [
   "Mark Vousden",
