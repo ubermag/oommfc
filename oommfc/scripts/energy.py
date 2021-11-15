@@ -201,10 +201,11 @@ def zeeman_script(term, system):
             mif += f'  script TimeFunction\n'
             mif += '}\n\n'
     elif isinstance(term.tcl_strings, dict):
-        mif += term.tcl_strings['proc']
+        mif += term.tcl_strings['script']
         mif += f'\n# {term.tcl_strings["energy"][4:]}\n'  # 3.9 removeprefix
         mif += f'Specify {term.tcl_strings["energy"]}:{term.name} {{\n'
-        for key in ['type', 'script_args', 'script']:
+        mif += f'  script {term.tcl_strings["script_name"]}\n'
+        for key in ['type', 'script_args']:
             try:
                 mif += f'  {key} {term.tcl_strings[key]}\n'
             except KeyError:
