@@ -238,10 +238,11 @@ class TclOOMMFRunner(OOMMFRunner):
 
     def _kill(self, targets=('all',)):
         if sys.platform != 'win32':
-            sp.run(['tclsh', self.oommf_tcl, 'killoommf'] + list(targets),
-                   env=self.env)
+            sp.run(['tclsh', self.oommf_tcl, 'killoommf', '-q']
+                   + list(targets), env=self.env)
         else:
-            sp.run(['tclsh', self.oommf_tcl, 'killoommf'] + list(targets))
+            sp.run(['tclsh', self.oommf_tcl, 'killoommf', '-q']
+                   + list(targets))
 
     def errors(self):
         errors_file = os.path.join(os.path.dirname(self.oommf_tcl),
@@ -284,7 +285,8 @@ class ExeOOMMFRunner(OOMMFRunner):
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE, env=self.env)
 
     def _kill(self, targets=('all',)):
-        sp.run([self.oommf_exe, 'killoommf'] + list(targets), env=self.env)
+        sp.run([self.oommf_exe, 'killoommf', '-q'] + list(targets),
+               env=self.env)
 
     def errors(self):
         try:
