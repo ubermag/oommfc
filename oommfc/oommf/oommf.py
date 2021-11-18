@@ -495,7 +495,7 @@ class Runner:
         if sys.platform == 'win32' and \
            os.path.isdir(os.path.join(sys.prefix, 'conda-meta')):
             oommf_tcl = os.path.join(sys.prefix, 'Library', 'opt', 'oommf',
-                                     'oommf.tcl')
+                                     'oommf.tcl', '-kill', 'all')
             if os.path.isfile(oommf_tcl):
                 self._runner = TclOOMMFRunner(oommf_tcl)
                 return
