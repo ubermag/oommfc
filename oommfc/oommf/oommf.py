@@ -269,10 +269,14 @@ class ExeOOMMFRunner(OOMMFRunner):
 
     def __init__(self, oommf_exe='oommf'):
         self.oommf_exe = oommf_exe
-        launchhost = sp.run([self.oommf_exe, 'launchhost', '0'],
-                            stdout=sp.PIPE)
-        port = launchhost.stdout.decode('utf-8', 'replace').strip('\n')
-        self.env = dict(OOMMF_HOSTPORT=port, **os.environ)
+        # oommf launchhost gets stuck on Windows
+        if sys.platform != 'win32':
+            launchhost = sp.run([self.oommf_exe, 'launchhost', '0'],
+                                stdout=sp.PIPE)
+            port = launchhost.stdout.decode('utf-8', 'replace').strip('\n')
+            self.env = dict(OOMMF_HOSTPORT=port, **os.environ)
+        else:
+            self.env = os.environ
 
     def _call(self, argstr, need_stderr=False, n_threads=None):
         # Here we might need stderr = stdot = None like in
@@ -487,22 +491,9 @@ class Runner:
                     self._runner = TclOOMMFRunner(oommf_tcl)
                     return
 
-        # OOMMF is installed via conda and oommf.tcl is in opt/oommf (Windows).
-        # This would probably also work on MacOS/Linux, but on these operating
-        # systems, when installed via conda, we use 'oommf' executable.
-        # log.debug(
-        #     "Step 2: are we on Windows and oommf is installed via conda?")
-        # if sys.platform == 'win32' and \
-        #    os.path.isdir(os.path.join(sys.prefix, 'conda-meta')):
-        #     oommf_tcl = os.path.join(sys.prefix, 'Library', 'opt', 'oommf',
-        #                              'oommf.tcl')
-        #     if os.path.isfile(oommf_tcl):
-        #         self._runner = TclOOMMFRunner(oommf_tcl)
-        #         return
-
         # OOMMF available as an executable - in a conda env on Mac/Linux, or
         # oommf installed separately.
-        log.debug('Step 3: is oommf_exe=%(oommf_exe)s in PATH? '
+        log.debug('Step 2: is oommf_exe=%(oommf_exe)s in PATH? '
                   'Could be from conda env or manual install.',
                   {'oommf_exe': self.oommf_exe})
         oommf_exe = shutil.which(self.oommf_exe)
@@ -532,7 +523,7 @@ class Runner:
                     pass
 
         # Check for docker to run OOMMF in a docker image.
-        log.debug("Step 4: Can we use docker to host OOMMF?"
+        log.debug("Step 3: Can we use docker to host OOMMF?"
                   ' ("docker_exe=%(docker_exe)s")',
                   {'docker_exe': self.docker_exe})
         cmd = [self.docker_exe, 'images']
