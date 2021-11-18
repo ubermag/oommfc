@@ -510,7 +510,7 @@ class Runner:
                   {'oommf_exe': oommf_exe})
         if oommf_exe:
             cmd = [oommf_exe, 'boxsi',
-                   '+fg', '+version', '-exitondone', '1']
+                   '+fg', '+version', '-exitondone', '1', '-kill', 'all']
 
             log.debug("Attempt command call")  # DEBUG
             res = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
