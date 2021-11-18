@@ -490,15 +490,15 @@ class Runner:
         # OOMMF is installed via conda and oommf.tcl is in opt/oommf (Windows).
         # This would probably also work on MacOS/Linux, but on these operating
         # systems, when installed via conda, we use 'oommf' executable.
-        log.debug(
-            "Step 2: are we on Windows and oommf is installed via conda?")
-        if sys.platform == 'win32' and \
-           os.path.isdir(os.path.join(sys.prefix, 'conda-meta')):
-            oommf_tcl = os.path.join(sys.prefix, 'Library', 'opt', 'oommf',
-                                     'oommf.tcl', '-kill', 'all')
-            if os.path.isfile(oommf_tcl):
-                self._runner = TclOOMMFRunner(oommf_tcl)
-                return
+        # log.debug(
+        #     "Step 2: are we on Windows and oommf is installed via conda?")
+        # if sys.platform == 'win32' and \
+        #    os.path.isdir(os.path.join(sys.prefix, 'conda-meta')):
+        #     oommf_tcl = os.path.join(sys.prefix, 'Library', 'opt', 'oommf',
+        #                              'oommf.tcl')
+        #     if os.path.isfile(oommf_tcl):
+        #         self._runner = TclOOMMFRunner(oommf_tcl)
+        #         return
 
         # OOMMF available as an executable - in a conda env on Mac/Linux, or
         # oommf installed separately.
@@ -512,8 +512,12 @@ class Runner:
             cmd = [oommf_exe, 'boxsi',
                    '+fg', '+version', '-exitondone', '1', '-kill', 'all']
 
+            stdout = stderr = sp.PIPE
+            if sys.platform == 'win32':
+                stdout = stderr = None  # pragma: no cover
+                
             log.debug("Attempt command call")  # DEBUG
-            res = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
+            res = sp.run(cmd, stdout=stdout, stderr=stderr)
             log.debug(res)
 
             if res.returncode == 0:
