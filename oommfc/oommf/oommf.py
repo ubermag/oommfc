@@ -236,7 +236,7 @@ class NativeOOMMFRunner(OOMMFRunner):
         #    return sp.run(cmd, stdout=stdout, stderr=stderr)
 
     def _kill(self, targets=('all',)):
-        sp.run([*self.oommf, 'killoommf'] + list(targets), env=self.env)
+        sp.run([*self.oommf, 'killoommf', '-q'] + list(targets), env=self.env)
 
 
 @uu.inherit_docs
@@ -282,8 +282,28 @@ class ExeOOMMFRunner(NativeOOMMFRunner):
 
     def __init__(self, oommf_exe='oommf'):
         self.oommf_exe = oommf_exe
+<<<<<<< HEAD
         self.oommf = [oommf_exe]
         super().__init__()
+=======
+        launchhost = sp.run([self.oommf_exe, 'launchhost', '0'],
+                            stdout=sp.PIPE)
+        port = launchhost.stdout.decode('utf-8', 'replace').strip('\n')
+        self.env = dict(OOMMF_HOSTPORT=port, **os.environ)
+
+    def _call(self, argstr, need_stderr=False, n_threads=None):
+        # Here we might need stderr = stdot = None like in
+        # TclOOMMFRunner for Windows.  This is not clear because we
+        # never use ExeOOMMFRunner on Windows.
+        cmd = [self.oommf_exe, 'boxsi', '+fg', argstr, '-exitondone', '1']
+        if n_threads is not None:
+            cmd += ['-threads', str(n_threads)]
+        return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE, env=self.env)
+
+    def _kill(self, targets=('all',)):
+        sp.run([self.oommf_exe, 'killoommf', '-q'] + list(targets),
+               env=self.env)
+>>>>>>> master
 
     def errors(self):
         try:
