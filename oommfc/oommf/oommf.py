@@ -17,8 +17,15 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
     """Abstract class for running OOMMF."""
 
     def __del__(self):
-        """Kill all OOMMF applications when object goes out of scope."""
-        self._kill()
+        """Kill all OOMMF applications when object goes out of scope.
+
+        On Windows we must kill OOMMF after each call because file ownerships
+        are otherwise not correct. As a consequence ``oommfc.delete`` does not
+        work without killing.
+
+        """
+        if sys.platform != 'win32':
+            self._kill()
 
     def call(self, argstr, need_stderr=False, n_threads=None):
         """Call OOMMF by passing ``argstr`` to OOMMF.
@@ -71,7 +78,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         res = self._call(argstr=argstr, need_stderr=need_stderr,
                          n_threads=n_threads)
         if sys.platform == 'win32':
-            self._kill()  # kill OOMMF (mostly needed on Windows)
+            self._kill()  # required for oc.delete; oommf keeps file ownership
         toc = time.time()
         seconds = '({:0.1f} s)'.format(toc - tic)
         print(seconds)  # append seconds to the previous print.

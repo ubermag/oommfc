@@ -1,6 +1,5 @@
 import os
 import shutil
-import sys
 import oommfc as oc
 
 
@@ -50,11 +49,8 @@ def delete(system, silent=False):
 
     """
     if os.path.exists(system.name):
-        # if sys.platform == 'win32':
-        #     # on Windows the running oommf process prevents deletion
-        #     oc.runner.runner._kill()
         try:
-            shutil.rmtree(system.name)  # , onerror=_onerror)
+            shutil.rmtree(system.name)
             system.drive_number = 0
         except Exception as e:
             print('Cannot delete system directory.')
@@ -63,26 +59,3 @@ def delete(system, silent=False):
         if not silent:
             msg = f'Directory {system.name} does not exist.'
             raise FileNotFoundError(msg)
-
-
-def _onerror(func, path, exc_info):
-    """
-    Error handler for ``shutil.rmtree``.
-
-    From https://stackoverflow.com/a/2656405 and
-    http://www.voidspace.org.uk/downloads/pathutils.py
-
-    If the error is due to an access error (read only file)
-    it attempts to add write permission and then retries.
-
-    If the error is for another reason it re-raises the error.
-
-    Usage : ``shutil.rmtree(path, onerror=onerror)``
-    """
-    import stat
-    # Is the error an access error?
-    if not os.access(path, os.W_OK):
-        os.chmod(path, stat.S_IWUSR)
-        func(path)
-    else:
-        raise
