@@ -16,6 +16,9 @@ log = logging.getLogger('oommfc')
 class OOMMFRunner(metaclass=abc.ABCMeta):
     """Abstract class for running OOMMF."""
 
+    def __del__(self):
+        self._kill()
+
     def call(self, argstr, need_stderr=False, n_threads=None):
         """Call OOMMF by passing ``argstr`` to OOMMF.
 
