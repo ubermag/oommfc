@@ -17,6 +17,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
     """Abstract class for running OOMMF."""
 
     def __del__(self):
+        """Kill all OOMMF applications when object goes out of scope."""
         self._kill()
 
     def call(self, argstr, need_stderr=False, n_threads=None):
@@ -213,6 +214,7 @@ class NativeOOMMFRunner(OOMMFRunner):
 
     def __init__(self):
         # oommf launchhost gets stuck on Windows
+        # -> it is not possible to run multiple calculations in parallel
         if sys.platform != 'win32':
             launchhost = sp.run([*self.oommf, 'launchhost', '0'],
                                 stdout=sp.PIPE)
@@ -233,10 +235,7 @@ class NativeOOMMFRunner(OOMMFRunner):
         if n_threads is not None:
             cmd += ['-threads', str(n_threads)]
 
-        # if sys.platform != 'win32':
         return sp.run(cmd, stdout=stdout, stderr=stderr, env=self.env)
-        # else:
-        #    return sp.run(cmd, stdout=stdout, stderr=stderr)
 
     def _kill(self, targets=('all',)):
         sp.run([*self.oommf, 'killoommf', '-q'] + list(targets), env=self.env)
