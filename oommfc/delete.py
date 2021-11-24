@@ -1,5 +1,7 @@
 import os
 import shutil
+import sys
+import oommfc as oc
 
 
 def delete(system, silent=False):
@@ -48,6 +50,9 @@ def delete(system, silent=False):
 
     """
     if os.path.exists(system.name):
+        if sys.platform == 'win32':
+            # on Windows the running oommf process prevents deletion
+            oc.runner.runner._kill()
         try:
             shutil.rmtree(system.name)
             system.drive_number = 0
