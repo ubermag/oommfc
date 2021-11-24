@@ -50,11 +50,11 @@ def delete(system, silent=False):
 
     """
     if os.path.exists(system.name):
-        if sys.platform == 'win32':
-            # on Windows the running oommf process prevents deletion
-            oc.runner.runner._kill()
+        # if sys.platform == 'win32':
+        #     # on Windows the running oommf process prevents deletion
+        #     oc.runner.runner._kill()
         try:
-            shutil.rmtree(system.name, onerror=_onerror)
+            shutil.rmtree(system.name)  # , onerror=_onerror)
             system.drive_number = 0
         except Exception as e:
             print('Cannot delete system directory.')

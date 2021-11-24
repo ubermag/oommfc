@@ -70,7 +70,8 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         tic = time.time()
         res = self._call(argstr=argstr, need_stderr=need_stderr,
                          n_threads=n_threads)
-        # self._kill()  # kill OOMMF (mostly needed on Windows)
+        if sys.platform == 'win32':
+            self._kill()  # kill OOMMF (mostly needed on Windows)
         toc = time.time()
         seconds = '({:0.1f} s)'.format(toc - tic)
         print(seconds)  # append seconds to the previous print.
