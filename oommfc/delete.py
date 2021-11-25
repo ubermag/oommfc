@@ -1,6 +1,5 @@
 import os
 import shutil
-import oommfc as oc
 
 
 def delete(system, silent=False):
