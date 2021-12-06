@@ -252,18 +252,11 @@ def dmi_script(term, system):
             tcc = 'D2d_z'
         oxs = f'Oxs_DMI_{tcc}'
     elif (tcc := term.crystalclass) in ['Cnv_x', 'Cnv_y', 'Cnv_z', 'Cnv']:
-        if sys.platform == 'win32' and system.m.mesh.bc == '':
-            if tcc in ['Cnv_x', 'Cnv_y']:
-                msg = (f'Crystalclass {tcc} is not supported on Windows.'
-                       'Use Docker to run OOMMF.')
-                raise RuntimeError(msg)
-            oxs = 'Oxs_DMExchange6Ngbr'
-        else:
-            if tcc == 'Cnv':
-                msg = 'Use of `Cnv` is deprecated; use `Cnv_z` instead.'
-                warnings.warn(msg, FutureWarning)
-                tcc = 'Cnv_z'
-            oxs = f'Oxs_DMI_{tcc}'
+        if tcc == 'Cnv':
+            msg = 'Use of `Cnv` is deprecated; use `Cnv_z` instead.'
+            warnings.warn(msg, FutureWarning)
+            tcc = 'Cnv_z'
+        oxs = f'Oxs_DMI_{tcc}'
 
     mif = f'# DMI of crystallographic class {term.crystalclass}\n'
     mif += f'Specify {oxs}:{term.name} {{\n'
