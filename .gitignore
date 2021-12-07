@@ -15,4 +15,3 @@ build/
 dist/
 *.egg-info/
 _autosummary/
-
