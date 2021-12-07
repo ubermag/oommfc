@@ -173,8 +173,8 @@ class Driver(mm.Driver):
 
         # compute tlist for time-dependent field (current)
         for term in system.energy:
-            if (hasattr(term, 'time_dependence')
-                    and callable(term.time_dependence)):
+            if (hasattr(term, 'func')
+                    and callable(term.func)):
                 self._time_dependence(term=term, **kwargs)
 
         # Change directory to workingdir
@@ -194,8 +194,8 @@ class Driver(mm.Driver):
 
             # free memory
             for term in system.energy:
-                if (hasattr(term, 'time_dependence')
-                        and callable(term.time_dependence)):
+                if (hasattr(term, 'func')
+                        and callable(term.func)):
                     del term.tlist
                     del term.dtlist
                     del mif
@@ -250,12 +250,12 @@ class Driver(mm.Driver):
             msg = (f'Time-dependent term {term.__class__.__name__=} must be '
                    'used with time driver.')
             raise RuntimeError(msg)
-        ts = np.arange(0, tmax + term.tstep, term.tstep)
-        try:  # vector output from term.time_dependence
-            tlist = [list(term.time_dependence(t)) for t in ts]
-            dtlist = (np.gradient(tlist)[0] / term.tstep).tolist()
-        except TypeError:
-            tlist = [term.time_dependence(t) for t in ts]
-            dtlist = list(np.gradient(tlist) / term.tstep)
+        ts = np.arange(0, tmax + term.dt, term.dt)
+        try:  # vector output from term.func
+            tlist = [list(term.func(t)) for t in ts]
+            dtlist = (np.gradient(tlist)[0] / term.dt).tolist()
+        except TypeError:  # scalar output from term.func
+            tlist = [term.func(t) for t in ts]
+            dtlist = list(np.gradient(tlist) / term.dt)
         term.tlist = tlist
         term.dtlist = dtlist

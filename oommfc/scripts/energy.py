@@ -58,9 +58,13 @@ def zeeman_script(term, system):
     mif = ''
     mif += Hmif
 
-    if isinstance(term.wave, str):
+    if isinstance(term.wave, str) or isinstance(term.func, str):
+        if isinstance(term.wave, str):
+            warnings.warn(
+                'Parameter `wave` is deprecated; use `func` instead.',
+                FutureWarning)
         if isinstance(term.H, (df.Field, dict)):
-            if term.wave == 'sin':
+            if term.wave == 'sin' or term.func == 'sin':
                 mif += 'proc TimeFunction { total_time } {\n'
                 mif += '  set PI [expr {4*atan(1.)}]\n'
                 mif += f'  set w [expr {{ {term.f}*2*$PI }}]\n'
@@ -74,7 +78,7 @@ def zeeman_script(term, system):
                         '$dft 0 0 0 $dft 0 0 0 $dft ] \n')
                 mif += '}\n\n'
 
-            elif term.wave == 'sinc':
+            elif term.wave == 'sinc' or term.func == 'sinc':
                 mif += 'proc TimeFunction { total_time } {\n'
                 mif += '  set PI [expr {4*atan(1.)}]\n'
                 mif += f'  set w [expr {{ {term.f}*2*$PI }}]\n'
@@ -101,7 +105,7 @@ def zeeman_script(term, system):
             mif += f'  field {Hname}\n'
             mif += '}\n\n'
         else:
-            if term.wave == 'sin':
+            if term.wave == 'sin' or term.func == 'sin':
                 mif += 'proc TimeFunction { total_time } {\n'
                 mif += '  set PI [expr {4*atan(1.)}]\n'
                 mif += f'  set w [expr {{ {term.f}*2*$PI }}]\n'
@@ -117,7 +121,7 @@ def zeeman_script(term, system):
                 mif += f'  set dHz [expr {{ {term.H[2]}*$df }}]\n'
                 mif += '  return [list $Hx $Hy $Hz $dHx $dHy $dHz ] \n'
                 mif += '}\n\n'
-            elif term.wave == 'sinc':
+            elif term.wave == 'sinc' or term.func == 'sinc':
                 mif += 'proc TimeFunction { total_time } {\n'
                 mif += '  set PI [expr {4*atan(1.)}]\n'
                 mif += f'  set w [expr {{ {term.f}*2*$PI }}]\n'
@@ -147,7 +151,7 @@ def zeeman_script(term, system):
     elif hasattr(term, 'tlist'):
         if isinstance(term.H, (df.Field, dict)):
             mif += 'proc TimeFunction { total_time } {\n'
-            mif += f'  set tstep {term.tstep}\n'
+            mif += f'  set tstep {term.dt}\n'
             mif += '  set index [expr round($total_time/$tstep)]\n'
             tstr = ' '.join(map(str, term.tlist))
             for char, replacement in [[',', ''], ['[', '{ '], [']', ' }']]:
@@ -180,7 +184,7 @@ def zeeman_script(term, system):
             mif += '}\n\n'
         else:
             mif += 'proc TimeFunction { total_time } {\n'
-            mif += f'  set tstep {term.tstep}\n'
+            mif += f'  set tstep {term.dt}\n'
             mif += '  set index [expr round($total_time/$tstep)]\n'
             mif += f'  set H_t_fac {{ {" ".join(map(str, term.tlist))} }}\n'
             mif += f'  set dH_t_fac {{ {" ".join(map(str, term.dtlist))} }}\n'
