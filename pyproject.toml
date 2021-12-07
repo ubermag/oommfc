@@ -12,12 +12,12 @@ requires-python = ">=3.8"
 license = {file = "LICENSE"}
 
 authors = [
-  {name = "Marijan Beg"},
-  {name = "Martin Lang"},
-  {name = "Ryan A. Pepper"},
-  {name = "Thomas Kluyver"},
-  {name = "Samuel Holt"},
-  {name = "Hans Fangohr"}
+    {name = "Marijan Beg"},
+    {name = "Martin Lang"},
+    {name = "Ryan A. Pepper"},
+    {name = "Thomas Kluyver"},
+    {name = "Samuel Holt"},
+    {name = "Hans Fangohr"}
 ]
 
 classifiers = [
@@ -37,8 +37,8 @@ classifiers = [
 ]
 
 dependencies = [
-  "micromagnetictests~=0.60.0",
-  "ubermagtable~=0.60.0"
+    "micromagnetictests~=0.60.0",
+    "ubermagtable~=0.60.0"
 ]
 
 # [project.optional-dependencies]
@@ -49,18 +49,20 @@ homepage = "https://ubermag.github.io"
 documentation = "https://ubermag.github.io/documentation/oommfc"
 repository = "https://github.com/ubermag/oommfc"
 
+
+
 # to define additional information we use a custom table
 # we need to own the entry for tool.NAME on PyPI
 # see: https://www.python.org/dev/peps/pep-0518/#tool-table
 [tool.ubermag]
-doi = "10.5281/zenodo.3539493"
+doi = "10.5281/zenodo.3539461"
 copyright_holder = "Marijan Beg and Hans Fangohr"
 contributors = [
-  "Mark Vousden",
-  "Sergii Mamedov",
-  "Rebecca Carey",
-  "Marc-Antonio Bisotti",
-  "Vanessa Nehruji"
+    "Mark Vousden",
+    "Sergii Mamedov",
+    "Rebecca Carey",
+    "Marc-Antonio Bisotti",
+    "Vanessa Nehruji"
 ]
 about = """
 - An Object Oriented MicroMagnetic Framework [OOMMF](https://math.nist.gov/oommf/) calculator for computational magnetism models defined with `micromagneticmodel`.
