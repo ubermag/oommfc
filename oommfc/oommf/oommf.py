@@ -257,7 +257,7 @@ class TclOOMMFRunner(NativeOOMMFRunner):
     ----------
     oommf_tcl: str
 
-        Path to ``oommf.tcl``file.
+        Path to ``oommf.tcl`` file.
 
     """
 
