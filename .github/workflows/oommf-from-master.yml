@@ -53,6 +53,7 @@ jobs:
         python -m pip install git+https://github.com/ubermag/ubermagtable.git
         python -m pip install git+https://github.com/ubermag/micromagneticmodel.git
         python -m pip install git+https://github.com/ubermag/micromagnetictests.git
+        python -m pip install git+https://github.com/ubermag/micromagneticdata.git
 
     - name: Install package
       run: python -m pip install .
