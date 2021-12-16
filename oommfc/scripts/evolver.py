@@ -53,12 +53,12 @@ def evolver_script(evolver, **kwargs):
         evolver.eps_prime = eps_primename
         mif += eps_primemif
 
-    if hasattr(evolver, 'tstep') and isinstance(evolver.tstep, numbers.Real):
-        ts = np.arange(0, kwargs['t'] + evolver.tstep, evolver.tstep)
-        tlist = [evolver.time_dependence(t) for t in ts]
+    if hasattr(evolver, 'dt') and isinstance(evolver.dt, numbers.Real):
+        ts = np.arange(0, kwargs['t'] + evolver.dt, evolver.dt)
+        tlist = [evolver.func(t) for t in ts]
 
         mif += 'proc TimeFunction { total_time } {\n'
-        mif += f'  set tstep {evolver.tstep}\n'
+        mif += f'  set tstep {evolver.dt}\n'
         mif += '  set index [expr round($total_time/$tstep)]\n'
         mif += f'  set profile {{ {" ".join(map(str, tlist))} }}\n'
         mif += '  set factor [lindex $profile $index]\n'
@@ -75,16 +75,16 @@ def evolver_script(evolver, **kwargs):
     if hasattr(evolver, 'tcl_strings') and isinstance(evolver.tcl_strings,
                                                       dict):
         print(evolver.tcl_strings)
-        mif += evolver.tcl_strings['proc']
+        mif += evolver.tcl_strings['script']
         if isinstance(evolver, (oc.SpinXferEvolver)):
             # oc.Xf_ThermSpinXferEvolver)):
-            setattr(evolver, 'J_profile', evolver.tcl_strings['proc_name'])
+            setattr(evolver, 'J_profile', evolver.tcl_strings['script_name'])
             setattr(evolver, 'J_profile_args',
-                    evolver.tcl_strings['proc_args'])
+                    evolver.tcl_strings['script_args'])
         elif isinstance(evolver, oc.SpinTEvolver):
-            setattr(evolver, 'u_profile', evolver.tcl_strings['proc_name'])
+            setattr(evolver, 'u_profile', evolver.tcl_strings['script_name'])
             setattr(evolver, 'u_profile_args',
-                    evolver.tcl_strings['proc_args'])
+                    evolver.tcl_strings['script_args'])
 
     # temperature cannot spacially vary
 

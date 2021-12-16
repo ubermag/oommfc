@@ -143,7 +143,7 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
         if mm.ZhangLi() in system.dynamics:
             driver.evolver.u = system.dynamics.zhangli.u
             driver.evolver.beta = system.dynamics.zhangli.beta
-            for arg in ['time_dependence', 'tstep', 'tcl_strings']:
+            for arg in ['func', 'dt', 'tcl_strings']:
                 if hasattr(system.dynamics.zhangli, arg):
                     setattr(driver.evolver, arg,
                             getattr(system.dynamics.zhangli, arg))
@@ -158,7 +158,7 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
             else:
                 driver.evolver.eps_prime = \
                     system.dynamics.slonczewski.eps_prime
-            for arg in ['time_dependence', 'tstep', 'tcl_strings']:
+            for arg in ['func', 'dt', 'tcl_strings']:
                 if (hasattr(system.dynamics.slonczewski, arg)
                         and not isinstance(
                             getattr(system.dynamics.slonczewski, arg),
