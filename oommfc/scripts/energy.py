@@ -42,7 +42,8 @@ def exchange_script(term, system):
         mif += '}\n\n'
 
     elif isinstance(term.A, df.Field):
-        Amif, Aname = oc.scripts.setup_scalar_parameter(term.A, 'exchange_A')
+        Amif, Aname = oc.scripts.setup_scalar_parameter(term.A,
+                                                        f'{term.name}_A')
         mif = Amif
         mif += '# ExchangePtwise\n'
         mif += f'Specify Oxs_ExchangePtwise:{term.name} {{\n'
@@ -53,7 +54,7 @@ def exchange_script(term, system):
 
 
 def zeeman_script(term, system):
-    Hmif, Hname = oc.scripts.setup_vector_parameter(term.H, 'zeeman_H')
+    Hmif, Hname = oc.scripts.setup_vector_parameter(term.H, f'{term.name}_H')
 
     mif = ''
     mif += Hmif
@@ -298,12 +299,14 @@ def dmi_script(term, system):
 
 
 def uniaxialanisotropy_script(term, system):
-    umif, uname = oc.scripts.setup_vector_parameter(term.u, 'ua_u')
+    umif, uname = oc.scripts.setup_vector_parameter(term.u, f'{term.name}_u')
 
     # Determine if higher-order anisotropy is defined
     if isinstance(term.K2, (numbers.Real, dict, df.Field)):
-        k1mif, k1name = oc.scripts.setup_scalar_parameter(term.K1, 'ua_K1')
-        k2mif, k2name = oc.scripts.setup_scalar_parameter(term.K2, 'ua_K2')
+        k1mif, k1name = oc.scripts.setup_scalar_parameter(term.K1,
+                                                          f'{term.name}_K1')
+        k2mif, k2name = oc.scripts.setup_scalar_parameter(term.K2,
+                                                          f'{term.name}_K2')
 
         mif = ''
         mif += k1mif
@@ -317,7 +320,8 @@ def uniaxialanisotropy_script(term, system):
         mif += '}\n\n'
 
     else:
-        kmif, kname = oc.scripts.setup_scalar_parameter(term.K, 'ua_K')
+        kmif, kname = oc.scripts.setup_scalar_parameter(term.K,
+                                                        f'{term.name}_K')
 
         mif = ''
         mif += kmif
@@ -332,9 +336,11 @@ def uniaxialanisotropy_script(term, system):
 
 
 def cubicanisotropy_script(term, system):
-    kmif, kname = oc.scripts.setup_scalar_parameter(term.K, 'ca_K')
-    u1mif, u1name = oc.scripts.setup_vector_parameter(term.u1, 'ca_u1')
-    u2mif, u2name = oc.scripts.setup_vector_parameter(term.u2, 'ca_u2')
+    kmif, kname = oc.scripts.setup_scalar_parameter(term.K, f'{term.name}_K')
+    u1mif, u1name = oc.scripts.setup_vector_parameter(term.u1,
+                                                      f'{term.name}_u1')
+    u2mif, u2name = oc.scripts.setup_vector_parameter(term.u2,
+                                                      f'{term.name}_u2')
 
     mif = ''
     mif += kmif
@@ -351,12 +357,14 @@ def cubicanisotropy_script(term, system):
 
 
 def magnetoelastic_script(term, system):
-    B1mif, B1name = oc.scripts.setup_scalar_parameter(term.B1, 'mel_B1')
-    B2mif, B2name = oc.scripts.setup_scalar_parameter(term.B2, 'mel_B2')
+    B1mif, B1name = oc.scripts.setup_scalar_parameter(term.B1,
+                                                      f'{term.name}_B1')
+    B2mif, B2name = oc.scripts.setup_scalar_parameter(term.B2,
+                                                      f'{term.name}_B2')
     ediagmif, ediagname = oc.scripts.setup_vector_parameter(
-        term.e_diag, 'mel_ediag')
+        term.e_diag, f'{term.name}_ediag')
     eoffdiagmif, eoffdiagname = oc.scripts.setup_vector_parameter(
-        term.e_offdiag, 'mel_eoffdiag')
+        term.e_offdiag, f'{term.name}_eoffdiag')
 
     mif = ''
     mif += B1mif
