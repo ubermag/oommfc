@@ -231,7 +231,7 @@ class Driver(mm.Driver):
                 elif isinstance(self, oc.MinDriver):
                     x = 'iteration'
                 elif isinstance(self, oc.HysteresisDriver):
-                    x = 'B'
+                    x = 'B_hysteresis'
                 system.table = ut.Table.fromfile(f'{system.name}.odt', x=x)
 
         if compute is None:
