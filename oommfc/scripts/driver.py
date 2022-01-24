@@ -30,7 +30,7 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
         # Oxs_UZeeman
         Hmin, Hmax, n = kwargs['Hmin'], kwargs['Hmax'], kwargs['n']
         mif += '# OxS_UZeeman\n'
-        mif += 'Specify Oxs_UZeeman {\n'
+        mif += 'Specify Oxs_UZeeman:hysteresis {\n'
         mif += '  Hrange {\n'
         mif += '    {{ {} {} {} {} {} {} {} }}\n'.format(*Hmin, *Hmax, n-1)
         mif += '    {{ {} {} {} {} {} {} {} }}\n'.format(*Hmax, *Hmin, n-1)
