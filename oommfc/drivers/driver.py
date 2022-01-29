@@ -46,7 +46,7 @@ class Driver(mm.Driver):
 
     def drive(self, system, /, dirname='.', append=True, fixed_subregions=None,
               compute=None, output_step=False, n_threads=None, runner=None,
-              **kwargs):
+              ovf_format='bin8', **kwargs):
         """Drives the system in phase space.
 
         Takes ``micromagneticmodel.System`` and drives it in the phase space.
@@ -90,6 +90,13 @@ class Driver(mm.Driver):
             OOMMF Runner which is going to be used for running OOMMF. If
             ``None``, OOMMF runner will be found automatically. Defaults to
             ``None``.
+
+        ovf_format : str
+
+            Format of the magnetisation output files written by OOMMF. Can be
+            one of ``'bin8'`` (binary, double precision), ``'bin4'`` (binary,
+            single precision) or ``'txt'`` (text-based, double precision).
+            Defaults to ``'bin8'``.
 
         Raises
         ------
@@ -184,7 +191,7 @@ class Driver(mm.Driver):
             jsonfilename = 'info.json'
 
             # Generate and save mif file.
-            mif = oc.scripts.system_script(system)
+            mif = oc.scripts.system_script(system, ovf_format=ovf_format)
             mif += oc.scripts.driver_script(self, system,
                                             fixed_subregions=fixed_subregions,
                                             output_step=output_step,
