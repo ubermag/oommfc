@@ -7,8 +7,8 @@ def system_script(system, **kwargs):
     mif += 'SetOptions {\n'
     mif += f'  basename {system.name}\n'
     mif += '  scalar_output_format %.12g\n'
-    mif += '  scalar_field_output_format {text %#.15g}\n'
-    mif += '  vector_field_output_format {text %#.15g}\n'
+    mif += '  scalar_field_output_format {binary 8}\n'
+    mif += '  vector_field_output_format {binary 8}\n'
     mif += '}\n\n'
 
     # Mesh and energy scripts.
