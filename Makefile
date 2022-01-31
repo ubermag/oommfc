@@ -21,7 +21,7 @@ test-all: test-unittests test-docs test-ipynb test-pycodestyle
 
 build-dists:
 	rm -rf dist/
-	$(PYTHON) setup.py sdist bdist_wheel
+	$(PYTHON) -m build
 
 release: build-dists
 	twine upload dist/*

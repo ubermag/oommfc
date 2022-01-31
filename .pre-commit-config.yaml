@@ -1,0 +1,30 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.0.1
+  hooks:
+  - id: check-merge-conflict  # checks for files that contain merge conflict strings
+  - id: check-toml  # checks toml files for parseable syntax
+  - id: debug-statements  # checks for debugger imports and py37+ `breakpoint()` calls in python source
+  - id: trailing-whitespace
+    args: [--markdown-linebreak-ext=md]
+
+- repo: https://github.com/pycqa/isort
+  rev: 5.10.1
+  hooks:
+  - id: isort
+
+- repo: https://github.com/nbQA-dev/nbQA
+  rev: 1.2.3
+  hooks:
+    - id: nbqa-isort  # isort inside Jupyter notebooks
+
+- repo: https://gitlab.com/pycqa/flake8
+  rev: 3.9.2
+  hooks:
+  - id: flake8
+    additional_dependencies: [flake8-rst-docstrings]  #, flake8-docstrings]
+
+- repo: https://github.com/codespell-project/codespell
+  rev: v2.1.0
+  hooks:
+  - id: codespell
