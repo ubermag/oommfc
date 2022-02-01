@@ -1,10 +1,12 @@
 import os
-import sys
-import pytest
 import shutil
+import sys
+
+import micromagneticmodel as mm
+import pytest
+
 import oommfc as oc
 import oommfc.oommf as oo
-import micromagneticmodel as mm
 
 
 def check_runner(runner):

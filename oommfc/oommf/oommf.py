@@ -1,14 +1,16 @@
-import os
 import abc
-import sys
-import time
 import datetime
 import logging
+import os
 import shutil
-import oommfc as oc
 import subprocess as sp
-import ubermagutil as uu
+import sys
+import time
+
 import micromagneticmodel as mm
+import ubermagutil as uu
+
+import oommfc as oc
 
 log = logging.getLogger('oommfc')
 

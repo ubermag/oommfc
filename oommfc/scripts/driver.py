@@ -1,7 +1,8 @@
-import numpy as np
-import oommfc as oc
 import micromagneticmodel as mm
+import numpy as np
 import ubermagutil.typesystem as ts
+
+import oommfc as oc
 
 
 def driver_script(driver, system, fixed_subregions=None, compute=None,
