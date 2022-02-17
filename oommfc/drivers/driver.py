@@ -46,7 +46,7 @@ class Driver(mm.Driver):
 
     def drive(self, system, /, dirname='.', append=True, fixed_subregions=None,
               compute=None, output_step=False, n_threads=None, runner=None,
-              ovf_format='bin8', **kwargs):
+              ovf_format='bin8', silent=False, **kwargs):
         """Drives the system in phase space.
 
         Takes ``micromagneticmodel.System`` and drives it in the phase space.
@@ -97,6 +97,12 @@ class Driver(mm.Driver):
             one of ``'bin8'`` (binary, double precision), ``'bin4'`` (binary,
             single precision) or ``'txt'`` (text-based, double precision).
             Defaults to ``'bin8'``.
+
+        silent : bool, optional
+
+            If ``silent=True``, no output is printed otherwise information
+            about the OOMMF runner and the runtime is printed to stdout.
+            Defaults to ``False``.
 
         Raises
         ------
@@ -221,7 +227,7 @@ class Driver(mm.Driver):
 
             if runner is None:
                 runner = oc.runner.runner
-            runner.call(argstr=miffilename, n_threads=n_threads)
+            runner.call(argstr=miffilename, n_threads=n_threads, silent=silent)
 
             # Update system's m and datatable attributes if the derivation of
             # E, Heff, or energy density was not asked.
