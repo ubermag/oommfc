@@ -1,4 +1,4 @@
-"""Main package"""
+"""OOMMF calculator."""
 import pytest
 import pkg_resources
 import oommfc.oommf
