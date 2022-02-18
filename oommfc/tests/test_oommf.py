@@ -167,3 +167,14 @@ def test_choose_runner():
 
     runner = oc.oommf.ExeOOMMFRunner(oommf_exe='oommf')
     md.drive(system, runner=runner)
+
+
+def test_silent(capsys):
+    md = oc.MinDriver()
+    md.drive(mm.examples.macrospin())
+    captured = capsys.readouterr()
+    assert 'Running OOMMF' in captured.out
+
+    md.drive(mm.examples.macrospin(), silent=True)
+    captured = capsys.readouterr()
+    assert captured.out == ''
