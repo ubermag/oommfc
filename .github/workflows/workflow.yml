@@ -28,11 +28,11 @@ jobs:
         activate-environment: conda-environment
         environment-file: .github/environment.yml
 
-    - name: Install testing packages
-      run: python -m pip install --upgrade pip coverage[toml] pytest-cov nbval pycodestyle
+    - name: Install testing packages  # can be removed after switching to pre-commit
+      run: python -m pip install --upgrade pip pycodestyle
 
     - name: Install package
-      run: python -m pip install .
+      run: python -m pip install .[test]
 
     - name: Unit tests
       run: make test-unittests
