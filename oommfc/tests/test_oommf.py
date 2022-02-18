@@ -175,6 +175,6 @@ def test_silent(capsys):
     captured = capsys.readouterr()
     assert 'Running OOMMF' in captured.out
 
-    md.drive(mm.examples.macrospin(), silent=True)
+    md.drive(mm.examples.macrospin(), verbose=0)
     captured = capsys.readouterr()
     assert captured.out == ''

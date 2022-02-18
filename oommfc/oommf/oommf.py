@@ -27,7 +27,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         if sys.platform != 'win32':
             self._kill()
 
-    def call(self, argstr, need_stderr=False, n_threads=None, silent=False):
+    def call(self, argstr, need_stderr=False, n_threads=None, verbose=1):
         """Call OOMMF by passing ``argstr`` to OOMMF.
 
         Parameters
@@ -41,11 +41,11 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
             If ``need_stderr=True``, standard error is captured. Defaults to
             ``False``.
 
-        silent : bool, optional
+        verbose : int, optional
 
-            If ``silent=True``, no output is printed otherwise information
-            about the OOMMF runner and the runtime is printed to stdout.
-            Defaults to ``False``.
+            If ``verbose=0``, no output is printed. For ``verbose>=1``
+            information about the OOMMF runner and the runtime is printed to
+            stdout. Defaults is ``verbose=1``.
 
         Raises
         ------
@@ -71,7 +71,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         CompletedProcess(...)
 
         """
-        if not silent:
+        if verbose >= 1:
             now = datetime.datetime.now()
             timestamp = '{}/{:02d}/{:02d} {:02d}:{:02d}'.format(now.year,
                                                                 now.month,
@@ -87,7 +87,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
                          n_threads=n_threads)
         if sys.platform == 'win32':
             self._kill()  # required for oc.delete; oommf keeps file ownership
-        if not silent:
+        if verbose >= 1:
             toc = time.time()
             seconds = '({:0.1f} s)'.format(toc - tic)
             print(seconds)  # append seconds to the previous print.
@@ -107,6 +107,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
             raise RuntimeError('Error in OOMMF run.')
 
         return res
+
 
     @abc.abstractmethod
     def _call(self, argstr, need_stderr=False, n_threads=None):
