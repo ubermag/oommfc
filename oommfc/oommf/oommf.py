@@ -108,7 +108,6 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
 
         return res
 
-
     @abc.abstractmethod
     def _call(self, argstr, need_stderr=False, n_threads=None):
         """This method should be implemented in subclass."""
