@@ -27,7 +27,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         if sys.platform != 'win32':
             self._kill()
 
-    def call(self, argstr, need_stderr=False, n_threads=None):
+    def call(self, argstr, need_stderr=False, n_threads=None, verbose=1):
         """Call OOMMF by passing ``argstr`` to OOMMF.
 
         Parameters
@@ -36,10 +36,16 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
 
             Argument string passed to OOMMF.
 
-        need_stderr : bool
+        need_stderr : bool, optional
 
             If ``need_stderr=True``, standard error is captured. Defaults to
             ``False``.
+
+        verbose : int, optional
+
+            If ``verbose=0``, no output is printed. For ``verbose>=1``
+            information about the OOMMF runner and the runtime is printed to
+            stdout. Defaults is ``verbose=1``.
 
         Raises
         ------
@@ -65,23 +71,26 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         CompletedProcess(...)
 
         """
-        now = datetime.datetime.now()
-        timestamp = '{}/{:02d}/{:02d} {:02d}:{:02d}'.format(now.year,
-                                                            now.month,
-                                                            now.day,
-                                                            now.hour,
-                                                            now.minute)
-        print(f'Running OOMMF ({self.__class__.__name__}) [{timestamp}]... ',
-              end='')
+        if verbose >= 1:
+            now = datetime.datetime.now()
+            timestamp = '{}/{:02d}/{:02d} {:02d}:{:02d}'.format(now.year,
+                                                                now.month,
+                                                                now.day,
+                                                                now.hour,
+                                                                now.minute)
+            print((f'Running OOMMF ({self.__class__.__name__})'
+                   f'[{timestamp}]... '),
+                  end='')
+            tic = time.time()
 
-        tic = time.time()
         res = self._call(argstr=argstr, need_stderr=need_stderr,
                          n_threads=n_threads)
         if sys.platform == 'win32':
             self._kill()  # required for oc.delete; oommf keeps file ownership
-        toc = time.time()
-        seconds = '({:0.1f} s)'.format(toc - tic)
-        print(seconds)  # append seconds to the previous print.
+        if verbose >= 1:
+            toc = time.time()
+            seconds = '({:0.1f} s)'.format(toc - tic)
+            print(seconds)  # append seconds to the previous print.
 
         if res.returncode != 0:
             if sys.platform != 'win32':
