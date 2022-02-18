@@ -173,7 +173,14 @@ def test_silent(capsys):
     md = oc.MinDriver()
     md.drive(mm.examples.macrospin())
     captured = capsys.readouterr()
-    assert 'Running OOMMF' in captured.out
+    verbose_1 = captured.out
+    assert 'Running OOMMF' in verbose_1
+
+    md.drive(mm.examples.macrospin(), verbose=2)
+    captured = capsys.readouterr()
+    verbose_2 = captured.out
+    assert 'Running OOMMF' in verbose_2
+    assert verbose_1 == verbose_2
 
     md.drive(mm.examples.macrospin(), verbose=0)
     captured = capsys.readouterr()
