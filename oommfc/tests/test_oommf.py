@@ -182,3 +182,4 @@ def test_silent(capsys):
     md.drive(mm.examples.macrospin(), verbose=0)
     captured = capsys.readouterr()
     assert captured.out == ''
+    assert captured.err == ''
