@@ -5,7 +5,7 @@ import shutil
 import iniconfig
 import pytest
 import tomli
-from invoke import Collection, task
+from invoke import Collection, Exit, task
 
 PYTHON = 'python'
 ns = Collection()
@@ -39,6 +39,10 @@ def release(c):
     """
     c.run('git checkout master')
     c.run('git pull')
+
+    res = r.run('git status -s', hide=True)
+    if res.stdout != '':
+        raise Exit('Working tree is not clean. Aborting.')
 
     version = iniconfig.IniConfig('setup.cfg').get('metadata', 'version')
     # sanity checks while we have two places containing the version.
