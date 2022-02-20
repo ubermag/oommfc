@@ -54,6 +54,7 @@ def release(c):
     upload(c)
 
     c.run('git push -f --tags')
+    c.run('git push')
 
 
 ns.add_task(build_dists)
