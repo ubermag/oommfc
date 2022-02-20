@@ -40,7 +40,7 @@ def release(c):
     c.run('git checkout master')
     c.run('git pull')
 
-    res = r.run('git status -s', hide=True)
+    res = c.run('git status -s', hide=True)
     if res.stdout != '':
         raise Exit('Working tree is not clean. Aborting.')
 
