@@ -8,7 +8,7 @@ import tomli
 from invoke import Collection, task
 
 PYTHON = 'python'
-root_collection = Collection()
+ns = Collection()
 
 
 @task
@@ -56,9 +56,9 @@ def release(c):
     c.run('git push -F --tags')
 
 
-root_collection.add_task(build_dists)
-root_collection.add_task(upload)
-root_collection.add_task(release)
+ns.add_task(build_dists)
+ns.add_task(upload)
+ns.add_task(release)
 
 test_collection = Collection('test')
 
@@ -79,8 +79,8 @@ def coverage(c):
 @task
 def docs(c):
     """Run doctests."""
-    pytest.main(['-v', '--doctest-modules', '--ignore', 'oommfc/tests',
-                 'ubermagutil'])
+    pytest.main(['-v', '--doctest-modules', '--ignore',
+                 'oommfc/tests', 'oommfc'])
 
 
 @task
@@ -104,9 +104,9 @@ def all(unittest):
     """Run all tests."""
 
 
-test.add_task(unittest)
-test.add_task(docs)
-test.add_task(ipynb)
-test.add_task(pycodestyle)
-test.add_task(all)
-root_collection.add_collection(test_collection)
+test_collection.add_task(unittest)
+test_collection.add_task(docs)
+test_collection.add_task(ipynb)
+test_collection.add_task(pycodestyle)
+test_collection.add_task(all)
+ns.add_collection(test_collection)
