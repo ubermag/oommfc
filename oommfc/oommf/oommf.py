@@ -333,11 +333,11 @@ class DockerOOMMFRunner(OOMMFRunner):
 
     image: str
 
-        Docker image on DockerHub. Defaults to ``oommf/oommf:20a2``.
+        Docker image on DockerHub. Defaults to ``oommf/oommf:20a3``.
 
     """
 
-    def __init__(self, docker_exe='docker', image='oommf/oommf:20a2'):
+    def __init__(self, docker_exe='docker', image='oommf/oommf:20a3'):
         self.docker_exe = docker_exe
         self.image = image
 
