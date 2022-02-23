@@ -1,10 +1,14 @@
 import os
 import sys
 import pytest
-import shutil
 import oommfc as oc
 import oommfc.oommf as oo
 import micromagneticmodel as mm
+
+
+@pytest.fixture
+def reset_runner():
+    oc.runner = oo.Runner()
 
 
 def check_runner(runner):
@@ -30,107 +34,98 @@ def check_runner(runner):
             os.remove(os.path.join(dirname, f))
 
 
-@pytest.mark.skip(reason='Temporary')
-def test_tcl_oommf_runner():
-    # TclOOMMFRunner runs when OOMMFTCL environment variable is set. On
-    # TravisCI OOMMFTCL environment variable is set inside oommf/oommf docker
-    # image.
-    oommf_tcl = os.environ.get('OOMMFTCL', None)
+def test_tcl_oommf_runner(reset_runner):
+    # assumes that conda is used to install oommf
+    oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
     runner = oo.TclOOMMFRunner(oommf_tcl)
+    assert isinstance(runner.errors(), str)
+    check_runner(runner)
+
+    # via runner object
+    oc.runner.oommf_exe = 'wrong_name'
+    oc.runner.docker_exe = 'wrong_name'
+    os.environ.setdefault('OOMMFTCL', oommf_tcl)
+    oc.runner.autoselect_runner()
+    runner = oc.runner.runner
+    assert isinstance(runner, oo.TclOOMMFRunner)
+    check_runner(runner)
+
+
+def test_exe_oommf_runner(reset_runner):
+    runner = oo.ExeOOMMFRunner()
     check_runner(runner)
     assert isinstance(runner.errors(), str)
 
-
-@pytest.mark.skip(reason='Temporary')
-def test_exe_oommf_runner():
-    # ExeOOMMFRunner runs when callable OOMMF exists ('oommf'). On TravisCI
-    # oommf is an executable inside oommf/oommf docker image.
-    oommf_exe = 'oommf'
-    runner = oo.ExeOOMMFRunner(oommf_exe)
+    # via runner object
+    oc.runner.envvar = 'wrong_name'
+    oc.runner.docker_exe = 'wrong_name'
+    oc.runner.autoselect_runner()
+    runner = oc.runner.runner
+    assert isinstance(runner, oo.ExeOOMMFRunner)
     check_runner(runner)
+
+
+@pytest.mark.skipif(sys.platform != 'linux',
+                    reason='Only Linux CI supports Docker')
+def test_docker_oommf_runner(reset_runner):
+    runner = oo.DockerOOMMFRunner()
+    check_runner(runner)
+    assert isinstance(runner, oo.DockerOOMMFRunner)
+    # errors cannot be retrieved from docker image
     with pytest.raises(EnvironmentError):
-        # On travis oommf compiled from source is used.
-        errors = runner.errors()
+        runner.errors()
 
-
-@pytest.mark.skip(reason='Temporary')
-def test_docker_oommf_runner():
-    # DockerOOMMFRunner runs when docker is installed. This test does not run
-    # on host or TravisCI. It can be run using make test-docker on host if
-    # docker is installed.
-    docker_exe = 'docker'
-    image = 'oommf/oommf'
-    runner = oo.DockerOOMMFRunner(docker_exe, image)
-    check_runner(runner)
-
-    # An additional check of getting OOMMF runner when docker is installed.
-    runner = oo.get_oommf_runner(use_cache=False,
-                                 envvar='wrong_name',
-                                 oommf_exe='wrong_name',
-                                 docker_exe='docker')
+    # via runner object
+    oc.runner.envvar = 'wrong_name'
+    oc.runner.oommf_exe = 'wrong_name'
+    oc.runner.autoselect_runner()
+    runner = oc.runner.runner
     assert isinstance(runner, oo.DockerOOMMFRunner)
     check_runner(runner)
 
-    with pytest.raises(EnvironmentError):
-        errors = runner.errors()
 
-
-@pytest.mark.skip(reason='Temporary')
-def test_get_oommf_runner():
-    # TclOOMMFRunner
-    oommf_runner = oo.get_oommf_runner(use_cache=False,
-                                       envvar='OOMMFTCL',
-                                       oommf_exe='wrong_name',
-                                       docker_exe='wrong_name')
-    assert isinstance(oommf_runner, oo.TclOOMMFRunner)
-    check_runner(oommf_runner)
-
-    # ExeOOMMFRunner
-    oommf_runner = oo.get_oommf_runner(use_cache=False,
-                                       envvar='wrong_name',
-                                       oommf_exe='oommf',
-                                       docker_exe='wrong_name')
-    assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
-    check_runner(oommf_runner)
-
-    # OOMMF cannot be found on the system.
-    with pytest.raises(EnvironmentError):
-        oommf_runner = oo.get_oommf_runner(use_cache=False,
-                                           envvar='wrong_name',
-                                           oommf_exe='wrong_name',
-                                           docker_exe='wrong_name')
-
-    # Test cached OOMMFRunner.
-    oommf_runner = oo.get_oommf_runner(use_cache=False,
-                                       envvar='wrong_name',
-                                       oommf_exe='oommf',
-                                       docker_exe='wrong_name')
-    assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
-    check_runner(oommf_runner)
-
-    oommf_runner = oo.get_oommf_runner(use_cache=True)
-    assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
-    check_runner(oommf_runner)
-
-    oommf_runner = oo.get_oommf_runner(use_cache=True,
-                                       envvar='OOMMFTCL',
-                                       oommf_exe='wrong_name',
-                                       docker_exe='wrong_name')
-    assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
-    check_runner(oommf_runner)
-
-
-def test_get_oommf_runner():
-    # This is a shorter version of the previous test for testing on host.
+def test_get_oommf_runner(reset_runner):
     oc.runner.autoselect_runner()
     oommf_runner = oc.runner.runner
     assert isinstance(oommf_runner, oo.OOMMFRunner)
     check_runner(oommf_runner)
 
 
-@pytest.mark.skip(reason='We need to think about how to test this properly.')
-def test_set_oommf_runner():
-    oc.runner.runner = oo.TclOOMMFRunner()
+def test_missing_oommf(reset_runner):
+    oc.runner.envvar = 'wrong_name'
+    oc.runner.oommf_exe = 'wrong_name'
+    oc.runner.docker_exe = 'wrong_name'
+    with pytest.raises(EnvironmentError):
+        oc.runner.runner
+
+
+@pytest.mark.skipif(sys.platform != 'linux',
+                    reason='Only Linux CI supports Docker')
+def test_get_cached_runner(reset_runner):
+    # ensure ExeOOMMFRunner
+    oc.runner.envvar = 'wrong_name'
+    oc.runner.autoselect_runner()
+    runner = oc.runner.runner
+    assert isinstance(runner, oo.ExeOOMMFRunner)
+    check_runner(runner)
+
+    oc.runner.oommf_exe = 'wrong_name'
+    runner = oc.runner.runner  # cached
+    assert isinstance(runner, oo.ExeOOMMFRunner)
+    check_runner(runner)
+
+    oc.runner.cache_runner = False
+    runner = oc.runner.runner
+    assert isinstance(runner, oo.DockerOOMMFRunner)
+    check_runner(runner)
+
+
+@pytest.mark.skipif(sys.platform != 'linux',
+                    reason='Only Linux CI supports Docker')
+def test_set_oommf_runner(reset_runner):
+    # assumes that conda is used to install oommf
+    oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
+    oc.runner.runner = oo.TclOOMMFRunner(oommf_tcl)
     assert isinstance(oc.runner.runner, oo.TclOOMMFRunner)
 
     oc.runner.runner = oo.ExeOOMMFRunner()
@@ -140,36 +135,35 @@ def test_set_oommf_runner():
     assert isinstance(oc.runner.runner, oo.DockerOOMMFRunner)
 
 
-@pytest.mark.skip(reason='Temporary')
-def test_status():
-    assert oo.status() == 0
+def test_status(reset_runner):
+    assert oc.runner.runner.status == 0
 
 
-def test_overhead():
+def test_overhead(reset_runner):
     assert isinstance(oo.overhead(), float)
 
 
-def test_runtimeerror():
+def test_wrong_command(reset_runner):
     oc.runner.autoselect_runner()
     oommf_runner = oc.runner.runner
     with pytest.raises(RuntimeError):
         oommf_runner.call('+wrong_argstr')
 
 
-@pytest.mark.skip(reason='Temporary')
-def test_choose_runner():
+@pytest.mark.skipif(sys.platform != 'linux',
+                    reason='Only Linux CI supports Docker')
+def test_choose_runner(reset_runner):
     system = mm.examples.macrospin()
 
     md = oc.MinDriver()
-    runner = oc.oommf.TclOOMMFRunner(oommf_tcl=os.environ.get('OOMMFTCL',
-                                                              None))
+    runner = oo.oommf.DockerOOMMFRunner()
     md.drive(system, runner=runner)
 
-    runner = oc.oommf.ExeOOMMFRunner(oommf_exe='oommf')
+    runner = oc.oommf.ExeOOMMFRunner()
     md.drive(system, runner=runner)
 
 
-def test_silent(capsys):
+def test_silent(capsys, reset_runner):
     md = oc.MinDriver()
     md.drive(mm.examples.macrospin())
     captured = capsys.readouterr()
