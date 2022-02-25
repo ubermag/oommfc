@@ -65,8 +65,8 @@ def test_exe_oommf_runner(reset_runner):
     check_runner(runner)
 
 
-@pytest.mark.skipif(sys.platform != 'linux',
-                    reason='Only Linux CI supports Docker')
+@pytest.mark.skip(
+    'OOMMF inside docker cannot be tested on CI [non-default user].')
 def test_docker_oommf_runner(reset_runner):
     runner = oo.DockerOOMMFRunner()
     check_runner(runner)
@@ -99,8 +99,6 @@ def test_missing_oommf(reset_runner):
         oc.runner.runner
 
 
-@pytest.mark.skipif(sys.platform != 'linux',
-                    reason='Only Linux CI supports Docker')
 def test_get_cached_runner(reset_runner):
     # ensure ExeOOMMFRunner
     oc.runner.envvar = 'wrong_name'
@@ -109,6 +107,10 @@ def test_get_cached_runner(reset_runner):
     assert isinstance(runner, oo.ExeOOMMFRunner)
     check_runner(runner)
 
+    # assumes that conda is used to install oommf
+    oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
+    os.environ.setdefault('OOMMFTCL', oommf_tcl)
+
     oc.runner.oommf_exe = 'wrong_name'
     runner = oc.runner.runner  # cached
     assert isinstance(runner, oo.ExeOOMMFRunner)
@@ -116,12 +118,10 @@ def test_get_cached_runner(reset_runner):
 
     oc.runner.cache_runner = False
     runner = oc.runner.runner
-    assert isinstance(runner, oo.DockerOOMMFRunner)
+    assert isinstance(runner, oo.TclOOMMFRunner)
     check_runner(runner)
 
 
-@pytest.mark.skipif(sys.platform != 'linux',
-                    reason='Only Linux CI supports Docker')
 def test_set_oommf_runner(reset_runner):
     # assumes that conda is used to install oommf
     oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
@@ -131,6 +131,10 @@ def test_set_oommf_runner(reset_runner):
     oc.runner.runner = oo.ExeOOMMFRunner()
     assert isinstance(oc.runner.runner, oo.ExeOOMMFRunner)
 
+
+@pytest.mark.skip(
+    'OOMMF inside docker cannot be tested on CI [non-default user].')
+def test_set_docker_oommf_runner(reset_runner):
     oc.runner.runner = oo.DockerOOMMFRunner()
     assert isinstance(oc.runner.runner, oo.DockerOOMMFRunner)
 
@@ -150,15 +154,10 @@ def test_wrong_command(reset_runner):
         oommf_runner.call('+wrong_argstr')
 
 
-@pytest.mark.skipif(sys.platform != 'linux',
-                    reason='Only Linux CI supports Docker')
 def test_choose_runner(reset_runner):
     system = mm.examples.macrospin()
 
     md = oc.MinDriver()
-    runner = oo.oommf.DockerOOMMFRunner()
-    md.drive(system, runner=runner)
-
     runner = oc.oommf.ExeOOMMFRunner()
     md.drive(system, runner=runner)
 
