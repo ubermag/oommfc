@@ -107,16 +107,21 @@ def test_get_cached_runner(reset_runner):
     assert isinstance(runner, oo.ExeOOMMFRunner)
     check_runner(runner)
 
-    # assumes that conda is used to install oommf
-    oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
-    os.environ.setdefault('OOMMFTCL', oommf_tcl)
-
     oc.runner.oommf_exe = 'wrong_name'
     runner = oc.runner.runner  # cached
     assert isinstance(runner, oo.ExeOOMMFRunner)
     check_runner(runner)
 
     oc.runner.cache_runner = False
+    runner = oc.runner.runner
+    assert isinstance(runner, oo.DockerOOMMFRunner)
+    # docker runner cannot be executed on CI
+    # check_runner(runner)
+
+    # assumes that conda is used to install oommf
+    oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
+    os.environ.setdefault('OOMMFTCL', oommf_tcl)
+    oc.runner.envvar = 'OOMMFTCL'
     runner = oc.runner.runner
     assert isinstance(runner, oo.TclOOMMFRunner)
     check_runner(runner)
@@ -131,10 +136,6 @@ def test_set_oommf_runner(reset_runner):
     oc.runner.runner = oo.ExeOOMMFRunner()
     assert isinstance(oc.runner.runner, oo.ExeOOMMFRunner)
 
-
-@pytest.mark.skip(
-    'OOMMF inside docker cannot be tested on CI [non-default user].')
-def test_set_docker_oommf_runner(reset_runner):
     oc.runner.runner = oo.DockerOOMMFRunner()
     assert isinstance(oc.runner.runner, oo.DockerOOMMFRunner)
 
