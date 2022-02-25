@@ -34,8 +34,9 @@ def check_runner(runner):
             os.remove(os.path.join(dirname, f))
 
 
-@pytest.mark.skipif(not os.path.exists(
-    os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')))
+@pytest.mark.skipif(
+    not os.path.exists(os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')),
+    reason='Location of oommf.tcl unknown.')
 def test_tcl_oommf_runner(reset_runner):
     # assumes that conda is used to install oommf
     oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
@@ -130,8 +131,9 @@ def test_get_cached_runner(reset_runner):
         check_runner(runner)
 
 
-@pytest.mark.skipif(not os.path.exists(
-    os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')))
+@pytest.mark.skipif(
+    not os.path.exists(os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')),
+    reason='Location of oommf.tcl unknown.')
 def test_set_tcl_oommf_runner(reset_runner):
     # assumes that conda is used to install oommf
     oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
