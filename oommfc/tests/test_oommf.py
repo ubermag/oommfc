@@ -34,6 +34,8 @@ def check_runner(runner):
             os.remove(os.path.join(dirname, f))
 
 
+@pytest.mark.skipif(not os.path.exists(
+    os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')))
 def test_tcl_oommf_runner(reset_runner):
     # assumes that conda is used to install oommf
     oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
@@ -118,21 +120,26 @@ def test_get_cached_runner(reset_runner):
     # docker runner cannot be executed on CI
     # check_runner(runner)
 
-    # assumes that conda is used to install oommf
+    # this only works if oommf is installed via conda
     oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
-    os.environ.setdefault('OOMMFTCL', oommf_tcl)
-    oc.runner.envvar = 'OOMMFTCL'
-    runner = oc.runner.runner
-    assert isinstance(runner, oo.TclOOMMFRunner)
-    check_runner(runner)
+    if os.path.exists(oommf_tcl):
+        os.environ.setdefault('OOMMFTCL', oommf_tcl)
+        oc.runner.envvar = 'OOMMFTCL'
+        runner = oc.runner.runner
+        assert isinstance(runner, oo.TclOOMMFRunner)
+        check_runner(runner)
 
 
-def test_set_oommf_runner(reset_runner):
+@pytest.mark.skipif(not os.path.exists(
+    os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')))
+def test_set_tcl_oommf_runner(reset_runner):
     # assumes that conda is used to install oommf
     oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
     oc.runner.runner = oo.TclOOMMFRunner(oommf_tcl)
     assert isinstance(oc.runner.runner, oo.TclOOMMFRunner)
 
+
+def test_set_exe_oommf_runner(reset_runner):
     oc.runner.runner = oo.ExeOOMMFRunner()
     assert isinstance(oc.runner.runner, oo.ExeOOMMFRunner)
 
