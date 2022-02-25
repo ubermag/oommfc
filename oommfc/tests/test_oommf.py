@@ -136,6 +136,11 @@ def test_set_oommf_runner(reset_runner):
     oc.runner.runner = oo.ExeOOMMFRunner()
     assert isinstance(oc.runner.runner, oo.ExeOOMMFRunner)
 
+
+@pytest.mark.skip(
+    'OOMMF inside docker cannot be tested on CI [non-default user].')
+def test_set_docker_oommf_runner(reset_runner):
+    # Before a new runner is set we test if it can be used
     oc.runner.runner = oo.DockerOOMMFRunner()
     assert isinstance(oc.runner.runner, oo.DockerOOMMFRunner)
 
