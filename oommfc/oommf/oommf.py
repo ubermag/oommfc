@@ -300,8 +300,8 @@ class ExeOOMMFRunner(NativeOOMMFRunner):
     """
 
     def __init__(self, oommf_exe='oommf'):
-        self.oommf_exe = oommf_exe
-        self.oommf = [oommf_exe]
+        self.oommf_exe = shutil.which(oommf_exe)
+        self.oommf = [self.oommf_exe]
         super().__init__()
 
     def errors(self):
