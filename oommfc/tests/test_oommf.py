@@ -33,9 +33,6 @@ def check_runner(runner):
             os.remove(os.path.join(dirname, f))
 
 
-@pytest.fixture
-def mock_oommftcl_envvar(monkeypatch):
-    monkeypatch.setenv('OOMMFTCL', oommf_tcl_path())
 
 
 @pytest.fixture(autouse=True)
@@ -57,7 +54,7 @@ def oommf_tcl_path():
 @pytest.mark.skipif(
     oommf_tcl_path() is None,
     reason='Location of oommf.tcl unknown.')
-def test_tcl_oommf_runner(mock_oommftcl_envvar):
+def test_tcl_oommf_runner(monkeypatch):
     runner = oo.TclOOMMFRunner(oommf_tcl_path())
     assert isinstance(runner.errors(), str)
     check_runner(runner)
@@ -65,6 +62,7 @@ def test_tcl_oommf_runner(mock_oommftcl_envvar):
     # via runner object
     oc.runner.oommf_exe = 'wrong_name'
     oc.runner.docker_exe = 'wrong_name'
+    monkeypatch.setenv('OOMMFTCL', oommf_tcl_path())
     oc.runner.autoselect_runner()
     runner = oc.runner.runner
     assert isinstance(runner, oo.TclOOMMFRunner)
@@ -119,7 +117,7 @@ def test_missing_oommf():
         oc.runner.runner
 
 
-def test_get_cached_runner(reset_runner, mock_oommftcl_envvar):
+def test_get_cached_runner(reset_runner, monkeypatch):
     # ensure ExeOOMMFRunner
     oc.runner.envvar = 'wrong_name'
     runner = oc.runner.runner
@@ -143,6 +141,7 @@ def test_get_cached_runner(reset_runner, mock_oommftcl_envvar):
     oc.runner.docker_exe = 'wrong_name'  # ensure that we do not find docker
     if oommf_tcl_path():
         expectation = contextlib.nullcontext()
+        monkeypatch.setenv('OOMMFTCL', oommf_tcl_path())
     else:
         expectation = pytest.raises(EnvironmentError)
     with expectation:
