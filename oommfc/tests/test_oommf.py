@@ -1,11 +1,13 @@
+import contextlib
 import os
+import shutil
 import sys
+
+import micromagneticmodel as mm
 import pytest
+
 import oommfc as oc
 import oommfc.oommf as oo
-import micromagneticmodel as mm
-import contextlib
-import shutil
 
 
 @pytest.fixture
@@ -21,6 +23,7 @@ def oommf_tcl_path():
     oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
     if os.path.exists(oommf_tcl):
         return oommf_tcl
+    return None
 
 
 def check_runner(runner):
