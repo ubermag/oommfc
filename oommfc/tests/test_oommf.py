@@ -4,6 +4,8 @@ import pytest
 import oommfc as oc
 import oommfc.oommf as oo
 import micromagneticmodel as mm
+import contextlib
+import shutil
 
 
 @pytest.fixture
@@ -123,30 +125,21 @@ def test_get_cached_runner(reset_runner):
     check_runner(runner)
 
     oc.runner.cache_runner = False
-    runner = oc.runner.runner
-    assert isinstance(runner, oo.DockerOOMMFRunner)
-    # docker runner cannot be executed on CI
-    # check_runner(runner)
+    expectation = (contextlib.nullcontext() if shutil.which('docker')
+                   else pytest.raises(EnvironmentError))
+    with expectation:
+        runner = oc.runner.runner
+        assert isinstance(runner, oo.DockerOOMMFRunner)
+        # check_runner cannot be used for Docker on CI
 
-
-@pytest.mark.skipif(
-    oommf_tcl_path() is None,
-    reason='Location of oommf.tcl unknown.')
-def test_get_cached_runner_with_tcl(reset_runner):
-    os.environ.setdefault('OOMMFTCL', oommf_tcl_path())
-    runner = oc.runner.runner
-    assert isinstance(runner, oo.TclOOMMFRunner)
-    check_runner(runner)
-
-    oc.runner.envvar = 'wrong_name'
-    runner = oc.runner.runner  # cached
-    assert isinstance(runner, oo.TclOOMMFRunner)
-    check_runner(runner)
-
-    oc.runner.cache_runner = False
-    runner = oc.runner.runner
-    assert isinstance(runner, oo.ExeOOMMFRunner)
-    check_runner(runner)
+    if oommf_tcl_path():
+        os.environ.setdefault('OOMMFTCL', oommf_tcl_path())
+    expectation = (contextlib.nullcontext() if oommf_tcl_path()
+                   else pytest.raises(EnvironmentError))
+    with expectation:
+        runner = oc.runner.runner
+        assert isinstance(runner, oo.TclOOMMFRunner)
+        check_runner(runner)
 
 
 @pytest.mark.skipif(
