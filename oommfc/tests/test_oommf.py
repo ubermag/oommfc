@@ -133,6 +133,7 @@ def test_get_cached_runner(reset_runner):
         # check_runner cannot be used for Docker on CI
 
     oc.runner.envvar = 'OOMMFTCL'
+    oc.runner.docker_exe = 'wrong_name'  # ensure that we do not find docker
     if oommf_tcl_path():
         os.environ.setdefault('OOMMFTCL', oommf_tcl_path())
         expectation = contextlib.nullcontext()
