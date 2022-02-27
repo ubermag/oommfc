@@ -11,6 +11,16 @@ def reset_runner():
     oc.runner = oo.Runner()
 
 
+def oommf_tcl_path():
+    oommf_tcl = os.environ.get('OOMMFTCL')
+    if oommf_tcl:
+        return oommf_tcl
+    # oommf installed via conda
+    oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
+    if os.path.exists(oommf_tcl):
+        return oommf_tcl
+
+
 def check_runner(runner):
     # Testing OOMMF on a mif file to make it independent of oommfc.
     dirname = os.path.join(os.path.dirname(__file__), 'test_sample')
@@ -35,19 +45,17 @@ def check_runner(runner):
 
 
 @pytest.mark.skipif(
-    not os.path.exists(os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')),
+    oommf_tcl_path() is None,
     reason='Location of oommf.tcl unknown.')
 def test_tcl_oommf_runner(reset_runner):
-    # assumes that conda is used to install oommf
-    oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
-    runner = oo.TclOOMMFRunner(oommf_tcl)
+    runner = oo.TclOOMMFRunner(oommf_tcl_path())
     assert isinstance(runner.errors(), str)
     check_runner(runner)
 
     # via runner object
     oc.runner.oommf_exe = 'wrong_name'
     oc.runner.docker_exe = 'wrong_name'
-    os.environ.setdefault('OOMMFTCL', oommf_tcl)
+    os.environ.setdefault('OOMMFTCL', oommf_tcl_path())
     oc.runner.autoselect_runner()
     runner = oc.runner.runner
     assert isinstance(runner, oo.TclOOMMFRunner)
@@ -105,7 +113,6 @@ def test_missing_oommf(reset_runner):
 def test_get_cached_runner(reset_runner):
     # ensure ExeOOMMFRunner
     oc.runner.envvar = 'wrong_name'
-    oc.runner.autoselect_runner()
     runner = oc.runner.runner
     assert isinstance(runner, oo.ExeOOMMFRunner)
     check_runner(runner)
@@ -121,23 +128,33 @@ def test_get_cached_runner(reset_runner):
     # docker runner cannot be executed on CI
     # check_runner(runner)
 
-    # this only works if oommf is installed via conda
-    oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
-    if os.path.exists(oommf_tcl):
-        os.environ.setdefault('OOMMFTCL', oommf_tcl)
-        oc.runner.envvar = 'OOMMFTCL'
-        runner = oc.runner.runner
-        assert isinstance(runner, oo.TclOOMMFRunner)
-        check_runner(runner)
+
+@pytest.mark.skipif(
+    oommf_tcl_path() is None,
+    reason='Location of oommf.tcl unknown.')
+def test_get_cached_runner_with_tcl(reset_runner):
+    os.environ.setdefault('OOMMFTCL', oommf_tcl_path())
+    runner = oc.runner.runner
+    assert isinstance(runner, oo.TclOOMMFRunner)
+    check_runner(runner)
+
+    oc.runner.envvar = 'wrong_name'
+    runner = oc.runner.runner  # cached
+    assert isinstance(runner, oo.TclOOMMFRunner)
+    check_runner(runner)
+
+    oc.runner.cache_runner = False
+    runner = oc.runner.runner
+    assert isinstance(runner, oo.ExeOOMMFRunner)
+    check_runner(runner)
 
 
 @pytest.mark.skipif(
-    not os.path.exists(os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')),
+    oommf_tcl_path is None,
     reason='Location of oommf.tcl unknown.')
 def test_set_tcl_oommf_runner(reset_runner):
     # assumes that conda is used to install oommf
-    oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
-    oc.runner.runner = oo.TclOOMMFRunner(oommf_tcl)
+    oc.runner.runner = oo.TclOOMMFRunner(oommf_tcl_path())
     assert isinstance(oc.runner.runner, oo.TclOOMMFRunner)
 
 
