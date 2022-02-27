@@ -32,11 +32,11 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: fangohr/oommf
-        path: oommf
+        path: opt  # to mimic directory structure of conda
 
     - name: Compile OOMMF
       run: |
-        cd oommf
+        cd opt
         make build
         cd ..
 
@@ -45,13 +45,13 @@ jobs:
         mkdir -p bin
         cat > bin/oommf <<EOF
         #! /bin/bash
-        tclsh $( pwd )/oommf/oommf/oommf.tcl "\$@"
+        tclsh $( pwd )/opt/oommf/oommf.tcl "\$@"
         EOF
         chmod a+x bin/oommf
 
     - name: Set environment variables
       run: |
-        echo "OOMMFTCL=$GITHUB_WORKSPACE/oommf/oommf/oommf.tcl" >> $GITHUB_ENV
+        echo "OOMMFTCL=$GITHUB_WORKSPACE/opt/oommf/oommf.tcl" >> $GITHUB_ENV
         echo "PATH=$( pwd )/bin:$PATH" >> $GITHUB_ENV
 
     - name: Install testing packages
