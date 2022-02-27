@@ -152,7 +152,7 @@ def test_get_cached_runner(reset_runner, mock_oommftcl):
 
 
 @pytest.mark.skipif(
-    oommf_tcl_path is None,
+    oommf_tcl_path() is None,
     reason='Location of oommf.tcl unknown.')
 def test_set_tcl_oommf_runner():
     # assumes that conda is used to install oommf
