@@ -132,10 +132,12 @@ def test_get_cached_runner(reset_runner):
         assert isinstance(runner, oo.DockerOOMMFRunner)
         # check_runner cannot be used for Docker on CI
 
+    oc.runner.envvar = 'OOMMFTCL'
     if oommf_tcl_path():
         os.environ.setdefault('OOMMFTCL', oommf_tcl_path())
-    expectation = (contextlib.nullcontext() if oommf_tcl_path()
-                   else pytest.raises(EnvironmentError))
+        expectation = contextlib.nullcontext()
+    else:
+        expectation = pytest.raises(EnvironmentError)
     with expectation:
         runner = oc.runner.runner
         assert isinstance(runner, oo.TclOOMMFRunner)
