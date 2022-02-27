@@ -10,22 +10,6 @@ import oommfc as oc
 import oommfc.oommf as oo
 
 
-@pytest.fixture
-def reset_runner():
-    oc.runner = oo.Runner()
-
-
-def oommf_tcl_path():
-    oommf_tcl = os.environ.get('OOMMFTCL')
-    if oommf_tcl:
-        return oommf_tcl
-    # oommf installed via conda
-    oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
-    if os.path.exists(oommf_tcl):
-        return oommf_tcl
-    return None
-
-
 def check_runner(runner):
     # Testing OOMMF on a mif file to make it independent of oommfc.
     dirname = os.path.join(os.path.dirname(__file__), 'test_sample')
@@ -49,10 +33,31 @@ def check_runner(runner):
             os.remove(os.path.join(dirname, f))
 
 
+@pytest.fixture
+def mock_oommftcl(monkeypatch):
+    monkeypatch.setenv('OOMMFTCL', oommf_tcl_path())
+
+
+@pytest.fixture(autouse=True)
+def reset_runner():
+    oc.runner = oo.Runner()
+
+
+def oommf_tcl_path():
+    oommf_tcl = os.environ.get('OOMMFTCL')
+    if oommf_tcl:
+        return oommf_tcl
+    # oommf installed via conda
+    oommf_tcl = os.path.join(sys.prefix, 'opt', 'oommf', 'oommf.tcl')
+    if os.path.exists(oommf_tcl):
+        return oommf_tcl
+    return None
+
+
 @pytest.mark.skipif(
     oommf_tcl_path() is None,
     reason='Location of oommf.tcl unknown.')
-def test_tcl_oommf_runner(reset_runner):
+def test_tcl_oommf_runner(mock_oommftcl):
     runner = oo.TclOOMMFRunner(oommf_tcl_path())
     assert isinstance(runner.errors(), str)
     check_runner(runner)
@@ -60,14 +65,13 @@ def test_tcl_oommf_runner(reset_runner):
     # via runner object
     oc.runner.oommf_exe = 'wrong_name'
     oc.runner.docker_exe = 'wrong_name'
-    os.environ.setdefault('OOMMFTCL', oommf_tcl_path())
     oc.runner.autoselect_runner()
     runner = oc.runner.runner
     assert isinstance(runner, oo.TclOOMMFRunner)
     check_runner(runner)
 
 
-def test_exe_oommf_runner(reset_runner):
+def test_exe_oommf_runner():
     runner = oo.ExeOOMMFRunner()
     check_runner(runner)
     assert isinstance(runner.errors(), str)
@@ -83,7 +87,7 @@ def test_exe_oommf_runner(reset_runner):
 
 @pytest.mark.skip(
     'OOMMF inside docker cannot be tested on CI [non-default user].')
-def test_docker_oommf_runner(reset_runner):
+def test_docker_oommf_runner():
     runner = oo.DockerOOMMFRunner()
     check_runner(runner)
     assert isinstance(runner, oo.DockerOOMMFRunner)
@@ -100,14 +104,14 @@ def test_docker_oommf_runner(reset_runner):
     check_runner(runner)
 
 
-def test_get_oommf_runner(reset_runner):
+def test_get_oommf_runner():
     oc.runner.autoselect_runner()
     oommf_runner = oc.runner.runner
     assert isinstance(oommf_runner, oo.OOMMFRunner)
     check_runner(oommf_runner)
 
 
-def test_missing_oommf(reset_runner):
+def test_missing_oommf():
     oc.runner.envvar = 'wrong_name'
     oc.runner.oommf_exe = 'wrong_name'
     oc.runner.docker_exe = 'wrong_name'
@@ -115,7 +119,7 @@ def test_missing_oommf(reset_runner):
         oc.runner.runner
 
 
-def test_get_cached_runner(reset_runner):
+def test_get_cached_runner(reset_runner, mock_oommftcl):
     # ensure ExeOOMMFRunner
     oc.runner.envvar = 'wrong_name'
     runner = oc.runner.runner
@@ -138,7 +142,6 @@ def test_get_cached_runner(reset_runner):
     oc.runner.envvar = 'OOMMFTCL'
     oc.runner.docker_exe = 'wrong_name'  # ensure that we do not find docker
     if oommf_tcl_path():
-        os.environ.setdefault('OOMMFTCL', oommf_tcl_path())
         expectation = contextlib.nullcontext()
     else:
         expectation = pytest.raises(EnvironmentError)
@@ -151,41 +154,41 @@ def test_get_cached_runner(reset_runner):
 @pytest.mark.skipif(
     oommf_tcl_path is None,
     reason='Location of oommf.tcl unknown.')
-def test_set_tcl_oommf_runner(reset_runner):
+def test_set_tcl_oommf_runner():
     # assumes that conda is used to install oommf
     oc.runner.runner = oo.TclOOMMFRunner(oommf_tcl_path())
     assert isinstance(oc.runner.runner, oo.TclOOMMFRunner)
 
 
-def test_set_exe_oommf_runner(reset_runner):
+def test_set_exe_oommf_runner():
     oc.runner.runner = oo.ExeOOMMFRunner()
     assert isinstance(oc.runner.runner, oo.ExeOOMMFRunner)
 
 
 @pytest.mark.skip(
     'OOMMF inside docker cannot be tested on CI [non-default user].')
-def test_set_docker_oommf_runner(reset_runner):
+def test_set_docker_oommf_runner():
     # Before a new runner is set we test if it can be used
     oc.runner.runner = oo.DockerOOMMFRunner()
     assert isinstance(oc.runner.runner, oo.DockerOOMMFRunner)
 
 
-def test_status(reset_runner):
+def test_status():
     assert oc.runner.runner.status == 0
 
 
-def test_overhead(reset_runner):
+def test_overhead():
     assert isinstance(oo.overhead(), float)
 
 
-def test_wrong_command(reset_runner):
+def test_wrong_command():
     oc.runner.autoselect_runner()
     oommf_runner = oc.runner.runner
     with pytest.raises(RuntimeError):
         oommf_runner.call('+wrong_argstr')
 
 
-def test_choose_runner(reset_runner):
+def test_choose_runner():
     system = mm.examples.macrospin()
 
     md = oc.MinDriver()
@@ -193,7 +196,7 @@ def test_choose_runner(reset_runner):
     md.drive(system, runner=runner)
 
 
-def test_silent(capsys, reset_runner):
+def test_silent(capsys):
     md = oc.MinDriver()
     md.drive(mm.examples.macrospin())
     captured = capsys.readouterr()
