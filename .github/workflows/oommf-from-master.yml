@@ -45,14 +45,14 @@ jobs:
         mkdir -p bin
         cat > bin/oommf <<EOF
         #! /bin/bash
-        tclsh $( pwd )/opt/oommf/oommf.tcl "\$@"
+        tclsh $GITHUB_WORKSPACE/opt/oommf/oommf.tcl "\$@"
         EOF
         chmod a+x bin/oommf
 
     - name: Set environment variables
       run: |
         echo "OOMMFTCL=$GITHUB_WORKSPACE/opt/oommf/oommf.tcl" >> $GITHUB_ENV
-        echo "PATH=$( pwd )/bin:$PATH" >> $GITHUB_ENV
+        echo "PATH=$GITHUB_WORKSPACE/bin:$PATH" >> $GITHUB_ENV
 
     - name: Install testing packages
       run: python -m pip install --upgrade pip pytest-cov nbval pycodestyle
