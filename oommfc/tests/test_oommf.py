@@ -33,8 +33,6 @@ def check_runner(runner):
             os.remove(os.path.join(dirname, f))
 
 
-
-
 @pytest.fixture(autouse=True)
 def reset_runner():
     oc.runner = oo.Runner()
