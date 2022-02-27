@@ -119,7 +119,7 @@ def test_missing_oommf():
         oc.runner.runner
 
 
-def test_get_cached_runner(reset_runner, mock_oommftcl):
+def test_get_cached_runner(reset_runner, mock_oommftcl_envvar):
     # ensure ExeOOMMFRunner
     oc.runner.envvar = 'wrong_name'
     runner = oc.runner.runner
