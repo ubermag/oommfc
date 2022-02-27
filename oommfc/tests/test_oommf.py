@@ -34,7 +34,7 @@ def check_runner(runner):
 
 
 @pytest.fixture
-def mock_oommftcl(monkeypatch):
+def mock_oommftcl_envvar(monkeypatch):
     monkeypatch.setenv('OOMMFTCL', oommf_tcl_path())
 
 
@@ -57,7 +57,7 @@ def oommf_tcl_path():
 @pytest.mark.skipif(
     oommf_tcl_path() is None,
     reason='Location of oommf.tcl unknown.')
-def test_tcl_oommf_runner(mock_oommftcl):
+def test_tcl_oommf_runner(mock_oommftcl_envvar):
     runner = oo.TclOOMMFRunner(oommf_tcl_path())
     assert isinstance(runner.errors(), str)
     check_runner(runner)
