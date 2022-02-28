@@ -31,7 +31,7 @@ repos:
 #   - id: codespell
 
 # temporarily
-- repo: https://github.com/pycqa/pycodestyle
-  rev: 2.8.0
+- repo: https://github.com/weibullguy/pycodestyle
+  rev: 2.6.1
   hooks:
   - id: pycodestyle
