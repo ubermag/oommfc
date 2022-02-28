@@ -1,7 +1,6 @@
 import contextlib
 import os
 import re
-import shutil
 import sys
 
 import micromagneticmodel as mm
