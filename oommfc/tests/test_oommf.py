@@ -1,5 +1,6 @@
 import contextlib
 import os
+import re
 import shutil
 import sys
 
@@ -65,6 +66,7 @@ def test_tcl_oommf_runner(monkeypatch):
     runner = oc.runner.runner
     assert isinstance(runner, oo.TclOOMMFRunner)
     check_runner(runner)
+    assert re.match(r'^TclOOMMFRunner\(.*\)$', repr(runner))
 
 
 def test_exe_oommf_runner():
@@ -79,6 +81,7 @@ def test_exe_oommf_runner():
     runner = oc.runner.runner
     assert isinstance(runner, oo.ExeOOMMFRunner)
     check_runner(runner)
+    assert re.match(r'^ExeOOMMFRunner\(.*\)$', repr(runner))
 
 
 @pytest.mark.skip(
@@ -100,10 +103,20 @@ def test_docker_oommf_runner():
     check_runner(runner)
 
 
-def test_get_oommf_runner():
+def test_docker_no_oommf_run():
+    runner = oo.DockerOOMMFRunner()
+    assert isinstance(runner, oo.DockerOOMMFRunner)
+    assert re.match(r'^DockerOOMMFRunner\(docker_exe=.*, image=.*\)$',
+                    repr(runner))
+    with pytest.raises(EnvironmentError):
+        runner.errors()
+
+
+def test_get_oommf_runner(monkeypatch):
+    monkeypatch.setenv('OOMMFTCL', 'wrong_name')  # wrong environment variable
     oc.runner.autoselect_runner()
     oommf_runner = oc.runner.runner
-    assert isinstance(oommf_runner, oo.OOMMFRunner)
+    assert isinstance(oommf_runner, oo.ExeOOMMFRunner)
     check_runner(oommf_runner)
 
 
@@ -128,15 +141,11 @@ def test_get_cached_runner(reset_runner, monkeypatch):
     check_runner(runner)
 
     oc.runner.cache_runner = False
-    expectation = (contextlib.nullcontext() if shutil.which('docker')
-                   else pytest.raises(EnvironmentError))
-    with expectation:
-        runner = oc.runner.runner
-        assert isinstance(runner, oo.DockerOOMMFRunner)
-        # check_runner cannot be used for Docker on CI
+    oc.runner.docker_exe = 'wrong_name'  # ensure that we do not find docker
+    with pytest.raises(EnvironmentError):
+        oc.runner.runner
 
     oc.runner.envvar = 'OOMMFTCL'
-    oc.runner.docker_exe = 'wrong_name'  # ensure that we do not find docker
     if oommf_tcl_path():
         expectation = contextlib.nullcontext()
         monkeypatch.setenv('OOMMFTCL', oommf_tcl_path())
@@ -170,8 +179,22 @@ def test_set_docker_oommf_runner():
     assert isinstance(oc.runner.runner, oo.DockerOOMMFRunner)
 
 
-def test_status():
+def test_runner_repr():
+    assert repr(oc.runner) == 'OOMMF runner: UNSET\nrunner is cached: True'
+    oc.runner.autoselect_runner()
+    assert re.match(r'^OOMMF runner: (Tcl|Exe|Docker)OOMMFRunner.+',
+                    repr(oc.runner))
+
+
+def test_set_invalid_runner():
+    with pytest.raises(ValueError):
+        oc.runner.runner = oo.TclOOMMFRunner('wrong_name')
+
+
+def test_status(monkeypatch):
     assert oc.runner.runner.status == 0
+    monkeypatch.setattr(oc.runner, '_runner', oo.TclOOMMFRunner('wrong_name'))
+    assert oc.runner.runner.status == 1
 
 
 def test_overhead():
