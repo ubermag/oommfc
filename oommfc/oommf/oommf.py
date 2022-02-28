@@ -497,7 +497,7 @@ class Runner:
                 if res.returncode:
                     log.warning(
                         'OOMMFTCL is set, but OOMMF could not be run.\n'
-                        'stdout:\n%(stdout)s\nstderr:\n%(sdterr)s', {
+                        'stdout:\n%(stdout)s\nstderr:\n%(stderr)s', {
                             'stdout': res.stdout,
                             'stderr': res.stderr
                         })
