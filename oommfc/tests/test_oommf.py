@@ -191,10 +191,12 @@ def test_set_invalid_runner():
         oc.runner.runner = oo.TclOOMMFRunner('wrong_name')
 
 
-def test_status(monkeypatch):
+def test_status():
     assert oc.runner.runner.status == 0
-    monkeypatch.setattr(oc.runner, '_runner', oo.TclOOMMFRunner('wrong_name'))
+    oc.runner._runner = oo.TclOOMMFRunner('wrong_name')  # force wrong runner
     assert oc.runner.runner.status == 1
+    oc.runner.autoselect_runner()  # let oommfc find a correct runner
+    assert oc.runner.runner.status == 0
 
 
 def test_overhead():
