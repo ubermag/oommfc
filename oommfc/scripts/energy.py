@@ -1,4 +1,3 @@
-import sys
 import numbers
 import oommfc as oc
 import warnings
@@ -70,11 +69,11 @@ def zeeman_script(term, system):
                 mif += '  set PI [expr {4*atan(1.)}]\n'
                 mif += f'  set w [expr {{ {term.f}*2*$PI }}]\n'
                 mif += f'  set tt [expr {{ $total_time - {term.t0} }}]\n'
-                mif += f'  set wt [expr {{ $w*$tt }}]\n'
+                mif += '  set wt [expr {{ $w*$tt }}]\n'
                 mif += '  set f [expr {sin($wt)}]\n'
                 mif += '  set df [expr {$w*cos($wt)}]\n'
-                mif += f'  set ft [expr {{ $f }}]\n'
-                mif += f'  set dft [expr {{ $df }}]\n'
+                mif += '  set ft [expr {{ $f }}]\n'
+                mif += '  set dft [expr {{ $df }}]\n'
                 mif += ('  return [list $ft 0 0 0 $ft 0 0 0 $ft '
                         '$dft 0 0 0 $dft 0 0 0 $dft ] \n')
                 mif += '}\n\n'
@@ -92,17 +91,17 @@ def zeeman_script(term, system):
                 mif += ('  if {$wt != 0} { set df '
                         '[expr {($wt*$w*$coswt - $w*$sinwt)/($wt*$wt)}] }\n')
                 mif += '  if {$wt == 0} { set df [expr {0}] }\n'
-                mif += f'  set ft [expr {{ $f }}]\n'
-                mif += f'  set dft [expr {{ $df }}]\n'
+                mif += '  set ft [expr {{ $f }}]\n'
+                mif += '  set dft [expr {{ $df }}]\n'
                 mif += ('  return [list $ft 0 0 0 $ft 0 0 0 $ft '
                         '$dft 0 0 0 $dft 0 0 0 $dft ] \n')
                 mif += '}\n\n'
 
             mif += '# TransformZeeman\n'
             mif += f'Specify Oxs_TransformZeeman:{term.name} {{\n'
-            mif += f'  type general\n'
-            mif += f'  script_args total_time\n'
-            mif += f'  script TimeFunction\n'
+            mif += '  type general\n'
+            mif += '  script_args total_time\n'
+            mif += '  script TimeFunction\n'
             mif += f'  field {Hname}\n'
             mif += '}\n\n'
         else:
@@ -111,7 +110,7 @@ def zeeman_script(term, system):
                 mif += '  set PI [expr {4*atan(1.)}]\n'
                 mif += f'  set w [expr {{ {term.f}*2*$PI }}]\n'
                 mif += f'  set tt [expr {{ $total_time - {term.t0} }}]\n'
-                mif += f'  set wt [expr {{ $w*$tt }}]\n'
+                mif += '  set wt [expr {{ $w*$tt }}]\n'
                 mif += '  set f [expr {sin($wt)}]\n'
                 mif += '  set df [expr {$w*cos($wt)}]\n'
                 mif += f'  set Hx [expr {{ {term.H[0]}*$f }}]\n'
@@ -146,8 +145,8 @@ def zeeman_script(term, system):
 
             mif += '# ScriptUZeeman\n'
             mif += f'Specify Oxs_ScriptUZeeman:{term.name} {{\n'
-            mif += f'  script_args total_time\n'
-            mif += f'  script TimeFunction\n'
+            mif += '  script_args total_time\n'
+            mif += '  script TimeFunction\n'
             mif += '}\n\n'
     elif hasattr(term, 'tlist'):
         if isinstance(term.H, (df.Field, dict)):
@@ -202,8 +201,8 @@ def zeeman_script(term, system):
 
             mif += '# ScriptUZeeman\n'
             mif += f'Specify Oxs_ScriptUZeeman:{term.name} {{\n'
-            mif += f'  script_args total_time\n'
-            mif += f'  script TimeFunction\n'
+            mif += '  script_args total_time\n'
+            mif += '  script TimeFunction\n'
             mif += '}\n\n'
     elif isinstance(term.tcl_strings, dict):
         mif += term.tcl_strings['script']
@@ -415,7 +414,7 @@ def rkky_script(term, system):
     mif += f'    region {first_name}\n'
     mif += '    scalarfield :rkkyfield\n'
     mif += f'    scalarvalue {first.pmax[df.util.axesdict[direction]]}\n'
-    mif += f'    scalarside -\n'
+    mif += '    scalarside -\n'
     mif += '  }\n'
 
     mif += '  surface2 {\n'
@@ -423,7 +422,7 @@ def rkky_script(term, system):
     mif += f'    region {second_name}\n'
     mif += '    scalarfield :rkkyfield\n'
     mif += f'    scalarvalue {second.pmin[df.util.axesdict[direction]]}\n'
-    mif += f'    scalarside +\n'
+    mif += '    scalarside +\n'
     mif += '  }\n'
 
     mif += '}\n\n'

@@ -1,7 +1,6 @@
 import re
 import os
 import glob
-import shutil
 import oommfc as oc
 import ubermagtable as ut
 import discretisedfield as df
