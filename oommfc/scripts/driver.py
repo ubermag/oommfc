@@ -1,4 +1,3 @@
-import numpy as np
 import oommfc as oc
 import micromagneticmodel as mm
 import ubermagutil.typesystem as ts
@@ -32,8 +31,8 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
         mif += '# OxS_UZeeman\n'
         mif += 'Specify Oxs_UZeeman:hysteresis {\n'
         mif += '  Hrange {\n'
-        mif += '    {{ {} {} {} {} {} {} {} }}\n'.format(*Hmin, *Hmax, n-1)
-        mif += '    {{ {} {} {} {} {} {} {} }}\n'.format(*Hmax, *Hmin, n-1)
+        mif += '    {{ {} {} {} {} {} {} {} }}\n'.format(*Hmin, *Hmax, n - 1)
+        mif += '    {{ {} {} {} {} {} {} {} }}\n'.format(*Hmax, *Hmin, n - 1)
         mif += '  }\n'
         mif += '}\n\n'
 
@@ -190,8 +189,8 @@ def driver_script(driver, system, fixed_subregions=None, compute=None,
         mif += 'Specify Oxs_TimeDriver {\n'
         mif += '  evolver :evolver\n'
         mif += '  mesh :mesh\n'
-        mif += f'  Ms :m0_norm\n'
-        mif += f'  m0 :m0\n'
+        mif += '  Ms :m0_norm\n'
+        mif += '  m0 :m0\n'
         mif += f'  stopping_time {t/n}\n'
         mif += f'  stage_count {n}\n'
         for attr, value in driver:

@@ -1,10 +1,8 @@
 import os
 import numpy as np
-import sys
 import abc
 import glob
 import json
-import shutil
 import datetime
 import contextlib
 import oommfc as oc

@@ -58,10 +58,10 @@ class HysteresisDriver(Driver):
         Hmin, Hmax, n = kwargs['Hmin'], kwargs['Hmax'], kwargs['n']
         for i in [Hmin, Hmax]:
             if not isinstance(i, (list, tuple, np.ndarray)):
-                msg = f'Hmin and Hmax must have array_like values.'
+                msg = 'Hmin and Hmax must have array_like values.'
                 raise ValueError(msg)
             if len(i) != 3:
-                msg = f'Hmin and Hmax must have length 3.'
+                msg = 'Hmin and Hmax must have length 3.'
                 raise ValueError(msg)
         if not isinstance(n, int):
             msg = f'Cannot drive with {type(n)=}.'
