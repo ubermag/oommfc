@@ -1,14 +1,16 @@
-import os
-import numpy as np
 import abc
+import contextlib
+import datetime
 import glob
 import json
-import datetime
-import contextlib
-import oommfc as oc
-import ubermagtable as ut
+import os
+
 import discretisedfield as df
 import micromagneticmodel as mm
+import numpy as np
+import ubermagtable as ut
+
+import oommfc as oc
 
 
 @contextlib.contextmanager

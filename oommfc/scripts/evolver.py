@@ -1,6 +1,8 @@
-import oommfc as oc
 import numbers
+
 import numpy as np
+
+import oommfc as oc
 
 
 def evolver_script(evolver, **kwargs):

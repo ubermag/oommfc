@@ -1,10 +1,12 @@
-import re
-import os
 import glob
-import oommfc as oc
-import ubermagtable as ut
+import os
+import re
+
 import discretisedfield as df
 import micromagneticmodel as mm
+import ubermagtable as ut
+
+import oommfc as oc
 
 
 def oxs_class(term, system):

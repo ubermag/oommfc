@@ -1,3 +1,3 @@
 """OOMMF driving utility"""
-from .oommf import (OOMMFRunner, TclOOMMFRunner, ExeOOMMFRunner,
-                    DockerOOMMFRunner, Runner, overhead)
+from .oommf import (DockerOOMMFRunner, ExeOOMMFRunner, OOMMFRunner, Runner,
+                    TclOOMMFRunner, overhead)
