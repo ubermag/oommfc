@@ -110,7 +110,7 @@ def all(unittest):
 
 
 test_collection.add_task(unittest)
-test_collection.add_test(coverage)
+test_collection.add_task(coverage)
 test_collection.add_task(docs)
 test_collection.add_task(ipynb)
 test_collection.add_task(pycodestyle)
