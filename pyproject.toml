@@ -46,13 +46,10 @@ dependencies = [
 dev = [
     "build",
     "invoke",
-    "pre-commit",
-    "twine"
-]
-test = [
     "nbval",
-    "pytest",
-    "pytest-cov"
+    "pre-commit",
+    "pytest-cov",
+    "twine"
 ]
 
 [project.urls]
