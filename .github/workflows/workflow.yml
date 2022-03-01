@@ -30,7 +30,7 @@ jobs:
       run: python -m pip install .[dev]
 
     - name: Unit tests
-      run: invoke test.unittests
+      run: invoke test.unittest
       if: matrix.os != 'ubuntu-latest'
 
     - name: Unit tests with coverage
