@@ -1,7 +1,9 @@
 import numbers
-import oommfc as oc
 import warnings
+
 import discretisedfield as df
+
+import oommfc as oc
 
 
 def energy_script(system):

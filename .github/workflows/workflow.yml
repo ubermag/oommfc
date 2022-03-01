@@ -2,8 +2,6 @@ name: workflow
 
 on:
   push:
-    branches-ignore:
-      - 'stable'
   schedule:
     - cron: '0 0 * * 1'  # run every Monday
 
@@ -28,28 +26,22 @@ jobs:
         activate-environment: conda-environment
         environment-file: .github/environment.yml
 
-    - name: Install testing packages  # can be removed after switching to pre-commit
-      run: python -m pip install --upgrade pip pycodestyle
-
     - name: Install package
-      run: python -m pip install .[test]
+      run: python -m pip install .[dev]
 
     - name: Unit tests
-      run: make test-unittests
+      run: invoke test.unittest
       if: matrix.os != 'ubuntu-latest'
 
     - name: Unit tests with coverage
-      run: make test-coverage
+      run: invoke test.coverage
       if: matrix.os == 'ubuntu-latest'
 
     - name: Documentation tests
-      run: make test-docs
+      run: invoke test.docs
 
     - name: Jupyter notebook tests
-      run: make test-ipynb
-
-    - name: Python code style
-      run: make test-pycodestyle
+      run: invoke test.ipynb
 
     - name: Upload coverage to Codecov.io
       uses: codecov/codecov-action@v1

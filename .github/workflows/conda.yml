@@ -18,7 +18,7 @@ jobs:
     - name: Initialisation
       uses: actions/checkout@v2
       with:
-        ref: stable
+        ref: latest
 
     - name: Set up conda
       uses: conda-incubator/setup-miniconda@v2
@@ -28,7 +28,7 @@ jobs:
         environment-file: binder/environment.yml
 
     - name: Install testing packages
-      run: python -m pip install --upgrade pip pytest-cov nbval pycodestyle
+      run: conda install -c conda-forge -y pytest nbval invoke
 
     - name: Test all
-      run: make test-all
+      run: invoke test.all

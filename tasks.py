@@ -104,12 +104,13 @@ def pycodestyle(c):
     c.run(f'{PYTHON} -m pycodestyle --filename=*.py .')
 
 
-@task(unittest, docs, ipynb, pycodestyle)
+@task(unittest, docs, ipynb)
 def all(unittest):
     """Run all tests."""
 
 
 test_collection.add_task(unittest)
+test_collection.add_task(coverage)
 test_collection.add_task(docs)
 test_collection.add_task(ipynb)
 test_collection.add_task(pycodestyle)

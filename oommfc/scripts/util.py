@@ -1,6 +1,7 @@
 import numbers
-import numpy as np
+
 import discretisedfield as df
+import numpy as np
 
 
 def box_atlas(pmin, pmax, name):
