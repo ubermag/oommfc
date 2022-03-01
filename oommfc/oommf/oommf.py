@@ -300,8 +300,8 @@ class ExeOOMMFRunner(NativeOOMMFRunner):
     """
 
     def __init__(self, oommf_exe='oommf'):
-        self.oommf_exe = oommf_exe
-        self.oommf = [oommf_exe]
+        self.oommf_exe = shutil.which(oommf_exe)
+        self.oommf = [self.oommf_exe]
         super().__init__()
 
     def errors(self):
@@ -333,11 +333,11 @@ class DockerOOMMFRunner(OOMMFRunner):
 
     image: str
 
-        Docker image on DockerHub. Defaults to ``oommf/oommf:20a2``.
+        Docker image on DockerHub. Defaults to ``oommf/oommf:20a3``.
 
     """
 
-    def __init__(self, docker_exe='docker', image='oommf/oommf:20a2'):
+    def __init__(self, docker_exe='docker', image='oommf/oommf:20a3'):
         self.docker_exe = docker_exe
         self.image = image
 
@@ -497,7 +497,7 @@ class Runner:
                 if res.returncode:
                     log.warning(
                         'OOMMFTCL is set, but OOMMF could not be run.\n'
-                        'stdout:\n%(stdout)s\nstderr:\n%(sdterr)s', {
+                        'stdout:\n%(stdout)s\nstderr:\n%(stderr)s', {
                             'stdout': res.stdout,
                             'stderr': res.stderr
                         })

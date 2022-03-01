@@ -19,10 +19,10 @@ repos:
 #   hooks:
 #     - id: nbqa-isort  # isort inside Jupyter notebooks
 
-# - repo: https://gitlab.com/pycqa/flake8
-#   rev: 3.9.2
-#   hooks:
-#   - id: flake8
+- repo: https://gitlab.com/pycqa/flake8
+  rev: 3.9.2
+  hooks:
+  - id: flake8
 #     # additional_dependencies: [flake8-rst-docstrings]  #, flake8-docstrings]
 
 # - repo: https://github.com/codespell-project/codespell
