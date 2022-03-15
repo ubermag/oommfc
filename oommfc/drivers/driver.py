@@ -229,6 +229,7 @@ class Driver(mm.Driver):
                 # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
                 omffiles = glob.iglob(f'{system.name}*.omf')
                 lastomffile = sorted(omffiles)[-1]
+                # pass Field.array instead of Field for better performance
                 system.m.value = df.Field.fromfile(lastomffile).array
 
                 # Update system's datatable.
