@@ -205,14 +205,6 @@ class Driver(mm.Driver):
             with open(miffilename, 'w') as miffile:
                 miffile.write(mif)
 
-            # free memory
-            for term in system.energy:
-                if (hasattr(term, 'func')
-                        and callable(term.func)):
-                    del term.tlist
-                    del term.dtlist
-            del mif
-
             # Generate and save json info file for a drive (not compute).
             if compute is None:
                 info = {}
