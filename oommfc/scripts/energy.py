@@ -67,7 +67,7 @@ def zeeman_script(term, system):
                 FutureWarning)
         if isinstance(term.H, (df.Field, dict)):
             if term.wave == 'sin' or term.func == 'sin':
-                mif += 'proc TimeFunction { total_time } {\n'
+                mif += f'proc TimeFunction:{term.name} {{ total_time }} {{\n'
                 mif += '  set PI [expr {4*atan(1.)}]\n'
                 mif += f'  set w [expr {{ {term.f}*2*$PI }}]\n'
                 mif += f'  set tt [expr {{ $total_time - {term.t0} }}]\n'
@@ -81,7 +81,7 @@ def zeeman_script(term, system):
                 mif += '}\n\n'
 
             elif term.wave == 'sinc' or term.func == 'sinc':
-                mif += 'proc TimeFunction { total_time } {\n'
+                mif += f'proc TimeFunction:{term.name} {{ total_time }} {{\n'
                 mif += '  set PI [expr {4*atan(1.)}]\n'
                 mif += f'  set w [expr {{ {term.f}*2*$PI }}]\n'
                 mif += f'  set tt [expr {{ $total_time - {term.t0} }}]\n'
@@ -103,12 +103,12 @@ def zeeman_script(term, system):
             mif += f'Specify Oxs_TransformZeeman:{term.name} {{\n'
             mif += '  type general\n'
             mif += '  script_args total_time\n'
-            mif += '  script TimeFunction\n'
+            mif += f'  script TimeFunction:{term.name}\n'
             mif += f'  field {Hname}\n'
             mif += '}\n\n'
         else:
             if term.wave == 'sin' or term.func == 'sin':
-                mif += 'proc TimeFunction { total_time } {\n'
+                mif += f'proc TimeFunction:{term.name} {{ total_time }} {{\n'
                 mif += '  set PI [expr {4*atan(1.)}]\n'
                 mif += f'  set w [expr {{ {term.f}*2*$PI }}]\n'
                 mif += f'  set tt [expr {{ $total_time - {term.t0} }}]\n'
@@ -124,7 +124,7 @@ def zeeman_script(term, system):
                 mif += '  return [list $Hx $Hy $Hz $dHx $dHy $dHz ] \n'
                 mif += '}\n\n'
             elif term.wave == 'sinc' or term.func == 'sinc':
-                mif += 'proc TimeFunction { total_time } {\n'
+                mif += f'proc TimeFunction:{term.name} {{ total_time }} {{\n'
                 mif += '  set PI [expr {4*atan(1.)}]\n'
                 mif += f'  set w [expr {{ {term.f}*2*$PI }}]\n'
                 mif += f'  set tt [expr {{ $total_time - {term.t0} }}]\n'
@@ -148,11 +148,11 @@ def zeeman_script(term, system):
             mif += '# ScriptUZeeman\n'
             mif += f'Specify Oxs_ScriptUZeeman:{term.name} {{\n'
             mif += '  script_args total_time\n'
-            mif += '  script TimeFunction\n'
+            mif += f'  script TimeFunction:{term.name}\n'
             mif += '}\n\n'
     elif hasattr(term, 'tlist'):
         if isinstance(term.H, (df.Field, dict)):
-            mif += 'proc TimeFunction { total_time } {\n'
+            mif += f'proc TimeFunction:{term.name} {{ total_time }} {{\n'
             mif += f'  set tstep {term.dt}\n'
             mif += '  set index [expr round($total_time/$tstep)]\n'
             tstr = ' '.join(map(str, term.tlist))
@@ -181,11 +181,11 @@ def zeeman_script(term, system):
             else:
                 mif += '  type diagonal\n'
             mif += '  script_args total_time\n'
-            mif += '  script TimeFunction\n'
+            mif += f'  script TimeFunction:{term.name}\n'
             mif += f'  field {Hname}\n'
             mif += '}\n\n'
         else:
-            mif += 'proc TimeFunction { total_time } {\n'
+            mif += f'proc TimeFunction:{term.name} {{ total_time }} {{\n'
             mif += f'  set tstep {term.dt}\n'
             mif += '  set index [expr round($total_time/$tstep)]\n'
             mif += f'  set H_t_fac {{ {" ".join(map(str, term.tlist))} }}\n'
@@ -204,7 +204,7 @@ def zeeman_script(term, system):
             mif += '# ScriptUZeeman\n'
             mif += f'Specify Oxs_ScriptUZeeman:{term.name} {{\n'
             mif += '  script_args total_time\n'
-            mif += '  script TimeFunction\n'
+            mif += f'  script TimeFunction:{term.name}\n'
             mif += '}\n\n'
     elif isinstance(term.tcl_strings, dict):
         mif += term.tcl_strings['script']
