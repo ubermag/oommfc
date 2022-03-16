@@ -11,6 +11,54 @@ PYTHON = 'python'
 ns = Collection()
 
 
+test_collection = Collection('test')
+
+
+@task
+def unittest(c):
+    """Run unittests."""
+    import oommfc
+    result = oommfc.test()
+    raise Exit(code=result)
+
+
+@task
+def coverage(c):
+    """Run unittests with coverage."""
+    result = pytest.main(['-v', '--cov', 'oommfc',
+                          '--cov-report', 'xml'])
+    raise Exit(code=result)
+
+
+@task
+def docs(c):
+    """Run doctests."""
+    result = pytest.main(['-v', '--doctest-modules', '--ignore',
+                          'oommfc/tests', 'oommfc'])
+    raise Exit(code=result)
+
+
+@task
+def ipynb(c):
+    """Test notebooks."""
+    result = pytest.main(['-v', '--nbval', '--sanitize-with', 'nbval.cfg',
+                          'docs'])
+    raise Exit(code=result)
+
+
+@task(unittest, docs, ipynb)
+def all(c):
+    """Run all tests."""
+
+
+test_collection.add_task(unittest)
+test_collection.add_task(coverage)
+test_collection.add_task(docs)
+test_collection.add_task(ipynb)
+test_collection.add_task(all)
+ns.add_collection(test_collection)
+
+
 @task
 def build_dists(c):
     """Build sdist and wheel."""
@@ -44,6 +92,9 @@ def release(c):
     if res.stdout != '':
         raise Exit('Working tree is not clean. Aborting.')
 
+    # run all tests
+    all(c)
+
     version = iniconfig.IniConfig('setup.cfg').get('metadata', 'version')
     # sanity checks while we have two places containing the version.
     with open('pyproject.toml', 'rb') as f:
@@ -64,55 +115,3 @@ def release(c):
 ns.add_task(build_dists)
 ns.add_task(upload)
 ns.add_task(release)
-
-test_collection = Collection('test')
-
-
-@task
-def unittest(c):
-    """Run unittests."""
-    import oommfc
-    oommfc.test()
-
-
-@task
-def coverage(c):
-    """Run unittests with coverage."""
-    pytest.main(['-v', '--cov', 'oommfc', '--cov-report', 'xml'])
-
-
-@task
-def docs(c):
-    """Run doctests."""
-    pytest.main(['-v', '--doctest-modules', '--ignore',
-                 'oommfc/tests', 'oommfc'])
-
-
-@task
-def ipynb(c):
-    """Test notebooks."""
-    pytest.main(['-v', '--nbval', '--sanitize-with', 'nbval.cfg',
-                 'docs'])
-
-
-@task
-def pycodestyle(c):
-    """Test pycodestyle.
-
-    Will be replaces with flake8.
-    """
-    c.run(f'{PYTHON} -m pycodestyle --filename=*.py .')
-
-
-@task(unittest, docs, ipynb)
-def all(unittest):
-    """Run all tests."""
-
-
-test_collection.add_task(unittest)
-test_collection.add_task(coverage)
-test_collection.add_task(docs)
-test_collection.add_task(ipynb)
-test_collection.add_task(pycodestyle)
-test_collection.add_task(all)
-ns.add_collection(test_collection)
