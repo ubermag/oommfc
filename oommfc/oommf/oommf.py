@@ -101,12 +101,13 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
                 stderr = res.stderr.decode('utf-8', 'replace')
                 stdout = res.stdout.decode('utf-8', 'replace')
                 cmdstr = ' '.join(res.args)
-                print('OOMMF error:')
-                print(f'\tcommand: {cmdstr}')
-                print(f'\tstdout: {stdout}')
-                print(f'\tstderr: {stderr}')
-                print('\n')
-            raise RuntimeError('Error in OOMMF run.')
+                msg = 'OOMMF error:'
+                msg += f'\tcommand: {cmdstr}\n'
+                msg += f'\tstdout: {stdout}\n'
+                msg += f'\tstderr: {stderr}\n'
+            else:
+                msg = 'Error in OOMMF run.'
+            raise RuntimeError(msg)
 
         return res
 
