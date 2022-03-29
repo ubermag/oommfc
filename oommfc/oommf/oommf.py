@@ -95,18 +95,16 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
             print(seconds)  # append seconds to the previous print.
 
         if res.returncode != 0:
+            msg = 'Error in OOMMF run.'
+            cmdstr = ' '.join(res.args)
+            msg += f'\tcommand: {cmdstr}\n'
             if sys.platform != 'win32':
                 # Only on Linux and MacOS - on Windows we do not get stderr and
                 # stdout.
                 stderr = res.stderr.decode('utf-8', 'replace')
                 stdout = res.stdout.decode('utf-8', 'replace')
-                cmdstr = ' '.join(res.args)
-                msg = 'OOMMF error:'
-                msg += f'\tcommand: {cmdstr}\n'
                 msg += f'\tstdout: {stdout}\n'
                 msg += f'\tstderr: {stderr}\n'
-            else:
-                msg = 'Error in OOMMF run.'
             raise RuntimeError(msg)
 
         return res
