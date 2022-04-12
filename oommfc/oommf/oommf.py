@@ -154,7 +154,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         '...'
 
         """
-        res = self.call(argstr='+version', need_stderr=True)
+        res = self.call(argstr='+version', need_stderr=True, verbose=0)
         return res.stderr.decode('utf-8').split('OOMMF')[-1].strip()
 
     @property
@@ -180,7 +180,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
 
         """
         # in 2.0a3 platform information is written to stdout
-        res = self.call(argstr='+platform', need_stderr=True)
+        res = self.call(argstr='+platform', need_stderr=True, verbose=0)
         return res.stdout.decode('utf-8')
 
     @property
