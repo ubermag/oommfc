@@ -95,18 +95,17 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
             print(seconds)  # append seconds to the previous print.
 
         if res.returncode != 0:
+            msg = 'Error in OOMMF run.\n'
+            cmdstr = ' '.join(res.args)
+            msg += f'command: {cmdstr}\n'
             if sys.platform != 'win32':
                 # Only on Linux and MacOS - on Windows we do not get stderr and
                 # stdout.
                 stderr = res.stderr.decode('utf-8', 'replace')
                 stdout = res.stdout.decode('utf-8', 'replace')
-                cmdstr = ' '.join(res.args)
-                print('OOMMF error:')
-                print(f'\tcommand: {cmdstr}')
-                print(f'\tstdout: {stdout}')
-                print(f'\tstderr: {stderr}')
-                print('\n')
-            raise RuntimeError('Error in OOMMF run.')
+                msg += f'stdout: {stdout}\n'
+                msg += f'stderr: {stderr}\n'
+            raise RuntimeError(msg)
 
         return res
 
@@ -151,11 +150,10 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         ...
         >>> runner = oc.runner.runner
         >>> runner.version
-        Running OOMMF...
         '...'
 
         """
-        res = self.call(argstr='+version', need_stderr=True)
+        res = self.call(argstr='+version', need_stderr=True, verbose=0)
         return res.stderr.decode('utf-8').split('OOMMF')[-1].strip()
 
     @property
@@ -176,12 +174,11 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         ...
         >>> runner = oc.runner.runner
         >>> runner.platform
-        Running OOMMF...
         '...'
 
         """
         # in 2.0a3 platform information is written to stdout
-        res = self.call(argstr='+platform', need_stderr=True)
+        res = self.call(argstr='+platform', need_stderr=True, verbose=0)
         return res.stdout.decode('utf-8')
 
     @property
