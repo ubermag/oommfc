@@ -29,7 +29,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         if sys.platform != 'win32':
             self._kill()
 
-    def call(self, argstr, need_stderr=True, n_threads=None, verbose=1):
+    def call(self, argstr, need_stderr=False, n_threads=None, verbose=1):
         """Call OOMMF by passing ``argstr`` to OOMMF.
 
         Parameters
