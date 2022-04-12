@@ -150,7 +150,6 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         ...
         >>> runner = oc.runner.runner
         >>> runner.version
-        Running OOMMF...
         '...'
 
         """
@@ -175,7 +174,6 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         ...
         >>> runner = oc.runner.runner
         >>> runner.platform
-        Running OOMMF...
         '...'
 
         """
