@@ -52,9 +52,9 @@ def delete(system, silent=False):
             shutil.rmtree(system.name)
             system.drive_number = 0
         except Exception as e:
-            print('Cannot delete system directory.')
+            print("Cannot delete system directory.")
             print(e)
     else:
         if not silent:
-            msg = f'Directory {system.name} does not exist.'
+            msg = f"Directory {system.name} does not exist."
             raise FileNotFoundError(msg)

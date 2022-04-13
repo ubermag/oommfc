@@ -34,15 +34,18 @@ class EulerEvolver(mm.Evolver):
     [...]
 
     """
-    _allowed_attributes = ['alpha',
-                           'gamma_LL',
-                           'gamma_G',
-                           'do_precess',
-                           'min_timestep',
-                           'max_timestep',
-                           'fixed_spins',
-                           'start_dm',
-                           'error_rate',
-                           'absolute_step_error',
-                           'relative_step_error',
-                           'step_headroom']
+
+    _allowed_attributes = [
+        "alpha",
+        "gamma_LL",
+        "gamma_G",
+        "do_precess",
+        "min_timestep",
+        "max_timestep",
+        "fixed_spins",
+        "start_dm",
+        "error_rate",
+        "absolute_step_error",
+        "relative_step_error",
+        "step_headroom",
+    ]

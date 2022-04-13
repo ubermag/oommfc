@@ -35,11 +35,13 @@ class UHH_ThetaEvolver(mm.Evolver):
     [...]
 
     """
-    _allowed_attributes = ['alpha',
-                           'do_precess',
-                           'gamma_LL',
 
-                           'fixed_timestep',
-                           'temperature',
-                           'uniform_seed',
-                           'ito_calculus']
+    _allowed_attributes = [
+        "alpha",
+        "do_precess",
+        "gamma_LL",
+        "fixed_timestep",
+        "temperature",
+        "uniform_seed",
+        "ito_calculus",
+    ]
