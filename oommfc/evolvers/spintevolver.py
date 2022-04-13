@@ -35,12 +35,15 @@ class SpinTEvolver(mm.Evolver):
     [...]
 
     """
-    _allowed_attributes = ['alpha',
-                           'gamma_LL',
-                           'gamma_G',
-                           'do_precess',
-                           'u',
-                           'u_profile',
-                           'u_profile_args',
-                           'beta',
-                           'method']
+
+    _allowed_attributes = [
+        "alpha",
+        "gamma_LL",
+        "gamma_G",
+        "do_precess",
+        "u",
+        "u_profile",
+        "u_profile_args",
+        "beta",
+        "method",
+    ]

@@ -34,12 +34,15 @@ class CGEvolver(mm.Evolver):
     [...]
 
     """
-    _allowed_attributes = ['gradient_reset_angle',
-                           'gradient_reset_count',
-                           'minimum_bracket_step',
-                           'maximum_bracket_step',
-                           'line_minimum_angle_precision',
-                           'line_minimum_relwidth',
-                           'energy_precision',
-                           'method',
-                           'fixed_spins']
+
+    _allowed_attributes = [
+        "gradient_reset_angle",
+        "gradient_reset_count",
+        "minimum_bracket_step",
+        "maximum_bracket_step",
+        "line_minimum_angle_precision",
+        "line_minimum_relwidth",
+        "energy_precision",
+        "method",
+        "fixed_spins",
+    ]

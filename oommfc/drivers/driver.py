@@ -15,9 +15,7 @@ import oommfc as oc
 
 @contextlib.contextmanager
 def _changedir(dirname):
-    """Context manager for changing directory.
-
-    """
+    """Context manager for changing directory."""
     cwd = os.getcwd()
     os.chdir(dirname)
     try:
@@ -27,26 +25,35 @@ def _changedir(dirname):
 
 
 class Driver(mm.Driver):
-    """Driver base class.
+    """Driver base class."""
 
-    """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        if hasattr(self, 'evolver'):
+        if hasattr(self, "evolver"):
             self.autoselect_evolver = False
         else:
             self.autoselect_evolver = True
 
     @abc.abstractmethod
     def _checkargs(self, **kwargs):
-        """Abstract method for checking arguments.
-
-        """
+        """Abstract method for checking arguments."""
         pass  # pragma: no cover
 
-    def drive(self, system, /, dirname='.', append=True, fixed_subregions=None,
-              compute=None, output_step=False, n_threads=None, runner=None,
-              ovf_format='bin8', verbose=1, **kwargs):
+    def drive(
+        self,
+        system,
+        /,
+        dirname=".",
+        append=True,
+        fixed_subregions=None,
+        compute=None,
+        output_step=False,
+        n_threads=None,
+        runner=None,
+        ovf_format="bin8",
+        verbose=1,
+        **kwargs,
+    ):
         """Drives the system in phase space.
 
         Takes ``micromagneticmodel.System`` and drives it in the phase space.
@@ -143,40 +150,42 @@ class Driver(mm.Driver):
         # system directory already exists
         if os.path.exists(os.path.join(dirname, system.name)):
             dirs = os.listdir(os.path.join(dirname, system.name))
-            drive_dirs = [i for i in dirs if i.startswith('drive')]
-            compute_dirs = [i for i in dirs if i.startswith('compute')]
+            drive_dirs = [i for i in dirs if i.startswith("drive")]
+            compute_dirs = [i for i in dirs if i.startswith("compute")]
             if compute is None:
                 if drive_dirs:
                     if append:
-                        numbers = list(zip(*[i.split('-')
-                                             for i in drive_dirs]))[1]
+                        numbers = list(zip(*[i.split("-") for i in drive_dirs]))[1]
                         numbers = list(map(int, numbers))
                         system.drive_number = max(numbers) + 1
                     else:
-                        msg = (f'Directory {system.name=} already exists. To '
-                               f'append drives to it, pass append=True.')
+                        msg = (
+                            f"Directory {system.name=} already exists. To "
+                            "append drives to it, pass append=True."
+                        )
                         raise FileExistsError(msg)
                 else:
                     system.drive_number = 0
             else:
                 if compute_dirs:
                     if append:
-                        numbers = list(zip(*[i.split('-')
-                                             for i in compute_dirs]))[1]
+                        numbers = list(zip(*[i.split("-") for i in compute_dirs]))[1]
                         numbers = list(map(int, numbers))
                         system.compute_number = max(numbers) + 1
                     else:
-                        msg = (f'Directory {system.name=} already exists. To '
-                               f'append drives to it, pass append=True.')
+                        msg = (
+                            f"Directory {system.name=} already exists. To "
+                            "append drives to it, pass append=True."
+                        )
                         raise FileExistsError(msg)
                 else:
                     system.compute_number = 0
 
         # Generate directory.
         if compute is None:
-            subdir = f'drive-{system.drive_number}'
+            subdir = f"drive-{system.drive_number}"
         else:
-            subdir = f'compute-{system.compute_number}'
+            subdir = f"compute-{system.compute_number}"
 
         workingdir = os.path.join(dirname, system.name, subdir)
 
@@ -186,60 +195,62 @@ class Driver(mm.Driver):
 
         # compute tlist for time-dependent field (current)
         for term in system.energy:
-            if (hasattr(term, 'func')
-                    and callable(term.func)):
+            if hasattr(term, "func") and callable(term.func):
                 self._time_dependence(term=term, **kwargs)
 
         # Change directory to workingdir
         with _changedir(workingdir):
             # Generate the necessary filenames.
-            miffilename = f'{system.name}.mif'
-            jsonfilename = 'info.json'
+            miffilename = f"{system.name}.mif"
+            jsonfilename = "info.json"
 
             # Generate and save mif file.
             mif = oc.scripts.system_script(system, ovf_format=ovf_format)
-            mif += oc.scripts.driver_script(self, system,
-                                            fixed_subregions=fixed_subregions,
-                                            output_step=output_step,
-                                            compute=compute, **kwargs)
-            with open(miffilename, 'w') as miffile:
+            mif += oc.scripts.driver_script(
+                self,
+                system,
+                fixed_subregions=fixed_subregions,
+                output_step=output_step,
+                compute=compute,
+                **kwargs,
+            )
+            with open(miffilename, "w") as miffile:
                 miffile.write(mif)
 
             # Generate and save json info file for a drive (not compute).
             if compute is None:
                 info = {}
-                info['drive_number'] = system.drive_number
-                info['date'] = datetime.datetime.now().strftime('%Y-%m-%d')
-                info['time'] = datetime.datetime.now().strftime('%H:%M:%S')
-                info['driver'] = self.__class__.__name__
+                info["drive_number"] = system.drive_number
+                info["date"] = datetime.datetime.now().strftime("%Y-%m-%d")
+                info["time"] = datetime.datetime.now().strftime("%H:%M:%S")
+                info["driver"] = self.__class__.__name__
                 for k, v in kwargs.items():
                     info[k] = v
-                with open(jsonfilename, 'w') as jsonfile:
+                with open(jsonfilename, "w") as jsonfile:
                     jsonfile.write(json.dumps(info))
 
             if runner is None:
                 runner = oc.runner.runner
-            runner.call(argstr=miffilename, n_threads=n_threads,
-                        verbose=verbose)
+            runner.call(argstr=miffilename, n_threads=n_threads, verbose=verbose)
 
             # Update system's m and datatable attributes if the derivation of
             # E, Heff, or energy density was not asked.
             if compute is None:
                 # Update system's magnetisation. An example .omf filename:
                 # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
-                omffiles = glob.iglob(f'{system.name}*.omf')
+                omffiles = glob.iglob(f"{system.name}*.omf")
                 lastomffile = sorted(omffiles)[-1]
                 # pass Field.array instead of Field for better performance
                 system.m.value = df.Field.fromfile(lastomffile).array
 
                 # Update system's datatable.
                 if isinstance(self, oc.TimeDriver):
-                    x = 't'
+                    x = "t"
                 elif isinstance(self, oc.MinDriver):
-                    x = 'iteration'
+                    x = "iteration"
                 elif isinstance(self, oc.HysteresisDriver):
-                    x = 'B_hysteresis'
-                system.table = ut.Table.fromfile(f'{system.name}.odt', x=x)
+                    x = "B_hysteresis"
+                system.table = ut.Table.fromfile(f"{system.name}.odt", x=x)
 
         if compute is None:
             system.drive_number += 1
@@ -247,15 +258,17 @@ class Driver(mm.Driver):
             system.compute_number += 1
 
         # remove information about fixed cells for subsequent runs
-        if hasattr(self.evolver, 'fixed_spins'):
+        if hasattr(self.evolver, "fixed_spins"):
             del self.evolver.fixed_spins
 
     def _time_dependence(self, term, **kwargs):
         try:
-            tmax = kwargs['t']
+            tmax = kwargs["t"]
         except KeyError:
-            msg = (f'Time-dependent term {term.__class__.__name__=} must be '
-                   'used with time driver.')
+            msg = (
+                f"Time-dependent term {term.__class__.__name__=} must be "
+                "used with time driver."
+            )
             raise RuntimeError(msg)
         ts = np.arange(0, tmax + term.dt, term.dt)
         try:  # vector output from term.func

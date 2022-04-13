@@ -12,7 +12,7 @@ import ubermagutil as uu
 
 import oommfc as oc
 
-log = logging.getLogger('oommfc')
+log = logging.getLogger("oommfc")
 
 
 class OOMMFRunner(metaclass=abc.ABCMeta):
@@ -26,7 +26,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         work without killing.
 
         """
-        if sys.platform != 'win32':
+        if sys.platform != "win32":
             self._kill()
 
     def call(self, argstr, need_stderr=False, n_threads=None, verbose=1):
@@ -75,36 +75,31 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         """
         if verbose >= 1:
             now = datetime.datetime.now()
-            timestamp = '{}/{:02d}/{:02d} {:02d}:{:02d}'.format(now.year,
-                                                                now.month,
-                                                                now.day,
-                                                                now.hour,
-                                                                now.minute)
-            print((f'Running OOMMF ({self.__class__.__name__})'
-                   f'[{timestamp}]... '),
-                  end='')
+            timestamp = "{}/{:02d}/{:02d} {:02d}:{:02d}".format(
+                now.year, now.month, now.day, now.hour, now.minute
+            )
+            print(f"Running OOMMF ({self.__class__.__name__})[{timestamp}]... ", end="")
             tic = time.time()
 
-        res = self._call(argstr=argstr, need_stderr=need_stderr,
-                         n_threads=n_threads)
-        if sys.platform == 'win32':
+        res = self._call(argstr=argstr, need_stderr=need_stderr, n_threads=n_threads)
+        if sys.platform == "win32":
             self._kill()  # required for oc.delete; oommf keeps file ownership
         if verbose >= 1:
             toc = time.time()
-            seconds = '({:0.1f} s)'.format(toc - tic)
+            seconds = "({:0.1f} s)".format(toc - tic)
             print(seconds)  # append seconds to the previous print.
 
         if res.returncode != 0:
-            msg = 'Error in OOMMF run.\n'
-            cmdstr = ' '.join(res.args)
-            msg += f'command: {cmdstr}\n'
-            if sys.platform != 'win32':
+            msg = "Error in OOMMF run.\n"
+            cmdstr = " ".join(res.args)
+            msg += f"command: {cmdstr}\n"
+            if sys.platform != "win32":
                 # Only on Linux and MacOS - on Windows we do not get stderr and
                 # stdout.
-                stderr = res.stderr.decode('utf-8', 'replace')
-                stdout = res.stdout.decode('utf-8', 'replace')
-                msg += f'stdout: {stdout}\n'
-                msg += f'stderr: {stderr}\n'
+                stderr = res.stderr.decode("utf-8", "replace")
+                stdout = res.stdout.decode("utf-8", "replace")
+                msg += f"stdout: {stdout}\n"
+                msg += f"stderr: {stderr}\n"
             raise RuntimeError(msg)
 
         return res
@@ -115,7 +110,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         pass  # pragma: no cover
 
     @abc.abstractmethod
-    def _kill(self, targets=('all',)):
+    def _kill(self, targets=("all",)):
         """This method should be implemented in subclass."""
         pass  # pragma: no cover
 
@@ -153,8 +148,8 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         '...'
 
         """
-        res = self.call(argstr='+version', need_stderr=True, verbose=0)
-        return res.stderr.decode('utf-8').split('OOMMF')[-1].strip()
+        res = self.call(argstr="+version", need_stderr=True, verbose=0)
+        return res.stderr.decode("utf-8").split("OOMMF")[-1].strip()
 
     @property
     def platform(self):
@@ -178,8 +173,8 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
 
         """
         # in 2.0a3 platform information is written to stdout
-        res = self.call(argstr='+platform', need_stderr=True, verbose=0)
-        return res.stdout.decode('utf-8')
+        res = self.call(argstr="+platform", need_stderr=True, verbose=0)
+        return res.stdout.decode("utf-8")
 
     @property
     def status(self):
@@ -208,10 +203,10 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         try:
             td = oc.TimeDriver()
             td.drive(system, t=1e-12, n=1, runner=self)
-            print('OOMMF found and running.')
+            print("OOMMF found and running.")
             return 0
         except (EnvironmentError, RuntimeError):
-            print('Cannot find OOMMF.')
+            print("Cannot find OOMMF.")
             return 1
 
     @abc.abstractmethod
@@ -231,30 +226,29 @@ class NativeOOMMFRunner(OOMMFRunner):
     def __init__(self):
         # oommf launchhost gets stuck on Windows
         # -> it is not possible to run multiple calculations in parallel
-        if sys.platform != 'win32':
-            launchhost = sp.run([*self.oommf, 'launchhost', '0'],
-                                stdout=sp.PIPE)
-            port = launchhost.stdout.decode('utf-8', 'replace').strip('\n')
+        if sys.platform != "win32":
+            launchhost = sp.run([*self.oommf, "launchhost", "0"], stdout=sp.PIPE)
+            port = launchhost.stdout.decode("utf-8", "replace").strip("\n")
             self.env = dict(OOMMF_HOSTPORT=port, **os.environ)
         else:
             self.env = os.environ
 
     def _call(self, argstr, need_stderr=False, n_threads=None):
-        cmd = [*self.oommf, 'boxsi', '+fg', argstr, '-exitondone', '1']
+        cmd = [*self.oommf, "boxsi", "+fg", argstr, "-exitondone", "1"]
 
         # Not clear why we cannot get stderr and stdout on win32. Calls to
         # OOMMF get stuck.
         stdout = stderr = sp.PIPE
-        if sys.platform == 'win32' and not need_stderr:
+        if sys.platform == "win32" and not need_stderr:
             stdout = stderr = None  # pragma: no cover
 
         if n_threads is not None:
-            cmd += ['-threads', str(n_threads)]
+            cmd += ["-threads", str(n_threads)]
 
         return sp.run(cmd, stdout=stdout, stderr=stderr, env=self.env)
 
-    def _kill(self, targets=('all',)):
-        sp.run([*self.oommf, 'killoommf', '-q'] + list(targets), env=self.env)
+    def _kill(self, targets=("all",)):
+        sp.run([*self.oommf, "killoommf", "-q"] + list(targets), env=self.env)
 
 
 @uu.inherit_docs
@@ -271,19 +265,18 @@ class TclOOMMFRunner(NativeOOMMFRunner):
 
     def __init__(self, oommf_tcl):
         self.oommf_tcl = oommf_tcl  # a path to oommf.tcl
-        self.oommf = ['tclsh', self.oommf_tcl]
+        self.oommf = ["tclsh", self.oommf_tcl]
         super().__init__()
 
     def errors(self):
-        errors_file = os.path.join(os.path.dirname(self.oommf_tcl),
-                                   'boxsi.errors')
-        with open(errors_file, 'r') as f:
+        errors_file = os.path.join(os.path.dirname(self.oommf_tcl), "boxsi.errors")
+        with open(errors_file, "r") as f:
             errors = f.read()
 
         return errors
 
     def __repr__(self):
-        return f'TclOOMMFRunner({self.oommf_tcl})'
+        return f"TclOOMMFRunner({self.oommf_tcl})"
 
 
 @uu.inherit_docs
@@ -298,7 +291,7 @@ class ExeOOMMFRunner(NativeOOMMFRunner):
 
     """
 
-    def __init__(self, oommf_exe='oommf'):
+    def __init__(self, oommf_exe="oommf"):
         self.oommf_exe = shutil.which(oommf_exe)
         self.oommf = [self.oommf_exe]
         super().__init__()
@@ -307,17 +300,21 @@ class ExeOOMMFRunner(NativeOOMMFRunner):
         try:
             errors_file = os.path.join(
                 os.path.dirname(shutil.which(self.oommf_exe)),
-                '..', 'opt', 'oommf', 'boxsi.errors')
-            with open(errors_file, 'r') as f:
+                "..",
+                "opt",
+                "oommf",
+                "boxsi.errors",
+            )
+            with open(errors_file, "r") as f:
                 errors = f.read()
             return errors
 
         except FileNotFoundError:
-            msg = 'boxsi.errors cannot be retrieved.'
+            msg = "boxsi.errors cannot be retrieved."
             raise EnvironmentError(msg)
 
     def __repr__(self):
-        return f'ExeOOMMFRunner({self.oommf_exe})'
+        return f"ExeOOMMFRunner({self.oommf_exe})"
 
 
 @uu.inherit_docs
@@ -336,30 +333,37 @@ class DockerOOMMFRunner(OOMMFRunner):
 
     """
 
-    def __init__(self, docker_exe='docker', image='oommf/oommf:20a3'):
+    def __init__(self, docker_exe="docker", image="oommf/oommf:20a3"):
         self.docker_exe = docker_exe
         self.image = image
 
     def _call(self, argstr, need_stderr=False, n_threads=None):
-        cmd = [self.docker_exe, 'run', '-v', os.getcwd()+':/io',
-               self.image, '/bin/bash', '-c',
-               ('tclsh /usr/local/oommf/oommf/oommf.tcl boxsi '
-                '+fg {} -exitondone 1').format(argstr)]
+        cmd = [
+            self.docker_exe,
+            "run",
+            "-v",
+            os.getcwd() + ":/io",
+            self.image,
+            "/bin/bash",
+            "-c",
+            (
+                "tclsh /usr/local/oommf/oommf/oommf.tcl boxsi +fg {} -exitondone 1"
+            ).format(argstr),
+        ]
         if n_threads is not None:
-            cmd += ['-threads', str(n_threads)]
+            cmd += ["-threads", str(n_threads)]
         return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
 
-    def _kill(self, targets=('all',)):
+    def _kill(self, targets=("all",)):
         # There is no need to kill OOMMF when run inside docker.
         pass
 
     def errors(self):
-        msg = 'boxsi.errors cannot be retrieved from Docker container.'
+        msg = "boxsi.errors cannot be retrieved from Docker container."
         raise EnvironmentError(msg)
 
     def __repr__(self):
-        return (f'DockerOOMMFRunner(docker_exe={self.docker_exe}, '
-                f'image={self.image})')
+        return f"DockerOOMMFRunner(docker_exe={self.docker_exe}, image={self.image})"
 
 
 class Runner:
@@ -389,9 +393,9 @@ class Runner:
 
     def __init__(self):
         self.cache_runner = True
-        self.envvar = 'OOMMFTCL'
-        self.oommf_exe = 'oommf'
-        self.docker_exe = 'docker'
+        self.envvar = "OOMMFTCL"
+        self.oommf_exe = "oommf"
+        self.docker_exe = "docker"
         self._runner = None
 
     @property
@@ -429,7 +433,7 @@ class Runner:
 
         """
         if self.cache_runner and self._runner is not None:
-            log.debug('Returning cached runner.')
+            log.debug("Returning cached runner.")
             return self._runner
         self.autoselect_runner()
         return self._runner
@@ -437,7 +441,7 @@ class Runner:
     @runner.setter
     def runner(self, runner):
         if runner.status != 0:
-            raise ValueError(f'{runner=} cannot be used.')
+            raise ValueError(f"{runner=} cannot be used.")
         self._runner = runner
 
     def autoselect_runner(self):
@@ -469,55 +473,66 @@ class Runner:
 
         """
         log.debug(
-            'Starting autoselect_runner: cache_runner=%(cache_runner)s, '
-            'envvar=%(envvar)s, oommf_exe=%(oommf_exe)s, '
-            'docker_exe=%(docker_exe)s)', {
-                'cache_runner': self.cache_runner,
-                'envvar': self.envvar,
-                'oommf_exe': self.oommf_exe,
-                'docker_exe': self.docker_exe
-            })
+            "Starting autoselect_runner: cache_runner=%(cache_runner)s, "
+            "envvar=%(envvar)s, oommf_exe=%(oommf_exe)s, "
+            "docker_exe=%(docker_exe)s)",
+            {
+                "cache_runner": self.cache_runner,
+                "envvar": self.envvar,
+                "oommf_exe": self.oommf_exe,
+                "docker_exe": self.docker_exe,
+            },
+        )
 
         # Check for the OOMMFTCL environment variable pointing to oommf.tcl.
         log.debug(
-            'Step 1: Checking for the self.envvar=%(envvar)s environment'
-            ' variable pointing to oommf.tcl.', {'envvar': self.envvar})
+            "Step 1: Checking for the self.envvar=%(envvar)s environment"
+            " variable pointing to oommf.tcl.",
+            {"envvar": self.envvar},
+        )
         oommf_tcl = os.environ.get(self.envvar, None)
         if oommf_tcl is not None:
-            cmd = [
-                'tclsh', oommf_tcl, 'boxsi', '+fg', '+version', '-exitondone',
-                '1'
-            ]
+            cmd = ["tclsh", oommf_tcl, "boxsi", "+fg", "+version", "-exitondone", "1"]
             try:
                 res = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
             except FileNotFoundError:
-                log.warning('oommf.tcl was not found.')
+                log.warning("oommf.tcl was not found.")
             else:
                 if res.returncode:
                     log.warning(
-                        'OOMMFTCL is set, but OOMMF could not be run.\n'
-                        'stdout:\n%(stdout)s\nstderr:\n%(stderr)s', {
-                            'stdout': res.stdout,
-                            'stderr': res.stderr
-                        })
+                        "OOMMFTCL is set, but OOMMF could not be run.\n"
+                        "stdout:\n%(stdout)s\nstderr:\n%(stderr)s",
+                        {"stdout": res.stdout, "stderr": res.stderr},
+                    )
                 else:
                     self._runner = TclOOMMFRunner(oommf_tcl)
                     return
 
         # OOMMF available as an executable - in a conda env on Mac/Linux, or
         # oommf installed separately.
-        log.debug('Step 2: is oommf_exe=%(oommf_exe)s in PATH? '
-                  'Could be from conda env or manual install.',
-                  {'oommf_exe': self.oommf_exe})
+        log.debug(
+            "Step 2: is oommf_exe=%(oommf_exe)s in PATH? "
+            "Could be from conda env or manual install.",
+            {"oommf_exe": self.oommf_exe},
+        )
         oommf_exe = shutil.which(self.oommf_exe)
-        log.debug('Ouput from "which oommf_exe"=%(oommf_exe)s',
-                  {'oommf_exe': oommf_exe})
+        log.debug(
+            'Ouput from "which oommf_exe"=%(oommf_exe)s', {"oommf_exe": oommf_exe}
+        )
         if oommf_exe:
-            cmd = [oommf_exe, 'boxsi',
-                   '+fg', '+version', '-exitondone', '1', '-kill', 'all']
+            cmd = [
+                oommf_exe,
+                "boxsi",
+                "+fg",
+                "+version",
+                "-exitondone",
+                "1",
+                "-kill",
+                "all",
+            ]
 
             stdout = stderr = sp.PIPE
-            if sys.platform == 'win32':
+            if sys.platform == "win32":
                 stdout = stderr = None  # pragma: no cover
 
             log.debug("Attempt command call")  # DEBUG
@@ -528,41 +543,42 @@ class Runner:
                 self._runner = ExeOOMMFRunner(oommf_exe)
                 return
             else:
-                log.warning('oommf_exe=%(exe)s found but not executable.',
-                            {'exe': oommf_exe})
-                log.debug('exitcode = %(returncode)s',
-                          {'returncode': res.returncode})
+                log.warning(
+                    "oommf_exe=%(exe)s found but not executable.", {"exe": oommf_exe}
+                )
+                log.debug("exitcode = %(returncode)s", {"returncode": res.returncode})
                 if res.returncode == 127:  # maybe oommf is a pyenv shim?
                     pass
 
         # Check for docker to run OOMMF in a docker image.
-        log.debug("Step 3: Can we use docker to host OOMMF?"
-                  ' ("docker_exe=%(docker_exe)s")',
-                  {'docker_exe': self.docker_exe})
-        cmd = [self.docker_exe, 'images']
+        log.debug(
+            'Step 3: Can we use docker to host OOMMF? ("docker_exe=%(docker_exe)s")',
+            {"docker_exe": self.docker_exe},
+        )
+        cmd = [self.docker_exe, "images"]
         try:
             res = sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
         except FileNotFoundError:
-            log.warning('Docker was not found.')
+            log.warning("Docker was not found.")
         else:
             if res.returncode != 0:
-                log.warning('Error running docker\nstdout:\n%(stdout)s\n'
-                            'stderr:\n%(stderr)s',
-                            {'stdout': res.stdout, 'stderr': res.stderr})
+                log.warning(
+                    "Error running docker\nstdout:\n%(stdout)s\nstderr:\n%(stderr)s",
+                    {"stdout": res.stdout, "stderr": res.stderr},
+                )
             else:
                 self._runner = DockerOOMMFRunner(docker_exe=self.docker_exe)
                 return
 
         # If OOMMFRunner was not returned up to this point, we raise an
         # exception.
-        raise EnvironmentError('Cannot find OOMMF.')
+        raise EnvironmentError("Cannot find OOMMF.")
 
     def __repr__(self):
         # avoid selecting a runner when calling __repr__
         _runner = self._runner if self._runner is not None else "UNSET"
 
-        return (f'OOMMF runner: {_runner}\n'
-                f'runner is cached: {self.cache_runner}')
+        return f"OOMMF runner: {_runner}\nrunner is cached: {self.cache_runner}"
 
 
 def overhead():
@@ -597,9 +613,7 @@ def overhead():
 
     # Running OOMMF directly.
     oommf_runner = oc.runner.runner
-    mifpath = os.path.realpath(os.path.join(system.name,
-                                            'drive-0',
-                                            'macrospin.mif'))
+    mifpath = os.path.realpath(os.path.join(system.name, "drive-0", "macrospin.mif"))
     oommf_start = time.time()
     oommf_runner.call(mifpath)
     oommf_stop = time.time()

@@ -36,37 +36,40 @@ class HysteresisDriver(Driver):
     [...]
 
     """
-    _allowed_attributes = ['evolver',
-                           'stopping_mxHxm',
-                           'stage_iteration_limit',
-                           'total_iteration_limit',
-                           'stage_count',
-                           'stage_count_check',
-                           'checkpoint_file',
-                           'checkpoint_interval',
-                           'checkpoint_disposal',
-                           'start_iteration',
-                           'start_stage',
-                           'start_stage_iteration',
-                           'start_stage_start_time',
-                           'start_stage_elapsed_time',
-                           'start_last_timestep',
-                           'normalize_aveM_output',
-                           'report_max_spin_angle',
-                           'report_wall_time']
+
+    _allowed_attributes = [
+        "evolver",
+        "stopping_mxHxm",
+        "stage_iteration_limit",
+        "total_iteration_limit",
+        "stage_count",
+        "stage_count_check",
+        "checkpoint_file",
+        "checkpoint_interval",
+        "checkpoint_disposal",
+        "start_iteration",
+        "start_stage",
+        "start_stage_iteration",
+        "start_stage_start_time",
+        "start_stage_elapsed_time",
+        "start_last_timestep",
+        "normalize_aveM_output",
+        "report_max_spin_angle",
+        "report_wall_time",
+    ]
 
     def _checkargs(self, **kwargs):
-        Hmin, Hmax, n = kwargs['Hmin'], kwargs['Hmax'], kwargs['n']
+        Hmin, Hmax, n = kwargs["Hmin"], kwargs["Hmax"], kwargs["n"]
         for i in [Hmin, Hmax]:
             if not isinstance(i, (list, tuple, np.ndarray)):
-                msg = 'Hmin and Hmax must have array_like values.'
+                msg = "Hmin and Hmax must have array_like values."
                 raise ValueError(msg)
             if len(i) != 3:
-                msg = 'Hmin and Hmax must have length 3.'
+                msg = "Hmin and Hmax must have length 3."
                 raise ValueError(msg)
         if not isinstance(n, int):
-            msg = f'Cannot drive with {type(n)=}.'
+            msg = f"Cannot drive with {type(n)=}."
             raise ValueError(msg)
         if n - 1 <= 0:  # OOMMF counts steps, not points (n -> n-1)
-            msg = f'Cannot drive with {n=}.'
+            msg = f"Cannot drive with {n=}."
             raise ValueError(msg)

@@ -77,7 +77,3 @@ jobs:
 
     - name: Jupyter notebook tests
       run: make test-ipynb
-
-    - name: Python code style
-      # avoid testing files in oommf directory
-      run: python -m pycodestyle --filename=*.py oommfc
