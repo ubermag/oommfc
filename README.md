@@ -15,7 +15,8 @@
 | --- | --- |
 | Tests | [![Build status](https://github.com/ubermag/oommfc/workflows/workflow/badge.svg)](https://github.com/ubermag/oommfc/actions?query=workflow%3Aworkflow) |
 |       | [![conda](https://github.com/ubermag/oommfc/workflows/conda/badge.svg)](https://github.com/ubermag/oommfc/actions?query=workflow%3Aconda) |
-| Linting | [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ubermag/oommfc/master.svg)](https://results.pre-commit.ci/latest/github/ubermag/oommfc/master)
+| Linting | [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ubermag/oommfc/master.svg)](https://results.pre-commit.ci/latest/github/ubermag/oommfc/master) |
+|         | [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) |
 | Releases | [![PyPI version](https://badge.fury.io/py/oommfc.svg)](https://badge.fury.io/py/oommfc) |
 |          | [![Anaconda-Server Badge](https://anaconda.org/conda-forge/oommfc/badges/version.svg)](https://anaconda.org/conda-forge/oommfc) |
 | Coverage | [![codecov](https://codecov.io/gh/ubermag/oommfc/branch/master/graph/badge.svg?token=hcK4fofmrL)](https://codecov.io/gh/ubermag/oommfc) |
