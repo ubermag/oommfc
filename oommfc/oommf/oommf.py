@@ -337,8 +337,8 @@ class DockerOOMMFRunner(OOMMFRunner):
         required to get read/write access when using selinux. Use with caution and check
         the Docker documentation on selinux:
         https://docs.docker.com/storage/bind-mounts/#configure-the-selinux-label.
-        Alternatively, setting ``selinux`` to ``permisive`` has been reported to give
-        read/write access. Defaults to ``False``.
+        Alternatively, you can set SELinux to Permissive Mode to get read/write access.
+        Defaults to ``False``.
 
     """
 
