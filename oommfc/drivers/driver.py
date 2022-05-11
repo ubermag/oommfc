@@ -83,9 +83,16 @@ class Driver(mm.Driver):
             the mesh whose spins should remain fixed while the system is being
             driven. Defaults to ``None``.
 
-        output_step: bool, optional
+        output_step : bool, optional
 
             If ``True``, output is saved at each step. Default to ``False``.
+
+        n_threads : int, optional
+
+            Controls the number of threads that OOMMF uses. The number can alternatively
+            also be controlled via the environment variable ``OOMMF_THREADS``. If not
+            specified a default value that depends on the OOMMF installation (typically
+            4) is used.
 
         compute : str, optional
 
