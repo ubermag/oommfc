@@ -331,18 +331,28 @@ class DockerOOMMFRunner(OOMMFRunner):
 
         Docker image on DockerHub. Defaults to ``oommf/oommf:20a3``.
 
+    selinux : bool, optional
+
+        If ``True`` use additional ``:z`` flag for the mounted directories. This can be
+        required to get read/write access when using SELinux. Use with caution and check
+        the Docker documentation on SELinux:
+        https://docs.docker.com/storage/bind-mounts/#configure-the-selinux-label.
+        Alternatively, you can set SELinux to Permissive Mode to get read/write access.
+        Defaults to ``False``.
+
     """
 
-    def __init__(self, docker_exe="docker", image="oommf/oommf:20a3"):
+    def __init__(self, docker_exe="docker", image="oommf/oommf:20a3", selinux=False):
         self.docker_exe = docker_exe
         self.image = image
+        self.selinux = selinux
 
     def _call(self, argstr, need_stderr=False, n_threads=None):
         cmd = [
             self.docker_exe,
             "run",
             "-v",
-            os.getcwd() + ":/io",
+            f"{os.getcwd()}:/io{':z' if self.selinux else ''}",
             self.image,
             "/bin/bash",
             "-c",
