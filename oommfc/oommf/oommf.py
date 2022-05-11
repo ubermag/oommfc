@@ -1,5 +1,7 @@
 import abc
+import asyncio
 import datetime
+import glob
 import logging
 import os
 import shutil
@@ -8,6 +10,7 @@ import sys
 import time
 
 import micromagneticmodel as mm
+import tqdm
 import ubermagutil as uu
 
 import oommfc as oc
@@ -29,7 +32,9 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         if sys.platform != "win32":
             self._kill()
 
-    def call(self, argstr, need_stderr=False, n_threads=None, verbose=1):
+    async def call(
+        self, argstr, need_stderr=False, n_threads=None, verbose=1, n=None, globname=""
+    ):
         """Call OOMMF by passing ``argstr`` to OOMMF.
 
         Parameters
@@ -45,9 +50,20 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
 
         verbose : int, optional
 
-            If ``verbose=0``, no output is printed. For ``verbose>=1``
-            information about the OOMMF runner and the runtime is printed to
-            stdout. Defaults is ``verbose=1``.
+            If ``verbose=0``, no output is printed. For ``verbose=1`` information about
+            the OOMMF runner and the runtime is printed to stdout. For ``verbose=2`` a
+            progress bar is displayed for time drives. Note, that this information only
+            relies on the number of magnetisation snapshot already saved to disk and
+            therefore only gives a rough hint. Defaults is ``verbose=1``.
+
+        n : int, optional
+
+            Number of steps that are saved to disk. Required to display a progress bar
+            for the time driver.
+
+        globname : str, optional
+
+            Filename used for searching files when showing a progress bar.
 
         Raises
         ------
@@ -78,31 +94,58 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
             timestamp = "{}/{:02d}/{:02d} {:02d}:{:02d}".format(
                 now.year, now.month, now.day, now.hour, now.minute
             )
-            print(f"Running OOMMF ({self.__class__.__name__})[{timestamp}]... ", end="")
-            tic = time.time()
+            if verbose >= 2 and n:
+                progressbar = tqdm.tqdm(total=n, desc="Running OOMMF")
+                bar_update = asyncio.create_task(self._barupdate(progressbar, globname))
+            else:
+                print(
+                    f"Running OOMMF ({self.__class__.__name__})[{timestamp}]... ",
+                    end="",
+                )
+                tic = time.time()
 
-        res = self._call(argstr=argstr, need_stderr=need_stderr, n_threads=n_threads)
+        cmdstr, subprocess = self._call(
+            argstr=argstr, need_stderr=need_stderr, n_threads=n_threads
+        )
+        res = await subprocess  # creates the actual subprocess
+        stdout, stderr = await res.communicate()
+
         if sys.platform == "win32":
             self._kill()  # required for oc.delete; oommf keeps file ownership
+
         if verbose >= 1:
             toc = time.time()
-            seconds = "({:0.1f} s)".format(toc - tic)
-            print(seconds)  # append seconds to the previous print.
+            if verbose >= 2 and n:
+                bar_update.cancel()
+                progressbar.n = progressbar.total
+                progressbar.refresh()
+                progressbar.close()
+            else:
+                seconds = f"({toc - tic:0.1f} s)"
+                print(seconds)  # append seconds to the previous print.
 
         if res.returncode != 0:
             msg = "Error in OOMMF run.\n"
-            cmdstr = " ".join(res.args)
-            msg += f"command: {cmdstr}\n"
+            msg += f"command: {' '.join(cmdstr)}\n"
             if sys.platform != "win32":
                 # Only on Linux and MacOS - on Windows we do not get stderr and
                 # stdout.
-                stderr = res.stderr.decode("utf-8", "replace")
-                stdout = res.stdout.decode("utf-8", "replace")
-                msg += f"stdout: {stdout}\n"
-                msg += f"stderr: {stderr}\n"
+                stderr = stderr.decode("utf-8", "replace")
+                stdout = stdout.decode("utf-8", "replace")
+                print(stdout)  # more useful for debugging because it is easier to read
+                print(stderr)  # than in the exception (newline characters)
+                msg += f"stdout: {stdout}\n"  # add stdout and stderr to the error
+                msg += f"stderr: {stderr}\n"  # message so that users would report it
             raise RuntimeError(msg)
 
         return res
+
+    async def _barupdate(self, bar, globname):
+        INTERVAL = 1  # changing this would require a change in the progress bar postfix
+        while True:
+            bar.n = len(glob.glob(f"{globname}*.omf"))
+            bar.refresh()
+            await asyncio.sleep(INTERVAL)
 
     @abc.abstractmethod
     def _call(self, argstr, need_stderr=False, n_threads=None):
@@ -245,7 +288,9 @@ class NativeOOMMFRunner(OOMMFRunner):
         if n_threads is not None:
             cmd += ["-threads", str(n_threads)]
 
-        return sp.run(cmd, stdout=stdout, stderr=stderr, env=self.env)
+        return cmd, asyncio.create_subprocess_exec(
+            *cmd, stdout=stdout, stderr=stderr, env=self.env
+        )
 
     def _kill(self, targets=("all",)):
         sp.run([*self.oommf, "killoommf", "-q"] + list(targets), env=self.env)
@@ -362,7 +407,7 @@ class DockerOOMMFRunner(OOMMFRunner):
         ]
         if n_threads is not None:
             cmd += ["-threads", str(n_threads)]
-        return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
+        return cmd, asyncio.create_subprocess_exec(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
 
     def _kill(self, targets=("all",)):
         # There is no need to kill OOMMF when run inside docker.

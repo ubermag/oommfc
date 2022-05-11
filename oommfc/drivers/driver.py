@@ -1,4 +1,6 @@
 import abc
+import asyncio
+import concurrent.futures
 import contextlib
 import datetime
 import glob
@@ -114,9 +116,11 @@ class Driver(mm.Driver):
 
         verbose : int, optional
 
-            If ``verbose=0``, no output is printed. For ``verbose>=1``
-            information about the OOMMF runner and the runtime is printed to
-            stdout. Defaults is ``verbose=1``.
+            If ``verbose=0``, no output is printed. For ``verbose=1`` information about
+            the OOMMF runner and the runtime is printed to stdout. For ``verbose=2`` a
+            progress bar is displayed for time drives. Note, that this information only
+            relies on the number of magnetisation snapshot already saved to disk and
+            therefore only gives a rough hint. Defaults is ``verbose=1``.
 
         Raises
         ------
@@ -238,7 +242,19 @@ class Driver(mm.Driver):
 
             if runner is None:
                 runner = oc.runner.runner
-            runner.call(argstr=miffilename, n_threads=n_threads, verbose=verbose)
+
+            # We need a separate thread inside Jupyter notebooks.
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(
+                    self._call,
+                    runner,
+                    argstr=miffilename,
+                    n_threads=n_threads,
+                    verbose=verbose,
+                    n=kwargs["n"] if "n" in kwargs else None,
+                    globname=system.name,
+                )
+                future.result()
 
             # Update system's m and datatable attributes if the derivation of
             # E, Heff, or energy density was not asked.
@@ -267,6 +283,10 @@ class Driver(mm.Driver):
         # remove information about fixed cells for subsequent runs
         if hasattr(self.evolver, "fixed_spins"):
             del self.evolver.fixed_spins
+
+    def _call(self, runner, *args, **kwargs):
+        """Asynchronous call to the runner."""
+        asyncio.run(runner.call(*args, **kwargs))
 
     def _time_dependence(self, term, **kwargs):
         try:
