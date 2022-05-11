@@ -334,8 +334,8 @@ class DockerOOMMFRunner(OOMMFRunner):
     selinux : bool, optional
 
         If ``True`` use additional ``:z`` flag for the mounted directories. This can be
-        required to get read/write access when using selinux. Use with caution and check
-        the Docker documentation on selinux:
+        required to get read/write access when using SELinux. Use with caution and check
+        the Docker documentation on SELinux:
         https://docs.docker.com/storage/bind-mounts/#configure-the-selinux-label.
         Alternatively, you can set SELinux to Permissive Mode to get read/write access.
         Defaults to ``False``.
