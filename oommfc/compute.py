@@ -89,8 +89,12 @@ def compute(func, system, /, verbose=1):
     td = oc.TimeDriver(total_iteration_limit=1)
     try:
         td.drive(
-            system, t=1e-25, n=1, append=True,
-            compute=schedule_script(func, system), verbose=verbose
+            system,
+            t=1e-25,
+            n=1,
+            append=True,
+            compute=schedule_script(func, system),
+            verbose=verbose,
         )
     except RuntimeError:
         msg = (
