@@ -98,7 +98,9 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
                 progressbar = tqdm(
                     total=n,
                     desc="Running OOMMF",
-                    bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}]",
+                    bar_format=(
+                        "{l_bar}{bar}| {n_fmt}/{total_fmt} files written [{elapsed}]"
+                    ),
                 )
                 progressbar.set_postfix_str("[{elapsed}]")
                 bar_update = asyncio.create_task(self._barupdate(progressbar, globname))
