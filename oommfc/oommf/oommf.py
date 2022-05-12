@@ -11,7 +11,7 @@ import time
 
 import micromagneticmodel as mm
 import ubermagutil as uu
-from tqdm.autonotebook import tqdm  # different styles for notebook and command line
+from tqdm.auto import tqdm  # different styles for notebook and command line
 
 import oommfc as oc
 
