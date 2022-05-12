@@ -39,7 +39,8 @@ classifiers = [
 dependencies = [
     "micromagnetictests~=0.61.1",
     "ubermagtable~=0.61.0",
-    "micromagneticdata~=0.61.0"
+    "micromagneticdata~=0.61.0",
+    "tqdm"
 ]
 
 [project.optional-dependencies]
