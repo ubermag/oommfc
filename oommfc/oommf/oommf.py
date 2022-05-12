@@ -10,8 +10,8 @@ import sys
 import time
 
 import micromagneticmodel as mm
-import tqdm
 import ubermagutil as uu
+from tqdm.autonotebook import tqdm  # different styles for notebook and command line
 
 import oommfc as oc
 
@@ -95,7 +95,12 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
                 now.year, now.month, now.day, now.hour, now.minute
             )
             if verbose >= 2 and n:
-                progressbar = tqdm.tqdm(total=n, desc="Running OOMMF")
+                progressbar = tqdm(
+                    total=n,
+                    desc="Running OOMMF",
+                    bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}]",
+                )
+                progressbar.set_postfix_str("[{elapsed}]")
                 bar_update = asyncio.create_task(self._barupdate(progressbar, globname))
             else:
                 print(
