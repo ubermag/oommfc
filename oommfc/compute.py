@@ -41,7 +41,7 @@ def schedule_script(func, system):
     return 'Schedule "{}" archive Step 1\n'.format(output)
 
 
-def compute(func, system):
+def compute(func, system, /, verbose=1):
     """Computes a particular value of an energy term or energy container
     (``energy``, ``density``, or ``effective_field``).
 
@@ -54,6 +54,12 @@ def compute(func, system):
     system : micromagneticmodel.System
 
         Micromagnetic system for which the property is calculated.
+
+    verbose : int, optional
+
+        If ``verbose=0``, no output is printed. For ``verbose>=1``
+        information about the OOMMF runner and the runtime is printed to
+        stdout. Defaults is ``verbose=1``.
 
     Returns
     -------
@@ -83,7 +89,12 @@ def compute(func, system):
     td = oc.TimeDriver(total_iteration_limit=1)
     try:
         td.drive(
-            system, t=1e-25, n=1, append=True, compute=schedule_script(func, system)
+            system,
+            t=1e-25,
+            n=1,
+            append=True,
+            compute=schedule_script(func, system),
+            verbose=verbose,
         )
     except RuntimeError:
         msg = (
