@@ -244,7 +244,7 @@ class Driver(mm.Driver):
                 argstr=miffilename,
                 n_threads=n_threads,
                 verbose=verbose,
-                total=kwargs["n"] if "n" in kwargs else None,
+                total=kwargs.get('n'),
                 glob_name=system.name,
             )
 
