@@ -116,10 +116,9 @@ class Driver(mm.Driver):
 
             If ``verbose=0``, no output is printed. For ``verbose=1`` information about
             the OOMMF runner and the runtime is printed to stdout. For ``verbose=2`` a
-            progress bar is displayed for time drives. Note, that this information only
-            relies on the number of magnetisation snapshot already saved to disk and
-            therefore only gives a rough indication of progress. The default
-            is ``verbose=1``.
+            progress bar is displayed for TimeDriver drives. Note that this information only
+            relies on the number of magnetisation snapshots already saved to disk and
+            therefore only gives a rough indication of progress. Defaults to ``1``.
 
         Raises
         ------
