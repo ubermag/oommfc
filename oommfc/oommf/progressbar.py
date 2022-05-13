@@ -36,10 +36,7 @@ class ProgressBar(threading.Thread):
         self.glob_name = glob_name
 
     def run(self):
-        """Update the progress bar once per second.
-
-        To stop the updates set ``ProgressBar.interrupt = True``.
-        """
+        """Update the progress bar once per second and close when terminating."""
         while not self._terminate:
             self.bar.n = len(glob.glob(f"{self.glob_name}*.omf"))
             self.bar.refresh()
@@ -49,4 +46,5 @@ class ProgressBar(threading.Thread):
         self.bar.close()
 
     def terminate(self):
+        """Stops a running progress bar thread after the current iteration."""
         self._terminate = True
