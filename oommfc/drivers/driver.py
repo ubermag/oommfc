@@ -114,9 +114,12 @@ class Driver(mm.Driver):
 
         verbose : int, optional
 
-            If ``verbose=0``, no output is printed. For ``verbose>=1``
-            information about the OOMMF runner and the runtime is printed to
-            stdout. Defaults is ``verbose=1``.
+            If ``verbose=0``, no output is printed. For ``verbose=1`` information about
+            the OOMMF runner and the runtime is printed to stdout. For ``verbose=2`` a
+            progress bar is displayed for time drives. Note, that this information only
+            relies on the number of magnetisation snapshot already saved to disk and
+            therefore only gives a rough indication of progress. The default
+            is ``verbose=1``.
 
         Raises
         ------
@@ -238,7 +241,13 @@ class Driver(mm.Driver):
 
             if runner is None:
                 runner = oc.runner.runner
-            runner.call(argstr=miffilename, n_threads=n_threads, verbose=verbose)
+            runner.call(
+                argstr=miffilename,
+                n_threads=n_threads,
+                verbose=verbose,
+                total=kwargs["n"] if "n" in kwargs else None,
+                glob_name=system.name,
+            )
 
             # Update system's m and datatable attributes if the derivation of
             # E, Heff, or energy density was not asked.
