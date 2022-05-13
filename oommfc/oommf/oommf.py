@@ -54,7 +54,8 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
             the OOMMF runner and the runtime is printed to stdout. For ``verbose=2`` a
             progress bar is displayed for time drives. Note, that this information only
             relies on the number of magnetisation snapshot already saved to disk and
-            therefore only gives a rough hint. Defaults is ``verbose=1``.
+            therefore only gives an indication of progress. The default 
+            is ``verbose=1``.
 
         n : int, optional
 
