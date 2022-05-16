@@ -46,5 +46,6 @@ class ProgressBar(threading.Thread):
         self.bar.close()
 
     def terminate(self):
-        """Stops a running progress bar thread after the current iteration."""
+        """Stop a running progress bar thread after the current iteration."""
         self._terminate = True
+        self.join()
