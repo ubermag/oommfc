@@ -12,6 +12,8 @@ import ubermagutil as uu
 
 import oommfc as oc
 
+from .progressbar import ProgressBar
+
 log = logging.getLogger("oommfc")
 
 
@@ -29,7 +31,15 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         if sys.platform != "win32":
             self._kill()
 
-    def call(self, argstr, need_stderr=False, n_threads=None, verbose=1):
+    def call(
+        self,
+        argstr,
+        need_stderr=False,
+        n_threads=None,
+        verbose=1,
+        total=None,
+        glob_name="",
+    ):
         """Call OOMMF by passing ``argstr`` to OOMMF.
 
         Parameters
@@ -45,9 +55,11 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
 
         verbose : int, optional
 
-            If ``verbose=0``, no output is printed. For ``verbose>=1``
-            information about the OOMMF runner and the runtime is printed to
-            stdout. Defaults is ``verbose=1``.
+            If ``verbose=0``, no output is printed. For ``verbose=1`` information about
+            the OOMMF runner and the runtime is printed to stdout. For ``verbose=2`` a
+            progress bar is displayed for TimeDriver drives. Note that this information
+            only relies on the number of magnetisation snapshots already saved to disk
+            and therefore only gives a rough indication of progress. Defaults to ``1``.
 
         Raises
         ------
@@ -78,16 +90,29 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
             timestamp = "{}/{:02d}/{:02d} {:02d}:{:02d}".format(
                 now.year, now.month, now.day, now.hour, now.minute
             )
-            print(f"Running OOMMF ({self.__class__.__name__})[{timestamp}]... ", end="")
-            tic = time.time()
+            if verbose >= 2 and total:
+                progress_bar_thread = ProgressBar(
+                    total, self.__class__.__name__, glob_name
+                )
+                progress_bar_thread.start()
+            else:
+                print(
+                    f"Running OOMMF ({self.__class__.__name__})[{timestamp}]... ",
+                    end="",
+                )
+                tic = time.time()
 
         res = self._call(argstr=argstr, need_stderr=need_stderr, n_threads=n_threads)
         if sys.platform == "win32":
             self._kill()  # required for oc.delete; oommf keeps file ownership
+
         if verbose >= 1:
-            toc = time.time()
-            seconds = "({:0.1f} s)".format(toc - tic)
-            print(seconds)  # append seconds to the previous print.
+            if verbose >= 2 and total:
+                progress_bar_thread.terminate()
+            else:
+                toc = time.time()
+                seconds = "({:0.1f} s)".format(toc - tic)
+                print(seconds)  # append seconds to the previous print.
 
         if res.returncode != 0:
             msg = "Error in OOMMF run.\n"
