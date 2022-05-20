@@ -37,9 +37,9 @@ classifiers = [
 ]
 
 dependencies = [
-    "micromagnetictests~=0.61.1",
-    "ubermagtable~=0.61.0",
-    "micromagneticdata~=0.61.0",
+    "micromagnetictests>=0.61.3",
+    "ubermagtable>=0.61.1",
+    "micromagneticdata>=0.62.0",
     "tqdm"
 ]
 
