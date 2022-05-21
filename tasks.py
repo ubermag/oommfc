@@ -18,6 +18,7 @@ test_collection = Collection("test")
 def unittest(c):
     """Run unittests."""
     import oommfc
+
     result = oommfc.test()
     raise Exit(code=result)
 
@@ -109,9 +110,9 @@ def release(c):
     # sanity checks while we have two places containing the version.
     with open("pyproject.toml", "rb") as f:
         toml_version = tomli.load(f)["project"]["version"]
-    assert toml_version == version, (
-        "Different versions in pyproject.toml and setup.cfg. Aborting."
-    )
+    assert (
+        toml_version == version
+    ), "Different versions in pyproject.toml and setup.cfg. Aborting."
 
     c.run(f"git tag {version}")  # fails if the tag exists
     c.run("git tag -f latest")  # `latest` tag for binder
