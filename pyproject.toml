@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "oommfc"
-version = "0.61.1"
+version = "0.62.0"
 description = "OOMMF calculator."
 readme = "README.md"
 requires-python = ">=3.8"
