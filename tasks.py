@@ -18,7 +18,6 @@ test_collection = Collection("test")
 def unittest(c):
     """Run unittests."""
     import oommfc
-
     result = oommfc.test()
     raise Exit(code=result)
 
@@ -46,9 +45,16 @@ def ipynb(c):
     raise Exit(code=result)
 
 
-@task(unittest, docs, ipynb)
+@task
 def all(c):
     """Run all tests."""
+    for cmd in (unittest, docs, ipynb):
+        try:
+            cmd(c)
+        except Exit as e:
+            if e.code != pytest.ExitCode.OK:
+                raise e
+    raise Exit(code=pytest.ExitCode.OK)
 
 
 test_collection.add_task(unittest)
@@ -93,15 +99,19 @@ def release(c):
         raise Exit("Working tree is not clean. Aborting.")
 
     # run all tests
-    all(c)
+    try:
+        all(c)
+    except Exit as e:
+        if e.code != pytest.ExitCode.OK:
+            raise e
 
     version = iniconfig.IniConfig("setup.cfg").get("metadata", "version")
     # sanity checks while we have two places containing the version.
     with open("pyproject.toml", "rb") as f:
         toml_version = tomli.load(f)["project"]["version"]
-    assert (
-        toml_version == version
-    ), "Different versions in pyproject.toml and setup.cfg. Aborting."
+    assert toml_version == version, (
+        "Different versions in pyproject.toml and setup.cfg. Aborting."
+    )
 
     c.run(f"git tag {version}")  # fails if the tag exists
     c.run("git tag -f latest")  # `latest` tag for binder
