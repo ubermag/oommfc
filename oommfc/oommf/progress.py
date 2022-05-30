@@ -54,7 +54,7 @@ class ProgressBar(threading.Thread):
 
 
 @contextlib.contextmanager
-def progress_bar(total, runner_name, glob_name):
+def bar(total, runner_name, glob_name):
     progress_bar_thread = ProgressBar(total, runner_name, glob_name)
     progress_bar_thread.start()
     try:

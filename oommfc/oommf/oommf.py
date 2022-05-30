@@ -86,7 +86,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
 
         """
         if verbose >= 2 and total:
-            context = progress.progress_bar(
+            context = progress.bar(
                 total=total, runner_name=self.__class__.__name__, glob_name=glob_name
             )
         elif verbose >= 1:
