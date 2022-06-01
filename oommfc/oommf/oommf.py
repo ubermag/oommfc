@@ -1,5 +1,5 @@
 import abc
-import datetime
+import contextlib
 import logging
 import os
 import shutil
@@ -12,7 +12,7 @@ import ubermagutil as uu
 
 import oommfc as oc
 
-from .progressbar import ProgressBar
+from . import progress
 
 log = logging.getLogger("oommfc")
 
@@ -85,34 +85,21 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         CompletedProcess(...)
 
         """
-        if verbose >= 1:
-            now = datetime.datetime.now()
-            timestamp = "{}/{:02d}/{:02d} {:02d}:{:02d}".format(
-                now.year, now.month, now.day, now.hour, now.minute
+        if verbose >= 2 and total:
+            context = progress.bar(
+                total=total, runner_name=self.__class__.__name__, glob_name=glob_name
             )
-            if verbose >= 2 and total:
-                progress_bar_thread = ProgressBar(
-                    total, self.__class__.__name__, glob_name
-                )
-                progress_bar_thread.start()
-            else:
-                print(
-                    f"Running OOMMF ({self.__class__.__name__})[{timestamp}]... ",
-                    end="",
-                )
-                tic = time.time()
+        elif verbose >= 1:
+            context = progress.summary(runner_name=self.__class__.__name__)
+        else:
+            context = contextlib.nullcontext()
 
-        res = self._call(argstr=argstr, need_stderr=need_stderr, n_threads=n_threads)
-        if sys.platform == "win32":
-            self._kill()  # required for oc.delete; oommf keeps file ownership
-
-        if verbose >= 1:
-            if verbose >= 2 and total:
-                progress_bar_thread.terminate()
-            else:
-                toc = time.time()
-                seconds = "({:0.1f} s)".format(toc - tic)
-                print(seconds)  # append seconds to the previous print.
+        with context:
+            res = self._call(
+                argstr=argstr, need_stderr=need_stderr, n_threads=n_threads
+            )
+            if sys.platform == "win32":
+                self._kill()  # required for oc.delete; oommf keeps file ownership
 
         if res.returncode != 0:
             msg = "Error in OOMMF run.\n"

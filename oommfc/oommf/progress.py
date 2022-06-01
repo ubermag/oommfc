@@ -1,3 +1,5 @@
+import contextlib
+import datetime
 import glob
 import threading
 import time
@@ -49,3 +51,32 @@ class ProgressBar(threading.Thread):
         """Stop a running progress bar thread after the current iteration."""
         self._terminate = True
         self.join()
+
+
+@contextlib.contextmanager
+def bar(total, runner_name, glob_name):
+    progress_bar_thread = ProgressBar(total, runner_name, glob_name)
+    progress_bar_thread.start()
+    try:
+        yield
+    finally:
+        progress_bar_thread.terminate()
+
+
+@contextlib.contextmanager
+def summary(runner_name):
+    now = datetime.datetime.now()
+    timestamp = "{}/{:02d}/{:02d} {:02d}:{:02d}".format(
+        now.year, now.month, now.day, now.hour, now.minute
+    )
+    print(
+        f"Running OOMMF ({runner_name})[{timestamp}]... ",
+        end="",
+    )
+    tic = time.time()
+    try:
+        yield
+    finally:
+        toc = time.time()
+        seconds = "({:0.1f} s)".format(toc - tic)
+        print(seconds)  # append seconds to the previous print.
