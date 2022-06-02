@@ -66,3 +66,7 @@ class TimeDriver(Driver):
         if n <= 0:
             msg = f"Cannot drive with {n=}."
             raise ValueError(msg)
+
+    @property
+    def _x(self):
+        return "t"

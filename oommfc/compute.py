@@ -1,4 +1,3 @@
-import glob
 import os
 import re
 
@@ -7,6 +6,7 @@ import micromagneticmodel as mm
 import ubermagtable as ut
 
 import oommfc as oc
+import oommfc.util
 
 
 def oxs_class(term, system):
@@ -41,7 +41,17 @@ def schedule_script(func, system):
     return 'Schedule "{}" archive Step 1\n'.format(output)
 
 
-def compute(func, system, /, verbose=1):
+def compute(
+    func,
+    system,
+    /,
+    dirname=".",
+    append=True,
+    n_threads=None,
+    runner=None,
+    ovf_format="bin8",
+    verbose=1,
+):
     """Computes a particular value of an energy term or energy container
     (``energy``, ``density``, or ``effective_field``).
 
@@ -86,34 +96,36 @@ def compute(func, system, /, verbose=1):
     Field(...)
 
     """
-    td = oc.TimeDriver(total_iteration_limit=1)
-    try:
-        td.drive(
-            system,
-            t=1e-25,
-            n=1,
-            append=True,
-            compute=schedule_script(func, system),
-            verbose=verbose,
-        )
-    except RuntimeError:
-        msg = (
+    if system.T > 0:
+        raise RuntimeError(
             "`oc.compute` does not support finite temperature."
             f" (Temperature is specified as {system.T=})"
         )
-        raise RuntimeError(msg)
+
+    td = oc.TimeDriver(total_iteration_limit=1)
+    workingdir = td._setup_working_directory(
+        system=system, dirname=dirname, mode="compute", append=append
+    )
+    with oc.util.changedir(workingdir):
+        td.write_mif(
+            system=system,
+            t=1e-25,
+            n=1,
+            ovf_format=ovf_format,
+            compute=schedule_script(func, system),
+        )
+        td._call(system=system, runner=runner, n_threads=n_threads, verbose=verbose)
+
+    system.compute_number += 1
 
     if func.__name__ == "energy":
-        extension = "*.odt"
+        extension = "odt"
     elif func.__name__ == "effective_field":
-        extension = "*.ohf"
+        extension = "ohf"
     elif func.__name__ == "density":
-        extension = "*.oef"
+        extension = "oef"
 
-    dirname = os.path.join(system.name, f"compute-{system.compute_number-1}")
-    output_file = max(
-        glob.iglob(os.path.join(dirname, extension)), key=os.path.getctime
-    )
+    output_file = str(max(workingdir.glob(f"*.{extension}"), key=os.path.getctime))
 
     if func.__name__ == "energy":
         table = ut.Table.fromfile(output_file, rename=False)

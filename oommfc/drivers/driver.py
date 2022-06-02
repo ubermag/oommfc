@@ -1,9 +1,8 @@
 import abc
-import contextlib
 import datetime
 import glob
 import json
-import os
+import pathlib
 
 import discretisedfield as df
 import micromagneticmodel as mm
@@ -11,17 +10,7 @@ import numpy as np
 import ubermagtable as ut
 
 import oommfc as oc
-
-
-@contextlib.contextmanager
-def _changedir(dirname):
-    """Context manager for changing directory."""
-    cwd = os.getcwd()
-    os.chdir(dirname)
-    try:
-        yield
-    finally:
-        os.chdir(cwd)
+import oommfc.util
 
 
 class Driver(mm.Driver):
@@ -37,7 +26,11 @@ class Driver(mm.Driver):
     @abc.abstractmethod
     def _checkargs(self, **kwargs):
         """Abstract method for checking arguments."""
-        pass  # pragma: no cover
+
+    @property
+    @abc.abstractmethod
+    def _x(self):
+        """Independent variable."""
 
     def drive(
         self,
@@ -46,7 +39,6 @@ class Driver(mm.Driver):
         dirname=".",
         append=True,
         fixed_subregions=None,
-        compute=None,
         output_step=False,
         n_threads=None,
         runner=None,
@@ -156,64 +148,61 @@ class Driver(mm.Driver):
         # exception if any of the arguments are not valid.
         self._checkargs(**kwargs)
 
-        # system directory already exists
-        if os.path.exists(os.path.join(dirname, system.name)):
-            dirs = os.listdir(os.path.join(dirname, system.name))
-            drive_dirs = [i for i in dirs if i.startswith("drive")]
-            compute_dirs = [i for i in dirs if i.startswith("compute")]
-            if compute is None:
-                if drive_dirs:
-                    if append:
-                        numbers = list(zip(*[i.split("-") for i in drive_dirs]))[1]
-                        numbers = list(map(int, numbers))
-                        system.drive_number = max(numbers) + 1
-                    else:
-                        msg = (
-                            f"Directory {system.name=} already exists. To "
-                            "append drives to it, pass append=True."
-                        )
-                        raise FileExistsError(msg)
-                else:
-                    system.drive_number = 0
-            else:
-                if compute_dirs:
-                    if append:
-                        numbers = list(zip(*[i.split("-") for i in compute_dirs]))[1]
-                        numbers = list(map(int, numbers))
-                        system.compute_number = max(numbers) + 1
-                    else:
-                        msg = (
-                            f"Directory {system.name=} already exists. To "
-                            "append drives to it, pass append=True."
-                        )
-                        raise FileExistsError(msg)
-                else:
-                    system.compute_number = 0
+        workingdir = self._setup_working_directory(
+            system=system, dirname=dirname, mode="drive", append=append
+        )
 
-        # Generate directory.
-        if compute is None:
-            subdir = f"drive-{system.drive_number}"
-        else:
-            subdir = f"compute-{system.compute_number}"
+        with oc.util.changedir(workingdir):
+            self.write_mif(
+                system=system,
+                ovf_format=ovf_format,
+                fixed_subregions=fixed_subregions,
+                output_step=output_step,
+                compute=None,
+                **kwargs,
+            )
+            self._call(system, runner, n_threads, verbose, total=kwargs.get("n"))
+            self._read_data(system)
 
-        workingdir = os.path.join(dirname, system.name, subdir)
+        system.drive_number += 1
 
-        # Make a directory inside which OOMMF will be run.
-        if not os.path.exists(workingdir):
-            os.makedirs(workingdir)
+    @staticmethod
+    def _setup_working_directory(system, dirname, mode, append):
+        system_dir = pathlib.Path(dirname, system.name)
+        try:
+            existing_number = max(
+                system_dir.glob(f"{mode}*"), key=lambda p: int(p.name.split("-")[1])
+            )
+            number = existing_number + 1
+        except ValueError:  # glob did not find any directories
+            number = 0
+        if number > 0 and not append:
+            raise FileExistsError(
+                f"Directory {system.name=} already exists. To "
+                "append drives to it, pass append=True."
+            )
+        setattr(system, f"{mode}_number", number)
+        workingdir = system_dir / f"{mode}-{number}"
+        workingdir.mkdir(parents=True)
+        return workingdir
 
+    def write_mif(
+        self,
+        system,
+        dirname=".",
+        ovf_format="bin8",
+        fixed_subregions=None,
+        output_step=False,
+        compute=None,
+        **kwargs,
+    ):
+        """Write the mif file and related files."""
         # compute tlist for time-dependent field (current)
         for term in system.energy:
             if hasattr(term, "func") and callable(term.func):
                 self._time_dependence(term=term, **kwargs)
 
-        # Change directory to workingdir
-        with _changedir(workingdir):
-            # Generate the necessary filenames.
-            miffilename = f"{system.name}.mif"
-            jsonfilename = "info.json"
-
-            # Generate and save mif file.
+        with oc.util.changedir(dirname):
             mif = oc.scripts.system_script(system, ovf_format=ovf_format)
             mif += oc.scripts.driver_script(
                 self,
@@ -223,7 +212,7 @@ class Driver(mm.Driver):
                 compute=compute,
                 **kwargs,
             )
-            with open(miffilename, "w") as miffile:
+            with open(self._miffilename(system), "wt") as miffile:
                 miffile.write(mif)
 
             # Generate and save json info file for a drive (not compute).
@@ -235,48 +224,35 @@ class Driver(mm.Driver):
                 info["driver"] = self.__class__.__name__
                 for k, v in kwargs.items():
                     info[k] = v
-                with open(jsonfilename, "w") as jsonfile:
+                with open("info.json", "wt") as jsonfile:
                     jsonfile.write(json.dumps(info))
 
-            if runner is None:
-                runner = oc.runner.runner
-            runner.call(
-                argstr=miffilename,
-                n_threads=n_threads,
-                verbose=verbose,
-                total=kwargs.get("n"),
-                glob_name=system.name,
-            )
-
-            # Update system's m and datatable attributes if the derivation of
-            # E, Heff, or energy density was not asked.
-            if compute is None:
-                # Update system's magnetisation. An example .omf filename:
-                # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
-                omffiles = glob.iglob(f"{system.name}*.omf")
-                lastomffile = sorted(omffiles)[-1]
-                # pass Field.array instead of Field for better performance
-                system.m.value = df.Field.fromfile(lastomffile).array
-
-                # Update system's datatable.
-                if isinstance(self, oc.TimeDriver):
-                    x = "t"
-                elif isinstance(self, oc.MinDriver):
-                    x = "iteration"
-                elif isinstance(self, oc.HysteresisDriver):
-                    x = "B_hysteresis"
-                system.table = ut.Table.fromfile(f"{system.name}.odt", x=x)
-
-        if compute is None:
-            system.drive_number += 1
-        else:
-            system.compute_number += 1
-
+    def _call(self, system, runner, n_threads, verbose, total=None):
+        if runner is None:
+            runner = oc.runner.runner
+        runner.call(
+            argstr=self._miffilename(system),
+            n_threads=n_threads,
+            verbose=verbose,
+            total=total,
+            glob_name=system.name,
+        )
         # remove information about fixed cells for subsequent runs
         if hasattr(self.evolver, "fixed_spins"):
             del self.evolver.fixed_spins
 
-    def _time_dependence(self, term, **kwargs):
+    def _read_data(self, system):
+        # Update system's magnetisation. An example .omf filename:
+        # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
+        omffiles = glob.iglob(f"{system.name}*.omf")
+        lastomffile = sorted(omffiles)[-1]
+        # pass Field.array instead of Field for better performance
+        system.m.value = df.Field.fromfile(lastomffile).array
+        # Update system's datatable.
+        system.table = ut.Table.fromfile(f"{system.name}.odt", x=self._x)
+
+    @staticmethod
+    def _time_dependence(term, **kwargs):
         try:
             tmax = kwargs["t"]
         except KeyError:
@@ -294,3 +270,7 @@ class Driver(mm.Driver):
             dtlist = list(np.gradient(tlist) / term.dt)
         term.tlist = tlist
         term.dtlist = dtlist
+
+    @staticmethod
+    def _miffilename(system):
+        return f"{system.name}.mif"

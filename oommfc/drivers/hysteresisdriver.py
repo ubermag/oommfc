@@ -73,3 +73,7 @@ class HysteresisDriver(Driver):
         if n - 1 <= 0:  # OOMMF counts steps, not points (n -> n-1)
             msg = f"Cannot drive with {n=}."
             raise ValueError(msg)
+
+    @property
+    def _x(self):
+        return "B_hysteresis"
