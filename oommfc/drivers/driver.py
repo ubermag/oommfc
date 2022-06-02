@@ -173,7 +173,7 @@ class Driver(mm.Driver):
             existing_number = max(
                 system_dir.glob(f"{mode}*"), key=lambda p: int(p.name.split("-")[1])
             )
-            number = existing_number + 1
+            number = int(existing_number.name.split("-")[1]) + 1
         except ValueError:  # glob did not find any directories
             number = 0
         if number > 0 and not append:
