@@ -161,28 +161,34 @@ class Driver(mm.Driver):
                 compute=None,
                 **kwargs,
             )
-            self._call(system, runner, n_threads, verbose, total=kwargs.get("n"))
+            self._call(
+                system=system,
+                runner=runner,
+                n_threads=n_threads,
+                verbose=verbose,
+                total=kwargs.get("n"),
+            )
             self._read_data(system)
 
         system.drive_number += 1
 
     @staticmethod
-    def _setup_working_directory(system, dirname, mode, append):
+    def _setup_working_directory(system, dirname, mode, append=True):
         system_dir = pathlib.Path(dirname, system.name)
         try:
-            existing_number = max(
+            last_existing_simulation = max(
                 system_dir.glob(f"{mode}*"), key=lambda p: int(p.name.split("-")[1])
             )
-            number = int(existing_number.name.split("-")[1]) + 1
+            next_number = int(last_existing_simulation.name.split("-")[1]) + 1
         except ValueError:  # glob did not find any directories
-            number = 0
-        if number > 0 and not append:
+            next_number = 0
+        if next_number > 0 and not append:
             raise FileExistsError(
                 f"Directory {system.name=} already exists. To "
                 "append drives to it, pass append=True."
             )
-        setattr(system, f"{mode}_number", number)
-        workingdir = system_dir / f"{mode}-{number}"
+        setattr(system, f"{mode}_number", next_number)
+        workingdir = system_dir / f"{mode}-{next_number}"
         workingdir.mkdir(parents=True)
         return workingdir
 
@@ -197,7 +203,7 @@ class Driver(mm.Driver):
         **kwargs,
     ):
         """Write the mif file and related files."""
-        # compute tlist for time-dependent field (current)
+        # compute tlist for time-dependent field/current
         for term in system.energy:
             if hasattr(term, "func") and callable(term.func):
                 self._time_dependence(term=term, **kwargs)
@@ -247,6 +253,7 @@ class Driver(mm.Driver):
         omffiles = glob.iglob(f"{system.name}*.omf")
         lastomffile = sorted(omffiles)[-1]
         # pass Field.array instead of Field for better performance
+        # and to avoid overriding custom component labels
         system.m.value = df.Field.fromfile(lastomffile).array
         # Update system's datatable.
         system.table = ut.Table.fromfile(f"{system.name}.odt", x=self._x)
@@ -256,11 +263,10 @@ class Driver(mm.Driver):
         try:
             tmax = kwargs["t"]
         except KeyError:
-            msg = (
+            raise RuntimeError(
                 f"Time-dependent term {term.__class__.__name__=} must be "
                 "used with time driver."
-            )
-            raise RuntimeError(msg)
+            ) from None
         ts = np.arange(0, tmax + term.dt, term.dt)
         try:  # vector output from term.func
             tlist = [list(term.func(t)) for t in ts]
