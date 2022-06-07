@@ -1,6 +1,5 @@
 import abc
 import datetime
-import glob
 import json
 import pathlib
 import subprocess as sp
@@ -453,11 +452,11 @@ class Driver(mm.Driver):
     def _read_data(self, system):
         # Update system's magnetisation. An example .omf filename:
         # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
-        omffiles = glob.iglob(f"{system.name}*.omf")
+        omffiles = pathlib.Path(".").glob(f"{system.name}*.omf")
         lastomffile = sorted(omffiles)[-1]
         # pass Field.array instead of Field for better performance
         # and to avoid overriding custom component labels
-        system.m.value = df.Field.fromfile(lastomffile).array
+        system.m.value = df.Field.fromfile(str(lastomffile)).array
         # Update system's datatable.
         system.table = ut.Table.fromfile(f"{system.name}.odt", x=self._x)
 
