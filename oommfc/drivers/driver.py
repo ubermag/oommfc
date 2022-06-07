@@ -36,7 +36,6 @@ class Driver(mm.Driver):
     def drive(
         self,
         system,
-        /,
         dirname=".",
         append=True,
         fixed_subregions=None,
@@ -186,7 +185,6 @@ class Driver(mm.Driver):
         system,
         cmd,
         header,
-        /,
         script_name="job.sh",
         dirname=".",
         append=True,
@@ -397,7 +395,6 @@ class Driver(mm.Driver):
     def write_mif(
         self,
         system,
-        /,
         dirname=".",
         ovf_format="bin8",
         fixed_subregions=None,
