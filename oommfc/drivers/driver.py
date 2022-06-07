@@ -43,6 +43,7 @@ class Driver(mm.Driver):
         output_step=False,
         n_threads=None,
         runner=None,
+        compute=None,
         ovf_format="bin8",
         verbose=1,
         **kwargs,
@@ -64,6 +65,13 @@ class Driver(mm.Driver):
         system : micromagneticmodel.System
 
             System object to be driven.
+
+        dirname : str, optional
+
+            Name of a base directory in which the simulation results are stored.
+            Additional subdirectories based on the system name and the current drive
+            number are created automatically. If not specified the current workinng
+            directory is used.
 
         append : bool, optional
 
@@ -159,7 +167,7 @@ class Driver(mm.Driver):
                 ovf_format=ovf_format,
                 fixed_subregions=fixed_subregions,
                 output_step=output_step,
-                compute=None,
+                compute=compute,
                 **kwargs,
             )
             self._call(
@@ -184,8 +192,8 @@ class Driver(mm.Driver):
         append=True,
         fixed_subregions=None,
         output_step=False,
-        n_threads=None,
         runner=None,
+        compute=None,
         ovf_format="bin8",
         verbose=1,
         **kwargs,
@@ -198,9 +206,14 @@ class Driver(mm.Driver):
         resources in a format understood by the schedule command must be passed to the
         function.
 
-        It is the users responsibility to ensure that OOMMF can be executed from the
+        It is the user's responsibility to ensure that OOMMF can be executed from the
         scheduled job. This would typically imply activating the conda environment in
         the schedule header.
+
+        To control the number of threads that OOMMF uses export the environment variable
+        ``OOMMF_THREADS`` in the header file. This variable should have the same value
+        as the number of CPUs requested from the scheduling system. If not specified a
+        default value that depends on the OOMMF installation (typically 4) is used.
 
         If ``append=True`` and the system director already exists, drive will
         be appended to that directory. Otherwise, an exception will be raised.
@@ -217,20 +230,27 @@ class Driver(mm.Driver):
 
             System object to be driven.
 
-        schedule_cmd : str
+        cmd : str
 
-            Name of the scheduling system submission program, e.g. ``'sbatch'`` for
-            slurm.
+            Name of the scheduling system's submission program, e.g. ``'sbatch'`` for
+            Slurm.
 
-        schedule_header : str
+        header : str
 
             Filename of the submission header file or str with the data to specify
             system requirements such as number of CPUs and memory. Note that OOMMF
             cannot run on multiple nodes.
 
-        schedule_file_name : str, optional
+        script_name : str, optional
 
             Name of the newly created OOMMF run script that is scheduled for execution.
+
+        dirname : str, optional
+
+            Name of a base directory in which the simulation results are stored.
+            Additional subdirectories based on the system name and the current drive
+            number are created automatically. If not specified the current workinng
+            directory is used.
 
         append : bool, optional
 
@@ -246,13 +266,6 @@ class Driver(mm.Driver):
         output_step : bool, optional
 
             If ``True``, output is saved at each step. Default to ``False``.
-
-        n_threads : int, optional
-
-            Controls the number of threads that OOMMF uses. The number can alternatively
-            also be controlled via the environment variable ``OOMMF_THREADS``. If not
-            specified a default value that depends on the OOMMF installation (typically
-            4) is used.
 
         compute : str, optional
 
@@ -288,7 +301,7 @@ class Driver(mm.Driver):
 
         Examples
         --------
-        1. Drive system using minimisation driver (``MinDriver``).
+        1. Schedule a time drive of the system (``TimeDriver``).
 
         >>> import micromagneticmodel as mm
         >>> import discretisedfield as df
@@ -299,17 +312,9 @@ class Driver(mm.Driver):
         >>> mesh = df.Mesh(p1=(0, 0, 0), p2=(1e-9, 1e-9, 10e-9), n=(1, 1, 10))
         >>> system.m = df.Field(mesh, dim=3, value=(1, 1, 1), norm=1e6)
         ...
-        >>> md = oc.MinDriver()
-        >>> md.drive(system)
-        Running OOMMF...
-
-        2. Drive system using time driver (``TimeDriver``).
-
-        >>> system.energy.zeeman.H = (0, 1e6, 0)
-        ...
         >>> td = oc.TimeDriver()
-        >>> td.drive(system, t=0.1e-9, n=10)
-        Running OOMMF...
+        >>> td.schedule(system, 'sbatch', 'header.sh' t=0.1e-9, n=10)  # doctest: +SKIP
+        Running 'sbatch job.sh' in ...
 
         """
         # This method is implemented in the derived driver class. It raises
@@ -332,15 +337,13 @@ class Driver(mm.Driver):
                 ovf_format=ovf_format,
                 fixed_subregions=fixed_subregions,
                 output_step=output_step,
-                compute=None,
+                compute=compute,
                 **kwargs,
             )
 
             if runner is None:
                 runner = oc.runner.runner
-            run_cmd = runner._call(
-                argstr=self._miffilename(system), n_threads=n_threads, dry_run=True
-            )
+            run_cmd = runner._call(argstr=self._miffilename(system), dry_run=True)
             with open(script_name, "wt", encoding="utf-8") as f:
                 f.write(header)
                 f.write("\n")
@@ -394,6 +397,7 @@ class Driver(mm.Driver):
     def write_mif(
         self,
         system,
+        /,
         dirname=".",
         ovf_format="bin8",
         fixed_subregions=None,
@@ -401,7 +405,63 @@ class Driver(mm.Driver):
         compute=None,
         **kwargs,
     ):
-        """Write the mif file and related files."""
+        """Write the mif file and related files.
+
+        Takes ``micromagneticmodel.System`` and write the mif file (and related files)
+        to drive it in the phase space. The files are written directly to directory
+        ``dirname`` (if not specified the current working directory). No additional
+        subdirectiories are created. To save a specific value during an OOMMF run
+        ``Schedule...`` line can be passed using ``compute``.
+
+        This method accepts any other arguments that could be required by the
+        specific driver.
+
+        Users are generally not encouraged to use this method directly. Instead
+        ``Driver.drive``, ``Driver.schedule``, or ``oommfc.schedule`` should be used to
+        write the files an run the simulation. This method is provided to give advanced
+        users full flexibility.
+
+        Parameters
+        ----------
+        system : micromagneticmodel.System
+
+            System object to be driven.
+
+        dirname : str, optional
+
+            Name of a directory in which the input files are stored.
+            If not specified the current workinng
+            directory is used.
+
+        ovf_format : str
+
+            Format of the magnetisation output files written by OOMMF. Can be
+            one of ``'bin8'`` (binary, double precision), ``'bin4'`` (binary,
+            single precision) or ``'txt'`` (text-based, double precision).
+            Defaults to ``'bin8'``.
+
+        fixed_subregions : list, optional
+
+            List of strings, where each string is the name of the subregion in
+            the mesh whose spins should remain fixed while the system is being
+            driven. Defaults to ``None``.
+
+        output_step : bool, optional
+
+            If ``True``, output is saved at each step. Default to ``False``.
+
+        compute : str, optional
+
+            ``Schedule...`` MIF line which can be added to the OOMMF file to
+            save additional data. Defaults to ``None``.
+
+        .. seealso::
+
+            :py:func:`~oommfc.Driver.drive`
+            :py:func:`~oommfc.Driver.schedule`
+            :py:func:`~oommfc.compute`
+
+        """
         # compute tlist for time-dependent field/current
         for term in system.energy:
             if hasattr(term, "func") and callable(term.func):

@@ -65,6 +65,32 @@ def compute(
 
         Micromagnetic system for which the property is calculated.
 
+    dirname : str, optional
+
+        Name of a base directory in which the simulation results are stored.
+        Additional subdirectories based on the system name and the current drive
+        number are created automatically. If not specified the current workinng
+        directory is used.
+
+    append : bool, optional
+
+        If ``True`` and the system directory already exists, drive or
+        compute directories will be appended. Defaults to ``True``.
+
+    n_threads : int, optional
+
+        Controls the number of threads that OOMMF uses. The number can alternatively
+        also be controlled via the environment variable ``OOMMF_THREADS``. If not
+        specified a default value that depends on the OOMMF installation (typically
+        4) is used.
+
+    ovf_format : str
+
+        Format of the magnetisation output files written by OOMMF. Can be
+        one of ``'bin8'`` (binary, double precision), ``'bin4'`` (binary,
+        single precision) or ``'txt'`` (text-based, double precision).
+        Defaults to ``'bin8'``.
+
     verbose : int, optional
 
         If ``verbose=0``, no output is printed. For ``verbose>=1``
