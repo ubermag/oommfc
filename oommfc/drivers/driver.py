@@ -432,21 +432,20 @@ class Driver(mm.Driver):
                 with open("info.json", "wt", encoding="utf-8") as jsonfile:
                     jsonfile.write(json.dumps(info))
 
+        # remove information about fixed cells for subsequent runs
+        if hasattr(self.evolver, "fixed_spins"):
+            del self.evolver.fixed_spins
+
     def _call(self, system, runner, n_threads, verbose, total=None):
         if runner is None:
             runner = oc.runner.runner
-        try:
-            runner.call(
-                argstr=self._miffilename(system),
-                n_threads=n_threads,
-                verbose=verbose,
-                total=total,
-                glob_name=system.name,
-            )
-        finally:
-            # remove information about fixed cells for subsequent runs
-            if hasattr(self.evolver, "fixed_spins"):
-                del self.evolver.fixed_spins
+        runner.call(
+            argstr=self._miffilename(system),
+            n_threads=n_threads,
+            verbose=verbose,
+            total=total,
+            glob_name=system.name,
+        )
 
     def _read_data(self, system):
         # Update system's magnetisation. An example .omf filename:
