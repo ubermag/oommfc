@@ -176,10 +176,10 @@ class Driver(mm.Driver):
     def schedule(
         self,
         system,
-        schedule_cmd,
-        schedule_header,
+        cmd,
+        header,
         /,
-        schedule_file_name="job.sh",
+        script_name="job.sh",
         dirname=".",
         append=True,
         fixed_subregions=None,
@@ -197,6 +197,10 @@ class Driver(mm.Driver):
         job scheduling system, e.g. Slurm. The command to schedule and the required
         resources in a format understood by the schedule command must be passed to the
         function.
+
+        It is the users responsibility to ensure that OOMMF can be executed from the
+        scheduled job. This would typically imply activating the conda environment in
+        the schedule header.
 
         If ``append=True`` and the system director already exists, drive will
         be appended to that directory. Otherwise, an exception will be raised.
@@ -316,11 +320,11 @@ class Driver(mm.Driver):
             system=system, dirname=dirname, mode="drive", append=append
         )
 
-        if pathlib.Path(schedule_header).exists():
-            with open(schedule_header, "rt") as f:
+        if pathlib.Path(header).exists():
+            with open(header, "rt", encoding="utf-8") as f:
                 header = f.read()
         else:
-            header = schedule_header
+            header = header
 
         with oc.util.changedir(workingdir):
             self.write_mif(
@@ -337,7 +341,7 @@ class Driver(mm.Driver):
             run_cmd = runner._call(
                 argstr=self._miffilename(system), n_threads=n_threads, dry_run=True
             )
-            with open(schedule_file_name, "wt") as f:
+            with open(script_name, "wt", encoding="utf-8") as f:
                 f.write(header)
                 f.write("\n")
                 f.write(" ".join(run_cmd))
@@ -347,14 +351,9 @@ class Driver(mm.Driver):
                 stdout = stderr = None  # pragma: no cover
 
             if verbose >= 1:
-                print(
-                    f"Running '{schedule_cmd} {schedule_file_name}' in"
-                    f" '{workingdir.absolute()}'."
-                )
+                print(f"Running '{cmd} {script_name}' in '{workingdir.absolute()}'.")
             system.drive_number += 1
-            res = sp.run(
-                [schedule_cmd, schedule_file_name], stdout=stdout, stderr=stderr
-            )
+            res = sp.run([cmd, script_name], stdout=stdout, stderr=stderr)
 
             # remove information about fixed cells for subsequent runs
             if hasattr(self.evolver, "fixed_spins"):
@@ -362,7 +361,7 @@ class Driver(mm.Driver):
 
             if res.returncode != 0:
                 msg = "Error during job schedule.\n"
-                msg += f"command: {schedule_cmd} {schedule_file_name}\n"
+                msg += f"command: {cmd} {script_name}\n"
                 if sys.platform != "win32":
                     # Only on Linux and MacOS - on Windows we do not get stderr and
                     # stdout.
@@ -375,6 +374,11 @@ class Driver(mm.Driver):
     @staticmethod
     def _setup_working_directory(system, dirname, mode, append=True):
         system_dir = pathlib.Path(dirname, system.name)
+        if system_dir.exists() and not append:
+            raise FileExistsError(
+                f"Directory {system.name=} already exists. To "
+                "append drives to it, pass append=True."
+            )
         try:
             last_existing_simulation = max(
                 system_dir.glob(f"{mode}*"), key=lambda p: int(p.name.split("-")[1])
@@ -382,11 +386,6 @@ class Driver(mm.Driver):
             next_number = int(last_existing_simulation.name.split("-")[1]) + 1
         except ValueError:  # glob did not find any directories
             next_number = 0
-        if next_number > 0 and not append:
-            raise FileExistsError(
-                f"Directory {system.name=} already exists. To "
-                "append drives to it, pass append=True."
-            )
         setattr(system, f"{mode}_number", next_number)
         workingdir = system_dir / f"{mode}-{next_number}"
         workingdir.mkdir(parents=True)
@@ -418,7 +417,7 @@ class Driver(mm.Driver):
                 compute=compute,
                 **kwargs,
             )
-            with open(self._miffilename(system), "wt") as miffile:
+            with open(self._miffilename(system), "wt", encoding="utf-8") as miffile:
                 miffile.write(mif)
 
             # Generate and save json info file for a drive (not compute).
@@ -430,7 +429,7 @@ class Driver(mm.Driver):
                 info["driver"] = self.__class__.__name__
                 for k, v in kwargs.items():
                     info[k] = v
-                with open("info.json", "wt") as jsonfile:
+                with open("info.json", "wt", encoding="utf-8") as jsonfile:
                     jsonfile.write(json.dumps(info))
 
     def _call(self, system, runner, n_threads, verbose, total=None):
