@@ -9,9 +9,9 @@ import discretisedfield as df
 import micromagneticmodel as mm
 import numpy as np
 import ubermagtable as ut
+import ubermagutil as uu
 
 import oommfc as oc
-import oommfc.util
 
 
 class Driver(mm.Driver):
@@ -153,7 +153,7 @@ class Driver(mm.Driver):
             system=system, dirname=dirname, mode="drive", append=append
         )
 
-        with oc.util.changedir(workingdir):
+        with uu.changedir(workingdir):
             self.write_mif(
                 system=system,
                 ovf_format=ovf_format,
@@ -326,7 +326,7 @@ class Driver(mm.Driver):
         else:
             header = header
 
-        with oc.util.changedir(workingdir):
+        with uu.changedir(workingdir):
             self.write_mif(
                 system=system,
                 ovf_format=ovf_format,
@@ -407,7 +407,7 @@ class Driver(mm.Driver):
             if hasattr(term, "func") and callable(term.func):
                 self._time_dependence(term=term, **kwargs)
 
-        with oc.util.changedir(dirname):
+        with uu.changedir(dirname):
             mif = oc.scripts.system_script(system, ovf_format=ovf_format)
             mif += oc.scripts.driver_script(
                 self,

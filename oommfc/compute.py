@@ -4,9 +4,9 @@ import re
 import discretisedfield as df
 import micromagneticmodel as mm
 import ubermagtable as ut
+import ubermagutil as uu
 
 import oommfc as oc
-import oommfc.util
 
 
 def oxs_class(term, system):
@@ -106,7 +106,7 @@ def compute(
     workingdir = td._setup_working_directory(
         system=system, dirname=dirname, mode="compute", append=append
     )
-    with oc.util.changedir(workingdir):
+    with uu.changedir(workingdir):
         td.write_mif(
             system=system,
             t=1e-25,
