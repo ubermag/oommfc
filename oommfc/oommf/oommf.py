@@ -117,7 +117,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         return res
 
     @abc.abstractmethod
-    def _call(self, argstr, need_stderr=False, n_threads=None):
+    def _call(self, argstr, need_stderr=False, n_threads=None, dry_run=False):
         """This method should be implemented in subclass."""
         pass  # pragma: no cover
 
@@ -245,7 +245,7 @@ class NativeOOMMFRunner(OOMMFRunner):
         else:
             self.env = os.environ
 
-    def _call(self, argstr, need_stderr=False, n_threads=None):
+    def _call(self, argstr, need_stderr=False, n_threads=None, dry_run=False):
         cmd = [*self.oommf, "boxsi", "+fg", argstr, "-exitondone", "1"]
 
         # Not clear why we cannot get stderr and stdout on win32. Calls to
@@ -257,7 +257,10 @@ class NativeOOMMFRunner(OOMMFRunner):
         if n_threads is not None:
             cmd += ["-threads", str(n_threads)]
 
-        return sp.run(cmd, stdout=stdout, stderr=stderr, env=self.env)
+        if dry_run:
+            return cmd
+        else:
+            return sp.run(cmd, stdout=stdout, stderr=stderr, env=self.env)
 
     def _kill(self, targets=("all",)):
         sp.run([*self.oommf, "killoommf", "-q"] + list(targets), env=self.env)
@@ -359,7 +362,7 @@ class DockerOOMMFRunner(OOMMFRunner):
         self.image = image
         self.selinux = selinux
 
-    def _call(self, argstr, need_stderr=False, n_threads=None):
+    def _call(self, argstr, need_stderr=False, n_threads=None, dry_run=False):
         cmd = [
             self.docker_exe,
             "run",
@@ -368,13 +371,14 @@ class DockerOOMMFRunner(OOMMFRunner):
             self.image,
             "/bin/bash",
             "-c",
-            (
-                "tclsh /usr/local/oommf/oommf/oommf.tcl boxsi +fg {} -exitondone 1"
-            ).format(argstr),
+            f"tclsh /usr/local/oommf/oommf/oommf.tcl boxsi +fg {argstr} -exitondone 1",
         ]
         if n_threads is not None:
             cmd += ["-threads", str(n_threads)]
-        return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
+        if dry_run:
+            return cmd
+        else:
+            return sp.run(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
 
     def _kill(self, targets=("all",)):
         # There is no need to kill OOMMF when run inside docker.
