@@ -29,6 +29,9 @@ class Driver(mm.ExternalDriver):
     def drive_kwargs_setup(self, **kwargs):
         """Additional keyword arguments allowed for drive.
 
+        To save a specific value during an OOMMF run ``Schedule...`` line can
+        be passed using ``compute``.
+
         Parameters
         ----------
         fixed_subregions : list, optional
@@ -62,6 +65,9 @@ class Driver(mm.ExternalDriver):
 
     def schedule_kwargs_setup(self, **kwargs):
         """Additional keyword arguments allowed for schedule.
+
+        To save a specific value during an OOMMF run ``Schedule...`` line can
+        be passed using ``compute``.
 
         Parameters
         ----------
