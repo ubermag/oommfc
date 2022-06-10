@@ -196,9 +196,7 @@ class Driver(mm.ExternalDriver):
         if hasattr(self.evolver, "fixed_spins"):
             del self.evolver.fixed_spins
 
-    def _call(
-        self, system, runner, n_threads=None, verbose=1, total=None, dry_run=False
-    ):
+    def _call(self, system, runner, n_threads=None, verbose=1, dry_run=False, **kwargs):
         if runner is None:
             runner = oc.runner.runner
         if dry_run:
@@ -208,7 +206,7 @@ class Driver(mm.ExternalDriver):
                 argstr=self._miffilename(system),
                 n_threads=n_threads,
                 verbose=verbose,
-                total=total,
+                total=kwargs.get("n"),
                 glob_name=system.name,
             )
 
