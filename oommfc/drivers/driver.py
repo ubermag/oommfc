@@ -180,7 +180,7 @@ class Driver(mm.ExternalDriver):
 
             # Generate and save json info file for a drive (not compute).
             if compute is None:
-                self._write_info_json(**kwargs)
+                self._write_info_json(system, **kwargs)
 
         # remove information about fixed cells for subsequent runs
         if hasattr(self.evolver, "fixed_spins"):
