@@ -62,7 +62,7 @@ jobs:
         python -m pip install git+https://github.com/ubermag/ubermagutil.git
         python -m pip install git+https://github.com/ubermag/discretisedfield.git
         python -m pip install git+https://github.com/ubermag/ubermagtable.git
-        python -m pip install git+https://github.com/ubermag/micromagneticmodel.git
+        python -m pip install git+https://github.com/ubermag/micromagneticmodel.git@external-driver
         python -m pip install git+https://github.com/ubermag/micromagnetictests.git
         python -m pip install git+https://github.com/ubermag/micromagneticdata.git
 
