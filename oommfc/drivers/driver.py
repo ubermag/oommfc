@@ -1,6 +1,4 @@
 import abc
-import datetime
-import json
 import pathlib
 
 import discretisedfield as df
@@ -182,15 +180,7 @@ class Driver(mm.ExternalDriver):
 
             # Generate and save json info file for a drive (not compute).
             if compute is None:
-                info = {}
-                info["drive_number"] = system.drive_number
-                info["date"] = datetime.datetime.now().strftime("%Y-%m-%d")
-                info["time"] = datetime.datetime.now().strftime("%H:%M:%S")
-                info["driver"] = self.__class__.__name__
-                for k, v in kwargs.items():
-                    info[k] = v
-                with open("info.json", "wt", encoding="utf-8") as jsonfile:
-                    jsonfile.write(json.dumps(info))
+                self._write_info_json(**kwargs)
 
         # remove information about fixed cells for subsequent runs
         if hasattr(self.evolver, "fixed_spins"):
@@ -218,7 +208,7 @@ class Driver(mm.ExternalDriver):
         # pass Field.array instead of Field for better performance
         # and to avoid overriding custom component labels
         system.m.value = df.Field.fromfile(str(lastomffile)).array
-        # Update system's datatable.
+
         system.table = ut.Table.fromfile(f"{system.name}.odt", x=self._x)
 
     @staticmethod
