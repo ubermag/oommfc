@@ -67,6 +67,17 @@ class Driver(mm.ExternalDriver):
         To save a specific value during an OOMMF run ``Schedule...`` line can
         be passed using ``compute``.
 
+        It is the user's responsibility to ensure that OOMMF can be executed from the
+        scheduled job. This would typically imply activating the conda environment in
+        the schedule header.
+
+        To control the number of threads that OOMMF uses export the environment variable
+        ``OOMMF_THREADS`` in the header file. This variable should have the same value
+        as the number of CPUs requested from the scheduling system. If not specified a
+        default value that depends on the OOMMF installation (typically 4) is used.
+
+        Note that OOMMF cannot run on multiple nodes.
+
         Parameters
         ----------
         fixed_subregions : list, optional
