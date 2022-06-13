@@ -24,7 +24,14 @@ class Driver(mm.ExternalDriver):
     def _checkargs(self, **kwargs):
         """Abstract method for checking arguments."""
 
-    def drive_kwargs_setup(self, **kwargs):
+    def drive_kwargs_setup(
+        self,
+        fixed_subregions=None,
+        output_step=False,
+        n_threads=None,
+        compute=None,
+        **kwargs,
+    ):
         """Additional keyword arguments allowed for drive.
 
         To save a specific value during an OOMMF run ``Schedule...`` line can
@@ -56,12 +63,14 @@ class Driver(mm.ExternalDriver):
 
         """
         self._checkargs(**kwargs)
-        kwargs.setdefault("fixed_subregions")
-        kwargs.setdefault("output_step", False)
-        kwargs.setdefault("n_threads")
-        kwargs.setdefault("compute")
+        kwargs.setdefault("fixed_subregions", fixed_subregions)
+        kwargs.setdefault("output_step", output_step)
+        kwargs.setdefault("n_threads", n_threads)
+        kwargs.setdefault("compute", compute)
 
-    def schedule_kwargs_setup(self, **kwargs):
+    def schedule_kwargs_setup(
+        self, fixed_subregions=None, output_step=False, compute=None, **kwargs
+    ):
         """Additional keyword arguments allowed for schedule.
 
         To save a specific value during an OOMMF run ``Schedule...`` line can
@@ -97,9 +106,9 @@ class Driver(mm.ExternalDriver):
 
         """
         self._checkargs(**kwargs)
-        kwargs.setdefault("fixed_subregions")
-        kwargs.setdefault("output_step", False)
-        kwargs.setdefault("compute")
+        kwargs.setdefault("fixed_subregions", fixed_subregions)
+        kwargs.setdefault("output_step", output_step)
+        kwargs.setdefault("compute", compute)
 
     def _write_input_files(self, system, **kwargs):
         self.write_mif(system, **kwargs)
