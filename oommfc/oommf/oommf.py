@@ -17,7 +17,7 @@ from . import progress
 log = logging.getLogger("oommfc")
 
 
-class OOMMFRunner(metaclass=abc.ABCMeta):
+class OOMMFRunner(mm.ExternalRunner):
     """Abstract class for running OOMMF."""
 
     def __del__(self):
@@ -39,6 +39,7 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         verbose=1,
         total=None,
         glob_name="",
+        dry_run=False,
     ):
         """Call OOMMF by passing ``argstr`` to OOMMF.
 
@@ -61,6 +62,11 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
             only relies on the number of magnetisation snapshots already saved to disk
             and therefore only gives a rough indication of progress. Defaults to ``1``.
 
+        dry_run : bool, optional
+
+            If ``dry_run=True`` this method returns the command to call OOMMF without
+            calling OOMMF. Defaults to ``False``.
+
         Raises
         ------
         RuntimeError
@@ -69,9 +75,10 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
 
         Returns
         -------
-        int
+        int, str
 
-            When the OOMMF run was successful, ``0`` is returned.
+            If ``dry_run=False`` and when the OOMMF run was successful, ``0`` is
+            returned. If ``dry_run=True`` the command to call OOMMF is returned.
 
         Examples
         --------
@@ -85,6 +92,14 @@ class OOMMFRunner(metaclass=abc.ABCMeta):
         CompletedProcess(...)
 
         """
+        if dry_run:
+            return self._call(
+                argstr=argstr,
+                need_stderr=need_stderr,
+                n_threads=n_threads,
+                dry_run=True,
+            )
+
         if verbose >= 2 and total:
             context = progress.bar(
                 total=total, runner_name=self.__class__.__name__, glob_name=glob_name
