@@ -1,5 +1,4 @@
 import abc
-import contextlib
 import logging
 import os
 import shutil
@@ -11,8 +10,6 @@ import micromagneticmodel as mm
 import ubermagutil as uu
 
 import oommfc as oc
-
-from . import progress
 
 log = logging.getLogger("oommfc")
 
@@ -101,13 +98,18 @@ class OOMMFRunner(mm.ExternalRunner):
             )
 
         if verbose >= 2 and total:
-            context = progress.bar(
-                total=total, runner_name=self.__class__.__name__, glob_name=glob_name
+            context = uu.progress.bar(
+                total=total,
+                package_name="OOMMF",
+                runner_name=self.__class__.__name__,
+                glob_name=glob_name,
             )
         elif verbose >= 1:
-            context = progress.summary(runner_name=self.__class__.__name__)
+            context = uu.progress.summary(
+                package_name="OOMMF", runner_name=self.__class__.__name__
+            )
         else:
-            context = contextlib.nullcontext()
+            context = uu.progress.quiet()
 
         with context:
             res = self._call(
