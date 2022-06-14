@@ -27,7 +27,7 @@ class OOMMFRunner(mm.ExternalRunner):
 
         """
         if sys.platform != "win32":
-            self._kill_oommf()
+            self._kill()
 
     @property
     def package_name(self):
