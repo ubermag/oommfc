@@ -217,7 +217,7 @@ class Driver(mm.ExternalDriver):
                 n_threads=n_threads,
                 verbose=verbose,
                 total=kwargs.get("n"),
-                glob_name=system.name,
+                glob_name=f"{system.name}*.omf",
             )
 
     def _read_data(self, system):
