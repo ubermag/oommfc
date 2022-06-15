@@ -132,7 +132,7 @@ def driver_script(
 
         # Extract dynamics equation parameters.
         if system.dynamics.get(type=mm.Precession):
-            precession = system.dynamics.get(type=mm.Precession)[0]
+            (precession,) = system.dynamics.get(type=mm.Precession)
             if isinstance(driver.evolver, oc.UHH_ThetaEvolver):
                 pref = 1
                 if system.dynamics.get(type=mm.Damping):
@@ -148,14 +148,14 @@ def driver_script(
         else:
             driver.evolver.alpha = 0
         if system.dynamics.get(type=mm.ZhangLi):
-            zhang_li = system.dynamics.get(type=mm.ZhangLi)[0]
+            (zhang_li,) = system.dynamics.get(type=mm.ZhangLi)
             driver.evolver.u = zhang_li.u
             driver.evolver.beta = zhang_li.beta
             for arg in ["func", "dt", "tcl_strings"]:
                 if hasattr(zhang_li, arg):
                     setattr(driver.evolver, arg, getattr(zhang_li, arg))
         if system.dynamics.get(type=mm.Slonczewski):
-            slonczewski = system.dynamics.get(type=mm.Slonczewski)[0]
+            (slonczewski,) = system.dynamics.get(type=mm.Slonczewski)
             driver.evolver.J = slonczewski.J
             driver.evolver.mp = slonczewski.mp
             driver.evolver.P = slonczewski.P
