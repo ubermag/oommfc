@@ -109,9 +109,9 @@ def driver_script(
                     "be specified explicitely."
                 )
                 raise RuntimeError(msg)
-            elif mm.ZhangLi() in system.dynamics:
+            elif system.dynamics.contains(type=mm.ZhangLi):
                 driver.evolver = oc.SpinTEvolver()
-            elif mm.Slonczewski() in system.dynamics:
+            elif system.dynamics.contains(type=mm.Slonczewski):
                 driver.evolver = oc.SpinXferEvolver()
             else:
                 driver.evolver = oc.RungeKuttaEvolver()
@@ -131,43 +131,44 @@ def driver_script(
             raise TypeError(msg)
 
         # Extract dynamics equation parameters.
-        if mm.Precession() in system.dynamics:
+        if system.dynamics.contains(type=mm.Precession):
+            precession = system.dynamics.get(type=mm.Precession)[0]
             if isinstance(driver.evolver, oc.UHH_ThetaEvolver):
                 pref = 1
-                if mm.Damping() in system.dynamics:
-                    pref += system.dynamics.damping.alpha**2
-                driver.evolver.gamma_LL = system.dynamics.precession.gamma0 / pref
+                if system.dynamics.contains(type=mm.Damping):
+                    pref += system.dynamics.get(type=mm.Damping)[0].alpha ** 2
+                driver.evolver.gamma_LL = precession.gamma0 / pref
                 driver.evolver.do_precess = 1
             else:
-                driver.evolver.gamma_G = system.dynamics.precession.gamma0
+                driver.evolver.gamma_G = precession.gamma0
         else:
             driver.evolver.do_precess = 0
-        if mm.Damping() in system.dynamics:
-            driver.evolver.alpha = system.dynamics.damping.alpha
+        if system.dynamics.contains(type=mm.Damping):
+            driver.evolver.alpha = system.dynamics.get(type=mm.Damping)[0].alpha
         else:
             driver.evolver.alpha = 0
-        if mm.ZhangLi() in system.dynamics:
-            driver.evolver.u = system.dynamics.zhangli.u
-            driver.evolver.beta = system.dynamics.zhangli.beta
+        if system.dynamics.contains(type=mm.ZhangLi):
+            zhang_li = system.dynamics.get(type=mm.ZhangLi)[0]
+            driver.evolver.u = zhang_li.u
+            driver.evolver.beta = zhang_li.beta
             for arg in ["func", "dt", "tcl_strings"]:
-                if hasattr(system.dynamics.zhangli, arg):
-                    setattr(driver.evolver, arg, getattr(system.dynamics.zhangli, arg))
-        if mm.Slonczewski() in system.dynamics:
-            driver.evolver.J = system.dynamics.slonczewski.J
-            driver.evolver.mp = system.dynamics.slonczewski.mp
-            driver.evolver.P = system.dynamics.slonczewski.P
-            driver.evolver.Lambda = system.dynamics.slonczewski.Lambda
-            if isinstance(system.dynamics.slonczewski.eps_prime, ts.Descriptor):
+                if hasattr(zhang_li, arg):
+                    setattr(driver.evolver, arg, getattr(zhang_li, arg))
+        if system.dynamics.contains(type=mm.Slonczewski):
+            slonczewski = system.dynamics.get(type=mm.Slonczewski)[0]
+            driver.evolver.J = slonczewski.J
+            driver.evolver.mp = slonczewski.mp
+            driver.evolver.P = slonczewski.P
+            driver.evolver.Lambda = slonczewski.Lambda
+            if isinstance(slonczewski.eps_prime, ts.Descriptor):
                 driver.evolver.eps_prime = 0
             else:
-                driver.evolver.eps_prime = system.dynamics.slonczewski.eps_prime
+                driver.evolver.eps_prime = slonczewski.eps_prime
             for arg in ["func", "dt", "tcl_strings"]:
-                if hasattr(system.dynamics.slonczewski, arg) and not isinstance(
-                    getattr(system.dynamics.slonczewski, arg), ts.Descriptor
+                if hasattr(slonczewski, arg) and not isinstance(
+                    getattr(slonczewski, arg), ts.Descriptor
                 ):
-                    setattr(
-                        driver.evolver, arg, getattr(system.dynamics.slonczewski, arg)
-                    )
+                    setattr(driver.evolver, arg, getattr(slonczewski, arg))
         if isinstance(
             driver.evolver,
             (oc.UHH_ThetaEvolver, oc.Xf_ThermHeunEvolver, oc.Xf_ThermSpinXferEvolver),
