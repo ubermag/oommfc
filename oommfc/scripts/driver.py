@@ -109,9 +109,9 @@ def driver_script(
                     "be specified explicitely."
                 )
                 raise RuntimeError(msg)
-            elif system.dynamics.contains(type=mm.ZhangLi):
+            elif system.dynamics.get(type=mm.ZhangLi):
                 driver.evolver = oc.SpinTEvolver()
-            elif system.dynamics.contains(type=mm.Slonczewski):
+            elif system.dynamics.get(type=mm.Slonczewski):
                 driver.evolver = oc.SpinXferEvolver()
             else:
                 driver.evolver = oc.RungeKuttaEvolver()
@@ -131,11 +131,11 @@ def driver_script(
             raise TypeError(msg)
 
         # Extract dynamics equation parameters.
-        if system.dynamics.contains(type=mm.Precession):
+        if system.dynamics.get(type=mm.Precession):
             precession = system.dynamics.get(type=mm.Precession)[0]
             if isinstance(driver.evolver, oc.UHH_ThetaEvolver):
                 pref = 1
-                if system.dynamics.contains(type=mm.Damping):
+                if system.dynamics.get(type=mm.Damping):
                     pref += system.dynamics.get(type=mm.Damping)[0].alpha ** 2
                 driver.evolver.gamma_LL = precession.gamma0 / pref
                 driver.evolver.do_precess = 1
@@ -143,18 +143,18 @@ def driver_script(
                 driver.evolver.gamma_G = precession.gamma0
         else:
             driver.evolver.do_precess = 0
-        if system.dynamics.contains(type=mm.Damping):
+        if system.dynamics.get(type=mm.Damping):
             driver.evolver.alpha = system.dynamics.get(type=mm.Damping)[0].alpha
         else:
             driver.evolver.alpha = 0
-        if system.dynamics.contains(type=mm.ZhangLi):
+        if system.dynamics.get(type=mm.ZhangLi):
             zhang_li = system.dynamics.get(type=mm.ZhangLi)[0]
             driver.evolver.u = zhang_li.u
             driver.evolver.beta = zhang_li.beta
             for arg in ["func", "dt", "tcl_strings"]:
                 if hasattr(zhang_li, arg):
                     setattr(driver.evolver, arg, getattr(zhang_li, arg))
-        if system.dynamics.contains(type=mm.Slonczewski):
+        if system.dynamics.get(type=mm.Slonczewski):
             slonczewski = system.dynamics.get(type=mm.Slonczewski)[0]
             driver.evolver.J = slonczewski.J
             driver.evolver.mp = slonczewski.mp
