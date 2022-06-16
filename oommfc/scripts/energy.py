@@ -274,6 +274,12 @@ def dmi_script(term, system):
             warnings.warn(msg, FutureWarning)
             tcc = "Cnv_z"
         oxs = f"Oxs_DMI_{tcc}"
+    elif (tcc := term.crystalclass) in ["S4_x", "S4_y", "S4_z"]:
+        oxs = f"Oxs_DMI_{tcc}"
+    elif (tcc := term.crystalclass) in ["Dn_x", "Dn_y", "Dn_z"]:
+        oxs = f"Oxs_DMI_{tcc}"
+    elif (tcc := term.crystalclass) in ["Cn_x", "Cn_y", "Cn_z"]:
+        oxs = f"Oxs_DMI_{tcc}"
 
     mif = f"# DMI of crystallographic class {term.crystalclass}\n"
     mif += f"Specify {oxs}:{term.name} {{\n"
@@ -287,7 +293,6 @@ def dmi_script(term, system):
         else:
             mif += f"    entire entire {term.D}\n"
         mif += "  }\n"
-        mif += "}\n\n"
 
     elif isinstance(term.D, dict):
         if "default" in term.D.keys():
@@ -305,7 +310,87 @@ def dmi_script(term, system):
                     region1, region2 = key, key
                 mif += f"    {region1} {region2} {value}\n"
         mif += "  }\n"
-        mif += "}\n\n"
+
+    if hasattr(system.energy.dmi, 'D1'):
+        if isinstance(term.D1, numbers.Real):
+            mif += f"  default_D1 {term.D1}\n"
+            mif += "  atlas :main_atlas\n"
+            mif += "  D1 {\n"
+            if len(system.m.mesh.subregions) == 0:
+                mif += f"    main main {term.D1}\n"
+            else:
+                mif += f"    entire entire {term.D1}\n"
+            mif += "  }\n"
+
+        elif isinstance(term.D1, dict):
+            if "default" in term.D1.keys():
+                default_value = term.D1["default"]
+            else:
+                default_value = 0
+            mif += f"  default_D1 {default_value}\n"
+            mif += "  D1 {\n"
+            for key, value in term.D1.items():
+                if key != "default":
+                    if ":" in key:
+                        region1, region2 = key.split(":")
+                    else:
+                        region1, region2 = key, key
+                    mif += f"    {region1} {region2} {value}\n"
+            mif += "  }\n"
+
+        if isinstance(term.D2, numbers.Real):
+            mif += f"  default_D2 {term.D2}\n"
+            mif += "  D2 {\n"
+            if len(system.m.mesh.subregions) == 0:
+                mif += f"    main main {term.D2}\n"
+            else:
+                mif += f"    entire entire {term.D2}\n"
+            mif += "  }\n"
+
+        elif isinstance(term.D2, dict):
+            if "default" in term.D2.keys():
+                default_value = term.D2["default"]
+            else:
+                default_value = 0
+            mif += f"  default_D2 {default_value}\n"
+            mif += "  atlas :main_atlas\n"
+            mif += "  D2 {\n"
+            for key, value in term.D2.items():
+                if key != "default":
+                    if ":" in key:
+                        region1, region2 = key.split(":")
+                    else:
+                        region1, region2 = key, key
+                    mif += f"    {region1} {region2} {value}\n"
+            mif += "  }\n"
+
+    if hasattr(system.energy.dmi, 'D3'):
+        if isinstance(term.D3, numbers.Real):
+            mif += f"  default_D3 {term.D3}\n"
+            mif += "  D3 {\n"
+            if len(system.m.mesh.subregions) == 0:
+                mif += f"    main main {term.D3}\n"
+            else:
+                mif += f"    entire entire {term.D3}\n"
+            mif += "  }\n"
+
+        elif isinstance(term.D3, dict):
+            if "default" in term.D3.keys():
+                default_value = term.D3["default"]
+            else:
+                default_value = 0
+            mif += f"  default_D3 {default_value}\n"
+            mif += "  atlas :main_atlas\n"
+            mif += "  D3 {\n"
+            for key, value in term.D3.items():
+                if key != "default":
+                    if ":" in key:
+                        region1, region2 = key.split(":")
+                    else:
+                        region1, region2 = key, key
+                    mif += f"    {region1} {region2} {value}\n"
+            mif += "  }\n"
+    mif += "}\n\n"
 
     return mif
 
