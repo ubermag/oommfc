@@ -2,9 +2,11 @@ import abc
 import contextlib
 import logging
 import os
+import pathlib
 import shutil
 import subprocess as sp
 import sys
+import tempfile
 import time
 
 import micromagneticmodel as mm
@@ -554,21 +556,22 @@ def overhead():
     True
 
     """
-    # Running OOMMF through oommfc.
-    system = mm.examples.macrospin()
-    td = oc.TimeDriver()
-    oommfc_start = time.time()
-    td.drive(system, t=1e-12, n=1, save=True, overwrite=True)
-    oommfc_stop = time.time()
-    oommfc_time = oommfc_stop - oommfc_start
+    with tempfile.TemporaryDirectory() as workingdir:
+        with uu.changedir(workingdir):
+            # Running OOMMF through oommfc.
+            system = mm.examples.macrospin()
+            td = oc.TimeDriver()
+            oommfc_start = time.time()
+            td.drive(system, t=1e-12, n=1)
+            oommfc_stop = time.time()
+            oommfc_time = oommfc_stop - oommfc_start
 
-    # Running OOMMF directly.
-    oommf_runner = oc.runner.runner
-    mifpath = os.path.realpath(os.path.join(system.name, "drive-0", "macrospin.mif"))
-    oommf_start = time.time()
-    oommf_runner.call(mifpath)
-    oommf_stop = time.time()
-    oommf_time = oommf_stop - oommf_start
-    oc.delete(system)
+            # Running OOMMF directly.
+            oommf_runner = oc.runner.runner
+            mifpath = pathlib.Path(f"{system.name}/drive-0/macrospin.mif").resolve()
+            oommf_start = time.time()
+            oommf_runner.call(str(mifpath))
+            oommf_stop = time.time()
+            oommf_time = oommf_stop - oommf_start
 
     return oommfc_time - oommf_time
