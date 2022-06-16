@@ -12,8 +12,6 @@ import ubermagutil as uu
 
 import oommfc as oc
 
-from . import progress
-
 log = logging.getLogger("oommfc")
 
 
@@ -31,115 +29,17 @@ class OOMMFRunner(mm.ExternalRunner):
         if sys.platform != "win32":
             self._kill()
 
-    def call(
-        self,
-        argstr,
-        need_stderr=False,
-        n_threads=None,
-        verbose=1,
-        total=None,
-        glob_name="",
-        dry_run=False,
-    ):
-        """Call OOMMF by passing ``argstr`` to OOMMF.
+    @property
+    def package_name(self):
+        """Simulation package name."""
+        return "OOMMF"
 
-        Parameters
-        ----------
-        argstr : str
-
-            Argument string passed to OOMMF.
-
-        need_stderr : bool, optional
-
-            If ``need_stderr=True``, standard error is captured. Defaults to
-            ``False``.
-
-        verbose : int, optional
-
-            If ``verbose=0``, no output is printed. For ``verbose=1`` information about
-            the OOMMF runner and the runtime is printed to stdout. For ``verbose=2`` a
-            progress bar is displayed for TimeDriver drives. Note that this information
-            only relies on the number of magnetisation snapshots already saved to disk
-            and therefore only gives a rough indication of progress. Defaults to ``1``.
-
-        dry_run : bool, optional
-
-            If ``dry_run=True`` this method returns the command to call OOMMF without
-            calling OOMMF. Defaults to ``False``.
-
-        Raises
-        ------
-        RuntimeError
-
-            If an error occured.
-
-        Returns
-        -------
-        int, str
-
-            If ``dry_run=False`` and when the OOMMF run was successful, ``0`` is
-            returned. If ``dry_run=True`` the command to call OOMMF is returned.
-
-        Examples
-        --------
-        1. Getting OOMMF runner automatically and calling it.
-
-        >>> import oommfc as oc
-        ...
-        >>> runner = oc.runner.runner
-        >>> runner.call(argstr='+version')
-        Running OOMMF...
-        CompletedProcess(...)
-
-        """
-        if dry_run:
-            return self._call(
-                argstr=argstr,
-                need_stderr=need_stderr,
-                n_threads=n_threads,
-                dry_run=True,
-            )
-
-        if verbose >= 2 and total:
-            context = progress.bar(
-                total=total, runner_name=self.__class__.__name__, glob_name=glob_name
-            )
-        elif verbose >= 1:
-            context = progress.summary(runner_name=self.__class__.__name__)
-        else:
-            context = contextlib.nullcontext()
-
-        with context:
-            res = self._call(
-                argstr=argstr, need_stderr=need_stderr, n_threads=n_threads
-            )
-            if sys.platform == "win32":
-                self._kill()  # required for oc.delete; oommf keeps file ownership
-
-        if res.returncode != 0:
-            msg = "Error in OOMMF run.\n"
-            cmdstr = " ".join(res.args)
-            msg += f"command: {cmdstr}\n"
-            if sys.platform != "win32":
-                # Only on Linux and MacOS - on Windows we do not get stderr and
-                # stdout.
-                stderr = res.stderr.decode("utf-8", "replace")
-                stdout = res.stdout.decode("utf-8", "replace")
-                msg += f"stdout: {stdout}\n"
-                msg += f"stderr: {stderr}\n"
-            raise RuntimeError(msg)
-
-        return res
-
-    @abc.abstractmethod
     def _call(self, argstr, need_stderr=False, n_threads=None, dry_run=False):
         """This method should be implemented in subclass."""
-        pass  # pragma: no cover
 
     @abc.abstractmethod
     def _kill(self, targets=("all",)):
-        """This method should be implemented in subclass."""
-        pass  # pragma: no cover
+        """Kill OOMMF."""
 
     @abc.abstractmethod
     def errors(self):
@@ -275,7 +175,17 @@ class NativeOOMMFRunner(OOMMFRunner):
         if dry_run:
             return cmd
         else:
-            return sp.run(cmd, stdout=stdout, stderr=stderr, env=self.env)
+            with self._kill_oommf_on_windows():
+                return sp.run(cmd, stdout=stdout, stderr=stderr, env=self.env)
+
+    @contextlib.contextmanager
+    def _kill_oommf_on_windows(self, targets=("all",)):
+        """Required for oc.delete; oommf keeps file ownership."""
+        try:
+            yield
+        finally:
+            if sys.platform == "win32":
+                self._kill()
 
     def _kill(self, targets=("all",)):
         sp.run([*self.oommf, "killoommf", "-q"] + list(targets), env=self.env)
