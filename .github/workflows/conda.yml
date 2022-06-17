@@ -5,7 +5,7 @@ on:
     - cron: '0 0 * * 1'  # run every Monday
 
 env:
-  PYTEST_ADOPTS: "--color=yes"
+  PYTEST_ADDOPTS: "--color=yes"
 
 jobs:
   conda:

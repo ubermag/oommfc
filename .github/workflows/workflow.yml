@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  PYTEST_ADOPTS: "--color=yes"
+  PYTEST_ADDOPTS: "--color=yes"
 
 jobs:
   workflow:
