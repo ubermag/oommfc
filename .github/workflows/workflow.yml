@@ -2,8 +2,15 @@ name: workflow
 
 on:
   push:
+    branches:
+      - master
+  pull_request:
   schedule:
     - cron: '0 0 * * 1'  # run every Monday
+  workflow_dispatch:
+
+env:
+  PYTEST_ADOPTS: "--color=yes"
 
 jobs:
   workflow:
@@ -31,7 +38,6 @@ jobs:
 
     - name: Unit tests
       run: invoke test.unittest
-      if: matrix.os != 'ubuntu-latest'
 
     - name: Unit tests with coverage
       run: invoke test.coverage
