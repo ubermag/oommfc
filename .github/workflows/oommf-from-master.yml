@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: '0 0 * * 1'  # run every Monday
 
+env:
+  PYTEST_ADDOPTS: "--color=yes"
+
 jobs:
   workflow:
     runs-on: ${{ matrix.os }}
