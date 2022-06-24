@@ -26,7 +26,7 @@
 | Platforms | [![Platforms](https://anaconda.org/conda-forge/oommfc/badges/platforms.svg)](https://anaconda.org/conda-forge/oommfc) |
 | Downloads | [![Downloads](https://anaconda.org/conda-forge/oommfc/badges/downloads.svg)](https://anaconda.org/conda-forge/oommfc) |
 | License | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
-| DOI | [![DOI](https://zenodo.org/badge/67028400.svg)](https://zenodo.org/badge/latestdoi/67028400) |
+| DOI | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3539461.svg)](https://doi.org/10.5281/zenodo.3539461) |
 
 ## About
 
