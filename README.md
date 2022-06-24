@@ -1,6 +1,6 @@
 # oommfc
 
-[Marijan Beg](https://github.com/marijanbeg)<sup>1,2</sup>, [Martin Lang](https://github.com/lang-m)<sup>2</sup>, [Ryan A. Pepper](https://github.com/rpep)<sup>3</sup>, [Thomas Kluyver](https://github.com/takluyver)<sup>4</sup>, [Samuel Holt](https://github.com/samjrholt)<sup>2,5</sup>, and [Hans Fangohr](https://github.com/fangohr)<sup>2,6,7</sup>
+[Marijan Beg](https://github.com/marijanbeg)<sup>1,2</sup>, [Martin Lang](https://github.com/lang-m)<sup>2</sup>, [Ryan A. Pepper](https://github.com/rpep)<sup>3</sup>, [Thomas Kluyver](https://github.com/takluyver)<sup>4</sup>, [Samuel Holt](https://github.com/samjrholt)<sup>2,5</sup>, [Swapneel Amit Pathak](https://github.com/swapneelap)<sup>2,6</sup>, and [Hans Fangohr](https://github.com/fangohr)<sup>2,6,7</sup>
 
 <sup>1</sup> *Department of Earth Science and Engineering, Imperial College London, London SW7 2AZ, UK*  
 <sup>2</sup> *Faculty of Engineering and Physical Sciences, University of Southampton, Southampton SO17 1BJ, UK*  
@@ -26,7 +26,7 @@
 | Platforms | [![Platforms](https://anaconda.org/conda-forge/oommfc/badges/platforms.svg)](https://anaconda.org/conda-forge/oommfc) |
 | Downloads | [![Downloads](https://anaconda.org/conda-forge/oommfc/badges/downloads.svg)](https://anaconda.org/conda-forge/oommfc) |
 | License | [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) |
-| DOI | [![DOI](https://zenodo.org/badge/67028400.svg)](https://zenodo.org/badge/latestdoi/67028400) |
+| DOI | [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3539461.svg)](https://doi.org/10.5281/zenodo.3539461) |
 
 ## About
 
@@ -79,7 +79,7 @@ Licensed under the BSD 3-Clause "New" or "Revised" License. For details, please 
 
 2. M. Beg, R. A. Pepper, and H. Fangohr. User interfaces for computational science: A domain specific language for OOMMF embedded in Python. [*AIP Advances* **7**, 56025](http://aip.scitation.org/doi/10.1063/1.4977225) (2017).
 
-3. Marijan Beg, Martin Lang, Ryan A. Pepper, Thomas Kluyver, Samuel Holt, and Hans Fangohr. oommfc: OOMMF calculator. DOI: [10.5281/zenodo.3539461](http://doi.org/10.5281/zenodo.3539461) (2022).
+3. Marijan Beg, Martin Lang, Ryan A. Pepper, Thomas Kluyver, Samuel Holt, Swapneel Amit Pathak, and Hans Fangohr. oommfc: OOMMF calculator. DOI: [10.5281/zenodo.3539461](http://doi.org/10.5281/zenodo.3539461) (2022).
 
 ## Acknowledgements
 
