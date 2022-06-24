@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "oommfc"
-version = "0.62.0"
+version = "0.63.0"
 description = "OOMMF calculator."
 readme = "README.md"
 requires-python = ">=3.8"
@@ -37,9 +37,11 @@ classifiers = [
 ]
 
 dependencies = [
-    "micromagnetictests>=0.61.3",
+    "micromagneticmodel>=0.62.0",
+    "micromagnetictests>=0.62.0",
     "ubermagtable>=0.61.1",
-    "micromagneticdata>=0.62.0"
+    "ubermagutil>=0.63.0",
+    "micromagneticdata>=0.63.0"
 ]
 
 [project.optional-dependencies]
