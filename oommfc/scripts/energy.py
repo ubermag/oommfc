@@ -52,6 +52,42 @@ def exchange_script(term, system):
     return mif
 
 
+def aei_script(term, system):
+    mif = f"# AEI\n"
+    mif += f"Specify Oxs_AEI:{term.Gamma} {{\n"
+
+    if isinstance(term.Gamma, numbers.Real):
+        mif += f"  default_Gamma {term.Gamma}\n"
+        mif += "  atlas :main_atlas\n"
+        mif += "  Gamma {\n"
+        if len(system.m.mesh.subregions) == 0:
+            mif += f"    main main {term.Gamma}\n"
+        else:
+            mif += f"    entire entire {term.Gamma}\n"
+        mif += "  }\n"
+        mif += "}\n\n"
+
+    elif isinstance(term.Gamma, dict):
+        if "default" in term.Gamma.keys():
+            default_value = term.Gamma["default"]
+        else:
+            default_value = 0
+        mif += f"  default_Gamma {default_value}\n"
+        mif += "  atlas :main_atlas\n"
+        mif += "  Gamma {\n"
+        for key, value in term.Gamma.items():
+            if key != "default":
+                if ":" in key:
+                    region1, region2 = key.split(":")
+                else:
+                    region1, region2 = key, key
+                mif += f"    {region1} {region2} {value}\n"
+        mif += "  }\n"
+        mif += "}\n\n"
+
+    return mif
+
+
 def zeeman_script(term, system):
     Hmif, Hname = oc.scripts.setup_vector_parameter(term.H, f"{term.name}_H")
 
