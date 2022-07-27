@@ -280,6 +280,8 @@ def dmi_script(term, system):
         oxs = f"Oxs_DMI_{tcc}"
     elif (tcc := term.crystalclass) in ["Cn_x", "Cn_y", "Cn_z"]:
         oxs = f"Oxs_DMI_{tcc}"
+    elif (tcc := term.crystalclass) in ["C2v"]:
+        oxs = f"Oxs_DMI_{tcc}"
 
     mif = f"# DMI of crystallographic class {term.crystalclass}\n"
     mif += f"Specify {oxs}:{term.name} {{\n"
@@ -383,6 +385,59 @@ def dmi_script(term, system):
             mif += "  atlas :main_atlas\n"
             mif += "  D3 {\n"
             for key, value in term.D3.items():
+                if key != "default":
+                    if ":" in key:
+                        region1, region2 = key.split(":")
+                    else:
+                        region1, region2 = key, key
+                    mif += f"    {region1} {region2} {value}\n"
+            mif += "  }\n"
+
+    if hasattr(system.energy.dmi, 'Dx'):
+        if isinstance(term.Dx, numbers.Real):
+            mif += f"  default_Dx {term.Dx}\n"
+            mif += "  atlas :main_atlas\n"
+            mif += "  Dx {\n"
+            if len(system.m.mesh.subregions) == 0:
+                mif += f"    main main {term.Dx}\n"
+            else:
+                mif += f"    entire entire {term.Dx}\n"
+            mif += "  }\n"
+
+        elif isinstance(term.Dx, dict):
+            if "default" in term.Dx.keys():
+                default_value = term.Dx["default"]
+            else:
+                default_value = 0
+            mif += f"  default_Dx {default_value}\n"
+            mif += "  Dx {\n"
+            for key, value in term.Dx.items():
+                if key != "default":
+                    if ":" in key:
+                        region1, region2 = key.split(":")
+                    else:
+                        region1, region2 = key, key
+                    mif += f"    {region1} {region2} {value}\n"
+            mif += "  }\n"
+
+        if isinstance(term.Dy, numbers.Real):
+            mif += f"  default_Dy {term.Dy}\n"
+            mif += "  Dy {\n"
+            if len(system.m.mesh.subregions) == 0:
+                mif += f"    main main {term.Dy}\n"
+            else:
+                mif += f"    entire entire {term.Dy}\n"
+            mif += "  }\n"
+
+        elif isinstance(term.Dy, dict):
+            if "default" in term.Dy.keys():
+                default_value = term.Dy["default"]
+            else:
+                default_value = 0
+            mif += f"  default_Dy {default_value}\n"
+            mif += "  atlas :main_atlas\n"
+            mif += "  Dy {\n"
+            for key, value in term.Dy.items():
                 if key != "default":
                     if ":" in key:
                         region1, region2 = key.split(":")
