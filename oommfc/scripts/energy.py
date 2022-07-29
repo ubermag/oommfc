@@ -54,7 +54,7 @@ def exchange_script(term, system):
 
 def aei_script(term, system):
     mif = f"# AEI\n"
-    mif += f"Specify Oxs_AEI:{term.Gamma} {{\n"
+    mif += f"Specify Oxs_AEI:{term.name} {{\n"
 
     if isinstance(term.Gamma, numbers.Real):
         mif += f"  default_Gamma {term.Gamma}\n"
