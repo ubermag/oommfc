@@ -15,10 +15,15 @@ def energy_script(system):
 
 
 def exchange_script(term, system):
+
     if isinstance(term.A, numbers.Real):
         mif = "# UniformExchange\n"
-        mif += f"Specify Oxs_UniformExchange:{term.name} {{\n"
-        mif += f"  A {term.A}\n"
+        mif += f"Specify Oxs_isoexch:{term.name} {{\n"
+        mif += f"  default_A {term.A}\n"
+        mif += "  atlas :main_atlas\n"
+        mif += "  A {\n"
+        mif += f"    main main {term.A}\n"
+        mif += "  }\n"
         mif += "}\n\n"
 
     elif isinstance(term.A, dict):
