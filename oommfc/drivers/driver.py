@@ -225,8 +225,10 @@ class Driver(mm.ExternalDriver):
         # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
         omffiles = pathlib.Path(".").glob(f"{system.name}*.omf")
         lastomffile = sorted(omffiles)[-1]
-        # pass Field.array instead of Field for better performance
-        # and to avoid overriding custom component labels
+        # pass Field.array instead of Field to system.m.value
+        # - to avoid overriding component labels
+        # - to avoid overriding subregions
+        # - for better performance
         system.m.value = df.Field.fromfile(str(lastomffile)).array
 
         system.table = ut.Table.fromfile(f"{system.name}.odt", x=self._x)

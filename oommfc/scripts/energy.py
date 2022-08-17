@@ -15,38 +15,31 @@ def energy_script(system):
 
 
 def exchange_script(term, system):
-    if isinstance(term.A, numbers.Real):
-        mif = "# UniformExchange\n"
+    if not isinstance(term.A, numbers.Real):
+        raise RuntimeError('Sam needs to actually sort this.')
+
+    if not hasattr(term, 'nn'):
+        term.nn = None
+
+    if term.nn == '12nn':
+        mif = "# UniformExchange 12nn\n"
         mif += f"Specify Oxs_UniformExchange:{term.name} {{\n"
         mif += f"  A {term.A}\n"
+        mif += f"  kernel 12ngbrmirror\n"
         mif += "}\n\n"
-
-    elif isinstance(term.A, dict):
-        if "default" in term.A.keys():
-            default_value = term.A["default"]
-        else:
-            default_value = 0
-        mif = "# Exchange6Ngbr\n"
-        mif += f"Specify Oxs_Exchange6Ngbr:{term.name} {{\n"
-        mif += f"  default_A {default_value}\n"
+    elif term.nn == 'iso':
+        mif = "# UniformExchange iso\n"
+        mif += f"Specify Oxs_isoexch:{term.name} {{\n"
+        mif += f"  default_A {term.A}\n"
         mif += "  atlas :main_atlas\n"
         mif += "  A {\n"
-        for key, value in term.A.items():
-            if key != "default":
-                if ":" in key:
-                    region1, region2 = key.split(":")
-                else:
-                    region1, region2 = key, key
-                mif += f"    {region1} {region2} {value}\n"
+        mif += f"    main main {term.A}\n"
         mif += "  }\n"
         mif += "}\n\n"
-
-    elif isinstance(term.A, df.Field):
-        Amif, Aname = oc.scripts.setup_scalar_parameter(term.A, f"{term.name}_A")
-        mif = Amif
-        mif += "# ExchangePtwise\n"
-        mif += f"Specify Oxs_ExchangePtwise:{term.name} {{\n"
-        mif += f"  A {Aname}\n"
+    else:
+        mif = "# UniformExchange 6nn\n"
+        mif += f"Specify Oxs_UniformExchange:{term.name} {{\n"
+        mif += f"  A {term.A}\n"
         mif += "}\n\n"
 
     return mif
@@ -310,6 +303,8 @@ def dmi_script(term, system):
             warnings.warn(msg, FutureWarning)
             tcc = "Cnv_z"
         oxs = f"Oxs_DMI_{tcc}"
+    elif (tcc := term.crystalclass) in ["T_12"]:
+        oxs = "Oxs_DMI_T_12"
 
     mif = f"# DMI of crystallographic class {term.crystalclass}\n"
     mif += f"Specify {oxs}:{term.name} {{\n"
