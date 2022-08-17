@@ -267,6 +267,8 @@ def dmi_script(term, system):
             warnings.warn(msg, FutureWarning)
             tcc = "Cnv_z"
         oxs = f"Oxs_DMI_{tcc}"
+    elif (tcc := term.crystalclass) in ["T_12"]:
+        oxs = "Oxs_DMI_T_12"
 
     mif = f"# DMI of crystallographic class {term.crystalclass}\n"
     mif += f"Specify {oxs}:{term.name} {{\n"
