@@ -18,7 +18,7 @@ repos:
   - id: isort
 
 - repo: https://github.com/nbQA-dev/nbQA
-  rev: 1.4.0
+  rev: 1.5.2
   hooks:
   - id: nbqa-isort  # isort inside Jupyter notebooks
 
@@ -29,7 +29,7 @@ repos:
     additional_dependencies: [flake8-rst-docstrings]  #, flake8-docstrings]
 
 - repo: https://github.com/psf/black
-  rev: 22.8.0
+  rev: 22.10.0
   hooks:
   - id: black-jupyter
 
