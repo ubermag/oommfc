@@ -1,3 +1,4 @@
+import contextlib
 import os
 import re
 
@@ -151,7 +152,7 @@ def compute(
     elif func.__name__ == "density":
         extension = "oef"
 
-    output_file = str(max(workingdir.glob(f"*.{extension}"), key=os.path.getctime))
+    output_file = max(workingdir.glob(f"*.{extension}"), key=os.path.getctime)
 
     if func.__name__ == "energy":
         table = ut.Table.fromfile(output_file, rename=False)
@@ -166,5 +167,7 @@ def compute(
             ][0]
     else:
         output = df.Field.fromfile(output_file)
+        with contextlib.suppress(FileNotFoundError):
+            output.mesh.load_subregions(workingdir / "m0.omf")
 
     return output
