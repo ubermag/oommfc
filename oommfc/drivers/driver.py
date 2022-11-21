@@ -212,13 +212,24 @@ class Driver(mm.ExternalDriver):
         if dry_run:
             return runner.call(argstr=self._miffilename(system), dry_run=True)
         else:
-            runner.call(
-                argstr=self._miffilename(system),
-                n_threads=n_threads,
-                verbose=verbose,
-                total=kwargs.get("n"),
-                glob_name=f"{system.name}*.omf",
-            )
+            if hasattr(self, "pipe"):
+                context = uu.progress.fs_observer(
+                    dirname=".",
+                    magnetisation_regex=rf"{system.name}.*omf",
+                    hv_pipe=self.pipe,
+                )
+            else:
+                context = uu.progress.quiet()
+
+            with context:
+                runner.call(
+                    argstr=self._miffilename(system),
+                    n_threads=n_threads,
+                    verbose=verbose,
+                    total=kwargs.get("n"),
+                    glob_name=f"{system.name}*.omf",
+                    # pipe=self.pipe,
+                )
 
     def _read_data(self, system):
         # Update system's magnetisation. An example .omf filename:
