@@ -214,7 +214,6 @@ class Driver(mm.ExternalDriver):
         else:
             if hasattr(self, "pipe"):
                 context = uu.progress.fs_observer(
-                    dirname=".",
                     magnetisation_regex=rf"{system.name}.*omf",
                     hv_pipe=self.pipe,
                 )
