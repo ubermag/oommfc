@@ -229,7 +229,7 @@ class Driver(mm.ExternalDriver):
         # - to avoid overriding component labels
         # - to avoid overriding subregions
         # - for better performance
-        system.m.value = df.Field.fromfile(str(lastomffile)).array
+        system.m.value = df.Field.from_file(str(lastomffile)).array
 
         system.table = ut.Table.fromfile(f"{system.name}.odt", x=self._x)
 

@@ -47,7 +47,7 @@ def atlas_scalar_field(value, name, atlas="main_atlas"):
 
 
 def setup_m0(field, name):
-    field.write(f"{name}.omf")
+    field.to_file(f"{name}.omf")
     # Magnetisation
     mif = file_vector_field(f"{name}.omf", f"{name}", "main_atlas")
     # Ms
@@ -77,7 +77,7 @@ def vector_norm_scalar_field(field, name):
 
 def setup_scalar_parameter(parameter, name):
     if isinstance(parameter, df.Field):
-        parameter.write(f"{name}.ovf", extend_scalar=True)
+        parameter.to_file(f"{name}.ovf", extend_scalar=True)
         mif = file_vector_field(f"{name}.ovf", f"{name}", "main_atlas")
         mif += vector_norm_scalar_field(f"{name}", f"{name}_norm")
         return mif, f"{name}_norm"
@@ -97,7 +97,7 @@ def setup_scalar_parameter(parameter, name):
 
 def setup_vector_parameter(parameter, name):
     if isinstance(parameter, df.Field):
-        parameter.write(f"{name}.ovf")
+        parameter.to_file(f"{name}.ovf")
         mif = file_vector_field(f"{name}.ovf", f"{name}", "main_atlas")
         return mif, f"{name}"
 
