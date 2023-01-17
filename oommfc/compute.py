@@ -166,7 +166,7 @@ def compute(
                 f"{oxs_class(func.__self__, system)}:{func.__self__.name}:Energy"
             ][0]
     else:
-        output = df.Field.fromfile(output_file)
+        output = df.Field.from_file(output_file)
         with contextlib.suppress(FileNotFoundError):
             output.mesh.load_subregions(workingdir / "m0.omf")
 
