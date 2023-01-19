@@ -313,7 +313,7 @@ def dmi_script(term, system):
                 mif += f"    {region1} {region2} {value}\n"
         mif += "  }\n"
 
-    if hasattr(system.energy.dmi, 'D1'):
+    if hasattr(system.energy.dmi, "D1"):
         if isinstance(term.D1, numbers.Real):
             mif += f"  default_D1 {term.D1}\n"
             mif += "  atlas :main_atlas\n"
@@ -366,7 +366,7 @@ def dmi_script(term, system):
                     mif += f"    {region1} {region2} {value}\n"
             mif += "  }\n"
 
-    if hasattr(system.energy.dmi, 'D3'):
+    if hasattr(system.energy.dmi, "D3"):
         if isinstance(term.D3, numbers.Real):
             mif += f"  default_D3 {term.D3}\n"
             mif += "  D3 {\n"
@@ -393,7 +393,7 @@ def dmi_script(term, system):
                     mif += f"    {region1} {region2} {value}\n"
             mif += "  }\n"
 
-    if hasattr(system.energy.dmi, 'Dx'):
+    if hasattr(system.energy.dmi, "Dx"):
         if isinstance(term.Dx, numbers.Real):
             mif += f"  default_Dx {term.Dx}\n"
             mif += "  atlas :main_atlas\n"
