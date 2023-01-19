@@ -16,18 +16,18 @@ def energy_script(system):
 
 def exchange_script(term, system):
     if not isinstance(term.A, numbers.Real):
-        raise RuntimeError('Sam needs to actually sort this.')
+        raise RuntimeError("Sam needs to actually sort this.")
 
-    if not hasattr(term, 'nn'):
+    if not hasattr(term, "nn"):
         term.nn = None
 
-    if term.nn == '12nn':
+    if term.nn == "12nn":
         mif = "# UniformExchange 12nn\n"
         mif += f"Specify Oxs_UniformExchange:{term.name} {{\n"
         mif += f"  A {term.A}\n"
         mif += f"  kernel 12ngbrmirror\n"
         mif += "}\n\n"
-    elif term.nn == 'iso':
+    elif term.nn == "iso":
         mif = "# UniformExchange iso\n"
         mif += f"Specify Oxs_isoexch:{term.name} {{\n"
         mif += f"  default_A {term.A}\n"
