@@ -217,8 +217,7 @@ class Driver(mm.ExternalDriver):
         if runner is None:
             runner = oc.runner.runner
         commands = []
-        commands.append(f"OOMMF_HOSTPORT=`{runner._launchhost(dry_run=True)}`")
-        commands.append("export OOMMF_HOSTPORT")
+        commands.append(f"export OOMMF_HOSTPORT=`{runner._launchhost(dry_run=True)}`")
         commands.append(runner.call(argstr=self._miffilename(system), dry_run=True))
         commands.append(runner._kill(dry_run=True))
         return commands
