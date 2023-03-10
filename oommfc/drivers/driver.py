@@ -216,11 +216,11 @@ class Driver(mm.ExternalDriver):
     def _schedule_commands(self, system, runner):
         if runner is None:
             runner = oc.runner.runner
-        commands = []
-        commands.append(f"export OOMMF_HOSTPORT=`{runner._launchhost(dry_run=True)}`")
-        commands.append(runner.call(argstr=self._miffilename(system), dry_run=True))
-        commands.append(runner._kill(dry_run=True))
-        return commands
+        return [
+            f"export OOMMF_HOSTPORT=`{runner._launchhost(dry_run=True)}`",
+            runner.call(argstr=self._miffilename(system), dry_run=True),
+            runner._kill(dry_run=True),
+        ]
 
     def _read_data(self, system):
         # Update system's magnetisation. An example .omf filename:
