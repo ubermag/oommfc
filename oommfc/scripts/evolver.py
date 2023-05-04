@@ -1,5 +1,6 @@
 import numbers
 
+import discretisedfield as df
 import numpy as np
 
 import oommfc as oc
@@ -22,7 +23,14 @@ def evolver_script(evolver, **kwargs):
         evolver.alpha = alphaname
         mif += alphamif
     if hasattr(evolver, "u"):
-        umif, uname = oc.scripts.setup_scalar_parameter(evolver.u, "zl_u")
+        if isinstance(evolver.u, numbers.Real) or (
+            isinstance(evolver.u, df.Field) and evolver.u.nvdim == 1
+        ):
+            scalar_u = True
+            umif, uname = oc.scripts.setup_scalar_parameter(evolver.u, "zl_u")
+        else:
+            scalar_u = False
+            umif, uname = oc.scripts.setup_vector_parameter(evolver.u, "zl_u")
         evolver.u = uname
         mif += umif
 
@@ -99,7 +107,10 @@ def evolver_script(evolver, **kwargs):
     elif isinstance(evolver, oc.SpinTEvolver):
         # time dependence
         mif += "# Zhang-Li evolver\n"
-        mif += "Specify Anv_SpinTEvolve:evolver {\n"
+        if scalar_u:
+            mif += "Specify Anv_SpinTEvolve:evolver {\n"
+        else:
+            mif += "Specify Anv_SpinTEvolve_3d:evolver {\n"
     elif isinstance(evolver, oc.SpinXferEvolver):
         # time dependence
         mif += "# Slonczewski evolver\n"
