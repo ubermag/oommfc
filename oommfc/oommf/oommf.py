@@ -45,7 +45,7 @@ class OOMMFRunner(mm.ExternalRunner):
 
     @abc.abstractmethod
     def _launchhost(dry_run=False):
-        """Launch the OOMMF host server."""
+        """Launch the OOMMF host server and return the port number as string."""
 
     @abc.abstractmethod
     def errors(self):
