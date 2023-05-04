@@ -199,26 +199,23 @@ class Driver(mm.ExternalDriver):
         if hasattr(self.evolver, "fixed_spins"):
             del self.evolver.fixed_spins
 
-    def _call(self, system, runner, n_threads=None, verbose=1, dry_run=False, **kwargs):
+    def _call(self, system, runner, n_threads=None, verbose=1, **kwargs):
         if runner is None:
             runner = oc.runner.runner
-        if dry_run:
-            return runner.call(argstr=self._miffilename(system), dry_run=True)
-        else:
-            runner.call(
-                argstr=self._miffilename(system),
-                n_threads=n_threads,
-                verbose=verbose,
-                total=kwargs.get("n"),
-                glob_name=f"{system.name}*.omf",
-            )
+        runner.call(
+            argstr=self._miffilename(system),
+            n_threads=n_threads,
+            verbose=verbose,
+            total=kwargs.get("n"),
+            glob_name=f"{system.name}*.omf",
+        )
 
     def _schedule_commands(self, system, runner):
         if runner is None:
             runner = oc.runner.runner
         return [
             f"export OOMMF_HOSTPORT=`{runner._launchhost(dry_run=True)}`",
-            runner.call(argstr=self._miffilename(system), dry_run=True),
+            runner._call(argstr=self._miffilename(system), dry_run=True),
             runner._kill(dry_run=True),
         ]
 
