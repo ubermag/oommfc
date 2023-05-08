@@ -179,7 +179,7 @@ class NativeOOMMFRunner(OOMMFRunner):
     def __init__(self):
         # oommf launchhost gets stuck on Windows
         # -> it is not possible to run multiple calculations in parallel
-        super.__init__()
+        super().__init__()
         if sys.platform != "win32":
             self.env = dict(OOMMF_HOSTPORT=self._launchhost(), **os.environ)
         else:
@@ -323,7 +323,7 @@ class DockerOOMMFRunner(OOMMFRunner):
     """
 
     def __init__(self, docker_exe="docker", image="oommf/oommf:20a3", selinux=False):
-        super.__init__()
+        super().__init__()
         self.docker_exe = docker_exe
         self.image = image
         self.selinux = selinux
