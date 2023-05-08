@@ -1,4 +1,7 @@
 """OOMMF calculator."""
+import atexit
+import gc
+
 import pkg_resources
 import pytest
 
@@ -29,12 +32,12 @@ details refer to ``oommfc.runner.Runner``.
 
 Examples
 --------
-``runner.runner``
+``oommfc.runner.runner``
     Returns the default runner; selects the best available runner if unset. A
     different ``OOMMFRunner`` can be passed to be used instead. The new runner
     is tested first.
 
-``runner.autoselect_runner()``
+``oommfc.runner.autoselect_runner()``
     Lets ``oommfc`` select the best runner. Can be used to reset the runner
     after overwriting it manually.
 
@@ -43,6 +46,20 @@ See Also
 :py:class:`~oommfc.oommf.Runner`
 
 """
+
+
+def _runner_cleanup():
+    """Runner cleanup on exit.
+
+    The runner kills the external OOMMF in its __del__ method. This function ensures
+    that the runner is removed before Python exits because a call to __del__ during the
+    interpreter shutdown would fail (import error).
+    """
+    del runner._runner
+    gc.collect()
+
+
+atexit.register(_runner_cleanup)
 
 
 def test():
