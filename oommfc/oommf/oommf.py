@@ -1,4 +1,5 @@
 import abc
+import atexit
 import contextlib
 import logging
 import os
@@ -17,11 +18,30 @@ import oommfc as oc
 log = logging.getLogger("oommfc")
 
 
+_oommf_instances = []
+
+
+def _global_cleanup():
+    """Stop all running OOMMF processes when the Python session ends."""
+    for instance in _oommf_instances:
+        instance._terminate()
+
+
+atexit.register(_global_cleanup)
+
+
 class OOMMFRunner(mm.ExternalRunner):
     """Abstract class for running OOMMF."""
 
-    def __del__(self):
-        """Kill all OOMMF applications when object goes out of scope.
+    def __init__(self):
+        """Init of the OOMMF runner base class.
+
+        Ensures that the OOMMF process is terminated when the Python session ends.
+        """
+        _oommf_instances.append(self)
+
+    def _terminate(self):
+        """Kill the corresponding OOMMF applications when object is removed.
 
         On Windows we must kill OOMMF after each call because file ownerships
         are otherwise not correct. As a consequence ``oommfc.delete`` does not
@@ -159,6 +179,7 @@ class NativeOOMMFRunner(OOMMFRunner):
     def __init__(self):
         # oommf launchhost gets stuck on Windows
         # -> it is not possible to run multiple calculations in parallel
+        super().__init__()
         if sys.platform != "win32":
             self.env = dict(OOMMF_HOSTPORT=self._launchhost(), **os.environ)
         else:
@@ -302,6 +323,7 @@ class DockerOOMMFRunner(OOMMFRunner):
     """
 
     def __init__(self, docker_exe="docker", image="oommf/oommf:20a3", selinux=False):
+        super().__init__()
         self.docker_exe = docker_exe
         self.image = image
         self.selinux = selinux
