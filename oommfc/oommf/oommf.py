@@ -162,6 +162,13 @@ class NativeOOMMFRunner(OOMMFRunner):
         else:
             self.env = os.environ
 
+    def _launchhost(self, dry_run=False):
+        command = [*self.oommf, "launchhost", "0"]
+        if dry_run:
+            return " ".join(command)
+        launchhost = sp.run(command, stdout=sp.PIPE)
+        return launchhost.stdout.decode("utf-8", "replace").strip("\n")
+
     def _call(self, argstr, need_stderr=False, n_threads=None, dry_run=False):
         cmd = [*self.oommf, "boxsi", "+fg", argstr, "-exitondone", "1"]
 
@@ -175,10 +182,9 @@ class NativeOOMMFRunner(OOMMFRunner):
             cmd += ["-threads", str(n_threads)]
 
         if dry_run:
-            return cmd
-        else:
-            with self._kill_oommf_on_windows():
-                return sp.run(cmd, stdout=stdout, stderr=stderr, env=self.env)
+            return " ".join(cmd)
+        with self._kill_oommf_on_windows():
+            return sp.run(cmd, stdout=stdout, stderr=stderr, env=self.env)
 
     @contextlib.contextmanager
     def _kill_oommf_on_windows(self, targets=("all",)):
@@ -189,8 +195,13 @@ class NativeOOMMFRunner(OOMMFRunner):
             if sys.platform == "win32":
                 self._kill()
 
-    def _kill(self, targets=("all",)):
-        sp.run([*self.oommf, "killoommf", "-q"] + list(targets), env=self.env)
+    def _kill(self, targets=("all",), dry_run=False):
+        command = [*self.oommf, "killoommf"] + list(targets)
+        if dry_run:
+            return " ".join(command)
+        # Quietly kill oommf when used interactively
+        command.insert(-1, "-q")
+        sp.run(command, env=self.env)
 
 
 @uu.inherit_docs
@@ -251,9 +262,9 @@ class ExeOOMMFRunner(NativeOOMMFRunner):
                 errors = f.read()
             return errors
 
-        except FileNotFoundError:
+        except FileNotFoundError as e:
             msg = "boxsi.errors cannot be retrieved."
-            raise EnvironmentError(msg)
+            raise EnvironmentError(msg) from e
 
     def __repr__(self):
         return f"ExeOOMMFRunner({self.oommf_exe})"
@@ -426,9 +437,11 @@ class Runner:
 
         """
         log.debug(
-            "Starting autoselect_runner: cache_runner=%(cache_runner)s, "
-            "envvar=%(envvar)s, oommf_exe=%(oommf_exe)s, "
-            "docker_exe=%(docker_exe)s)",
+            (
+                "Starting autoselect_runner: cache_runner=%(cache_runner)s, "
+                "envvar=%(envvar)s, oommf_exe=%(oommf_exe)s, "
+                "docker_exe=%(docker_exe)s)"
+            ),
             {
                 "cache_runner": self.cache_runner,
                 "envvar": self.envvar,
@@ -439,8 +452,10 @@ class Runner:
 
         # Check for the OOMMFTCL environment variable pointing to oommf.tcl.
         log.debug(
-            "Step 1: Checking for the self.envvar=%(envvar)s environment"
-            " variable pointing to oommf.tcl.",
+            (
+                "Step 1: Checking for the self.envvar=%(envvar)s environment"
+                " variable pointing to oommf.tcl."
+            ),
             {"envvar": self.envvar},
         )
         oommf_tcl = os.environ.get(self.envvar, None)
@@ -453,8 +468,10 @@ class Runner:
             else:
                 if res.returncode:
                     log.warning(
-                        "OOMMFTCL is set, but OOMMF could not be run.\n"
-                        "stdout:\n%(stdout)s\nstderr:\n%(stderr)s",
+                        (
+                            "OOMMFTCL is set, but OOMMF could not be run.\n"
+                            "stdout:\n%(stdout)s\nstderr:\n%(stderr)s"
+                        ),
                         {"stdout": res.stdout, "stderr": res.stderr},
                     )
                 else:
@@ -464,8 +481,10 @@ class Runner:
         # OOMMF available as an executable - in a conda env on Mac/Linux, or
         # oommf installed separately.
         log.debug(
-            "Step 2: is oommf_exe=%(oommf_exe)s in PATH? "
-            "Could be from conda env or manual install.",
+            (
+                "Step 2: is oommf_exe=%(oommf_exe)s in PATH? "
+                "Could be from conda env or manual install."
+            ),
             {"oommf_exe": self.oommf_exe},
         )
         oommf_exe = shutil.which(self.oommf_exe)

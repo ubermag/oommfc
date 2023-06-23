@@ -174,8 +174,8 @@ def zeeman_script(term, system):
             if isinstance(term.tlist[0], list):
                 mif += (
                     "  return [list"
-                    f' {" ".join([f"[lindex $H {i}]" for i in range(9)])}'
-                    f' {" ".join([f"[lindex $dH {i}]" for i in range(9)])}'
+                    f" {' '.join([f'[lindex $H {i}]' for i in range(9)])}"
+                    f" {' '.join([f'[lindex $dH {i}]' for i in range(9)])}"
                     "]\n"
                 )
             else:

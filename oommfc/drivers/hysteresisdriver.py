@@ -70,7 +70,7 @@ class HysteresisDriver(Driver):
         if not isinstance(n, int):
             msg = f"Cannot drive with {type(n)=}."
             raise ValueError(msg)
-        if n - 1 <= 0:  # OOMMF counts steps, not points (n -> n-1)
+        if n <= 1:  # OOMMF counts steps, not points (n -> n-1)
             msg = f"Cannot drive with {n=}."
             raise ValueError(msg)
 

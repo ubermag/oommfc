@@ -7,7 +7,7 @@ import oommfc.scripts
 
 from .compute import compute
 from .delete import delete
-from .drivers import Driver, HysteresisDriver, MinDriver, TimeDriver
+from .drivers import Driver, HysteresisDriver, MinDriver, SteppingDriver, TimeDriver
 from .evolvers import (
     CGEvolver,
     EulerEvolver,
