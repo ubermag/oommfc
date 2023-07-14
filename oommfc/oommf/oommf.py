@@ -322,7 +322,7 @@ class DockerOOMMFRunner(OOMMFRunner):
 
     """
 
-    def __init__(self, docker_exe="docker", image="oommf/oommf:20a3", selinux=False):
+    def __init__(self, docker_exe="docker", image="oommf/oommf:20b0", selinux=False):
         super().__init__()
         self.docker_exe = docker_exe
         self.image = image
