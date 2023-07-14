@@ -174,8 +174,8 @@ def zeeman_script(term, system):
             if isinstance(term.tlist[0], list):
                 mif += (
                     "  return [list"
-                    f' {" ".join([f"[lindex $H {i}]" for i in range(9)])}'
-                    f' {" ".join([f"[lindex $dH {i}]" for i in range(9)])}'
+                    f" {' '.join([f'[lindex $H {i}]' for i in range(9)])}"
+                    f" {' '.join([f'[lindex $dH {i}]' for i in range(9)])}"
                     "]\n"
                 )
             else:
@@ -393,7 +393,7 @@ def rkky_script(term, system):
     sr1 = system.m.mesh.subregions[term.subregions[0]]
     sr2 = system.m.mesh.subregions[term.subregions[1]]
 
-    direction, first, second = sr1 | sr2
+    direction, first, second = sr1.facing_surface(sr2)
 
     for key, value in system.m.mesh.subregions.items():
         if value == first:
@@ -405,7 +405,9 @@ def rkky_script(term, system):
 
     mif += "# Scalar field for RKKY surfaces\n"
     mif += "Specify Oxs_LinearScalarField:rkkyfield {\n"
-    vectorval = df.util.assemble_index(0, 3, {df.util.axesdict[direction]: 1})
+    vectorval = df.util.assemble_index(
+        0, 3, {system.m.mesh.region._dim2index(direction): 1}
+    )
     mif += "  vector {{{} {} {}}}\n".format(*vectorval)
     mif += "  norm 1.0\n"
     mif += "}\n\n"
@@ -421,7 +423,7 @@ def rkky_script(term, system):
     mif += "    atlas :main_atlas\n"
     mif += f"    region {first_name}\n"
     mif += "    scalarfield :rkkyfield\n"
-    mif += f"    scalarvalue {first.pmax[df.util.axesdict[direction]]}\n"
+    mif += f"    scalarvalue {first.pmax[system.m.mesh.region._dim2index(direction)]}\n"
     mif += "    scalarside -\n"
     mif += "  }\n"
 
@@ -429,7 +431,9 @@ def rkky_script(term, system):
     mif += "    atlas :main_atlas\n"
     mif += f"    region {second_name}\n"
     mif += "    scalarfield :rkkyfield\n"
-    mif += f"    scalarvalue {second.pmin[df.util.axesdict[direction]]}\n"
+    mif += (
+        f"    scalarvalue {second.pmin[system.m.mesh.region._dim2index(direction)]}\n"
+    )
     mif += "    scalarside +\n"
     mif += "  }\n"
 

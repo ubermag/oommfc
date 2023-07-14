@@ -24,18 +24,12 @@ class Driver(mm.ExternalDriver):
     def _checkargs(self, **kwargs):
         """Abstract method for checking arguments."""
 
-    def drive_kwargs_setup(
-        self,
-        fixed_subregions=None,
-        output_step=False,
-        n_threads=None,
-        compute=None,
-        **kwargs,
-    ):
+    def drive_kwargs_setup(self, drive_kwargs):
         """Additional keyword arguments allowed for drive.
 
-        To save a specific value during an OOMMF run ``Schedule...`` line can
-        be passed using ``compute``.
+        This function tests additional keyword arguments that have been passed to the
+        ``drive`` method (it is not intended for direct use). A drive in oommfc can
+        accept the following additional keyword arguments.
 
         Parameters
         ----------
@@ -62,19 +56,18 @@ class Driver(mm.ExternalDriver):
             save additional data. Defaults to ``None``.
 
         """
-        self._checkargs(**kwargs)
-        kwargs.setdefault("fixed_subregions", fixed_subregions)
-        kwargs.setdefault("output_step", output_step)
-        kwargs.setdefault("n_threads", n_threads)
-        kwargs.setdefault("compute", compute)
+        self._checkargs(**drive_kwargs)
+        drive_kwargs.setdefault("fixed_subregions", None)
+        drive_kwargs.setdefault("output_step", False)
+        drive_kwargs.setdefault("n_threads", None)
+        drive_kwargs.setdefault("compute", None)
 
-    def schedule_kwargs_setup(
-        self, fixed_subregions=None, output_step=False, compute=None, **kwargs
-    ):
+    def schedule_kwargs_setup(self, schedule_kwargs):
         """Additional keyword arguments allowed for schedule.
 
-        To save a specific value during an OOMMF run ``Schedule...`` line can
-        be passed using ``compute``.
+        This function tests additional keyword arguments that have been passed to the
+        ``schedule`` method (it is not intended for direct use). A drive in oommfc can
+        accept the following additional keyword arguments.
 
         It is the user's responsibility to ensure that OOMMF can be executed from the
         scheduled job. This would typically imply activating the conda environment in
@@ -105,10 +98,10 @@ class Driver(mm.ExternalDriver):
             save additional data. Defaults to ``None``.
 
         """
-        self._checkargs(**kwargs)
-        kwargs.setdefault("fixed_subregions", fixed_subregions)
-        kwargs.setdefault("output_step", output_step)
-        kwargs.setdefault("compute", compute)
+        self._checkargs(**schedule_kwargs)
+        schedule_kwargs.setdefault("fixed_subregions", None)
+        schedule_kwargs.setdefault("output_step", False)
+        schedule_kwargs.setdefault("compute", None)
 
     def _write_input_files(self, system, **kwargs):
         self.write_mif(system, **kwargs)
@@ -206,19 +199,25 @@ class Driver(mm.ExternalDriver):
         if hasattr(self.evolver, "fixed_spins"):
             del self.evolver.fixed_spins
 
-    def _call(self, system, runner, n_threads=None, verbose=1, dry_run=False, **kwargs):
+    def _call(self, system, runner, n_threads=None, verbose=1, **kwargs):
         if runner is None:
             runner = oc.runner.runner
-        if dry_run:
-            return runner.call(argstr=self._miffilename(system), dry_run=True)
-        else:
-            runner.call(
-                argstr=self._miffilename(system),
-                n_threads=n_threads,
-                verbose=verbose,
-                total=kwargs.get("n"),
-                glob_name=f"{system.name}*.omf",
-            )
+        runner.call(
+            argstr=self._miffilename(system),
+            n_threads=n_threads,
+            verbose=verbose,
+            total=kwargs.get("n"),
+            glob_name=f"{system.name}*.omf",
+        )
+
+    def _schedule_commands(self, system, runner):
+        if runner is None:
+            runner = oc.runner.runner
+        return [
+            f"export OOMMF_HOSTPORT=`{runner._launchhost(dry_run=True)}`",
+            runner._call(argstr=self._miffilename(system), dry_run=True),
+            runner._kill(dry_run=True),
+        ]
 
     def _read_data(self, system):
         # Update system's magnetisation. An example .omf filename:
@@ -229,7 +228,7 @@ class Driver(mm.ExternalDriver):
         # - to avoid overriding component labels
         # - to avoid overriding subregions
         # - for better performance
-        system.m.value = df.Field.fromfile(str(lastomffile)).array
+        system.m.array = df.Field.from_file(str(lastomffile)).array
 
         system.table = ut.Table.fromfile(f"{system.name}.odt", x=self._x)
 
