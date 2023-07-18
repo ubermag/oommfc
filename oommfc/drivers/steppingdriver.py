@@ -44,9 +44,9 @@ class SteppingDriver(Driver):
     ...
     >>> sd = oc.SteppingDriver()
     >>> sd.drive(system, steps=[
-    >>>    {"Hmin": (0, 0, 0), "Hmax": (0, 0, 1), "n": 10},
-    >>>    {"Hmin": (0, 0, 1), "Hmax": (0, 0, 0.5), "n": 10},
-    >>>    {"Hmin": (0, 0, 0.5), "Hmax": (0, 0, 0), "n": 10},
+    >>>    [(0, 0, 0), (0, 0, 1), 10],
+    >>>    [(0, 0, 1), (0, 0, -1), 10],
+    >>>    [(0, 0, -1), (0, 0, 0), 10],
     >>> ])
     """
 
@@ -72,11 +72,10 @@ class SteppingDriver(Driver):
     ]
 
     def _checkargs(self, **kwargs):
-        for item in kwargs["steps"]:
-            Hmin, Hmax, n = item["Hmin"], item["Hmax"], item["n"]
-            for i in [Hmin, Hmax]:
+        for Hstart, Hstop, n in kwargs["steps"]:
+            for i in [Hstart, Hstop]:
                 if not isinstance(i, (list, tuple, np.ndarray)):
-                    msg = "Hmin and Hmax must have array_like values."
+                    msg = "Hstart and Hstop must have array_like values."
                     raise ValueError(msg)
                 if len(i) != 3:
                     msg = "Hmin and Hmax must have length 3."
@@ -90,4 +89,4 @@ class SteppingDriver(Driver):
 
     @property
     def _x(self):
-        return "B_hsteps"
+        return "B_hysteresis"
