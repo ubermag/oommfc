@@ -79,7 +79,6 @@ def evolver_script(evolver, **kwargs):
         print(evolver.tcl_strings)
         mif += evolver.tcl_strings["script"]
         if isinstance(evolver, (oc.SpinXferEvolver, oc.Xf_ThermSpinXferEvolver)):
-            # oc.Xf_ThermSpinXferEvolver)):
             setattr(evolver, "J_profile", evolver.tcl_strings["script_name"])
             setattr(evolver, "J_profile_args", evolver.tcl_strings["script_args"])
         elif isinstance(evolver, oc.SpinTEvolver):
