@@ -70,7 +70,6 @@ def evolver_script(evolver, **kwargs):
         mif += "}\n\n"
 
         if isinstance(evolver, (oc.SpinXferEvolver, oc.Xf_ThermSpinXferEvolver)):
-            # oc.Xf_TherrmSpinXferEvolver)):
             setattr(evolver, "J_profile", "TimeFunction")
             setattr(evolver, "J_profile_args", "total_time")
         elif isinstance(evolver, oc.SpinTEvolver):
