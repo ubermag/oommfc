@@ -35,19 +35,6 @@ class SteppingDriver(Driver):
     >>> sd = oc.SteppingDriver()
     >>> sd._allowed_attributes
     [...]
-
-    4. How to define a step with this driver.
-
-    >>> import oommfc as oc
-    ...
-    >>> system = oc.System(name="my_system")
-    ...
-    >>> sd = oc.SteppingDriver()
-    >>> sd.drive(system, steps=[
-    >>>    [(0, 0, 0), (0, 0, 1), 10],
-    >>>    [(0, 0, 1), (0, 0, -1), 10],
-    >>>    [(0, 0, -1), (0, 0, 0), 10],
-    >>> ])
     """
 
     _allowed_attributes = [
