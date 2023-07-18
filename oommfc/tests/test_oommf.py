@@ -224,7 +224,7 @@ def test_silent(capsys):
     td = oc.TimeDriver()
     td.drive(mm.examples.macrospin(), t=1e-10, n=10, verbose=2)
     captured = capsys.readouterr()
-    assert captured.out == ""
+    assert "Running OOMMF" in captured.out  # summary line on stdout
     assert "files written" in captured.err  # tqdm output on stderr
 
     md.drive(mm.examples.macrospin(), verbose=0)
