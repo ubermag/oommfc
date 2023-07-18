@@ -189,10 +189,8 @@ class NativeOOMMFRunner(OOMMFRunner):
         command = [*self.oommf, "launchhost", "0"]
         if dry_run:
             return " ".join(command)
-        else:
-            launchhost = sp.run(command, stdout=sp.PIPE)
-            port = launchhost.stdout.decode("utf-8", "replace").strip("\n")
-            return port
+        launchhost = sp.run(command, stdout=sp.PIPE)
+        return launchhost.stdout.decode("utf-8", "replace").strip("\n")
 
     def _call(self, argstr, need_stderr=False, n_threads=None, dry_run=False):
         command = [*self.oommf, "boxsi", "+fg", argstr, "-exitondone", "1"]
@@ -208,9 +206,8 @@ class NativeOOMMFRunner(OOMMFRunner):
 
         if dry_run:
             return " ".join(command)
-        else:
-            with self._kill_oommf_on_windows():
-                return sp.run(command, stdout=stdout, stderr=stderr, env=self.env)
+        with self._kill_oommf_on_windows():
+            return sp.run(command, stdout=stdout, stderr=stderr, env=self.env)
 
     @contextlib.contextmanager
     def _kill_oommf_on_windows(self, targets=("all",)):
@@ -225,10 +222,9 @@ class NativeOOMMFRunner(OOMMFRunner):
         command = [*self.oommf, "killoommf"] + list(targets)
         if dry_run:
             return " ".join(command)
-        else:
-            # Quietly kill oommf when used interactively
-            command.insert(-1, "-q")
-            sp.run(command, env=self.env)
+        # Quietly kill oommf when used interactively
+        command.insert(-1, "-q")
+        sp.run(command, env=self.env)
 
 
 @uu.inherit_docs
@@ -289,9 +285,9 @@ class ExeOOMMFRunner(NativeOOMMFRunner):
                 errors = f.read()
             return errors
 
-        except FileNotFoundError:
+        except FileNotFoundError as e:
             msg = "boxsi.errors cannot be retrieved."
-            raise EnvironmentError(msg)
+            raise EnvironmentError(msg) from e
 
     def __repr__(self):
         return f"ExeOOMMFRunner({self.oommf_exe})"
