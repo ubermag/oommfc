@@ -60,10 +60,7 @@ class HysteresisDriver(Driver):
 
     def _checkargs(self, **kwargs):
         # check the default arguments for a symmetric hysteresis loop
-        if (
-            any(item in kwargs for item in ["Hmin", "Hmax", "n"])
-            and "Hsteps" in kwargs
-        ):
+        if any(item in kwargs for item in ["Hmin", "Hmax", "n"]) and "Hsteps" in kwargs:
             msg = "Cannot define both (Hmin, Hmax, n) and Hsteps."
             raise ValueError(msg)
 
