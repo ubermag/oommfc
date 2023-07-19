@@ -59,13 +59,34 @@ class HysteresisDriver(Driver):
     ]
 
     def _checkargs(self, **kwargs):
-        Hmin, Hmax, n = kwargs["Hmin"], kwargs["Hmax"], kwargs["n"]
-        for i in [Hmin, Hmax]:
+        # check the default arguments for a symmetric hysteresis loop
+        if (
+            any(item in kwargs for item in ["Hmin", "Hmax", "n"])
+            and "Hsteps" in kwargs
+        ):
+            msg = "Cannot define both (Hmin, Hmax, n) and Hsteps."
+            raise ValueError(msg)
+
+        if all(item in kwargs for item in ["Hmin", "Hmax", "n"]):
+            self._checkvalues(kwargs["Hmin"], kwargs["Hmax"], kwargs["n"])
+        elif "Hsteps" in kwargs:
+            for Hstart, Hend, n in kwargs["Hsteps"]:
+                self._checkvalues(Hstart, Hend, n)
+        else:
+            msg = (
+                "Some of the required arguments are missing. "
+                "(Hmin, Hmax, n) or Hsteps must be defined."
+            )
+            raise ValueError(msg)
+
+    @staticmethod
+    def _checkvalues(Hstart, Hend, n):
+        for i in [Hstart, Hend]:
             if not isinstance(i, (list, tuple, np.ndarray)):
-                msg = "Hmin and Hmax must have array_like values."
+                msg = "Hstart (Hmin) and Hend (Hmax) must have array_like values."
                 raise ValueError(msg)
             if len(i) != 3:
-                msg = "Hmin and Hmax must have length 3."
+                msg = "Hstart (Hmin) and Hend (Hmax) must have length 3."
                 raise ValueError(msg)
         if not isinstance(n, int):
             msg = f"Cannot drive with {type(n)=}."
