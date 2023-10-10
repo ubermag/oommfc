@@ -71,6 +71,9 @@ omit = ["oommfc/tests/*"]
 profile = "black"
 skip_gitignore = true  # ignores files listed in .gitignore
 
+[tool.setuptools.packages.find]
+include = ["oommfc*"]
+
 # to define additional information we use a custom table
 # see: https://www.python.org/dev/peps/pep-0518/#tool-table
 [tool.ubermag]
