@@ -81,7 +81,7 @@ class HysteresisDriver(Driver):
             self._checkvalues(kwargs["Hmin"], kwargs["Hmax"], kwargs["n"])
             kwargs["Hsteps"] = [
                 [kwargs["Hmin"], kwargs["Hmax"], kwargs["n"]],
-                [kwargs["Hmax"], kwargs["Hmin"], kwargs["n"]]
+                [kwargs["Hmax"], kwargs["Hmin"], kwargs["n"]],
             ]
         elif "Hsteps" in kwargs:
             # case of multiple hysteresis sweep steps
