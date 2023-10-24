@@ -35,6 +35,18 @@ class HysteresisDriver(Driver):
     >>> hd._allowed_attributes
     [...]
 
+    4. How to define multiple steps with this driver.
+    >>> import oommfc as oc
+    ...
+    >>> system = oc.System(name="my_system")
+    ...
+    >>> sd = oc.HysteresisDriver()
+    >>> sd.drive(system, Hsteps=[
+    >>>    [(0, 0, 0), (0, 0, 1), 10],
+    >>>    [(0, 0, 1), (0, 0, -1), 10],
+    >>>    [(0, 0, -1), (0, 0, 0), 10],
+    >>> ])
+
     """
 
     _allowed_attributes = [
@@ -58,23 +70,35 @@ class HysteresisDriver(Driver):
         "report_wall_time",
     ]
 
-    def _checkargs(self, **kwargs):
+    def _checkargs(self, kwargs):
         # check the default arguments for a symmetric hysteresis loop
         if any(item in kwargs for item in ["Hmin", "Hmax", "n"]) and "Hsteps" in kwargs:
             msg = "Cannot define both (Hmin, Hmax, n) and Hsteps."
             raise ValueError(msg)
 
         if all(item in kwargs for item in ["Hmin", "Hmax", "n"]):
+            # case of a symmetric hysteresis simulation
             self._checkvalues(kwargs["Hmin"], kwargs["Hmax"], kwargs["n"])
+            kwargs["Hsteps"] = [
+                [kwargs["Hmin"], kwargs["Hmax"], kwargs["n"]],
+                [kwargs["Hmax"], kwargs["Hmin"], kwargs["n"]]
+            ]
         elif "Hsteps" in kwargs:
+            # case of multiple hysteresis sweep steps
+            if not isinstance(kwargs["Hsteps"], (list, tuple)):
+                raise TypeError("Hsteps has to be iterable.")
+            if any(len(element) != 3 for element in kwargs["Hsteps"]):
+                raise ValueError(
+                    "Hsteps has to include three elements "
+                    "(Hstart, Hend, n) in each step."
+                )
             for Hstart, Hend, n in kwargs["Hsteps"]:
                 self._checkvalues(Hstart, Hend, n)
         else:
-            msg = (
+            raise ValueError(
                 "Some of the required arguments are missing. "
                 "(Hmin, Hmax, n) or Hsteps must be defined."
             )
-            raise ValueError(msg)
 
     @staticmethod
     def _checkvalues(Hstart, Hend, n):
