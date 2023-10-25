@@ -86,7 +86,7 @@ class HysteresisDriver(Driver):
         elif "Hsteps" in kwargs:
             # case of multiple hysteresis sweep steps
             if not isinstance(kwargs["Hsteps"], (list, tuple)):
-                raise TypeError("Hsteps has to be iterable.")
+                raise TypeError("Hsteps has to be a list or tuple.")
             if any(len(element) != 3 for element in kwargs["Hsteps"]):
                 raise ValueError(
                     "Hsteps has to include three elements "
