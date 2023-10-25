@@ -70,7 +70,7 @@ class HysteresisDriver(Driver):
         "report_wall_time",
     ]
 
-    def _checkargs(self, kwargs):
+    def _checkargs(self, **kwargs):
         if any(item in kwargs for item in ["Hmin", "Hmax", "n"]) and "Hsteps" in kwargs:
             # unwanted case of beeing (Hmin, Hmax, n) and Hsteps both defined
             msg = "Cannot define both (Hmin, Hmax, n) and Hsteps."
