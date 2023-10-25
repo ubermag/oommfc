@@ -35,6 +35,18 @@ class HysteresisDriver(Driver):
     >>> hd._allowed_attributes
     [...]
 
+    4. How to define multiple steps with this driver.
+    >>> import oommfc as oc
+    ...
+    >>> system = oc.System(name="my_system")
+    ...
+    >>> sd = oc.HysteresisDriver()
+    >>> sd.drive(system, Hsteps=[
+    >>>    [(0, 0, 0), (0, 0, 1), 10],
+    >>>    [(0, 0, 1), (0, 0, -1), 10],
+    >>>    [(0, 0, -1), (0, 0, 0), 10],
+    >>> ])
+
     """
 
     _allowed_attributes = [
@@ -59,13 +71,42 @@ class HysteresisDriver(Driver):
     ]
 
     def _checkargs(self, **kwargs):
-        Hmin, Hmax, n = kwargs["Hmin"], kwargs["Hmax"], kwargs["n"]
-        for i in [Hmin, Hmax]:
+        if any(item in kwargs for item in ["Hmin", "Hmax", "n"]) and "Hsteps" in kwargs:
+            # unwanted case of beeing (Hmin, Hmax, n) and Hsteps both defined
+            msg = "Cannot define both (Hmin, Hmax, n) and Hsteps."
+            raise ValueError(msg)
+        elif all(item in kwargs for item in ["Hmin", "Hmax", "n"]):
+            # case of a symmetric hysteresis simulation
+            self._checkvalues(kwargs["Hmin"], kwargs["Hmax"], kwargs["n"])
+            kwargs["Hsteps"] = [
+                [kwargs["Hmin"], kwargs["Hmax"], kwargs["n"]],
+                [kwargs["Hmax"], kwargs["Hmin"], kwargs["n"]],
+            ]
+        elif "Hsteps" in kwargs:
+            # case of multiple hysteresis sweep steps
+            if not isinstance(kwargs["Hsteps"], (list, tuple)):
+                raise TypeError("Hsteps has to be a list or tuple.")
+            if any(len(element) != 3 for element in kwargs["Hsteps"]):
+                raise ValueError(
+                    "Hsteps has to include three elements "
+                    "(Hstart, Hend, n) in each step."
+                )
+            for Hstart, Hend, n in kwargs["Hsteps"]:
+                self._checkvalues(Hstart, Hend, n)
+        else:
+            raise ValueError(
+                "Some of the required arguments are missing. "
+                "(Hmin, Hmax, n) or Hsteps must be defined."
+            )
+
+    @staticmethod
+    def _checkvalues(Hstart, Hend, n):
+        for i in [Hstart, Hend]:
             if not isinstance(i, (list, tuple, np.ndarray)):
-                msg = "Hmin and Hmax must have array_like values."
+                msg = "Hstart (Hmin) and Hend (Hmax) must have array_like values."
                 raise ValueError(msg)
             if len(i) != 3:
-                msg = "Hmin and Hmax must have length 3."
+                msg = "Hstart (Hmin) and Hend (Hmax) must have length 3."
                 raise ValueError(msg)
         if not isinstance(n, int):
             msg = f"Cannot drive with {type(n)=}."
