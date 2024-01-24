@@ -59,7 +59,7 @@ class MinDriver(Driver):
     def _checkargs(self, **kwargs):
         pass  # no kwargs should be checked
 
-    def check_system(self, system):
+    def _check_system(self, system):
         """Checks the system has energy in it"""
         if len(system.energy) == 0:
             raise AttributeError("System's energy is not defined")

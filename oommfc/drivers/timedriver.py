@@ -67,7 +67,7 @@ class TimeDriver(Driver):
             msg = f"Cannot drive with {n=}."
             raise ValueError(msg)
 
-    def check_system(self, system):
+    def _check_system(self, system):
         """Checks the system has dynamics in it"""
         if len(system.dynamics) == 0:
             raise AttributeError("System's dynamics is not defined")
