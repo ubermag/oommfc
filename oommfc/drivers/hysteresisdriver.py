@@ -73,6 +73,11 @@ class HysteresisDriver(Driver):
         if n - 1 <= 0:  # OOMMF counts steps, not points (n -> n-1)
             msg = f"Cannot drive with {n=}."
             raise ValueError(msg)
+        
+    def _check_system(self, system):
+        """Checks the system has energy in it"""
+        if len(system.energy) == 0:
+            raise RuntimeError("System's energy is not defined")
 
     @property
     def _x(self):

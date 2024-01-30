@@ -62,7 +62,7 @@ class MinDriver(Driver):
     def _check_system(self, system):
         """Checks the system has energy in it"""
         if len(system.energy) == 0:
-            raise AttributeError("System's energy is not defined")
+            raise RuntimeError("System's energy is not defined")
 
     @property
     def _x(self):
