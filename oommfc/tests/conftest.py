@@ -2,7 +2,7 @@ import pytest
 
 import oommfc as oc
 
-not_supported_by_oommf = ["test_check_for_energy_and_dynamics", "test_relaxdriver"]
+not_supported_by_oommf = ["test_relax_check_for_energy", "test_relaxdriver"]
 
 
 @pytest.fixture(scope="module")
