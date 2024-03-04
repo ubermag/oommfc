@@ -74,6 +74,11 @@ class HysteresisDriver(Driver):
             msg = f"Cannot drive with {n=}."
             raise ValueError(msg)
 
+    def _check_system(self, system):
+        """Checks the system has energy in it"""
+        if len(system.energy) == 0:
+            raise RuntimeError("System's energy is not defined")
+
     @property
     def _x(self):
         return "B_hysteresis"
