@@ -1,4 +1,5 @@
 """OOMMF driving utility"""
+
 from .oommf import (
     DockerOOMMFRunner,
     ExeOOMMFRunner,
