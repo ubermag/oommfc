@@ -4,7 +4,7 @@ import ubermagutil as uu
 
 @uu.inherit_docs
 class OOMMFDrive(mdata.Drive):
-    """Drive class for OOMMFDrives (created automatically).
+    """Drive class for OOMMFDrives.
 
     This class provides utility for the analysis of individual OOMMF drives. It should
     not be created explicitly. Instead, use ``micromagneticdata.Drive`` which
