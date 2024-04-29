@@ -1,4 +1,5 @@
 """OOMMF calculator."""
+
 import importlib.metadata
 
 import pytest
