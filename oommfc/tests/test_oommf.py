@@ -27,9 +27,7 @@ def check_runner(runner):
 
     # Cleanup created files.
     for f in os.listdir(dirname):
-        if f.endswith(".odt"):
-            os.remove(os.path.join(dirname, f))
-        elif f.endswith(".omf") and f.startswith("test_oommf-Oxs"):
+        if f.endswith(".odt") or f.endswith(".omf") and f.startswith("test_oommf-Oxs"):
             os.remove(os.path.join(dirname, f))
 
 

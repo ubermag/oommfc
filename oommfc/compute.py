@@ -39,7 +39,7 @@ def schedule_script(func, system):
         msg = f"Computing the value of {func} is not supported."
         raise ValueError(msg)
 
-    return 'Schedule "{}" archive Step 1\n'.format(output)
+    return f'Schedule "{output}" archive Step 1\n'
 
 
 def compute(

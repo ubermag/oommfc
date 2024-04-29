@@ -1,11 +1,11 @@
 """OOMMF calculator."""
+
 import importlib.metadata
 
 import pytest
 
 import oommfc.oommf
 import oommfc.scripts
-
 from .compute import compute
 from .delete import delete
 from .drivers import Driver, HysteresisDriver, MinDriver, TimeDriver
