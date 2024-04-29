@@ -3,7 +3,7 @@ default_language_version:
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.4.0
+  rev: v4.6.0
   hooks:
   - id: check-merge-conflict  # checks for files that contain merge conflict strings
   - id: check-toml  # checks toml files for parseable syntax
@@ -13,23 +13,23 @@ repos:
 #    exclude: 'oommfc/tests/test_sample/.*'
 
 - repo: https://github.com/pycqa/isort
-  rev: 5.12.0
+  rev: 5.13.2
   hooks:
   - id: isort
 
 - repo: https://github.com/nbQA-dev/nbQA
-  rev: 1.7.0
+  rev: 1.8.5
   hooks:
   - id: nbqa-isort  # isort inside Jupyter notebooks
 
 - repo: https://github.com/PyCQA/flake8
-  rev: 6.1.0
+  rev: 7.0.0
   hooks:
   - id: flake8
     additional_dependencies: [flake8-rst-docstrings]  #, flake8-docstrings]
 
 - repo: https://github.com/psf/black
-  rev: 23.9.1
+  rev: 24.4.2
   hooks:
   - id: black-jupyter
 
