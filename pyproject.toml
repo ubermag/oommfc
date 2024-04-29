@@ -61,15 +61,51 @@ repository = "https://github.com/ubermag/oommfc"
 
 
 
-[tool.black]
-experimental-string-processing = true
 
 [tool.coverage.run]
 omit = ["oommfc/tests/*"]
 
-[tool.isort]
-profile = "black"
-skip_gitignore = true  # ignores files listed in .gitignore
+[tool.ruff]
+ignore-init-module-imports = true  # do not remove unused imports in __init__ and warn instead
+
+[tool.ruff.lint]
+select = [
+    "B",   # flake8-bugbear
+    "E",   # pycodestyle
+    "F",   # Pyflakes
+    "I",   # isort
+    "SIM", # flake8-simplify
+    "UP",  # pyupgrade
+]
+ignore = [
+    # conflict with other rules
+    "D203",  # one-blank-line-before-class (conflicts with D204)
+    "D212",  # multi-line-summary-first-line (conflicts with D213)
+    # conflict with formatter
+    "D206",  # indent-with-spaces
+    "D300",  # triple-single-quotes
+    "E111",  # indentation-with-invalid-multiple
+    "E114",  # indentation-with-invalid-multiple-comment
+    "E117",  # over-indented
+    # conflict with Python 3.6 compatibility
+    "UP022", # replace-stdout-stderr
+]
+
+[tool.ruff.lint.isort]
+known-local-folder = ["oommfc"]
+
+[tool.ruff.per-file-ignores]
+"*.ipynb" = [
+    "B018",  # "Found useless expression. Either assign it to a variable or remove it."; false positives when using implicit __repr__ in the notebook
+    "E501",  # line too long
+    "F811",  # 'redefined-while-unused'; many false positives in notebooks because ipywidgets decorated functions are not recognised
+]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error",
+    "ignore:((.|\n)*)Sentinel is not a public part of the traitlets API((.|\n)*)",  # dependency of k3d
+]
 
 [tool.setuptools.packages.find]
 include = ["oommfc*"]
