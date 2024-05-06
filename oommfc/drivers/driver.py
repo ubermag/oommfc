@@ -21,8 +21,13 @@ class Driver(mm.ExternalDriver):
             self.autoselect_evolver = True
 
     @abc.abstractmethod
-    def _checkargs(self, **kwargs):
-        """Abstract method for checking arguments."""
+    def _checkargs(self, kwargs) -> dict:
+        """Check drive keyword arguments.
+
+        This method can also update keyword arguments where required. It must return
+        a dict of all keyword arguments (initial or modified) that shall be used for the
+        simulation.
+        """
 
     def drive_kwargs_setup(self, drive_kwargs):
         """Additional keyword arguments allowed for drive.
@@ -56,7 +61,7 @@ class Driver(mm.ExternalDriver):
             save additional data. Defaults to ``None``.
 
         """
-        self._checkargs(**drive_kwargs)
+        drive_kwargs = self._checkargs(drive_kwargs)
         drive_kwargs.setdefault("fixed_subregions", None)
         drive_kwargs.setdefault("output_step", False)
         drive_kwargs.setdefault("n_threads", None)
@@ -98,7 +103,7 @@ class Driver(mm.ExternalDriver):
             save additional data. Defaults to ``None``.
 
         """
-        self._checkargs(**schedule_kwargs)
+        schedule_kwargs = self._checkargs(schedule_kwargs)
         schedule_kwargs.setdefault("fixed_subregions", None)
         schedule_kwargs.setdefault("output_step", False)
         schedule_kwargs.setdefault("compute", None)
