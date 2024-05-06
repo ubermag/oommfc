@@ -33,6 +33,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
         auto-update-conda: true
         activate-environment: conda-environment
+        miniconda-version: "latest"
         environment-file: .github/environment.yml
 
     - name: Install package
