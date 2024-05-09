@@ -87,6 +87,10 @@ def _read_header(filename, rename=True):
         while not (cline := f.readline()).startswith("# Columns"):
             pass
         columns = cline.lstrip("# Columns:").rstrip()
+        # Columns can e.g. look like:
+        # {Oxs_CGEvolve:evolver:Max mxHxm} {...} Oxs_MinDriver::Stage Oxs_MinDriver::mx
+        # - the first part of the regex finds column names with spaces inside {}
+        # - the second part finds column names without spaces and without {}
         cols = re.findall(r"(?<={)[^}]+|[^ {}]+", columns)
         # UNITS
         uline = f.readline()
