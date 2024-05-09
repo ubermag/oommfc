@@ -58,7 +58,7 @@ class HysteresisDriver(Driver):
         "report_wall_time",
     ]
 
-    def _checkargs(self, **kwargs):
+    def _checkargs(self, kwargs):
         Hmin, Hmax, n = kwargs["Hmin"], kwargs["Hmax"], kwargs["n"]
         for i in [Hmin, Hmax]:
             if not isinstance(i, (list, tuple, np.ndarray)):
@@ -73,6 +73,7 @@ class HysteresisDriver(Driver):
         if n - 1 <= 0:  # OOMMF counts steps, not points (n -> n-1)
             msg = f"Cannot drive with {n=}."
             raise ValueError(msg)
+        return kwargs
 
     def _check_system(self, system):
         """Checks the system has energy in it"""
