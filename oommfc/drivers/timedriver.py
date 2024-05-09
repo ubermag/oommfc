@@ -55,7 +55,7 @@ class TimeDriver(Driver):
         "report_wall_time",
     ]
 
-    def _checkargs(self, **kwargs):
+    def _checkargs(self, kwargs):
         t, n = kwargs["t"], kwargs["n"]
         if t <= 0:
             msg = f"Cannot drive with {t=}."
@@ -66,6 +66,14 @@ class TimeDriver(Driver):
         if n <= 0:
             msg = f"Cannot drive with {n=}."
             raise ValueError(msg)
+        return kwargs
+
+    def _check_system(self, system):
+        """Checks the system has dynamics in it"""
+        if len(system.dynamics) == 0:
+            raise RuntimeError("System's dynamics is not defined")
+        if len(system.energy) == 0:
+            raise RuntimeError("System's energy is not defined")
 
     @property
     def _x(self):
