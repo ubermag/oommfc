@@ -65,10 +65,8 @@ repository = "https://github.com/ubermag/oommfc"
 [tool.coverage.run]
 omit = ["oommfc/tests/*"]
 
-[tool.ruff]
-ignore-init-module-imports = true  # do not remove unused imports in __init__ and warn instead
-
 [tool.ruff.lint]
+ignore-init-module-imports = true  # do not remove unused imports in __init__ and warn instead
 select = [
     "B",   # flake8-bugbear
     "E",   # pycodestyle
@@ -94,7 +92,7 @@ ignore = [
 [tool.ruff.lint.isort]
 known-local-folder = ["oommfc"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "*.ipynb" = [
     "B018",  # "Found useless expression. Either assign it to a variable or remove it."; false positives when using implicit __repr__ in the notebook
     "E501",  # line too long
