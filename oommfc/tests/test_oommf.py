@@ -118,7 +118,7 @@ def test_missing_oommf():
     oc.runner.oommf_exe = "wrong_name"
     oc.runner.docker_exe = "wrong_name"
     with pytest.raises(EnvironmentError):
-        oc.runner.runner
+        oc.runner.runner  # noqa: B018
 
 
 def test_get_cached_runner(reset_runner, monkeypatch):
@@ -136,7 +136,7 @@ def test_get_cached_runner(reset_runner, monkeypatch):
     oc.runner.cache_runner = False
     oc.runner.docker_exe = "wrong_name"  # ensure that we do not find docker
     with pytest.raises(EnvironmentError):
-        oc.runner.runner
+        oc.runner.runner  # noqa: B018
 
     oc.runner.envvar = "OOMMFTCL"
     if oommf_tcl_path():
