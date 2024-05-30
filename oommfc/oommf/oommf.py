@@ -470,11 +470,9 @@ class Runner:
 
         """
         log.debug(
-            (
-                "Starting autoselect_runner: cache_runner=%(cache_runner)s, "
-                "envvar=%(envvar)s, oommf_exe=%(oommf_exe)s, "
-                "docker_exe=%(docker_exe)s)"
-            ),
+            "Starting autoselect_runner: cache_runner=%(cache_runner)s, "
+            "envvar=%(envvar)s, oommf_exe=%(oommf_exe)s, "
+            "docker_exe=%(docker_exe)s)",
             {
                 "cache_runner": self.cache_runner,
                 "envvar": self.envvar,
@@ -485,10 +483,8 @@ class Runner:
 
         # Check for the OOMMFTCL environment variable pointing to oommf.tcl.
         log.debug(
-            (
-                "Step 1: Checking for the self.envvar=%(envvar)s environment"
-                " variable pointing to oommf.tcl."
-            ),
+            "Step 1: Checking for the self.envvar=%(envvar)s environment"
+            " variable pointing to oommf.tcl.",
             {"envvar": self.envvar},
         )
         oommf_tcl = os.environ.get(self.envvar, None)
@@ -501,10 +497,8 @@ class Runner:
             else:
                 if res.returncode:
                     log.warning(
-                        (
-                            "OOMMFTCL is set, but OOMMF could not be run.\n"
-                            "stdout:\n%(stdout)s\nstderr:\n%(stderr)s"
-                        ),
+                        "OOMMFTCL is set, but OOMMF could not be run.\n"
+                        "stdout:\n%(stdout)s\nstderr:\n%(stderr)s",
                         {"stdout": res.stdout, "stderr": res.stderr},
                     )
                 else:
@@ -514,10 +508,8 @@ class Runner:
         # OOMMF available as an executable - in a conda env on Mac/Linux, or
         # oommf installed separately.
         log.debug(
-            (
-                "Step 2: is oommf_exe=%(oommf_exe)s in PATH? "
-                "Could be from conda env or manual install."
-            ),
+            "Step 2: is oommf_exe=%(oommf_exe)s in PATH? "
+            "Could be from conda env or manual install.",
             {"oommf_exe": self.oommf_exe},
         )
         oommf_exe = shutil.which(self.oommf_exe)
