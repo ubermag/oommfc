@@ -416,7 +416,7 @@ def rkky_script(term, system):
     mif += f"Specify Oxs_TwoSurfaceExchange:{term.name} {{\n"
     if isinstance(term.sigma, numbers.Real):
         mif += f"  sigma {term.sigma}\n"
-    if isinstance(term.sigma, numbers.Real):
+    if isinstance(term.sigma2, numbers.Real):
         mif += f"  sigma2 {term.sigma2}\n"
 
     mif += "  surface1 {\n"

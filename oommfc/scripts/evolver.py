@@ -69,8 +69,7 @@ def evolver_script(evolver, **kwargs):
         mif += "  return $factor\n"
         mif += "}\n\n"
 
-        if isinstance(evolver, (oc.SpinXferEvolver)):
-            # oc.Xf_TherrmSpinXferEvolver)):
+        if isinstance(evolver, (oc.SpinXferEvolver, oc.Xf_ThermSpinXferEvolver)):
             setattr(evolver, "J_profile", "TimeFunction")
             setattr(evolver, "J_profile_args", "total_time")
         elif isinstance(evolver, oc.SpinTEvolver):
@@ -79,8 +78,7 @@ def evolver_script(evolver, **kwargs):
     if hasattr(evolver, "tcl_strings") and isinstance(evolver.tcl_strings, dict):
         print(evolver.tcl_strings)
         mif += evolver.tcl_strings["script"]
-        if isinstance(evolver, (oc.SpinXferEvolver)):
-            # oc.Xf_ThermSpinXferEvolver)):
+        if isinstance(evolver, (oc.SpinXferEvolver, oc.Xf_ThermSpinXferEvolver)):
             setattr(evolver, "J_profile", evolver.tcl_strings["script_name"])
             setattr(evolver, "J_profile_args", evolver.tcl_strings["script_args"])
         elif isinstance(evolver, oc.SpinTEvolver):

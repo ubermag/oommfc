@@ -1,5 +1,6 @@
 """OOMMF calculator."""
-import pkg_resources
+import importlib.metadata
+
 import pytest
 
 import oommfc.oommf
@@ -19,7 +20,7 @@ from .evolvers import (
     Xf_ThermSpinXferEvolver,
 )
 
-__version__ = pkg_resources.get_distribution(__name__).version
+__version__ = importlib.metadata.version(__package__)
 
 runner = oommfc.oommf.oommf.Runner()
 """Controls the default runner.

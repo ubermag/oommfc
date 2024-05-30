@@ -70,38 +70,9 @@ class HysteresisDriver(Driver):
         "report_wall_time",
     ]
 
-    def _checkargs(self, **kwargs):
-        if any(item in kwargs for item in ["Hmin", "Hmax", "n"]) and "Hsteps" in kwargs:
-            # unwanted case of beeing (Hmin, Hmax, n) and Hsteps both defined
-            msg = "Cannot define both (Hmin, Hmax, n) and Hsteps."
-            raise ValueError(msg)
-        elif all(item in kwargs for item in ["Hmin", "Hmax", "n"]):
-            # case of a symmetric hysteresis simulation
-            self._checkvalues(kwargs["Hmin"], kwargs["Hmax"], kwargs["n"])
-            kwargs["Hsteps"] = [
-                [kwargs["Hmin"], kwargs["Hmax"], kwargs["n"]],
-                [kwargs["Hmax"], kwargs["Hmin"], kwargs["n"]],
-            ]
-        elif "Hsteps" in kwargs:
-            # case of multiple hysteresis sweep steps
-            if not isinstance(kwargs["Hsteps"], (list, tuple)):
-                raise TypeError("Hsteps has to be a list or tuple.")
-            if any(len(element) != 3 for element in kwargs["Hsteps"]):
-                raise ValueError(
-                    "Hsteps has to include three elements "
-                    "(Hstart, Hend, n) in each step."
-                )
-            for Hstart, Hend, n in kwargs["Hsteps"]:
-                self._checkvalues(Hstart, Hend, n)
-        else:
-            raise ValueError(
-                "Some of the required arguments are missing. "
-                "(Hmin, Hmax, n) or Hsteps must be defined."
-            )
-
-    @staticmethod
-    def _checkvalues(Hstart, Hend, n):
-        for i in [Hstart, Hend]:
+    def _checkargs(self, kwargs):
+        Hmin, Hmax, n = kwargs["Hmin"], kwargs["Hmax"], kwargs["n"]
+        for i in [Hmin, Hmax]:
             if not isinstance(i, (list, tuple, np.ndarray)):
                 msg = "Hstart (Hmin) and Hend (Hmax) must have array_like values."
                 raise ValueError(msg)
@@ -114,6 +85,12 @@ class HysteresisDriver(Driver):
         if n - 1 <= 0:  # OOMMF counts steps, not points (n -> n-1)
             msg = f"Cannot drive with {n=}."
             raise ValueError(msg)
+        return kwargs
+
+    def _check_system(self, system):
+        """Checks the system has energy in it"""
+        if len(system.energy) == 0:
+            raise RuntimeError("System's energy is not defined")
 
     @property
     def _x(self):
