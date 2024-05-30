@@ -71,13 +71,41 @@ class HysteresisDriver(Driver):
     ]
 
     def _checkargs(self, kwargs):
-        Hmin, Hmax, n = kwargs["Hmin"], kwargs["Hmax"], kwargs["n"]
-        for i in [Hmin, Hmax]:
-            if not isinstance(i, (list, tuple, np.ndarray)):
-                msg = "Hstart (Hmin) and Hend (Hmax) must have array_like values."
+        
+        if any(item in kwargs for item in ["Hmin", "Hmax", "n"]) and "Hsteps" in kwargs:
+            # both Hsteps and (Hmin, Hmax, n) are defined, which is not allowed
+            msg = "Cannot define both (Hmin, Hmax, n) and Hsteps."
+            raise ValueError(msg)
+        
+        if all(item in kwargs for item in ["Hmin", "Hmax", "n"]):
+            # case of a symmetric hysteresis simulation
+            # construct symmetric Hsteps from (Hmin, Hmax, n)
+            kwargs = {"Hsteps": [
+                [kwargs["Hmin"], kwargs["Hmax"], kwargs["n"]],
+                [kwargs["Hmax"], kwargs["Hmin"], kwargs["n"]]
+            ]}
+        
+        if "Hsteps" in kwargs:
+            # case of a stepped hysteresis simulation
+            for step in kwargs["Hsteps"]:
+                if len(step) != 3:
+                    msg = "Each list item in Hsteps must have 3 entries: Hstart, Hend, n."
+                    raise ValueError(msg)
+                self._checkvalues(step[0], step[1], step[2])
+        else:
+            msg = "Cannot drive without a full definition of (Hmin, Hmax, n) xor Hsteps."
+            return ValueError(msg)
+        
+        return kwargs
+    
+    @staticmethod
+    def _checkvalues(Hmin, Hmax, n):
+        for item in [Hmin, Hmax]:
+            if not isinstance(item, (list, tuple, np.ndarray)):
+                msg = "Hmin and Hmax must have array_like values."
                 raise ValueError(msg)
-            if len(i) != 3:
-                msg = "Hstart (Hmin) and Hend (Hmax) must have length 3."
+            if len(item) != 3:
+                msg = "Hmin and Hmax must have length 3."
                 raise ValueError(msg)
         if not isinstance(n, int):
             msg = f"Cannot drive with {type(n)=}."
@@ -85,7 +113,6 @@ class HysteresisDriver(Driver):
         if n - 1 <= 0:  # OOMMF counts steps, not points (n -> n-1)
             msg = f"Cannot drive with {n=}."
             raise ValueError(msg)
-        return kwargs
 
     def _check_system(self, system):
         """Checks the system has energy in it"""

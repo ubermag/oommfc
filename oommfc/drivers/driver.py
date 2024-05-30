@@ -66,6 +66,7 @@ class Driver(mm.ExternalDriver):
         drive_kwargs.setdefault("output_step", False)
         drive_kwargs.setdefault("n_threads", None)
         drive_kwargs.setdefault("compute", None)
+        return drive_kwargs
 
     def schedule_kwargs_setup(self, schedule_kwargs):
         """Additional keyword arguments allowed for schedule.
