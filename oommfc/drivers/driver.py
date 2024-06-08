@@ -102,7 +102,7 @@ class Driver(mm.ExternalDriver):
             save additional data. Defaults to ``None``.
 
         """
-        schedule_kwargs = self._checkargs(schedule_kwargs)
+        self._checkargs(schedule_kwargs)
         schedule_kwargs.setdefault("fixed_subregions", None)
         schedule_kwargs.setdefault("output_step", False)
         schedule_kwargs.setdefault("compute", None)
