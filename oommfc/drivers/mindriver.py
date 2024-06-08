@@ -57,7 +57,7 @@ class MinDriver(Driver):
     ]
 
     def _checkargs(self, kwargs):
-        return kwargs  # no kwargs should be checked
+        pass  # no kwargs should be checked
 
     def _check_system(self, system):
         """Checks the system has energy in it"""
