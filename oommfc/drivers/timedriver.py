@@ -66,7 +66,6 @@ class TimeDriver(Driver):
         if n <= 0:
             msg = f"Cannot drive with {n=}."
             raise ValueError(msg)
-        return kwargs
 
     def _check_system(self, system):
         """Checks the system has dynamics in it"""

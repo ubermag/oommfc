@@ -79,12 +79,12 @@ class HysteresisDriver(Driver):
         if all(item in kwargs for item in ["Hmin", "Hmax", "n"]):
             # case of a symmetric hysteresis simulation
             # construct symmetric Hsteps from (Hmin, Hmax, n)
-            kwargs = {
-                "Hsteps": [
-                    [kwargs["Hmin"], kwargs["Hmax"], kwargs["n"]],
-                    [kwargs["Hmax"], kwargs["Hmin"], kwargs["n"]],
-                ]
-            }
+            kwargs["Hsteps"] = [
+                [kwargs["Hmin"], kwargs["Hmax"], kwargs["n"]],
+                [kwargs["Hmax"], kwargs["Hmin"], kwargs["n"]],
+            ]
+            for key in ["Hmin", "Hmax", "n"]:
+                kwargs.pop(key)
 
         if "Hsteps" in kwargs:
             # case of a stepped hysteresis simulation
@@ -100,8 +100,6 @@ class HysteresisDriver(Driver):
                 "Cannot drive without a full definition of (Hmin, Hmax, n) xor Hsteps."
             )
             return ValueError(msg)
-
-        return kwargs
 
     @staticmethod
     def _checkvalues(Hmin, Hmax, n):
