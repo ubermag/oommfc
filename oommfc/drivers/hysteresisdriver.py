@@ -36,16 +36,17 @@ class HysteresisDriver(Driver):
     [...]
 
     4. How to define multiple steps with this driver.
+    >>> import micromagneticmodel as mm
     >>> import oommfc as oc
-    ...
-    >>> system = oc.System(name="my_system")
-    ...
+    >>> system = mm.examples.macrospin()
     >>> sd = oc.HysteresisDriver()
+    >>> H = 1 / mm.consts.mu0
     >>> sd.drive(system, Hsteps=[
-    >>>    [(0, 0, 0), (0, 0, 1), 10],
-    >>>    [(0, 0, 1), (0, 0, -1), 10],
-    >>>    [(0, 0, -1), (0, 0, 0), 10],
-    >>> ])
+    ...    [(0, 0, 0), (0, 0, H), 10],
+    ...    [(0, 0, H), (0, 0, -H), 10],
+    ...    [(0, 0, -H), (0, 0, 0), 10],
+    ... ])
+    Running OOMMF ...
 
     """
 
