@@ -192,7 +192,7 @@ class Driver(mm.ExternalDriver):
                 compute=compute,
                 **kwargs,
             )
-            with open(self._miffilename(system), "wt", encoding="utf-8") as miffile:
+            with open(self._miffilename(system), "w", encoding="utf-8") as miffile:
                 miffile.write(mif)
 
             # Generate and save json info file for a drive (not compute).

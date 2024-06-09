@@ -1,3 +1,4 @@
+import contextlib
 import numbers
 import warnings
 
@@ -22,10 +23,7 @@ def exchange_script(term, system):
         mif += "}\n\n"
 
     elif isinstance(term.A, dict):
-        if "default" in term.A.keys():
-            default_value = term.A["default"]
-        else:
-            default_value = 0
+        default_value = term.A.get("default", 0)
         mif = "# Exchange6Ngbr\n"
         mif += f"Specify Oxs_Exchange6Ngbr:{term.name} {{\n"
         mif += f"  default_A {default_value}\n"
@@ -61,7 +59,9 @@ def zeeman_script(term, system):
     if isinstance(term.wave, str) or isinstance(term.func, str):
         if isinstance(term.wave, str):
             warnings.warn(
-                "Parameter `wave` is deprecated; use `func` instead.", FutureWarning
+                "Parameter `wave` is deprecated; use `func` instead.",
+                FutureWarning,
+                stacklevel=2,
             )
         if isinstance(term.H, (df.Field, dict)):
             if term.wave == "sin" or term.func == "sin":
@@ -220,10 +220,8 @@ def zeeman_script(term, system):
         mif += f'Specify {term.tcl_strings["energy"]}:{term.name} {{\n'
         mif += f'  script {term.tcl_strings["script_name"]}\n'
         for key in ["type", "script_args"]:
-            try:
+            with contextlib.suppress(KeyError):
                 mif += f"  {key} {term.tcl_strings[key]}\n"
-            except KeyError:
-                pass
         if term.tcl_strings["energy"] == "Oxs_TransformZeeman":
             mif += f"  field {Hname}\n"
         mif += "}\n\n"
@@ -264,14 +262,16 @@ def dmi_script(term, system):
     elif (tcc := term.crystalclass) in ["D2d_x", "D2d_y", "D2d_z", "D2d"]:
         if tcc == "D2d":
             warnings.warn(
-                "Use of `D2d` is deprecated; use `D2d_z` instead.", FutureWarning
+                "Use of `D2d` is deprecated; use `D2d_z` instead.",
+                FutureWarning,
+                stacklevel=2,
             )
             tcc = "D2d_z"
         oxs = f"Oxs_DMI_{tcc}"
     elif (tcc := term.crystalclass) in ["Cnv_x", "Cnv_y", "Cnv_z", "Cnv"]:
         if tcc == "Cnv":
             msg = "Use of `Cnv` is deprecated; use `Cnv_z` instead."
-            warnings.warn(msg, FutureWarning)
+            warnings.warn(msg, FutureWarning, stacklevel=2)
             tcc = "Cnv_z"
         oxs = f"Oxs_DMI_{tcc}"
 
@@ -290,10 +290,7 @@ def dmi_script(term, system):
         mif += "}\n\n"
 
     elif isinstance(term.D, dict):
-        if "default" in term.D.keys():
-            default_value = term.D["default"]
-        else:
-            default_value = 0
+        default_value = term.D.get("default", 0)
         mif += f"  default_D {default_value}\n"
         mif += "  atlas :main_atlas\n"
         mif += "  D {\n"

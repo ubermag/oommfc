@@ -27,9 +27,7 @@ def check_runner(runner):
 
     # Cleanup created files.
     for f in os.listdir(dirname):
-        if f.endswith(".odt"):
-            os.remove(os.path.join(dirname, f))
-        elif f.endswith(".omf") and f.startswith("test_oommf-Oxs"):
+        if f.endswith(".odt") or f.endswith(".omf") and f.startswith("test_oommf-Oxs"):
             os.remove(os.path.join(dirname, f))
 
 
@@ -120,7 +118,7 @@ def test_missing_oommf():
     oc.runner.oommf_exe = "wrong_name"
     oc.runner.docker_exe = "wrong_name"
     with pytest.raises(EnvironmentError):
-        oc.runner.runner
+        oc.runner.runner  # noqa: B018
 
 
 def test_get_cached_runner(reset_runner, monkeypatch):
@@ -138,7 +136,7 @@ def test_get_cached_runner(reset_runner, monkeypatch):
     oc.runner.cache_runner = False
     oc.runner.docker_exe = "wrong_name"  # ensure that we do not find docker
     with pytest.raises(EnvironmentError):
-        oc.runner.runner
+        oc.runner.runner  # noqa: B018
 
     oc.runner.envvar = "OOMMFTCL"
     if oommf_tcl_path():

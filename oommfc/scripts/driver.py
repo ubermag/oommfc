@@ -74,10 +74,7 @@ def driver_script(
             driver.evolver.fixed_spins = resstr
 
         # What is saved in output?
-        if output_step:
-            output_str = "Step"
-        else:
-            output_str = "Stage"
+        output_str = "Step" if output_step else "Stage"
 
         mif += oc.scripts.evolver_script(driver.evolver)
 
