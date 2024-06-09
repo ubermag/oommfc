@@ -86,7 +86,7 @@ def setup_scalar_parameter(parameter, name):
         # to avoid changing the dictionary used in the respective term
         # in the system (from micromagneticmodel)
         param = parameter.copy()
-        if "default" not in param.keys():
+        if "default" not in param:
             param["default"] = 0
         mif = atlas_scalar_field(param, f"{name}")
         return mif, f"{name}"
@@ -102,7 +102,7 @@ def setup_vector_parameter(parameter, name):
         return mif, f"{name}"
 
     elif isinstance(parameter, dict):
-        if "default" not in parameter.keys():
+        if "default" not in parameter:
             parameter["default"] = (0, 0, 0)
         mif = atlas_vector_field(parameter, f"{name}")
         return mif, f"{name}"

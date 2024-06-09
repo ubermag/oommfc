@@ -1,4 +1,4 @@
-from .driver import Driver
-from .hysteresisdriver import HysteresisDriver
-from .mindriver import MinDriver
-from .timedriver import TimeDriver
+from .driver import Driver as Driver
+from .hysteresisdriver import HysteresisDriver as HysteresisDriver
+from .mindriver import MinDriver as MinDriver
+from .timedriver import TimeDriver as TimeDriver

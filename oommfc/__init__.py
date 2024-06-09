@@ -1,25 +1,27 @@
 """OOMMF calculator."""
-import pkg_resources
+
+import importlib.metadata
+
 import pytest
 
 import oommfc.oommf
 import oommfc.scripts
+from .compute import compute as compute
+from .delete import delete as delete
+from .drivers import Driver as Driver
+from .drivers import HysteresisDriver as HysteresisDriver
+from .drivers import MinDriver as MinDriver
+from .drivers import TimeDriver as TimeDriver
+from .evolvers import CGEvolver as CGEvolver
+from .evolvers import EulerEvolver as EulerEvolver
+from .evolvers import RungeKuttaEvolver as RungeKuttaEvolver
+from .evolvers import SpinTEvolver as SpinTEvolver
+from .evolvers import SpinXferEvolver as SpinXferEvolver
+from .evolvers import UHH_ThetaEvolver as UHH_ThetaEvolver
+from .evolvers import Xf_ThermHeunEvolver as Xf_ThermHeunEvolver
+from .evolvers import Xf_ThermSpinXferEvolver as Xf_ThermSpinXferEvolver
 
-from .compute import compute
-from .delete import delete
-from .drivers import Driver, HysteresisDriver, MinDriver, TimeDriver
-from .evolvers import (
-    CGEvolver,
-    EulerEvolver,
-    RungeKuttaEvolver,
-    SpinTEvolver,
-    SpinXferEvolver,
-    UHH_ThetaEvolver,
-    Xf_ThermHeunEvolver,
-    Xf_ThermSpinXferEvolver,
-)
-
-__version__ = pkg_resources.get_distribution(__name__).version
+__version__ = importlib.metadata.version(__package__)
 
 runner = oommfc.oommf.oommf.Runner()
 """Controls the default runner.

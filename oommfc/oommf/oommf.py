@@ -158,7 +158,7 @@ class OOMMFRunner(mm.ExternalRunner):
             td.drive(system, t=1e-12, n=1, runner=self)
             print("OOMMF found and running.")
             return 0
-        except (EnvironmentError, RuntimeError):
+        except (OSError, RuntimeError):
             print("Cannot find OOMMF.")
             return 1
 
@@ -250,7 +250,7 @@ class TclOOMMFRunner(NativeOOMMFRunner):
 
     def errors(self):
         errors_file = os.path.join(os.path.dirname(self.oommf_tcl), "boxsi.errors")
-        with open(errors_file, "r") as f:
+        with open(errors_file) as f:
             errors = f.read()
 
         return errors
@@ -285,13 +285,13 @@ class ExeOOMMFRunner(NativeOOMMFRunner):
                 "oommf",
                 "boxsi.errors",
             )
-            with open(errors_file, "r") as f:
+            with open(errors_file) as f:
                 errors = f.read()
             return errors
 
         except FileNotFoundError:
             msg = "boxsi.errors cannot be retrieved."
-            raise EnvironmentError(msg)
+            raise OSError(msg) from None
 
     def __repr__(self):
         return f"ExeOOMMFRunner({self.oommf_exe})"
@@ -322,7 +322,7 @@ class DockerOOMMFRunner(OOMMFRunner):
 
     """
 
-    def __init__(self, docker_exe="docker", image="oommf/oommf:20a3", selinux=False):
+    def __init__(self, docker_exe="docker", image="oommf/oommf:20b0", selinux=False):
         super().__init__()
         self.docker_exe = docker_exe
         self.image = image
@@ -357,7 +357,7 @@ class DockerOOMMFRunner(OOMMFRunner):
 
     def errors(self):
         msg = "boxsi.errors cannot be retrieved from Docker container."
-        raise EnvironmentError(msg)
+        raise OSError(msg)
 
     def __repr__(self):
         return f"DockerOOMMFRunner(docker_exe={self.docker_exe}, image={self.image})"
@@ -470,11 +470,9 @@ class Runner:
 
         """
         log.debug(
-            (
-                "Starting autoselect_runner: cache_runner=%(cache_runner)s, "
-                "envvar=%(envvar)s, oommf_exe=%(oommf_exe)s, "
-                "docker_exe=%(docker_exe)s)"
-            ),
+            "Starting autoselect_runner: cache_runner=%(cache_runner)s, "
+            "envvar=%(envvar)s, oommf_exe=%(oommf_exe)s, "
+            "docker_exe=%(docker_exe)s)",
             {
                 "cache_runner": self.cache_runner,
                 "envvar": self.envvar,
@@ -485,10 +483,8 @@ class Runner:
 
         # Check for the OOMMFTCL environment variable pointing to oommf.tcl.
         log.debug(
-            (
-                "Step 1: Checking for the self.envvar=%(envvar)s environment"
-                " variable pointing to oommf.tcl."
-            ),
+            "Step 1: Checking for the self.envvar=%(envvar)s environment"
+            " variable pointing to oommf.tcl.",
             {"envvar": self.envvar},
         )
         oommf_tcl = os.environ.get(self.envvar, None)
@@ -501,10 +497,8 @@ class Runner:
             else:
                 if res.returncode:
                     log.warning(
-                        (
-                            "OOMMFTCL is set, but OOMMF could not be run.\n"
-                            "stdout:\n%(stdout)s\nstderr:\n%(stderr)s"
-                        ),
+                        "OOMMFTCL is set, but OOMMF could not be run.\n"
+                        "stdout:\n%(stdout)s\nstderr:\n%(stderr)s",
                         {"stdout": res.stdout, "stderr": res.stderr},
                     )
                 else:
@@ -514,10 +508,8 @@ class Runner:
         # OOMMF available as an executable - in a conda env on Mac/Linux, or
         # oommf installed separately.
         log.debug(
-            (
-                "Step 2: is oommf_exe=%(oommf_exe)s in PATH? "
-                "Could be from conda env or manual install."
-            ),
+            "Step 2: is oommf_exe=%(oommf_exe)s in PATH? "
+            "Could be from conda env or manual install.",
             {"oommf_exe": self.oommf_exe},
         )
         oommf_exe = shutil.which(self.oommf_exe)
@@ -577,7 +569,7 @@ class Runner:
 
         # If OOMMFRunner was not returned up to this point, we raise an
         # exception.
-        raise EnvironmentError("Cannot find OOMMF.")
+        raise OSError("Cannot find OOMMF.")
 
     def __repr__(self):
         # avoid selecting a runner when calling __repr__
@@ -608,22 +600,21 @@ def overhead():
     True
 
     """
-    with tempfile.TemporaryDirectory() as workingdir:
-        with uu.changedir(workingdir):
-            # Running OOMMF through oommfc.
-            system = mm.examples.macrospin()
-            td = oc.TimeDriver()
-            oommfc_start = time.time()
-            td.drive(system, t=1e-12, n=1)
-            oommfc_stop = time.time()
-            oommfc_time = oommfc_stop - oommfc_start
+    with tempfile.TemporaryDirectory() as workingdir, uu.changedir(workingdir):
+        # Running OOMMF through oommfc.
+        system = mm.examples.macrospin()
+        td = oc.TimeDriver()
+        oommfc_start = time.time()
+        td.drive(system, t=1e-12, n=1)
+        oommfc_stop = time.time()
+        oommfc_time = oommfc_stop - oommfc_start
 
-            # Running OOMMF directly.
-            oommf_runner = oc.runner.runner
-            mifpath = pathlib.Path(f"{system.name}/drive-0/macrospin.mif").resolve()
-            oommf_start = time.time()
-            oommf_runner.call(str(mifpath))
-            oommf_stop = time.time()
-            oommf_time = oommf_stop - oommf_start
+        # Running OOMMF directly.
+        oommf_runner = oc.runner.runner
+        mifpath = pathlib.Path(f"{system.name}/drive-0/macrospin.mif").resolve()
+        oommf_start = time.time()
+        oommf_runner.call(str(mifpath))
+        oommf_stop = time.time()
+        oommf_time = oommf_stop - oommf_start
 
     return oommfc_time - oommf_time
