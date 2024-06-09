@@ -1,13 +1,11 @@
-from .driver import driver_script
-from .energy import energy_script
-from .evolver import evolver_script
-from .mesh import mesh_script
-from .system import system_script
-from .util import (
-    box_atlas,
-    file_vector_field,
-    setup_m0,
-    setup_scalar_parameter,
-    setup_vector_parameter,
-    vector_norm_scalar_field,
-)
+from .driver import driver_script as driver_script
+from .energy import energy_script as energy_script
+from .evolver import evolver_script as evolver_script
+from .mesh import mesh_script as mesh_script
+from .system import system_script as system_script
+from .util import box_atlas as box_atlas
+from .util import file_vector_field as file_vector_field
+from .util import setup_m0 as setup_m0
+from .util import setup_scalar_parameter as setup_scalar_parameter
+from .util import setup_vector_parameter as setup_vector_parameter
+from .util import vector_norm_scalar_field as vector_norm_scalar_field
