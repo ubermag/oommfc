@@ -23,8 +23,13 @@ def evolver_script(evolver, **kwargs):
         evolver.alpha = alphaname
         mif += alphamif
     if hasattr(evolver, "u"):
-        if isinstance(evolver.u, numbers.Real) or (
-            isinstance(evolver.u, df.Field) and evolver.u.nvdim == 1
+        if (
+            isinstance(evolver.u, numbers.Real)
+            or (isinstance(evolver.u, df.Field) and evolver.u.nvdim == 1)
+            or (
+                isinstance(evolver.u, dict)
+                and isinstance(list(evolver.u.values())[0], numbers.Real)
+            )
         ):
             scalar_u = True
             umif, uname = oc.scripts.setup_scalar_parameter(evolver.u, "zl_u")
