@@ -55,7 +55,7 @@ class TimeDriver(Driver):
         "report_wall_time",
     ]
 
-    def _checkargs(self, **kwargs):
+    def _checkargs(self, kwargs):
         t, n = kwargs["t"], kwargs["n"]
         if t <= 0:
             msg = f"Cannot drive with {t=}."

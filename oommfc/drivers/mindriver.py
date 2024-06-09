@@ -56,7 +56,7 @@ class MinDriver(Driver):
         "report_wall_time",
     ]
 
-    def _checkargs(self, **kwargs):
+    def _checkargs(self, kwargs):
         pass  # no kwargs should be checked
 
     def _check_system(self, system):
