@@ -160,11 +160,11 @@ def compute(
             col = [
                 c for c in table.data.columns if c.endswith(":evolver:Total energy")
             ][0]
-            output = table.data[col][0]
+            output = table.data[col][0].item()
         else:
             output = table.data[
                 f"{oxs_class(func.__self__, system)}:{func.__self__.name}:Energy"
-            ][0]
+            ][0].item()
     else:
         output = df.Field.from_file(output_file)
         with contextlib.suppress(FileNotFoundError):
