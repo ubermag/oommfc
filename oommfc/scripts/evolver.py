@@ -89,7 +89,6 @@ def evolver_script(evolver, **kwargs):
             evolver.u_profile = "TimeFunction"
             evolver.u_profile_args = "total_time"
     if hasattr(evolver, "tcl_strings") and isinstance(evolver.tcl_strings, dict):
-        print(evolver.tcl_strings)
         mif += evolver.tcl_strings["script"]
         if isinstance(evolver, (oc.SpinXferEvolver, oc.Xf_ThermSpinXferEvolver)):
             evolver.J_profile = evolver.tcl_strings["script_name"]
