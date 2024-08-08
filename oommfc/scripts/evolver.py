@@ -1,5 +1,6 @@
 import numbers
 
+import discretisedfield as df
 import numpy as np
 
 import oommfc as oc
@@ -22,7 +23,19 @@ def evolver_script(evolver, **kwargs):
         evolver.alpha = alphaname
         mif += alphamif
     if hasattr(evolver, "u"):
-        umif, uname = oc.scripts.setup_scalar_parameter(evolver.u, "zl_u")
+        if (
+            isinstance(evolver.u, numbers.Real)
+            or (isinstance(evolver.u, df.Field) and evolver.u.nvdim == 1)
+            or (
+                isinstance(evolver.u, dict)
+                and isinstance(list(evolver.u.values())[0], numbers.Real)
+            )
+        ):
+            scalar_u = True
+            umif, uname = oc.scripts.setup_scalar_parameter(evolver.u, "zl_u")
+        else:
+            scalar_u = False
+            umif, uname = oc.scripts.setup_vector_parameter(evolver.u, "zl_u")
         evolver.u = uname
         mif += umif
 
@@ -76,7 +89,6 @@ def evolver_script(evolver, **kwargs):
             evolver.u_profile = "TimeFunction"
             evolver.u_profile_args = "total_time"
     if hasattr(evolver, "tcl_strings") and isinstance(evolver.tcl_strings, dict):
-        print(evolver.tcl_strings)
         mif += evolver.tcl_strings["script"]
         if isinstance(evolver, (oc.SpinXferEvolver, oc.Xf_ThermSpinXferEvolver)):
             evolver.J_profile = evolver.tcl_strings["script_name"]
@@ -97,7 +109,10 @@ def evolver_script(evolver, **kwargs):
     elif isinstance(evolver, oc.SpinTEvolver):
         # time dependence
         mif += "# Zhang-Li evolver\n"
-        mif += "Specify Anv_SpinTEvolve:evolver {\n"
+        if scalar_u:
+            mif += "Specify Anv_SpinTEvolve:evolver {\n"
+        else:
+            mif += "Specify Anv_SpinTEvolve_3d:evolver {\n"
     elif isinstance(evolver, oc.SpinXferEvolver):
         # time dependence
         mif += "# Slonczewski evolver\n"
