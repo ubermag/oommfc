@@ -246,11 +246,11 @@ class Driver(mm.ExternalDriver):
                 "used with time driver."
             ) from None
         ts = np.arange(0, tmax + term.dt, term.dt)
-        try:  # vector output from term.func
-            tlist = [list(term.func(t)) for t in ts]
+        if isinstance(term.func(ts[0]), (list, tuple, np.ndarray)):
+            tlist = [[float(x) for x in term.func(t)] for t in ts]
             dtlist = (np.gradient(tlist)[0] / term.dt).tolist()
-        except TypeError:  # scalar output from term.func
-            tlist = [term.func(t) for t in ts]
+        else:  # scalar output from term.func
+            tlist = [float(term.func(t)) for t in ts]
             dtlist = list(np.gradient(tlist) / term.dt)
         term.tlist = tlist
         term.dtlist = dtlist
