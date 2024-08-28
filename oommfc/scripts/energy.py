@@ -12,6 +12,14 @@ def energy_script(system):
     term_names = [term.__class__.__name__.lower() for term in system.energy]
     joint_case = "dmi" in term_names and "exchange" in term_names
 
+    if joint_case:
+        for term in system.energy:
+            term_name = term.__class__.__name__.lower()
+            if term_name == "dmi" and (
+                isinstance(term.suffix, str) or term.suffix == "6ngbrs"
+            ):
+                joint_case = False
+
     for term in system.energy:
         term_name = term.__class__.__name__.lower()
         if joint_case and term_name == "exchange":
@@ -52,9 +60,7 @@ def exchange_dmi_script(term_A, term_D, system):
             "Extension is only valid for a spatially uniform DMI constant."
         )
 
-    bc = f"_{term_D.BC}BC" if term_D.BC in ["Robin"] else ""
-
-    mif += f"Specify Oxs_ExchangeAndDMI_{oxs}_12ngbrs{bc} {{\n"
+    mif += f"Specify Oxs_ExchangeAndDMI_{oxs}_{term_D.suffix} {{\n"
     mif += f"  Aex {term_A.A}\n"
     mif += f"  D {term_D.D}\n"
     mif += "  atlas :main_atlas\n"
