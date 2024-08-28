@@ -16,7 +16,7 @@ def energy_script(system):
         for term in system.energy:
             term_name = term.__class__.__name__.lower()
             if term_name == "dmi" and (
-                isinstance(term.suffix, str) or term.suffix == "6ngbrs"
+                not isinstance(term.suffix, str) or term.suffix == "6ngbrs"
             ):
                 joint_case = False
 
