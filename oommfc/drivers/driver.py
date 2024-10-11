@@ -195,10 +195,6 @@ class Driver(mm.ExternalDriver):
             with open(self._miffilename(system), "w", encoding="utf-8") as miffile:
                 miffile.write(mif)
 
-            # Generate and save json info file for a drive (not compute).
-            if compute is None:
-                self._write_info_json(system, **kwargs)
-
         # remove information about fixed cells for subsequent runs
         if hasattr(self.evolver, "fixed_spins"):
             del self.evolver.fixed_spins
