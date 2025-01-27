@@ -196,8 +196,8 @@ def zeeman_script(term, system):
             mif += f"proc TimeFunction:{term.name} {{ total_time }} {{\n"
             mif += f"  set tstep {term.dt}\n"
             mif += "  set index [expr round($total_time/$tstep)]\n"
-            mif += f'  set H_t_fac {{ {" ".join(map(str, term.tlist))} }}\n'
-            mif += f'  set dH_t_fac {{ {" ".join(map(str, term.dtlist))} }}\n'
+            mif += f"  set H_t_fac {{ {' '.join(map(str, term.tlist))} }}\n"
+            mif += f"  set dH_t_fac {{ {' '.join(map(str, term.dtlist))} }}\n"
             mif += "  set H_fac [lindex $H_t_fac $index]\n"
             mif += "  set dH_fac [lindex $dH_t_fac $index]\n"
             mif += f"  set Hx [expr {{ {term.H[0]}*$H_fac }}]\n"
@@ -216,9 +216,9 @@ def zeeman_script(term, system):
             mif += "}\n\n"
     elif isinstance(term.tcl_strings, dict):
         mif += term.tcl_strings["script"]
-        mif += f'\n# {term.tcl_strings["energy"][4:]}\n'  # 3.9 removeprefix
-        mif += f'Specify {term.tcl_strings["energy"]}:{term.name} {{\n'
-        mif += f'  script {term.tcl_strings["script_name"]}\n'
+        mif += f"\n# {term.tcl_strings['energy'][4:]}\n"  # 3.9 removeprefix
+        mif += f"Specify {term.tcl_strings['energy']}:{term.name} {{\n"
+        mif += f"  script {term.tcl_strings['script_name']}\n"
         for key in ["type", "script_args"]:
             with contextlib.suppress(KeyError):
                 mif += f"  {key} {term.tcl_strings[key]}\n"

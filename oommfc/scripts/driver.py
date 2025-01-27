@@ -23,7 +23,7 @@ def driver_script(
 
         # Fixed spins
         if fixed_subregions is not None:
-            resstr = f'{{main_atlas {" ".join(fixed_subregions)}}}'
+            resstr = f"{{main_atlas {' '.join(fixed_subregions)}}}"
             driver.evolver.fixed_spins = resstr
 
         mif += oc.scripts.evolver_script(driver.evolver)
@@ -70,7 +70,7 @@ def driver_script(
 
         # Fixed spins
         if fixed_subregions is not None:
-            resstr = f'{{main_atlas {" ".join(fixed_subregions)}}}'
+            resstr = f"{{main_atlas {' '.join(fixed_subregions)}}}"
             driver.evolver.fixed_spins = resstr
 
         # What is saved in output?
@@ -177,7 +177,7 @@ def driver_script(
 
         # Fixed spins
         if fixed_subregions is not None:
-            resstr = f'{{main_atlas {" ".join(fixed_subregions)}}}'
+            resstr = f"{{main_atlas {' '.join(fixed_subregions)}}}"
             driver.evolver.fixed_spins = resstr
 
         mif += oc.scripts.evolver_script(driver.evolver, **kwargs)
@@ -192,7 +192,7 @@ def driver_script(
         mif += "  mesh :mesh\n"
         mif += "  Ms :m0_norm\n"
         mif += "  m0 :m0\n"
-        mif += f"  stopping_time {t/n}\n"
+        mif += f"  stopping_time {t / n}\n"
         mif += f"  stage_count {n}\n"
         for attr, value in driver:
             if attr != "evolver":
