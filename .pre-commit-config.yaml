@@ -2,14 +2,14 @@ exclude: 'dev'
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.5.0
+  rev: v5.0.0
   hooks:
   - id: check-merge-conflict  # checks for files that contain merge conflict strings
   - id: check-toml  # checks toml files for parseable syntax
   - id: debug-statements  # checks for debugger imports and py37+ `breakpoint()` calls in python source
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.4.4
+  rev: v0.9.3
   hooks:
     # Run the linter.
     - id: ruff

@@ -77,7 +77,7 @@ def evolver_script(evolver, **kwargs):
         mif += "proc TimeFunction { total_time } {\n"
         mif += f"  set tstep {evolver.dt}\n"
         mif += "  set index [expr round($total_time/$tstep)]\n"
-        mif += f'  set profile {{ {" ".join(map(str, tlist))} }}\n'
+        mif += f"  set profile {{ {' '.join(map(str, tlist))} }}\n"
         mif += "  set factor [lindex $profile $index]\n"
         mif += "  return $factor\n"
         mif += "}\n\n"
