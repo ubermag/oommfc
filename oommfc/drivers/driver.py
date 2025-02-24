@@ -222,7 +222,7 @@ class Driver(mm.ExternalDriver):
     def _read_data(self, system):
         # Update system's magnetisation. An example .omf filename:
         # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
-        omffiles = pathlib.Path(".").glob(f"{system.name}*.omf")
+        omffiles = pathlib.Path(".").glob(f"{system.name}-*.omf")
         lastomffile = sorted(omffiles)[-1]
         # pass Field.array instead of Field to system.m.value
         # - to avoid overriding component labels
