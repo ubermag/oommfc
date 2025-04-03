@@ -38,11 +38,15 @@ def energy_script(system):
 def exchange_dmi_script(term_A, term_D, system):
     mif = "# Uniform Exchange and DMI\n"
     if term_D.crystalclass in ["T", "O"]:
-        oxs = "t"
+        oxs = "T"
     elif term_D.crystalclass in ["D2d_z"]:
         oxs = "d2d"
     elif term_D.crystalclass in ["Cnv_z"]:
         oxs = "Cnv"
+    elif term_D.crystalclass in ["Cn_z"]:
+        oxs = "Cn"
+    elif term_D.crystalclass in ["S4_z"]:
+        oxs = "S4"
     else:
         raise NotImplementedError(f"DMI {term_D.crystalclass} not implemented")
 
@@ -55,6 +59,8 @@ def exchange_dmi_script(term_A, term_D, system):
 
     if isinstance(term_D.D, numbers.Real):
         pass
+    elif isinstance(term_D.D1, numbers.Real) and isinstance(term_D.D2, numbers.Real):
+        pass
     else:
         raise NotImplementedError(
             "Extension is only valid for a spatially uniform DMI constant."
@@ -62,7 +68,13 @@ def exchange_dmi_script(term_A, term_D, system):
 
     mif += f"Specify Oxs_ExchangeAndDMI_{oxs}_{term_D.suffix} {{\n"
     mif += f"  Aex {term_A.A}\n"
-    mif += f"  D {term_D.D}\n"
+
+    if oxs in ["Cn", "S4"]:  # DMIs with 2 constants:
+        mif += f"  D1 {term_D.D1}\n"
+        mif += f"  D2 {term_D.D2}\n"
+    else:  # any other DMI with single constant
+        mif += f"  D {term_D.D}\n"
+
     mif += "  atlas :main_atlas\n"
     mif += "  mesh :mesh\n"
     mif += "}\n\n"
