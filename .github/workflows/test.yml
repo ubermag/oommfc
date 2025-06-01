@@ -53,21 +53,17 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
 
   tests-oommf-compiled:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        python-version: [3.13]
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash -l {0}
     steps:
     - name: Initialisation
       uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.13
     - name: Install Tk/Tcl
       run: sudo apt-get install tk-dev tcl-dev
     - name: Clone OOMMF
