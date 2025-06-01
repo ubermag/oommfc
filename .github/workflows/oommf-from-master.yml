@@ -13,7 +13,7 @@ env:
   PYTEST_ADDOPTS: "--color=yes"
 
 jobs:
-  workflow:
+  tests-oommf-compiled:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
