@@ -13,7 +13,7 @@
 
 | Description | Badge |
 | --- | --- |
-| Tests | [![Build status](https://github.com/ubermag/oommfc/workflows/workflow/badge.svg)](https://github.com/ubermag/oommfc/actions?query=workflow%3Aworkflow) |
+| Tests | [![tests](https://github.com/ubermag/oommfc/actions/workflows/test.yml/badge.svg)](https://github.com/ubermag/oommfc/actions/workflows/test.yml) |
 | Linting | [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ubermag/oommfc/master.svg)](https://results.pre-commit.ci/latest/github/ubermag/oommfc/master) |
 |         | [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) |
 | Releases | [![PyPI version](https://badge.fury.io/py/oommfc.svg)](https://badge.fury.io/py/oommfc) |
@@ -78,7 +78,7 @@ Licensed under the BSD 3-Clause "New" or "Revised" License. For details, please 
 
 2. M. Beg, R. A. Pepper, and H. Fangohr. User interfaces for computational science: A domain specific language for OOMMF embedded in Python. [*AIP Advances* **7**, 56025](http://aip.scitation.org/doi/10.1063/1.4977225) (2017).
 
-3. Marijan Beg, Martin Lang, Ryan A. Pepper, Thomas Kluyver, Samuel Holt, Swapneel Amit Pathak, and Hans Fangohr. oommfc: OOMMF calculator. DOI: [10.5281/zenodo.3539461](http://doi.org/10.5281/zenodo.3539461) (2023).
+3. Marijan Beg, Martin Lang, Ryan A. Pepper, Thomas Kluyver, Samuel Holt, Swapneel Amit Pathak, and Hans Fangohr. oommfc: OOMMF calculator. DOI: [10.5281/zenodo.3539461](http://doi.org/10.5281/zenodo.3539461) (2025).
 
 ## Acknowledgements
 

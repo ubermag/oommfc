@@ -1,4 +1,4 @@
-name: oommf-from-master
+name: tests
 
 on:
   push:
@@ -7,46 +7,75 @@ on:
   pull_request:
   schedule:
     - cron: '0 0 * * 1'  # run every Monday
+  workflow_call:
   workflow_dispatch:
 
 env:
   PYTEST_ADDOPTS: "--color=yes"
 
 jobs:
-  workflow:
+  tests:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        python-version: [3.8]
+        os: [ubuntu-latest, macos-13, windows-latest]
+        python-version: ["3.13"]
+        include:
+          - os: ubuntu-latest
+            python-version: "3.9"
     defaults:
       run:
         shell: bash -l {0}
+    steps:
+    - name: Initialisation
+      uses: actions/checkout@v4
+    - name: Set up conda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+        auto-update-conda: true
+        activate-environment: conda-environment
+        environment-file: .github/environment.yml
+    - name: Install package
+      run: python -m pip install .[dev]
+    - name: Unit tests
+      run: invoke test.unittest
+      if: matrix.os != 'ubuntu-latest'
+    - name: Unit tests with coverage
+      run: invoke test.coverage
+      if: matrix.os == 'ubuntu-latest'
+    - name: Documentation tests
+      run: invoke test.docs
+    - name: Jupyter notebook tests
+      run: invoke test.ipynb
+    - name: Upload coverage to Codecov.io
+      uses: codecov/codecov-action@v1
+      if: matrix.os == 'ubuntu-latest'
 
+  tests-oommf-compiled:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
     steps:
     - name: Initialisation
       uses: actions/checkout@v2
-
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
-
+        python-version: 3.13
     - name: Install Tk/Tcl
       run: sudo apt-get install tk-dev tcl-dev
-
     - name: Clone OOMMF
       uses: actions/checkout@v2
       with:
         repository: fangohr/oommf
         path: opt  # to mimic directory structure of conda
-
     - name: Compile OOMMF
       run: |
         cd opt
         make build
         cd ..
-
     - name: Create oommf executable
       run: |
         mkdir -p bin
@@ -55,15 +84,12 @@ jobs:
         tclsh $GITHUB_WORKSPACE/opt/oommf/oommf.tcl "\$@"
         EOF
         chmod a+x bin/oommf
-
     - name: Set environment variables
       run: |
         echo "OOMMFTCL=$GITHUB_WORKSPACE/opt/oommf/oommf.tcl" >> $GITHUB_ENV
         echo "PATH=$GITHUB_WORKSPACE/bin:$PATH" >> $GITHUB_ENV
-
     - name: Install testing packages
       run: python -m pip install --upgrade pip pytest-cov nbval pycodestyle invoke
-
     - name: Install ubermag dependencies
       run: |
         python -m pip install git+https://github.com/ubermag/ubermagutil.git
@@ -72,15 +98,35 @@ jobs:
         python -m pip install git+https://github.com/ubermag/micromagneticmodel.git
         python -m pip install git+https://github.com/ubermag/micromagnetictests.git
         python -m pip install git+https://github.com/ubermag/micromagneticdata.git
-
     - name: Install package
       run: python -m pip install .
-
     - name: Unit tests
       run: invoke test.unittest
-
     - name: Documentation tests
       run: invoke test.docs
-
     - name: Jupyter notebook tests
       run: invoke test.ipynb
+
+  build:
+    needs:
+      - tests
+      - tests-oommf-compiled
+    name: Build wheel and sdist
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+    - name: Install pypa/build
+      run: python -m pip install --user build
+    - name: Build wheel and source tarball
+      run: python -m build
+    - name: Store the distribution packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
