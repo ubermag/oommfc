@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/blaupause
+      url: https://pypi.org/p/oommfc
     permissions:
       id-token: write
     steps:
