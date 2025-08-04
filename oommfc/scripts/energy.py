@@ -57,9 +57,11 @@ def exchange_dmi_script(term_A, term_D, system):
             "Extension is only valid for a spatially uniform Exchange constant."
         )
 
-    if isinstance(term_D.D, numbers.Real):
-        pass
-    elif isinstance(term_D.D1, numbers.Real) and isinstance(term_D.D2, numbers.Real):
+    if (
+        isinstance(term_D.D, numbers.Real)
+        or isinstance(term_D.D1, numbers.Real)
+        and isinstance(term_D.D2, numbers.Real)
+    ):
         pass
     else:
         raise NotImplementedError(
