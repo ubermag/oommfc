@@ -195,10 +195,6 @@ class Driver(mm.ExternalDriver):
             with open(self._miffilename(system), "w", encoding="utf-8") as miffile:
                 miffile.write(mif)
 
-            # Generate and save json info file for a drive (not compute).
-            if compute is None:
-                self._write_info_json(system, **kwargs)
-
         # remove information about fixed cells for subsequent runs
         if hasattr(self.evolver, "fixed_spins"):
             del self.evolver.fixed_spins
@@ -226,7 +222,7 @@ class Driver(mm.ExternalDriver):
     def _read_data(self, system):
         # Update system's magnetisation. An example .omf filename:
         # test_sample-Oxs_TimeDriver-Magnetization-01-0000008.omf
-        omffiles = pathlib.Path(".").glob(f"{system.name}*.omf")
+        omffiles = pathlib.Path(".").glob(f"{system.name}-*.omf")
         lastomffile = sorted(omffiles)[-1]
         # pass Field.array instead of Field to system.m.value
         # - to avoid overriding component labels
