@@ -343,6 +343,14 @@ def dmi_script(term, system):
             warnings.warn(msg, FutureWarning, stacklevel=2)
             tcc = "Cnv_z"
         oxs = f"Oxs_DMI_{tcc}"
+    elif (tcc := term.crystalclass) in ["Cn_x", "Cn_y", "Cn_z", "Cn"]:
+        if tcc == "Cn":
+            msg = "Use of `Cn` is deprecated; use `Cn_z` instead."
+            warnings.warn(msg, FutureWarning, stacklevel=2)
+            tcc = "Cn_z"
+        elif tcc == "Cn_x" or tcc == "Cn_y":
+            raise NotImplementedError(f"DMI {tcc} not implemented")
+        oxs = f"Oxs_DMI_{tcc}"
 
     mif = f"# DMI of crystallographic class {term.crystalclass}\n"
     mif += f"Specify {oxs}:{term.name} {{\n"
