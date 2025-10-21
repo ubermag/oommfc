@@ -381,6 +381,27 @@ def dmi_script(term, system):
         mif += "  }\n"
         mif += "}\n\n"
 
+    # This is for DMI classes with two constants: D1 and D2, and using 6 ngbs
+    elif isinstance(term.D1, numbers.Real) and isinstance(term.D2, numbers.Real):
+        mif += f"  default_D1 {term.D1}\n"
+        mif += f"  default_D2 {term.D2}\n"
+        mif += "  atlas :main_atlas\n"
+        mif += "  D1 {\n"
+        if len(system.m.mesh.subregions) == 0:
+            mif += f"    main main {term.D1}\n"
+        else:
+            mif += f"    entire entire {term.D1}\n"
+        #
+        mif += "  D2 {\n"
+        if len(system.m.mesh.subregions) == 0:
+            mif += f"    main main {term.D2}\n"
+        else:
+            mif += f"    entire entire {term.D2}\n"
+        #
+        mif += "  }\n"
+        mif += "}\n\n"
+    # Other options like, D1=real and D2=dict, ... are not implemented yet
+
     return mif
 
 
