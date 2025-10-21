@@ -392,6 +392,7 @@ def dmi_script(term, system):
         else:
             mif += f"    entire entire {term.D1}\n"
         #
+        mif += "  }\n"
         mif += "  D2 {\n"
         if len(system.m.mesh.subregions) == 0:
             mif += f"    main main {term.D2}\n"
