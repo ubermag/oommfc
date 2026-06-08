@@ -104,6 +104,7 @@ known-local-folder = ["oommfc"]
 filterwarnings = [
     "error",
     "ignore:((.|\n)*)Sentinel is not a public part of the traitlets API((.|\n)*)",  # dependency of k3d
+    "ignore:'oneOf' deprecated - use 'one_of'",  # matplotlib (maybe our custom style?)
 ]
 
 [tool.setuptools.packages.find]
