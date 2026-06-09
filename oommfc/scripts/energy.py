@@ -9,8 +9,77 @@ import oommfc as oc
 
 def energy_script(system):
     mif = ""
+    term_names = [term.__class__.__name__.lower() for term in system.energy]
+    joint_case = "dmi" in term_names and "exchange" in term_names
+
+    if joint_case:
+        for term in system.energy:
+            term_name = term.__class__.__name__.lower()
+            if term_name == "dmi" and (
+                not isinstance(term.suffix, str) or term.suffix == "6ngbrs"
+            ):
+                joint_case = False
+
     for term in system.energy:
-        mif += globals()[f"{term.__class__.__name__.lower()}_script"](term, system)
+        term_name = term.__class__.__name__.lower()
+        if joint_case and term_name == "exchange":
+            term_A = term
+        elif joint_case and term_name == "dmi":
+            term_D = term
+        else:
+            mif += globals()[f"{term_name}_script"](term, system)
+
+    if joint_case:
+        mif += globals()["exchange_dmi_script"](term_A, term_D, system)
+
+    return mif
+
+
+def exchange_dmi_script(term_A, term_D, system):
+    mif = "# Uniform Exchange and DMI\n"
+    if term_D.crystalclass in ["T", "O"]:
+        oxs = "T"
+    elif term_D.crystalclass in ["D2d_z"]:
+        oxs = "d2d"
+    elif term_D.crystalclass in ["Cnv_z"]:
+        oxs = "Cnv"
+    elif term_D.crystalclass in ["Cn_z"]:
+        oxs = "Cn"
+    elif term_D.crystalclass in ["S4_z"]:
+        oxs = "S4"
+    else:
+        raise NotImplementedError(f"DMI {term_D.crystalclass} not implemented")
+
+    if isinstance(term_A.A, numbers.Real):
+        pass
+    else:
+        raise NotImplementedError(
+            "Extension is only valid for a spatially uniform Exchange constant."
+        )
+
+    if (
+        isinstance(term_D.D, numbers.Real)
+        or isinstance(term_D.D1, numbers.Real)
+        and isinstance(term_D.D2, numbers.Real)
+    ):
+        pass
+    else:
+        raise NotImplementedError(
+            "Extension is only valid for a spatially uniform DMI constant."
+        )
+
+    mif += f"Specify Oxs_ExchangeAndDMI_{oxs}_{term_D.suffix} {{\n"
+    mif += f"  Aex {term_A.A}\n"
+
+    if oxs in ["Cn", "S4"]:  # DMIs with 2 constants:
+        mif += f"  D1 {term_D.D1}\n"
+        mif += f"  D2 {term_D.D2}\n"
+    else:  # any other DMI with single constant
+        mif += f"  D {term_D.D}\n"
+
+    mif += "  atlas :main_atlas\n"
+    mif += "  mesh :mesh\n"
+    mif += "}\n\n"
 
     return mif
 
@@ -274,6 +343,14 @@ def dmi_script(term, system):
             warnings.warn(msg, FutureWarning, stacklevel=2)
             tcc = "Cnv_z"
         oxs = f"Oxs_DMI_{tcc}"
+    elif (tcc := term.crystalclass) in ["Cn_x", "Cn_y", "Cn_z", "Cn"]:
+        if tcc == "Cn":
+            msg = "Use of `Cn` is deprecated; use `Cn_z` instead."
+            warnings.warn(msg, FutureWarning, stacklevel=2)
+            tcc = "Cn_z"
+        elif tcc == "Cn_x" or tcc == "Cn_y":
+            raise NotImplementedError(f"DMI {tcc} not implemented")
+        oxs = f"Oxs_DMI_{tcc}"
 
     mif = f"# DMI of crystallographic class {term.crystalclass}\n"
     mif += f"Specify {oxs}:{term.name} {{\n"
@@ -303,6 +380,28 @@ def dmi_script(term, system):
                 mif += f"    {region1} {region2} {value}\n"
         mif += "  }\n"
         mif += "}\n\n"
+
+    # This is for DMI classes with two constants: D1 and D2, and using 6 ngbs
+    elif isinstance(term.D1, numbers.Real) and isinstance(term.D2, numbers.Real):
+        mif += f"  default_D1 {term.D1}\n"
+        mif += f"  default_D2 {term.D2}\n"
+        mif += "  atlas :main_atlas\n"
+        mif += "  D1 {\n"
+        if len(system.m.mesh.subregions) == 0:
+            mif += f"    main main {term.D1}\n"
+        else:
+            mif += f"    entire entire {term.D1}\n"
+        #
+        mif += "  }\n"
+        mif += "  D2 {\n"
+        if len(system.m.mesh.subregions) == 0:
+            mif += f"    main main {term.D2}\n"
+        else:
+            mif += f"    entire entire {term.D2}\n"
+        #
+        mif += "  }\n"
+        mif += "}\n\n"
+    # Other options like, D1=real and D2=dict, ... are not implemented yet
 
     return mif
 
