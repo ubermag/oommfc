@@ -35,8 +35,6 @@ llg_samples = [
 
 @pytest.fixture(scope="session", params=llg_samples)
 def table_llg_factory(request):
-    """LLG tables."""
-
     def _inner(**kwargs):
         return table_from_file(samples() / request.param, **kwargs)
 
@@ -64,8 +62,6 @@ def table_hysteresis_factory():
     params=energy_minimisation_samples + llg_samples + ["oommf-hysteresis1.odt"],
 )
 def table_factory(request):
-    """Energy minimisation or LLG tables."""
-
     def _inner(**kwargs):
         return table_from_file(samples() / request.param, **kwargs)
 
@@ -74,5 +70,5 @@ def table_factory(request):
 
 @pytest.fixture(scope="session")
 def table_llg_25ps():
-    """LLG data with tmax=25ps."""
+    # LLG data with tmax=25ps
     return table_from_file(samples() / "oommf-old-file1.odt", x="t")
