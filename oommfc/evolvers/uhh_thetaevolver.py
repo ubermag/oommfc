@@ -1,7 +1,7 @@
-import micromagneticmodel as mm
+from micromagneticmodel import adapter_base
 
 
-class UHH_ThetaEvolver(mm.Evolver):
+class UHH_ThetaEvolver(adapter_base.Evolver):
     """Models finite temperature via a differential equation of Langevin type.
 
     Only attributes in ``_allowed_attributes`` can be defined. For details on
