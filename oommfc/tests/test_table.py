@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from ubermagtable.tests.test_table import *  # noqa: F403
+from ubermagtable.testing.table import *  # noqa: F403
 
 from oommfc.plugins import table_from_file
 
