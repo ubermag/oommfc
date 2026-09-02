@@ -1,7 +1,7 @@
-import micromagneticmodel as mm
+from micromagneticmodel import adapter_base
 
 
-class EulerEvolver(mm.Evolver):
+class EulerEvolver(adapter_base.Evolver):
     """Euler evolver.
 
     Only attributes in ``_allowed_attributes`` can be defined. For details on

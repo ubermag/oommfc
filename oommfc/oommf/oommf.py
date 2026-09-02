@@ -12,6 +12,7 @@ import time
 
 import micromagneticmodel as mm
 import ubermagutil as uu
+from micromagneticmodel import adapter_base
 
 import oommfc as oc
 
@@ -30,7 +31,7 @@ def _global_cleanup():
 atexit.register(_global_cleanup)
 
 
-class OOMMFRunner(mm.ExternalRunner):
+class OOMMFRunner(adapter_base.ExternalRunner):
     """Abstract class for running OOMMF."""
 
     def __init__(self):
