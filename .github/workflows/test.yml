@@ -62,7 +62,7 @@ jobs:
       with:
         python-version: 3.13
     - name: Install Tk/Tcl
-      run: sudo apt-get install tk-dev tcl-dev
+      run: sudo apt-get update && sudo apt-get install tk-dev tcl-dev
     - name: Clone OOMMF
       uses: actions/checkout@v2
       with:
