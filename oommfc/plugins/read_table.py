@@ -28,7 +28,6 @@ def table_from_file(filename, /, x=None, rename=True):
 
         Table object.
 
-    TODO: update example
     Examples
     --------
     1. Defining ``ubermagtable.Table`` by reading an OOMMF ``.odt`` file.
@@ -36,16 +35,11 @@ def table_from_file(filename, /, x=None, rename=True):
     >>> import os
     >>> import ubermagtable as ut
     ...
-    >>> odtfile = os.path.join(os.path.dirname(__file__),
-    ...                        'tests', 'test_sample',
+    >>> odtfile = os.path.join(os.path.dirname(__file__), '..',
+    ...                        'tests', 'test_sample', 'tables',
     ...                        'oommf-hysteresis1.odt')
     >>> table = ut.Table.fromfile(odtfile, x='B_hysteresis')
 
-    2. Defining ``ubermagtable.Table`` by reading a mumax3 ``.txt`` file.
-
-    >>> odtfile = os.path.join(os.path.dirname(__file__),
-    ...                        'tests', 'test_sample', 'mumax3-file1.txt')
-    >>> table = ut.Table.fromfile(odtfile, x='t')
 
     """
     quantities = _read_header(filename, rename=rename)
