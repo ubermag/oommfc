@@ -163,7 +163,7 @@ def compute(
             output = table.data[col][0].item()
         else:
             output = table.data[
-                f"{oxs_class(func.__self__, system)}:{func.__self__.name}:Energy"
+                f"Oxs_{oxs_class(func.__self__, system)}:{func.__self__.name}:Energy"
             ][0].item()
     else:
         output = df.Field.from_file(output_file)
