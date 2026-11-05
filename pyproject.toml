@@ -60,7 +60,10 @@ homepage = "https://ubermag.github.io"
 documentation = "https://ubermag.github.io/documentation/oommfc"
 repository = "https://github.com/ubermag/oommfc"
 
-
+[project.entry-points."micromagneticdata.plugins.CalculatorDrive"]
+oommfc = "oommfc.plugins:OOMMFDrive"
+[project.entry-points."micromagneticdata.plugins.read_table"]
+oommfc = "oommfc.plugins:table_from_file"
 
 
 [tool.coverage.run]

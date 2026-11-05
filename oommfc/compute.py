@@ -4,10 +4,10 @@ import re
 
 import discretisedfield as df
 import micromagneticmodel as mm
-import ubermagtable as ut
 import ubermagutil as uu
 
 import oommfc as oc
+import oommfc.plugins
 
 
 def oxs_class(term, system):
@@ -155,7 +155,7 @@ def compute(
     output_file = max(workingdir.glob(f"*.{extension}"), key=os.path.getctime)
 
     if func.__name__ == "energy":
-        table = ut.Table.fromfile(output_file, rename=False)
+        table = oommfc.plugins.table_from_file(output_file, rename=False)
         if isinstance(func.__self__, mm.Energy):
             col = [
                 c for c in table.data.columns if c.endswith(":evolver:Total energy")
@@ -163,7 +163,7 @@ def compute(
             output = table.data[col][0].item()
         else:
             output = table.data[
-                f"{oxs_class(func.__self__, system)}:{func.__self__.name}:Energy"
+                f"Oxs_{oxs_class(func.__self__, system)}:{func.__self__.name}:Energy"
             ][0].item()
     else:
         output = df.Field.from_file(output_file)
