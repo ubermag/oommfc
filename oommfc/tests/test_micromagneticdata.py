@@ -119,7 +119,18 @@ def drive(_compute):
     return mdata.Drive(name=name, number=number, dirname=dirname)
 
 
+@pytest.fixture
+def expected_field_type():
+    return df.Field
+
+
 # Additional oommf specific tests
+
+
+def test_magnetisation_geometry(drive):
+    """Magnetisation steps retain the initial region and subregions."""
+    assert drive[0].mesh.region.allclose(drive.m0.mesh.region)
+    assert drive[0].mesh.subregions.keys() == drive.m0.mesh.subregions.keys()
 
 
 def test_ovf2vtk(drive, tmp_path):
