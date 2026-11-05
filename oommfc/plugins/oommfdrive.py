@@ -1,3 +1,7 @@
+import contextlib
+import pathlib
+
+import discretisedfield as df
 import micromagneticdata as mdata
 import ubermagutil as uu
 
@@ -84,6 +88,15 @@ class OOMMFDrive(mdata.Drive):
     @property
     def _step_file_glob(self):
         return self.drive_path.glob(f"{self.name}*.omf")
+
+    def _read_m(self, filename):
+        """Read an OOMMF magnetisation field."""
+        field = df.Field.from_file(filename)
+        if pathlib.Path(filename) != self._m0_path:
+            with contextlib.suppress(FileNotFoundError):
+                field.mesh.load_subregions(self._m0_path)
+        field.valid = "norm"
+        return field
 
     @property
     def calculator_script(self):
