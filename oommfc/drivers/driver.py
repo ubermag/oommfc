@@ -2,15 +2,15 @@ import abc
 import pathlib
 
 import discretisedfield as df
-import micromagneticmodel as mm
 import numpy as np
-import ubermagtable as ut
 import ubermagutil as uu
+from micromagneticmodel import adapter_base
 
 import oommfc as oc
+import oommfc.plugins
 
 
-class Driver(mm.ExternalDriver):
+class Driver(adapter_base.ExternalDriver):
     """Driver base class."""
 
     def __init__(self, **kwargs):
@@ -230,7 +230,7 @@ class Driver(mm.ExternalDriver):
         # - for better performance
         system.m.array = df.Field.from_file(str(lastomffile)).array
 
-        system.table = ut.Table.fromfile(f"{system.name}.odt", x=self._x)
+        system.table = oommfc.plugins.table_from_file(f"{system.name}.odt", x=self._x)
 
     @staticmethod
     def _time_dependence(term, **kwargs):

@@ -1,7 +1,7 @@
-import micromagneticmodel as mm
+from micromagneticmodel import adapter_base
 
 
-class Xf_ThermSpinXferEvolver(mm.Evolver):
+class Xf_ThermSpinXferEvolver(adapter_base.Evolver):
     """Slonczewski evolver for finite temperature.
 
     Only attributes in ``_allowed_attributes`` can be defined. For details on
