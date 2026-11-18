@@ -77,6 +77,9 @@ def hysteresis(dirname, *args):
     return system
 
 
+HYSTERESIS = (hysteresis, ("",), ("B_hysteresis", "mx", "Hrange"))
+
+
 @pytest.fixture(
     scope="session",
     params=[
@@ -95,7 +98,7 @@ def hysteresis(dirname, *args):
             ("time_drive",),
             ("t", "mx", "Schedule Oxs_TimeDriver::Magnetization mags Stage 1"),
         ),
-        (hysteresis, ("",), ("B_hysteresis", "mx", "Hrange")),
+        HYSTERESIS,
     ],
 )
 def _compute(tmp_path_factory, request):
@@ -137,11 +140,10 @@ def test_ovf2vtk(drive, tmp_path):
     drive.ovf2vtk(dirname=tmp_path)
 
 
-def test_to_xarray_hysteresis(tmp_path):
-    system = hysteresis(tmp_path)
-    drive = mdata.Drive(
-        name=system.name, number=system.drive_number - 1, dirname=tmp_path
-    )
+@pytest.mark.parametrize("_compute", [HYSTERESIS], indirect=True)
+def test_to_xarray_hysteresis(_compute):
+    name, number, dirname, _ = _compute
+    drive = mdata.Drive(name=name, number=number, dirname=dirname)
     assert all(
         np.allclose(
             drive.to_xarray()[f"B{i}_hysteresis"].values,
