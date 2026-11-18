@@ -53,7 +53,9 @@ def docs(c):
 @task
 def ipynb(c):
     """Test notebooks."""
-    result = pytest.main(["-v", "--nbval", "--sanitize-with", "nbval.cfg", "docs"])
+    result = pytest.main(
+        ["-v", "--nbval", "--nbval-sanitize-with", "nbval.cfg", "docs"]
+    )
     raise Exit(code=result)
 
 
