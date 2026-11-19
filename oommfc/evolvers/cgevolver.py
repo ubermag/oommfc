@@ -1,7 +1,7 @@
-import micromagneticmodel as mm
+from micromagneticmodel import adapter_base
 
 
-class CGEvolver(mm.Evolver):
+class CGEvolver(adapter_base.Evolver):
     """Conjugate-Gradient evolver.
 
     Only attributes in ``_allowed_attributes`` can be defined. For details on

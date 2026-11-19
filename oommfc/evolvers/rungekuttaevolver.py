@@ -1,7 +1,7 @@
-import micromagneticmodel as mm
+from micromagneticmodel import adapter_base
 
 
-class RungeKuttaEvolver(mm.Evolver):
+class RungeKuttaEvolver(adapter_base.Evolver):
     """Runge-Kutta evolver.
 
     Only attributes in ``_allowed_attributes`` can be defined. For details on

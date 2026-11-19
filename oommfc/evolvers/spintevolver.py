@@ -1,7 +1,7 @@
-import micromagneticmodel as mm
+from micromagneticmodel import adapter_base
 
 
-class SpinTEvolver(mm.Evolver):
+class SpinTEvolver(adapter_base.Evolver):
     """Zhang-Li evolver.
 
     Only attributes in ``_allowed_attributes`` can be defined. For details on
