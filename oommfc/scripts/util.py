@@ -66,10 +66,12 @@ def file_vector_field(filename, name, atlas):
     return mif
 
 
-def vector_norm_scalar_field(field, name):
+def vector_norm_scalar_field(field, name, offset=0):
     mif = f"# {name}\n"
     mif += f"Specify Oxs_VecMagScalarField:{name} {{\n"
     mif += f"    field :{field}\n"
+    if offset != 0:
+        mif += f"    offset {offset}\n"
     mif += "}\n\n"
 
     return mif
@@ -77,9 +79,14 @@ def vector_norm_scalar_field(field, name):
 
 def setup_scalar_parameter(parameter, name):
     if isinstance(parameter, df.Field):
-        parameter.to_file(f"{name}.ovf", extend_scalar=True)
+        # OOMMF reads the scalar field as the first component of a vector field and
+        # Oxs_VecMagScalarField takes its norm, which drops the sign. Negative values
+        # (e.g. easy-plane anisotropy K < 0) are therefore shifted to be non-negative
+        # and the shift is added back with the ``offset`` of Oxs_VecMagScalarField.
+        offset = min(float(np.nanmin(parameter.array)), 0.0)
+        (parameter - offset).to_file(f"{name}.ovf", extend_scalar=True)
         mif = file_vector_field(f"{name}.ovf", f"{name}", "main_atlas")
-        mif += vector_norm_scalar_field(f"{name}", f"{name}_norm")
+        mif += vector_norm_scalar_field(f"{name}", f"{name}_norm", offset=offset)
         return mif, f"{name}_norm"
 
     elif isinstance(parameter, dict):
